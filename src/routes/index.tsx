@@ -86,8 +86,15 @@ function HomePage() {
   const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));
   const publishedPortfolio = portfolio.filter((p) => p.is_published);
 
+  const jsonLd = buildLocalBusinessJsonLd(tenant, settings);
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PublicHeader />
 
       <main className="flex-1">
