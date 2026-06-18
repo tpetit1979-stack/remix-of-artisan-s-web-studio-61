@@ -9,18 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Check, Palette } from "lucide-react";
+import { Check, Palette, Lock } from "lucide-react";
 import { LogoAnalyzer } from "@/components/admin/LogoAnalyzer";
-import {
-  validateImageFile,
-  buildMediaPath,
-  uploadImage,
-  removeStorageFile,
-  bucketPublicUrl,
-  extractMediaPathFromPublicUrl,
-} from "@/lib/media-upload";
 
 export const Route = createFileRoute("/admin/settings")({
   component: AdminSettings,
@@ -104,8 +96,6 @@ function AdminSettings() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<any>(null);
   const [tenantForm, setTenantForm] = useState<any>(null);
-  const [uploading, setUploading] = useState(false);
-  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (settings) setForm({ ...settings });
@@ -122,24 +112,10 @@ function AdminSettings() {
   const currentHeaderStyle = form?.header_style ?? "solid";
   const shades = useMemo(() => generatePreviewShades(currentColor), [currentColor]);
 
-  async function uploadLogo(file: File): Promise<string> {
-    const validationErr = validateImageFile(file);
-    if (validationErr) throw new Error(validationErr);
-    // Always create a NEW path on each upload so the public URL changes
-    // (defeats CDN cache without needing upsert + version querystring).
-    const newPath = buildMediaPath({ scope: tenant!.id, kind: "logo", file });
-    await uploadImage({ bucket: "media", path: newPath, file });
-    // Best-effort: remove the previous logo file so we don't accumulate orphans.
-    const previousUrl: string | undefined = form?.logo_url ?? undefined;
-    const previousPath = previousUrl ? extractMediaPathFromPublicUrl(previousUrl) : null;
-    if (previousPath && previousPath !== newPath) {
-      await removeStorageFile("media", previousPath);
-    }
-    return bucketPublicUrl("media", newPath);
-  }
-
   const saveSettings = useMutation({
     mutationFn: async () => {
+      // logo_url, favicon_url, hero_image_url are intentionally NOT in this payload:
+      // brand visuals are managed exclusively by super-admin (DB trigger enforces this too).
       const { error } = await supabase
         .from("site_settings")
         .update({
@@ -147,7 +123,6 @@ function AdminSettings() {
           hero_subtitle: form.hero_subtitle,
           primary_color: form.primary_color,
           cta_text: form.cta_text,
-          logo_url: form.logo_url,
           seo_meta_title: form.seo_meta_title,
           seo_meta_description: form.seo_meta_description,
           border_radius: form.border_radius,
@@ -184,20 +159,6 @@ function AdminSettings() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setUploading(true);
-      const url = await uploadLogo(file);
-      setForm((p: any) => ({ ...p, logo_url: url }));
-      toast.success("Logo uploadé");
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setUploading(false);
-    }
-  }
 
   if (!form || !tenantForm) return <p className="text-muted-foreground">Chargement...</p>;
 
@@ -225,18 +186,22 @@ function AdminSettings() {
         </CardContent>
       </Card>
 
-      {/* Logo */}
+      {/* Logo — read-only, managed by super-admin */}
       <Card>
         <CardHeader><CardTitle>Logo & identité visuelle</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
-            {form.logo_url && (
-              <img src={form.logo_url} alt="Logo" className="h-16 object-contain rounded border bg-muted/30 p-2" />
+            {form.logo_url ? (
+              <img src={form.logo_url} alt="Logo" loading="lazy" className="h-16 object-contain rounded border bg-muted/30 p-2" />
+            ) : (
+              <div className="h-16 w-32 rounded border bg-muted/30 flex items-center justify-center text-xs text-muted-foreground">
+                Aucun logo
+              </div>
             )}
-            <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-            <Button variant="outline" onClick={() => logoInputRef.current?.click()} disabled={uploading}>
-              {uploading ? "Upload..." : form.logo_url ? "Changer le logo" : "Uploader un logo"}
-            </Button>
+            <div className="flex items-start gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+              <span>Géré par votre agence — contactez-nous pour modifier votre logo.</span>
+            </div>
           </div>
 
           <div className="border-t pt-4">
@@ -258,6 +223,7 @@ function AdminSettings() {
           </div>
         </CardContent>
       </Card>
+
 
       {/* Hero */}
       <Card>
