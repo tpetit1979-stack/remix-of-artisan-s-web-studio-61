@@ -3,7 +3,9 @@ import { useTenant } from "@/hooks/use-tenant";
 import { Phone, Menu, X } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
 import { Button } from "@/components/ui/button";
+import { BookingButton } from "./BookingButton";
 import { useState } from "react";
+
 
 export function PublicHeader() {
   const { tenant, settings } = useTenant();
@@ -61,6 +63,8 @@ export function PublicHeader() {
               </Button>
             </a>
           )}
+          <BookingButton variant="header" />
+
           <Link to="/contact" className="hidden sm:block">
             <Button size="sm">{settings?.cta_text ?? "Demander un devis"}</Button>
           </Link>
@@ -100,6 +104,8 @@ export function PublicHeader() {
                 </Button>
               </a>
             )}
+            <BookingButton variant="mobile-menu" onNavigate={() => setMenuOpen(false)} />
+
             <Link to="/contact" onClick={() => setMenuOpen(false)}>
               <Button className="w-full">{settings?.cta_text ?? "Demander un devis"}</Button>
             </Link>
