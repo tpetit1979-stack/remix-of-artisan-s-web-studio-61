@@ -1,0 +1,488 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTenant } from "@/hooks/use-tenant";
+import { supabase } from "@/integrations/supabase/client";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRef, useState, useEffect, useMemo } from "react";
+import { toast } from "sonner";
+import { Check, Palette } from "lucide-react";
+import { LogoAnalyzer } from "@/components/admin/LogoAnalyzer";
+import {
+  validateImageFile,
+  buildMediaPath,
+  uploadImage,
+  removeStorageFile,
+  bucketPublicUrl,
+  extractMediaPathFromPublicUrl,
+} from "@/lib/media-upload";
+
+export const Route = createFileRoute("/admin/settings")({
+  component: AdminSettings,
+});
+
+/* ── Sector presets ── */
+const SECTOR_PRESETS = [
+  { label: "Ramoneur", hex: "#1e40af", desc: "Bleu acier" },
+  { label: "Chauffagiste", hex: "#c2410c", desc: "Orange brûlé" },
+  { label: "Plombier", hex: "#0f766e", desc: "Vert ardoise" },
+];
+
+/* ── Color presets: curated palettes for artisans ── */
+const COLOR_PRESETS = [
+  { hex: "#2563eb", name: "Bleu pro" },
+  { hex: "#0891b2", name: "Cyan" },
+  { hex: "#0d9488", name: "Teal" },
+  { hex: "#059669", name: "Émeraude" },
+  { hex: "#16a34a", name: "Vert" },
+  { hex: "#ca8a04", name: "Or" },
+  { hex: "#ea580c", name: "Orange" },
+  { hex: "#dc2626", name: "Rouge" },
+  { hex: "#9333ea", name: "Violet" },
+  { hex: "#db2777", name: "Rose" },
+  { hex: "#475569", name: "Ardoise" },
+  { hex: "#1e293b", name: "Nuit" },
+];
+
+const GRADIENT_STYLES = [
+  { value: "flat", label: "Plat" },
+  { value: "diagonal", label: "Diagonal" },
+  { value: "radial", label: "Radial" },
+  { value: "dark", label: "Sombre" },
+  { value: "light-top", label: "Clair haut" },
+];
+
+const FONT_OPTIONS = [
+  { value: "inter", label: "Inter", desc: "Moderne et lisible" },
+  { value: "outfit", label: "Outfit", desc: "Rond et chaleureux" },
+  { value: "raleway", label: "Raleway", desc: "Élégant et premium" },
+];
+
+const HEADER_STYLES = [
+  { value: "solid", label: "Couleur pleine" },
+  { value: "gradient", label: "Dégradé" },
+  { value: "dark", label: "Sombre" },
+  { value: "light", label: "Blanc bordé" },
+];
+
+function hexToOklchPreview(hex: string): { l: number; c: number; h: number } {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const toLinear = (v: number) => (v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
+  const lr = toLinear(r), lg = toLinear(g), lb = toLinear(b);
+  const l_ = Math.cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb);
+  const m_ = Math.cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb);
+  const s_ = Math.cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
+  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const bOk = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+  const C = Math.sqrt(a * a + bOk * bOk);
+  let H = (Math.atan2(bOk, a) * 180) / Math.PI;
+  if (H < 0) H += 360;
+  return { l: L, c: C, h: H };
+}
+
+function generatePreviewShades(hex: string) {
+  const { l, c, h } = hexToOklchPreview(hex);
+  return [
+    { label: "Clair", css: `oklch(${Math.min(0.95, l * 1.35).toFixed(3)} ${(c * 0.2).toFixed(3)} ${h.toFixed(1)})` },
+    { label: "Léger", css: `oklch(${Math.min(0.88, l * 1.2).toFixed(3)} ${(c * 0.4).toFixed(3)} ${h.toFixed(1)})` },
+    { label: "Base", css: hex },
+    { label: "Foncé", css: `oklch(${(l * 0.75).toFixed(3)} ${(c * 1.1).toFixed(3)} ${h.toFixed(1)})` },
+    { label: "Profond", css: `oklch(${(l * 0.5).toFixed(3)} ${c.toFixed(3)} ${h.toFixed(1)})` },
+  ];
+}
+
+function AdminSettings() {
+  const { tenant, settings } = useTenant();
+  const queryClient = useQueryClient();
+  const [form, setForm] = useState<any>(null);
+  const [tenantForm, setTenantForm] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (settings) setForm({ ...settings });
+  }, [settings]);
+
+  useEffect(() => {
+    if (tenant) setTenantForm({ phone: tenant.phone ?? "", email: tenant.email ?? "" });
+  }, [tenant]);
+
+  const currentColor = form?.primary_color ?? "#2563eb";
+  const currentBorderRadius = form?.border_radius ?? 8;
+  const currentGradientStyle = form?.gradient_style ?? "flat";
+  const currentFontFamily = form?.font_family ?? "inter";
+  const currentHeaderStyle = form?.header_style ?? "solid";
+  const shades = useMemo(() => generatePreviewShades(currentColor), [currentColor]);
+
+  async function uploadLogo(file: File): Promise<string> {
+    const validationErr = validateImageFile(file);
+    if (validationErr) throw new Error(validationErr);
+    // Always create a NEW path on each upload so the public URL changes
+    // (defeats CDN cache without needing upsert + version querystring).
+    const newPath = buildMediaPath({ scope: tenant!.id, kind: "logo", file });
+    await uploadImage({ bucket: "media", path: newPath, file });
+    // Best-effort: remove the previous logo file so we don't accumulate orphans.
+    const previousUrl: string | undefined = form?.logo_url ?? undefined;
+    const previousPath = previousUrl ? extractMediaPathFromPublicUrl(previousUrl) : null;
+    if (previousPath && previousPath !== newPath) {
+      await removeStorageFile("media", previousPath);
+    }
+    return bucketPublicUrl("media", newPath);
+  }
+
+  const saveSettings = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("site_settings")
+        .update({
+          hero_title: form.hero_title,
+          hero_subtitle: form.hero_subtitle,
+          primary_color: form.primary_color,
+          cta_text: form.cta_text,
+          logo_url: form.logo_url,
+          seo_meta_title: form.seo_meta_title,
+          seo_meta_description: form.seo_meta_description,
+          border_radius: form.border_radius,
+          gradient_style: form.gradient_style,
+          header_style: form.header_style,
+          font_family: form.font_family,
+        })
+        .eq("tenant_id", tenant!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["site-settings"] });
+      toast.success("Paramètres enregistrés");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const saveTenant = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("tenants")
+        .update({ phone: tenantForm.phone, email: tenantForm.email })
+        .eq("id", tenant!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenant"] });
+      toast.success("Coordonnées enregistrées");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploading(true);
+      const url = await uploadLogo(file);
+      setForm((p: any) => ({ ...p, logo_url: url }));
+      toast.success("Logo uploadé");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  if (!form || !tenantForm) return <p className="text-muted-foreground">Chargement...</p>;
+
+  return (
+    <div className="space-y-6">
+      <AdminPageHeader title="Paramètres du site" description="Personnalisez l'apparence de votre site" />
+
+      {/* Coordonnées */}
+      <Card>
+        <CardHeader><CardTitle>Coordonnées</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Téléphone</Label>
+              <Input value={tenantForm.phone} onChange={(e) => setTenantForm((p: any) => ({ ...p, phone: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input type="email" value={tenantForm.email} onChange={(e) => setTenantForm((p: any) => ({ ...p, email: e.target.value }))} />
+            </div>
+          </div>
+          <Button onClick={() => saveTenant.mutate()} disabled={saveTenant.isPending}>
+            {saveTenant.isPending ? "Enregistrement..." : "Enregistrer"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Logo */}
+      <Card>
+        <CardHeader><CardTitle>Logo & identité visuelle</CardTitle></CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center gap-4">
+            {form.logo_url && (
+              <img src={form.logo_url} alt="Logo" className="h-16 object-contain rounded border bg-muted/30 p-2" />
+            )}
+            <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+            <Button variant="outline" onClick={() => logoInputRef.current?.click()} disabled={uploading}>
+              {uploading ? "Upload..." : form.logo_url ? "Changer le logo" : "Uploader un logo"}
+            </Button>
+          </div>
+
+          <div className="border-t pt-4">
+            <LogoAnalyzer
+              logoUrl={form.logo_url ?? null}
+              tenantId={tenant!.id}
+              tradeName={tenant?.company_name}
+              cachedAnalysis={form.ai_analysis ?? null}
+              onAnalyzed={(analysis) => setForm((p: any) => ({ ...p, ai_analysis: analysis }))}
+              onApply={(v) => setForm((p: any) => ({
+                ...p,
+                primary_color: v.primary_color,
+                gradient_style: v.gradient_style,
+                font_family: v.font_family,
+                header_style: v.header_style,
+                border_radius: v.border_radius,
+              }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Hero */}
+      <Card>
+        <CardHeader><CardTitle>Hero</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Titre</Label>
+            <Input value={form.hero_title ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, hero_title: e.target.value }))} />
+          </div>
+          <div className="space-y-2">
+            <Label>Sous-titre</Label>
+            <Input value={form.hero_subtitle ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, hero_subtitle: e.target.value }))} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Couleur & Palette */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="h-5 w-5" />
+            Palette de couleurs
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Sector presets */}
+          <div>
+            <Label className="text-sm text-muted-foreground mb-3 block">Preset sectoriel</Label>
+            <div className="flex gap-2 flex-wrap">
+              {SECTOR_PRESETS.map((sp) => (
+                <button
+                  key={sp.hex}
+                  type="button"
+                  onClick={() => setForm((f: any) => ({ ...f, primary_color: sp.hex }))}
+                  className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-all hover:shadow-md ${currentColor.toLowerCase() === sp.hex.toLowerCase() ? "ring-2 ring-foreground ring-offset-2" : ""}`}
+                >
+                  <div className="h-4 w-4 rounded-full" style={{ backgroundColor: sp.hex }} />
+                  <span className="font-medium">{sp.label}</span>
+                  <span className="text-muted-foreground text-xs">({sp.desc})</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Presets grid */}
+          <div>
+            <Label className="text-sm text-muted-foreground mb-3 block">Ou choisissez une couleur</Label>
+            <div className="grid grid-cols-6 sm:grid-cols-12 gap-2">
+              {COLOR_PRESETS.map((p) => (
+                <button
+                  key={p.hex}
+                  type="button"
+                  onClick={() => setForm((f: any) => ({ ...f, primary_color: p.hex }))}
+                  className="group relative aspect-square rounded-lg transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  style={{ backgroundColor: p.hex }}
+                  title={p.name}
+                >
+                  {currentColor.toLowerCase() === p.hex.toLowerCase() && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-lg ring-2 ring-foreground ring-offset-2 ring-offset-background">
+                      <Check className="h-4 w-4 text-white drop-shadow-md" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Custom color */}
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={currentColor}
+              onChange={(e) => setForm((p: any) => ({ ...p, primary_color: e.target.value }))}
+              className="h-10 w-10 cursor-pointer rounded-lg border-0 p-0 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-lg [&::-webkit-color-swatch]:border-0"
+            />
+            <Input
+              value={currentColor}
+              onChange={(e) => setForm((p: any) => ({ ...p, primary_color: e.target.value }))}
+              className="w-32 font-mono text-sm"
+              placeholder="#2563eb"
+            />
+            <span className="text-sm text-muted-foreground">ou couleur personnalisée</span>
+          </div>
+
+          {/* Gradient style */}
+          <div>
+            <Label className="text-sm text-muted-foreground mb-3 block">Style de dégradé</Label>
+            <div className="flex gap-1 flex-wrap">
+              {GRADIENT_STYLES.map((gs) => (
+                <button
+                  key={gs.value}
+                  type="button"
+                  onClick={() => setForm((f: any) => ({ ...f, gradient_style: gs.value }))}
+                  className={`rounded-lg border px-3 py-1.5 text-sm transition-all ${currentGradientStyle === gs.value ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+                >
+                  {gs.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Live palette preview */}
+          <div>
+            <Label className="text-sm text-muted-foreground mb-3 block">Dégradé automatique</Label>
+            <div className="flex gap-1 rounded-xl overflow-hidden h-14">
+              {shades.map((s, i) => (
+                <div key={i} className="flex-1 flex items-end justify-center pb-1 transition-all" style={{ backgroundColor: s.css }}>
+                  <span className="text-[10px] font-medium text-white/80 drop-shadow-sm">{s.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Live preview card */}
+          <div>
+            <Label className="text-sm text-muted-foreground mb-3 block">Aperçu en direct</Label>
+            <div className="border bg-card p-6 space-y-4" style={{ borderRadius: `${currentBorderRadius}px` }}>
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10" style={{ backgroundColor: currentColor, borderRadius: `${currentBorderRadius}px` }} />
+                <div>
+                  <p className="font-semibold" style={{ color: currentColor }}>Votre entreprise</p>
+                  <p className="text-sm text-muted-foreground">Expert en chauffage</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button type="button" className="px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90" style={{ backgroundColor: currentColor, borderRadius: `${currentBorderRadius}px` }}>
+                  Demander un devis
+                </button>
+                <button type="button" className="border px-4 py-2 text-sm font-medium transition-opacity hover:opacity-80" style={{ color: currentColor, borderColor: currentColor + "40", borderRadius: `${currentBorderRadius}px` }}>
+                  En savoir plus
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA text */}
+          <div className="space-y-2">
+            <Label>Texte du bouton CTA</Label>
+            <Input value={form.cta_text ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, cta_text: e.target.value }))} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Border Radius */}
+      <Card>
+        <CardHeader><CardTitle>Rayon des coins</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <input
+              type="range"
+              min={0}
+              max={20}
+              value={currentBorderRadius}
+              onChange={(e) => setForm((p: any) => ({ ...p, border_radius: parseInt(e.target.value) }))}
+              className="flex-1 accent-primary"
+            />
+            <span className="text-sm font-mono w-12 text-right">{currentBorderRadius}px</span>
+          </div>
+          <div className="flex gap-3">
+            {[0, 4, 8, 12, 16].map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setForm((p: any) => ({ ...p, border_radius: v }))}
+                className={`h-10 w-10 border-2 transition-all ${currentBorderRadius === v ? "border-primary" : "border-muted"}`}
+                style={{ borderRadius: `${v}px`, backgroundColor: currentBorderRadius === v ? currentColor + "20" : undefined }}
+              />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Typography */}
+      <Card>
+        <CardHeader><CardTitle>Typographie</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {FONT_OPTIONS.map((fo) => (
+              <button
+                key={fo.value}
+                type="button"
+                onClick={() => setForm((f: any) => ({ ...f, font_family: fo.value }))}
+                className={`rounded-xl border p-4 text-left transition-all ${currentFontFamily === fo.value ? "ring-2 ring-primary bg-primary/5" : "hover:bg-muted"}`}
+              >
+                <p className="font-semibold text-lg">{fo.label}</p>
+                <p className="text-sm text-muted-foreground">{fo.desc}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Header Style */}
+      <Card>
+        <CardHeader><CardTitle>Style de header</CardTitle></CardHeader>
+        <CardContent>
+          <div className="flex gap-2 flex-wrap">
+            {HEADER_STYLES.map((hs) => (
+              <button
+                key={hs.value}
+                type="button"
+                onClick={() => setForm((f: any) => ({ ...f, header_style: hs.value }))}
+                className={`rounded-lg border px-4 py-2 text-sm transition-all ${currentHeaderStyle === hs.value ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+              >
+                {hs.label}
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* SEO */}
+      <Card>
+        <CardHeader><CardTitle>SEO</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Meta titre</Label>
+            <Input value={form.seo_meta_title ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_title: e.target.value }))} />
+          </div>
+          <div className="space-y-2">
+            <Label>Meta description</Label>
+            <Input value={form.seo_meta_description ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_description: e.target.value }))} />
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="flex justify-end">
+        <Button size="lg" onClick={() => saveSettings.mutate()} disabled={saveSettings.isPending}>
+          {saveSettings.isPending ? "Enregistrement..." : "Enregistrer les paramètres"}
+        </Button>
+      </div>
+    </div>
+  );
+}

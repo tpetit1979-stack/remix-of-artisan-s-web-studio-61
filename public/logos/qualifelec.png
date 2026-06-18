@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="fr-FR" prefix="og: http://ogp.me/ns#"><![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8" lang="fr-FR" prefix="og: http://ogp.me/ns#"><![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="fr-FR" prefix="og: http://ogp.me/ns#"><![endif]-->
+<!--[if IE 9]>
+<html class="no-js lt-ie10" lang="fr-FR" prefix="og: http://ogp.me/ns#"><![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="no-js" lang="fr-FR" prefix="og: http://ogp.me/ns#">
+<!--<![endif]-->
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="https://www.qualifelec.fr/xmlrpc.php">
+
+	<!-- Fav and touch icons -->
+			<link rel="shortcut icon" href="https://www.qualifelec.fr/wp-content/uploads/2018/09/logo_16x16.png">
+				<link rel="apple-touch-icon-precomposed" href="https://www.qualifelec.fr/wp-content/uploads/2018/09/logo_57x57.png">
+				<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://www.qualifelec.fr/wp-content/uploads/2018/09/logo_72x72.png">
+				<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://www.qualifelec.fr/wp-content/uploads/2018/09/logo_114x114.png">
+				<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://www.qualifelec.fr/wp-content/uploads/2018/09/logo_144x144.png">
+	
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="https://www.qualifelec.fr/wp-content/themes/kleo/assets/js/html5shiv.js"></script>
+	<![endif]-->
+
+	<!--[if IE 7]>
+	<link rel="stylesheet" href="https://www.qualifelec.fr/wp-content/themes/kleo/assets/css/fontello-ie7.css">
+	<![endif]-->
+
+	
+	<title>Page non trouvée | Qualifelec</title>
+
+<!-- This site is optimized with the Yoast SEO plugin v9.2.1 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="robots" content="noindex,follow"/>
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:type" content="object" />
+<meta property="og:title" content="Page non trouvée | Qualifelec" />
+<meta property="og:site_name" content="Qualifelec" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Page non trouvée | Qualifelec" />
+<script type='application/ld+json'>{"@context":"https:\/\/schema.org","@type":"Organization","url":"https:\/\/www.qualifelec.fr\/","sameAs":[],"@id":"https:\/\/www.qualifelec.fr\/#organization","name":"Qualifelec","logo":"https:\/\/www.qualifelec.fr\/wp-content\/uploads\/2018\/11\/Logo-Qualifelec-home.png"}</script>
+<!-- / Yoast SEO plugin. -->
+
+<link rel='dns-prefetch' href='//cdn.datatables.net' />
+<link rel='dns-prefetch' href='//forms.sbc28.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//maxcdn.bootstrapcdn.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel="alternate" type="application/rss+xml" title="Qualifelec &raquo; Flux" href="https://www.qualifelec.fr/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Qualifelec &raquo; Flux des commentaires" href="https://www.qualifelec.fr/comments/feed/" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/www.qualifelec.fr\/wp-includes\/js\/wp-emoji-release.min.js"}};
+			!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode;p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0);e=i.toDataURL();return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])?!1:!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([55358,56760,9792,65039],[55358,56760,8203,9792,65039])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(n=t.source||{}).concatemoji?c(n.concatemoji):n.wpemoji&&n.twemoji&&(c(n.twemoji),c(n.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='rs-plugin-settings-css'  href='https://www.qualifelec.fr/wp-content/plugins/revslider/public/assets/css/settings.css' type='text/css' media='all' />
+<style id='rs-plugin-settings-inline-css' type='text/css'>
+#rs-demo-id {}
+</style>
+<link rel='stylesheet' id='cmplz-general-css'  href='https://www.qualifelec.fr/wp-content/plugins/complianz-gdpr/assets/css/cookieblocker.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='mediaelement-css'  href='https://www.qualifelec.fr/wp-includes/js/mediaelement/mediaelementplayer-legacy.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='kleo-google-fonts-css'  href='//fonts.googleapis.com/css?family=Dosis%3A500%2C300%2C600%2C400&#038;ver=4.9.29' type='text/css' media='all' />
+<link rel='stylesheet' id='kleo-combined-css'  href='https://www.qualifelec.fr/wp-content/uploads/custom_styles/combined.css' type='text/css' media='all' />
+<link rel='stylesheet' id='kleo-colors-css'  href='https://www.qualifelec.fr/wp-content/uploads/custom_styles/dynamic.css' type='text/css' media='all' />
+<link rel='stylesheet' id='kleo-fonts-css'  href='https://www.qualifelec.fr/wp-content/themes/kleo/assets/css/fontello.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='kleo-style-css'  href='https://www.qualifelec.fr/wp-content/themes/kleo-child/style.css' type='text/css' media='all' />
+<link rel='stylesheet' id='qualifelec-dd-css-css'  href='https://www.qualifelec.fr/wp-content/plugins/nj-custom/bootstrap-select.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='qualifelec-fa-css-css'  href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='qualifelec-datatables-css-css'  href='https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='nj-custom-css-css'  href='https://www.qualifelec.fr/wp-content/plugins/nj-custom/nj-custom.css' type='text/css' media='all' />
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-includes/js/jquery/jquery.js'></script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-includes/js/jquery/jquery-migrate.min.js'></script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-content/plugins/revslider/public/assets/js/jquery.themepunch.tools.min.js'></script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-content/plugins/revslider/public/assets/js/jquery.themepunch.revolution.min.js'></script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-content/themes/kleo/assets/js/modernizr.custom.46504.js'></script>
+<script type='text/javascript'>
+var mejsL10n = {"language":"fr","strings":{"mejs.install-flash":"Vous utilisez un navigateur qui n\u2019a pas le lecteur Flash activ\u00e9 ou install\u00e9. Veuillez activer votre extension Flash ou t\u00e9l\u00e9charger la derni\u00e8re version \u00e0 partir de cette adresse\u00a0: https:\/\/get.adobe.com\/flashplayer\/","mejs.fullscreen-off":"Quitter le plein \u00e9cran","mejs.fullscreen-on":"Passer en plein \u00e9cran","mejs.download-video":"T\u00e9l\u00e9charger la vid\u00e9o","mejs.fullscreen":"Plein \u00e9cran","mejs.time-jump-forward":["Saut en avant d\u20191 seconde","Avancer de %1 secondes"],"mejs.loop":"Lire en boucle","mejs.play":"Lecture","mejs.pause":"Pause","mejs.close":"Fermer","mejs.time-slider":"Curseur de temps","mejs.time-help-text":"Utilisez les fl\u00e8ches droite\/gauche pour avancer d\u2019une seconde, haut\/bas pour avancer de dix secondes.","mejs.time-skip-back":["Revenir une seconde en arri\u00e8re","Saut en arri\u00e8re de %1 seconde(s)"],"mejs.captions-subtitles":"L\u00e9gendes\/Sous-titres","mejs.captions-chapters":"Chapitres","mejs.none":"Aucun","mejs.mute-toggle":"Couper le son","mejs.volume-help-text":"Utilisez les fl\u00e8ches haut\/bas pour augmenter ou diminuer le volume.","mejs.unmute":"R\u00e9activer le son","mejs.mute":"Muet","mejs.volume-slider":"Curseur de volume","mejs.video-player":"Lecteur vid\u00e9o","mejs.audio-player":"Lecteur audio","mejs.ad-skip":"Passer la publicit\u00e9","mejs.ad-skip-info":["Passer dans %1 seconde","Passer dans %1 secondes"],"mejs.source-chooser":"S\u00e9lecteur de source","mejs.stop":"Arr\u00eater","mejs.speed-rate":"Taux de vitesse","mejs.live-broadcast":"\u00c9mission en direct","mejs.afrikaans":"Afrikaans","mejs.albanian":"Albanais","mejs.arabic":"Arabe","mejs.belarusian":"Bi\u00e9lorusse","mejs.bulgarian":"Bulgare","mejs.catalan":"Catalan","mejs.chinese":"Chinois","mejs.chinese-simplified":"Chinois (simplifi\u00e9)","mejs.chinese-traditional":"Chinois (traditionnel)","mejs.croatian":"Croate","mejs.czech":"Tch\u00e8que","mejs.danish":"Danois","mejs.dutch":"N\u00e9erlandais","mejs.english":"Anglais","mejs.estonian":"Estonien","mejs.filipino":"Filipino","mejs.finnish":"Terminer","mejs.french":"Fran\u00e7ais","mejs.galician":"Galicien","mejs.german":"Allemand","mejs.greek":"Grec","mejs.haitian-creole":"Cr\u00e9ole ha\u00eftien","mejs.hebrew":"H\u00e9breu","mejs.hindi":"Hindi","mejs.hungarian":"Hongrois","mejs.icelandic":"Islandais","mejs.indonesian":"Indon\u00e9sien","mejs.irish":"Irlandais","mejs.italian":"Italien","mejs.japanese":"Japonais","mejs.korean":"Cor\u00e9en","mejs.latvian":"Letton","mejs.lithuanian":"Lituanien","mejs.macedonian":"Mac\u00e9donien","mejs.malay":"Malais","mejs.maltese":"Maltais","mejs.norwegian":"Norv\u00e9gien","mejs.persian":"Perse","mejs.polish":"Polonais","mejs.portuguese":"Portugais","mejs.romanian":"Roumain","mejs.russian":"Russe","mejs.serbian":"Serbe","mejs.slovak":"Slovaque","mejs.slovenian":"Slov\u00e9nien","mejs.spanish":"Espagnol","mejs.swahili":"Swahili","mejs.swedish":"Su\u00e9dois","mejs.tagalog":"Tagalog","mejs.thai":"Thai","mejs.turkish":"Turc","mejs.ukrainian":"Ukrainien","mejs.vietnamese":"Vietnamien","mejs.welsh":"Ga\u00e9lique","mejs.yiddish":"Yiddish"}};
+</script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-includes/js/mediaelement/mediaelement-and-player.min.js'></script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-includes/js/mediaelement/mediaelement-migrate.min.js'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var _wpmejsSettings = {"pluginPath":"\/wp-includes\/js\/mediaelement\/","classPrefix":"mejs-","stretching":"responsive"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-content/plugins/nj-custom/nj-custom.js'></script>
+<script type='text/javascript' src='https://forms.sbc28.com/form.js'></script>
+<link rel='https://api.w.org/' href='https://www.qualifelec.fr/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.qualifelec.fr/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.qualifelec.fr/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 4.9.29" />
+	<meta name="mobile-web-app-capable" content="yes">
+		<script type="text/javascript">
+		/*
+		 prevent dom flickering for elements hidden with js
+		 */
+		"use strict";
+
+		document.documentElement.className += ' js-active ';
+		document.documentElement.className += 'ontouchstart' in document.documentElement ? ' kleo-mobile ' : ' kleo-desktop ';
+
+		var prefix = ['-webkit-', '-o-', '-moz-', '-ms-', ""];
+		for (var i in prefix) {
+			if (prefix[i] + 'transform' in document.documentElement.style) document.documentElement.className += " kleo-transform ";
+		}
+	</script>
+	<meta name="generator" content="Powered by WPBakery Page Builder - drag and drop page builder for WordPress."/>
+<!--[if lte IE 9]><link rel="stylesheet" type="text/css" href="https://www.qualifelec.fr/wp-content/plugins/js_composer/assets/css/vc_lte_ie9.min.css" media="screen"><![endif]--><meta name="generator" content="Powered by Slider Revolution 5.4.8 - responsive, Mobile-Friendly Slider Plugin for WordPress with comfortable drag and drop interface." />
+
+<style>
+.widget_tag_cloud a { font-size: small !important; }
+</style>
+<script type="text/javascript">function setREVStartSize(e){									
+						try{ e.c=jQuery(e.c);var i=jQuery(window).width(),t=9999,r=0,n=0,l=0,f=0,s=0,h=0;
+							if(e.responsiveLevels&&(jQuery.each(e.responsiveLevels,function(e,f){f>i&&(t=r=f,l=e),i>f&&f>r&&(r=f,n=e)}),t>r&&(l=n)),f=e.gridheight[l]||e.gridheight[0]||e.gridheight,s=e.gridwidth[l]||e.gridwidth[0]||e.gridwidth,h=i/s,h=h>1?1:h,f=Math.round(h*f),"fullscreen"==e.sliderLayout){var u=(e.c.width(),jQuery(window).height());if(void 0!=e.fullScreenOffsetContainer){var c=e.fullScreenOffsetContainer.split(",");if (c) jQuery.each(c,function(e,i){u=jQuery(i).length>0?u-jQuery(i).outerHeight(!0):u}),e.fullScreenOffset.split("%").length>1&&void 0!=e.fullScreenOffset&&e.fullScreenOffset.length>0?u-=jQuery(window).height()*parseInt(e.fullScreenOffset,0)/100:void 0!=e.fullScreenOffset&&e.fullScreenOffset.length>0&&(u-=parseInt(e.fullScreenOffset,0))}f=u}else void 0!=e.minHeight&&f<e.minHeight&&(f=e.minHeight);e.c.closest(".rev_slider_wrapper").css({height:f})					
+						}catch(d){console.log("Failure at Presize of Slider:"+d)}						
+					};</script>
+		<style type="text/css" id="wp-custom-css">
+			/* Nouveau moteur */
+.search-engine {
+width: 80%;
+margin: auto;
+}
+.search-engine input[type=search] {
+width:40%;
+margin:0;
+padding:10px 10px 10px 50px;
+vertical-align: middle;
+font-size:16px;
+}
+.search-engine button {
+background-color: rgb(241, 113, 91);
+border-radius: 5px;
+cursor: pointer;
+border-width: 0px;
+font-size: 18px;
+color:#fff;
+text-transform: uppercase;
+padding: 10px;
+vertical-align: middle;
+}
+.search-engine .icon-search {
+margin-right:10px;
+}
+#_geo {
+background-image: url(/wp-content/uploads/2022/03/Geo_icon_2.png);
+background-size: 7%;
+background-repeat: no-repeat;
+background-position: 12px 6px;
+}
+#query {
+background-image: url(/wp-content/uploads/2022/03/Loupe_icon_2.png);
+background-size: 7%;
+background-repeat: no-repeat;
+background-position: 12px 8px;
+}		</style>
+	<noscript><style type="text/css"> .wpb_animate_when_almost_visible { opacity: 1; }</style></noscript></head>
+
+
+<body data-cmplz=1 class="error404 wpb-js-composer js-comp-ver-5.5.2 vc_responsive" itemscope itemtype="http://schema.org/WebPage">
+
+
+<!-- PAGE LAYOUT
+================================================ -->
+<!--Attributes-->
+<div class="kleo-page">
+
+	<!-- HEADER SECTION
+	================================================ -->
+	
+<div id="header" class="header-color">
+
+	<div class="navbar" role="navigation">
+
+		
+			<!--Attributes-->
+			<!--class = social-header inverse-->
+			<div class="social-header header-color">
+				<div class="container">
+					<div class="top-bar">
+
+												<div id="top-social" class="col-xs-12 col-sm-5 no-padd hidden-xs hidden-sm">
+													</div>
+
+						<div class="top-menu col-xs-12 col-sm-7 no-padd"><ul id="menu-menu-principal-haut-top" class=""><li id="menu-item-18" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-18"><a title="[kleo_icon icon=&quot;lock-open-alt&quot;] ESPACE PROS" target="_blank" href="https://pros.qualifelec.fr/"><i class="icon-lock-open-alt"></i>  ESPACE PROS</a></li>
+<li id="menu-item-721" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-721"><a title="[kleo_icon icon=&quot;search&quot;] Trouver une entreprise qualifiée" href="https://data.qualifelec.fr/recherche/"><i class="icon-search"></i>  Trouver une entreprise qualifiée</a></li>
+</ul></div>
+					</div><!--end top-bar-->
+				</div>
+			</div>
+
+		
+				<div class="kleo-main-header header-normal">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<div class="kleo-mobile-switch">
+
+												<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+							<span class="sr-only">Activer/désactiver navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+
+					</div>
+
+					<div class="kleo-mobile-icons">
+
+						
+					</div>
+
+					<strong class="logo">
+						<a href="https://www.qualifelec.fr">
+
+							
+								<img id="logo_img" title="Qualifelec" src="https://www.qualifelec.fr/wp-content/uploads/2018/09/logo_home.png"
+								     alt="Qualifelec">
+
+							
+						</a>
+					</strong>
+				</div>
+
+				
+
+				
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="primary-menu collapse navbar-collapse nav-collapse"><ul id="menu-menu-principal-haut" class="nav navbar-nav"><li id="menu-item-41" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-41"><a title="PARTICULIER" href="https://www.qualifelec.fr/particulier/">PARTICULIER <i class="icon-circle"></i></a></li>
+<li id="menu-item-40" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-40"><a title="Maître d’ouvrage pro &#038; Maître d’Œuvre" href="https://www.qualifelec.fr/maitre-douvrage-pro-maitre-doeuvre/">Maître d’ouvrage pro &#038; Maître d’Œuvre <i class="icon-circle"></i></a></li>
+<li id="menu-item-39" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-39"><a title="Pourquoi choisir une entreprise Qualifelec" href="https://www.qualifelec.fr/pourquoi-choisir-une-entreprise-qualifelec/">Pourquoi choisir une entreprise Qualifelec <i class="icon-circle"></i></a></li>
+<li id="menu-item-956" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-956"><a title="Professionnels" href="https://pros.qualifelec.fr">Professionnels <i class="icon-circle"></i></a></li>
+<li id="menu-item-37" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37"><a title="Contact" href="https://www.qualifelec.fr/contact/">Contact <i class="icon-circle"></i></a></li>
+<li id="nav-menu-item-search" class="menu-item kleo-search-nav">		<a class="search-trigger" href="#"><img src="/wp-content/uploads/2018/11/search.png" alt="rechercher" class="recherche_menu"></a>
+		<div class="kleo-search-wrap searchHidden" id="ajax_search_container">
+			<form class="form-inline" id="ajax_searchform" action="https://www.qualifelec.fr/"
+			      data-context="">
+								<input name="s" class="ajax_s form-control" autocomplete="off" type="text"
+				       value="" placeholder="Commencez à taper pour rechercher..." required>
+				<span class="kleo-ajax-search-loading"><i class="icon-spin6 animate-spin"></i></span>
+			</form>
+			<div class="kleo_ajax_results"></div>
+		</div>
+
+		</li></ul></div>
+				
+				
+
+			</div><!--end container-->
+		</div>
+	</div>
+
+</div><!--end header-->
+
+	<!-- MAIN SECTION
+	================================================ -->
+	<div id="main">
+
+
+<section class='container-wrap main-title alternate-color  border-bottom breadcrumbs-container'><div class='container'><h1 class="page-title">Erreur 404 - Page introuvable</h1><div class='breadcrumb-extra'>
+		<div class="kleo_framework breadcrumb" xmlns:v="http://rdf.data-vocabulary.org/#"><span typeof="v:Breadcrumb"><a rel="v:url" property="v:title" href="https://www.qualifelec.fr" title="Qualifelec" >Accueil</a></span>
+			 <span class="sep"> </span> <span class="active">404 Introuvable</span>
+		</div><p class="page-info"></p></div></div></section>
+
+<section class="container-wrap main-color">
+	<div id="main-container" class="container">
+		<div class="row"> 
+			<div class="template-page col-sm-12 tpl-no text-center">
+				<div class="wrap-content">
+					
+				
+<div class="row">
+	<div class="col-sm-12">
+			<img src="https://www.qualifelec.fr/wp-content/themes/kleo/assets/img/404_image.png"><br>
+			<h2 class="article-title">Ceci est un peu gênant, n’est-ce pas ?</h2>
+
+			<p>Il semble que rien n&#039;a été trouvé à cet endroit. Vous voulez peut-être essayer une recherche ?</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-6 col-sm-offset-3 search-404">
+			<form role="search" method="get" class="searchform" action="https://www.qualifelec.fr/">
+	
+	<div class="input-group">
+		<input name="s" autocomplete="off" type="text" class="ajax_s form-control input-sm" value="">
+		<span class="input-group-btn">
+            <input type="submit" value="Recherche" class="searchsubmit button">
+		</span>
+	</div>
+
+</form>	</div>
+</div>
+
+<br><br><br>
+
+
+				
+				</div><!--end wrap-content-->
+			</div><!--end main-page-template-->
+						</div><!--end .row-->		</div><!--end .container-->
+  
+</section>
+<!--END MAIN SECTION-->
+		</div><!-- #main -->
+
+	
+<div id="footer" class="footer-color border-top">
+	<div class="container">
+		<div class="template-page tpl-no">
+			<div class="wrap-content">
+				<div class="row">
+					<div class="col-sm-3">
+						<div id="footer-sidebar-1" class="footer-sidebar widget-area" role="complementary">
+							<div id="text-2" class="widget widget_text"><h4 class="widget-title">QUALIFELEC</h4>			<div class="textwidget"><p>L&rsquo;organisme de qualification des entreprises du génie électrique, énergétique et numérique.<br />
+109, rue Lemercier<br />
+75017 Paris</p>
+</div>
+		</div><div id="text-3" class="widget widget_text"><h4 class="widget-title">NOUS CONTACTER</h4>			<div class="textwidget"><p><i class="icon-phone"></i>  01 53 06 65 20<br />
+Du lundi au vendredi de 8h30 à 20h<br />
+<a href="/contact/"><i class="icon-mail-alt"></i>  Nous écrire</a><br />
+<a href="https://ec.linkedin.com/company/qualifelec" target="_blank" rel="noopener"><i class="icon-linkedin-squared"></i>  Nous suivre</a><br />
+<a href="https://www.youtube.com/channel/UC6fzf44M8RF-yA6YqlRbh-A" target="_blank" rel="noopener"><i class="icon-youtube-squared"></i>  Nous regarder</a></p>
+</div>
+		</div>						</div>
+					</div>
+					<div class="col-sm-3">
+						<div id="footer-sidebar-2" class="footer-sidebar widget-area" role="complementary">
+													</div>
+					</div>
+					<div class="col-sm-3">
+						<div id="footer-sidebar-3" class="footer-sidebar widget-area" role="complementary">
+							<div id="custom_html-2" class="widget_text widget widget_custom_html"><div class="textwidget custom-html-widget"><br />
+<div>
+<a href="https://forms.sbc37.com/5aaf7974b85b5350ef1cf7ee/w9lH9qBCQuWR7B-RGdC2OA/form.html" target="_blank" class="afooterpro">S’INSCRIRE À NOTRE NEWSLETTER</a>
+</div>
+<br />
+<div class="footerpro">
+<h5>Entreprises, Professionnels,<br> visitez votre site dédié :</h5>
+	<a href="https://pros.qualifelec.fr" target="_blank" class="afooterpro">https://pros.qualifelec.fr</a>
+</div></div></div>	
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div id="footer-sidebar-4" class="footer-sidebar widget-area" role="complementary">
+													</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><!-- #footer -->
+
+		<a class="kleo-go-top" href="#"><i class="icon-up-open-big"></i></a>
+			
+		<!-- SOCKET SECTION
+		================================================ -->
+
+		<div id="socket" class="socket-color">
+			<div class="container">
+				<div class="template-page tpl-no col-xs-12 col-sm-12">
+					<div class="wrap-content">
+
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="gap-10"></div>
+							</div><!--end widget-->
+
+							<div class="col-sm-12">
+								<div class="njclear"></div>
+<div style="float: left; letter-spacing: 0.5px;"><strong>©2026 www.qualifelec.fr. </strong>Tous droits réservés. <a href="/mentions-legales/">Mentions légales.</a> <a href="/politique-de-confidentialite/">Politique de confidentialité</a></div>
+<div style="float: right;"><a href="https://pros.qualifelec.fr" target="_blank" rel="noopener"><i class="icon-lock-open-alt"></i>  ESPACE PROS</a></div>
+<div class="njclear"></div>							</div>
+							
+							<div class="col-sm-12">
+								<div class="gap-10"></div>
+							</div><!--end widget-->
+						</div><!--end row-->
+
+					</div><!--end wrap-content-->
+				</div><!--end template-page-->
+			</div><!--end container-->
+		</div><!--end footer-->
+	</div><!-- #page -->
+
+	
+	<!-- Analytics -->
+	
+	
+<!-- Consent Management powered by Complianz | GDPR/CCPA Cookie Consent https://wordpress.org/plugins/complianz-gdpr -->
+<style>.cmplz-hidden{display:none!important;}</style>
+					<div id="cmplz-cookiebanner-container"><div class="cmplz-cookiebanner cmplz-hidden banner-1 optin cmplz-bottom-right cmplz-categories-type-view-preferences" aria-modal="true" data-nosnippet="true" role="dialog" aria-live="polite" aria-labelledby="cmplz-header-1-optin" aria-describedby="cmplz-message-1-optin">
+	<div class="cmplz-header">
+		<div class="cmplz-logo"></div>
+		<div class="cmplz-title" id="cmplz-header-1-optin">Le respect de votre vie privée est notre priorité</div>
+		<a class="cmplz-close" tabindex="0" role="button">
+			<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times" class="svg-inline--fa fa-times fa-w-11" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+		</a>
+	</div>
+
+		<div class="cmplz-divider cmplz-divider-header"></div>
+		<div class="cmplz-body">
+			<div class="cmplz-message" id="cmplz-message-1-optin">Ce site utilise des cookies pour vous offrir une expérience utilisateur de qualité et mesurer l'audience. Cliquez sur Accepter si vous consentez à l'utilisation de cette technologie et au traitement de vos données à caractère personnel en vue de ces objectifs. Vous pouvez changer d'avis et modifier votre consentement à tout moment en revenant sur ce site.</div>
+			<!-- categories start -->
+			<div class="cmplz-categories">
+				<details class="cmplz-category cmplz-functional" >
+					<summary>
+						<div class="cmplz-category-header">
+							<div class="cmplz-category-title">Fonctionnel</div>
+							<div class='cmplz-always-active'>
+								<div class="cmplz-banner-checkbox">
+									<input type="checkbox"
+										   aria-checked="true"
+										   id="cmplz-functional-optin"
+										   data-category="cmplz_functional"
+										   class="cmplz-consent-checkbox cmplz-functional"
+										   size="40"
+										   value="1"/>
+									<label class="cmplz-label" for="cmplz-functional-optin" tabindex="0"><span>Fonctionnel</span></label>
+								</div>
+								Toujours activé							</div>
+							<div class="cmplz-icon cmplz-open"></div>
+						</div>
+					</summary>
+					<div class="cmplz-description">
+						<span class="cmplz-description-functional">Le stockage ou l’accès technique est strictement nécessaire dans la finalité d’intérêt légitime de permettre l’utilisation d’un service spécifique explicitement demandé par l’abonné ou l’utilisateur, ou dans le seul but d’effectuer la transmission d’une communication sur un réseau de communications électroniques.</span>
+					</div>
+				</details>
+
+				<details class="cmplz-category cmplz-preferences" >
+					<summary>
+						<div class="cmplz-category-header">
+							<div class="cmplz-category-title">Préférences</div>
+							<div class="cmplz-banner-checkbox">
+								<input type="checkbox"
+									   id="cmplz-preferences-optin"
+									   data-category="cmplz_preferences"
+									   class="cmplz-consent-checkbox cmplz-preferences"
+									   size="40"
+									   value="1"/>
+								<label class="cmplz-label" for="cmplz-preferences-optin" tabindex="0"><span>Préférences</span></label>
+							</div>
+							<div class="cmplz-icon cmplz-open"></div>
+						</div>
+					</summary>
+					<div class="cmplz-description">
+						<span class="cmplz-description-preferences">Le stockage ou l’accès technique est nécessaire dans la finalité d’intérêt légitime de stocker des préférences qui ne sont pas demandées par l’abonné ou l’utilisateur.</span>
+					</div>
+				</details>
+
+				<details class="cmplz-category cmplz-statistics" >
+					<summary>
+						<div class="cmplz-category-header">
+							<div class="cmplz-category-title">Statistiques</div>
+							<div class="cmplz-banner-checkbox">
+								<input type="checkbox"
+									   id="cmplz-statistics-optin"
+									   data-category="cmplz_statistics"
+									   class="cmplz-consent-checkbox cmplz-statistics"
+									   size="40"
+									   value="1"/>
+								<label class="cmplz-label" for="cmplz-statistics-optin" tabindex="0"><span>Statistiques</span></label>
+							</div>
+							<div class="cmplz-icon cmplz-open"></div>
+						</div>
+					</summary>
+					<div class="cmplz-description">
+						<span class="cmplz-description-statistics">Le service de mesure d'audience permettent de générer des statistiques de fréquentation utiles à l'amélioration du site.</span>
+						<span class="cmplz-description-statistics-anonymous">Le stockage ou l’accès technique qui est utilisé exclusivement dans des finalités statistiques anonymes. En l’absence d’une assignation à comparaître, d’une conformité volontaire de la part de votre fournisseur d’accès à internet ou d’enregistrements supplémentaires provenant d’une tierce partie, les informations stockées ou extraites à cette seule fin ne peuvent généralement pas être utilisées pour vous identifier.</span>
+					</div>
+				</details>
+
+				<details class="cmplz-category cmplz-marketing" >
+					<summary>
+						<div class="cmplz-category-header">
+							<div class="cmplz-category-title">Marketing</div>
+								<div class="cmplz-banner-checkbox">
+									<input type="checkbox"
+										   id="cmplz-marketing-optin"
+										   data-category="cmplz_marketing"
+										   class="cmplz-consent-checkbox cmplz-marketing"
+										   size="40"
+										   value="1"/>
+									<label class="cmplz-label" for="cmplz-marketing-optin" tabindex="0"><span>Marketing</span></label>
+								</div>
+							<div class="cmplz-icon cmplz-open"></div>
+						</div>
+					</summary>
+					<div class="cmplz-description">
+						<span class="cmplz-description-marketing">Le stockage ou l’accès technique est nécessaire pour créer des profils d’utilisateurs afin d’envoyer des publicités, ou pour suivre l’utilisateur sur un site web ou sur plusieurs sites web ayant des finalités marketing similaires.</span>
+					</div>
+				</details>
+			</div><!-- categories end -->
+					</div>
+
+		<div class="cmplz-links cmplz-information">
+			<a class="cmplz-link cmplz-manage-options cookie-statement" href="#" data-relative_url="#cmplz-manage-consent-container">Gérer les options</a>
+			<a class="cmplz-link cmplz-manage-third-parties cookie-statement" href="#" data-relative_url="#cmplz-cookies-overview">Gérer les services</a>
+			<a class="cmplz-link cmplz-manage-vendors tcf cookie-statement" href="#" data-relative_url="#cmplz-tcf-wrapper">Gérer les fournisseurs</a>
+			<a class="cmplz-link cmplz-external cmplz-read-more-purposes tcf" target="_blank" rel="noopener noreferrer nofollow" href="https://cookiedatabase.org/tcf/purposes/">En savoir plus sur ces finalités</a>
+					</div>
+
+	<div class="cmplz-divider cmplz-footer"></div>
+
+	<div class="cmplz-buttons">
+		<button class="cmplz-btn cmplz-accept">Accepter</button>
+		<button class="cmplz-btn cmplz-deny">Refuser</button>
+		<button class="cmplz-btn cmplz-view-preferences">Personnaliser</button>
+		<button class="cmplz-btn cmplz-save-preferences">Enregistrer</button>
+		<a class="cmplz-btn cmplz-manage-options tcf cookie-statement" href="#" data-relative_url="#cmplz-manage-consent-container">Personnaliser</a>
+			</div>
+
+	<div class="cmplz-links cmplz-documents">
+		<a class="cmplz-link cookie-statement" href="#" data-relative_url="">{title}</a>
+		<a class="cmplz-link privacy-statement" href="#" data-relative_url="">{title}</a>
+		<a class="cmplz-link impressum" href="#" data-relative_url="">{title}</a>
+			</div>
+
+</div>
+
+
+</div>
+					<div id="cmplz-manage-consent" data-nosnippet="true"><button class="cmplz-btn cmplz-hidden cmplz-manage-consent manage-consent-1">Le respect de votre vie privée est notre priorité</button>
+
+</div><!-- Modal Login form -->
+<div id="kleo-login-modal" class="kleo-form-modal main-color mfp-hide">
+    <div class="row">
+        <div class="col-sm-12 text-center">
+
+			
+            <div class="kleo-pop-title-wrap main-color">
+                <h3 class="kleo-pop-title">Vous connecter avec vos identifiants</h3>
+
+				            </div>
+
+
+			            <form action="https://www.qualifelec.fr/wp-login.php" id="login_form" name="login_form" method="post"
+                  class="kleo-form-signin">
+				<input type="hidden" id="security" name="security" value="faab4dd2ce" /><input type="hidden" name="_wp_http_referer" value="/wp-content/uploads/2020/01/QUALIFELEC-RGE.png" />                <input type="text" id="username" required name="log" class="form-control" value=""
+                       placeholder="Nom d&#039;utilisateur">
+                <input type="password" id="password" required spellcheck="false" autocomplete="off" value="" name="pwd" class="form-control"
+                       placeholder="Mot de passe">
+                <div id="kleo-login-result"></div>
+                <button class="btn btn-lg btn-default btn-block"
+                        type="submit">Connexion</button>
+                <label class="checkbox pull-left">
+                    <input id="rememberme" name="rememberme" type="checkbox"
+                           value="forever"> Se souvenir de moi                </label>
+                <a href="#kleo-lostpass-modal"
+                   class="kleo-show-lostpass kleo-other-action pull-right">Mot de passe oublié ?</a>
+                <span class="clearfix"></span>
+
+                				
+            </form>
+
+        </div>
+    </div>
+</div><!-- END Modal Login form -->
+
+
+<!-- Modal Lost Password form -->
+<div id="kleo-lostpass-modal" class="kleo-form-modal main-color mfp-hide">
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <div class="kleo-pop-title-wrap alternate-color">
+                <h3 class="kleo-pop-title">Vous avez oublié vos informations ?</h3>
+            </div>
+
+			
+            <form id="forgot_form" name="forgot_form" action="" method="post" class="kleo-form-signin">
+				<input type="hidden" id="security-pass" name="security-pass" value="faab4dd2ce" /><input type="hidden" name="_wp_http_referer" value="/wp-content/uploads/2020/01/QUALIFELEC-RGE.png" />                <input type="text" id="forgot-email" required name="user_login" class="form-control"
+                       placeholder="Nom d&#039;utilisateur ou E-mail">
+                <div id="kleo-lost-result"></div>
+                <button class="btn btn-lg btn-default btn-block"
+                        type="submit">Réinitialiser mot de passe</button>
+                <a href="#kleo-login-modal"
+                   class="kleo-show-login kleo-other-action pull-right">Je me souviens de mes informations</a>
+                <span class="clearfix"></span>
+            </form>
+
+        </div>
+    </div>
+</div><!-- END Modal Lost Password form -->
+
+
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-content/themes/kleo/assets/js/combined.min.js'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var kleoFramework = {"ajaxurl":"https:\/\/www.qualifelec.fr\/wp-admin\/admin-ajax.php","themeUrl":"https:\/\/www.qualifelec.fr\/wp-content\/themes\/kleo","loginUrl":"https:\/\/www.qualifelec.fr\/wp-login.php","goTop":"1","ajaxSearch":"1","alreadyLiked":"You already like this","logo":"https:\/\/www.qualifelec.fr\/wp-content\/uploads\/2018\/09\/logo_home.png","retinaLogo":"https:\/\/www.qualifelec.fr\/wp-content\/uploads\/2018\/09\/logo_home.png","headerHeight":"88","headerHeightScrolled":"0","headerTwoRowHeight":"88","headerTwoRowHeightScrolled":"0","headerResizeOffset":"","loadingmessage":"<i class=\"icon icon-spin5 animate-spin\"><\/i> Informations en cours d\u2019envoi, veuillez patienter...","DisableMagnificGallery":"0","flexMenuEnabled":"0","errorOcurred":"Sorry, an error occurred"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-content/themes/kleo/assets/js/app.min.js'></script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-content/plugins/nj-custom/bootstrap-select.js'></script>
+<script type='text/javascript' src='https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var complianz = {"prefix":"cmplz_","user_banner_id":"1","set_cookies":[],"block_ajax_content":"","banner_version":"18","version":"6.1.0.1","store_consent":"","do_not_track":"","consenttype":"optin","region":"eu","geoip":"","dismiss_timeout":"","disable_cookiebanner":"","soft_cookiewall":"","dismiss_on_scroll":"","cookie_expiry":"365","url":"https:\/\/www.qualifelec.fr\/wp-json\/complianz\/v1\/","locale":"lang=fr&locale=fr_FR","set_cookies_on_root":"","cookie_domain":"","current_policy_id":"15","cookie_path":"\/","tcf_active":"","placeholdertext":"Cliquez pour accepter les cookies de marketing et activer ce contenu","css_file":"https:\/\/www.qualifelec.fr\/wp-content\/uploads\/complianz\/css\/banner-{banner_id}-{type}.css?v=18","page_links":{"eu":{"cookie-statement":{"title":"Politique de confidentialit\u00e9 ","url":"https:\/\/www.qualifelec.fr\/politique-de-confidentialite\/"},"privacy-statement":{"title":"Politique de confidentialit\u00e9 ","url":"https:\/\/www.qualifelec.fr\/politique-de-confidentialite\/"}}},"tm_categories":"","forceEnableStats":"","preview":"","clean_cookies":""};
+/* ]]> */
+</script>
+<script defer type='text/javascript' src='https://www.qualifelec.fr/wp-content/plugins/complianz-gdpr/cookiebanner/js/complianz.min.js'></script>
+<script type='text/javascript' src='https://www.qualifelec.fr/wp-includes/js/wp-embed.min.js'></script>
+				<script type="text/plain" data-service="google-analytics" async data-category="statistics" src="https://www.googletagmanager.com/gtag/js?id=UA-60841947-1"></script><!-- Statistics script Complianz GDPR/CCPA -->
+					<script type="text/plain" data-category="statistics">window['gtag_enable_tcf_support'] = false;
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-60841947-1', {
+	cookie_flags:'secure;samesite=none',
+	'anonymize_ip': true
+});
+</script>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script type="text/plain" data-service="google-analytics" data-category="statistics" async src="https://www.googletagmanager.com/gtag/js?id=UA-60841947-1"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-60841947-1');
+	</script>
+
+	</body>
+</html>

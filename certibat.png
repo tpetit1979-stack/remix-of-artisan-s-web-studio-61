@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr-FR">
+<head>
+    <meta charset="UTF-8">
+    <title>La page est introuvable - Certibat</title>
+
+    
+	<!-- This site is optimized with the Yoast SEO plugin v14.8 - https://yoast.com/wordpress/plugins/seo/ -->
+	<meta name="robots" content="noindex, follow" />
+	<meta property="og:locale" content="fr_FR" />
+	<meta property="og:title" content="La page est introuvable - Certibat" />
+	<meta property="og:site_name" content="Certibat" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.certibat.fr/#website","url":"https://www.certibat.fr/","name":"Certibat","description":"Organisme de certification","potentialAction":[{"@type":"SearchAction","target":"https://www.certibat.fr/?s={search_term_string}","query-input":"required name=search_term_string"}],"inLanguage":"fr-FR"}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//www.google.com' />
+<link rel='dns-prefetch' href='//ajax.googleapis.com' />
+<link rel='dns-prefetch' href='//cdnjs.cloudflare.com' />
+<link rel='dns-prefetch' href='//netdna.bootstrapcdn.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.0.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.0.0\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/www.certibat.fr\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.5.18"}};
+			!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode;p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0);e=i.toDataURL();return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([55357,56424,8205,55356,57212],[55357,56424,8203,55356,57212])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(n=t.source||{}).concatemoji?c(n.concatemoji):n.wpemoji&&n.twemoji&&(c(n.twemoji),c(n.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='wp-block-library-css'  href='https://www.certibat.fr/wp-includes/css/dist/block-library/style.min.css?ver=5.5.18' type='text/css' media='all' />
+<link rel='stylesheet' id='dnd-upload-cf7-css'  href='https://www.certibat.fr/wp-content/plugins/drag-and-drop-multiple-file-upload-contact-form-7/assets/css/dnd-upload-cf7.css?ver=1.3.5.6' type='text/css' media='all' />
+<link rel='stylesheet' id='contact-form-7-css'  href='https://www.certibat.fr/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=5.2.1' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-css'  href='https://www.certibat.fr/wp-content/plugins/cookie-law-info/public/css/cookie-law-info-public.css?ver=1.9.0' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-law-info-gdpr-css'  href='https://www.certibat.fr/wp-content/plugins/cookie-law-info/public/css/cookie-law-info-gdpr.css?ver=1.9.0' type='text/css' media='all' />
+<link rel='stylesheet' id='font-awesome-css'  href='//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css' type='text/css' media='screen' />
+<link rel='stylesheet' id='select2-css'  href='//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='fancybox-css'  href='https://www.certibat.fr/wp-content/themes/webqam/css/fancybox.css?ver=0.0.2' type='text/css' media='all' />
+<link rel='stylesheet' id='scrollbar-css'  href='https://www.certibat.fr/wp-content/themes/webqam/js/vendor/scrollbar/jquery.scrollbar.css?ver=0.0.2' type='text/css' media='all' />
+<link rel='stylesheet' id='main-css'  href='https://www.certibat.fr/wp-content/themes/webqam/css/front.css?ver=0.0.2' type='text/css' media='all' />
+<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js' id='jquery-js'></script>
+<script type='text/javascript' id='cookie-law-info-js-extra'>
+/* <![CDATA[ */
+var Cli_Data = {"nn_cookie_ids":[],"cookielist":[],"ccpaEnabled":"","ccpaRegionBased":"","ccpaBarEnabled":"","ccpaType":"gdpr","js_blocking":"","custom_integration":""};
+var cli_cookiebar_settings = {"animate_speed_hide":"500","animate_speed_show":"500","background":"#fff","border":"#1e73be","border_on":"","button_1_button_colour":"#1e73be","button_1_button_hover":"#185c98","button_1_link_colour":"#fff","button_1_as_button":"1","button_1_new_win":"","button_2_button_colour":"#1e73be","button_2_button_hover":"#185c98","button_2_link_colour":"#1e73be","button_2_as_button":"","button_2_hidebar":"","button_3_button_colour":"#000","button_3_button_hover":"#000000","button_3_link_colour":"#fff","button_3_as_button":"1","button_3_new_win":"","button_4_button_colour":"#000","button_4_button_hover":"#000000","button_4_link_colour":"#fff","button_4_as_button":"1","font_family":"inherit","header_fix":"","notify_animate_hide":"1","notify_animate_show":"","notify_div_id":"#cookie-law-info-bar","notify_position_horizontal":"right","notify_position_vertical":"bottom","scroll_close":"","scroll_close_reload":"","accept_close_reload":"","reject_close_reload":"","showagain_tab":"","showagain_background":"#fff","showagain_border":"#000","showagain_div_id":"#cookie-law-info-again","showagain_x_position":"100px","text":"#000","show_once_yn":"","show_once":"10000","logging_on":"","as_popup":"","popup_overlay":"1","bar_heading_text":"","cookie_bar_as":"banner","popup_showagain_position":"bottom-right","widget_position":"left"};
+var log_object = {"ajax_url":"https:\/\/www.certibat.fr\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/plugins/cookie-law-info/public/js/cookie-law-info-public.js?ver=1.9.0' id='cookie-law-info-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/themes/webqam/js/vendor/modernizr-2.8.3.min.js' id='modernizr-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/themes/webqam/js/vendor/respond.min.js' id='respond-js'></script>
+<link rel="https://api.w.org/" href="https://www.certibat.fr/wp-json/" />
+<style>
+.scroll-back-to-top-wrapper {
+    position: fixed;
+	opacity: 0;
+	visibility: hidden;
+	overflow: hidden;
+	text-align: center;
+	z-index: 99999999;
+    background-color: #7faedc;
+	color: #ffffff;
+	width: 50px;
+	height: 48px;
+	line-height: 48px;
+	right: 30px;
+	bottom: 50px;
+	padding-top: 2px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	-ms-transition: all 0.5s ease-in-out;
+	-o-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
+}
+.scroll-back-to-top-wrapper:hover {
+	background-color: #7faedc;
+  color: #ffffff;
+}
+.scroll-back-to-top-wrapper.show {
+    visibility:visible;
+    cursor:pointer;
+	opacity: 1.0;
+}
+.scroll-back-to-top-wrapper i.fa {
+	line-height: inherit;
+}
+.scroll-back-to-top-wrapper .fa-lg {
+	vertical-align: 0;
+}
+</style>
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="icon" href="https://www.certibat.fr/wp-content/themes/webqam/favicon.ico">
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <link rel="pingback" href="https://www.certibat.fr/xmlrpc.php">
+
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MSZ2NBJ');</script>
+    <!-- End Google Tag Manager -->
+
+</head>
+
+
+
+<body class="error404">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MSZ2NBJ"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="site-image" style="background-image: url(https://www.certibat.fr/wp-content/uploads/2015/07/img-contenu.jpg);" data-bgmobile="https://www.certibat.fr/wp-content/uploads/2015/10/img-contenu-mobile.jpg" data-bgdesktop="https://www.certibat.fr/wp-content/uploads/2015/07/img-contenu.jpg"></div>
+<div id="page" class="hfeed site">
+
+    <header class="site-header" role="banner">
+        <div class="l-content">
+            <div class="header-main">
+
+                <div class="site-title">
+                    <a href="https://www.certibat.fr/" rel="home">
+                                                    <img src="https://www.certibat.fr/wp-content/uploads/2018/01/logo-certibat_2018.png" width="108" height="60" alt="Certibat">
+                        
+                    </a>
+                </div>
+
+                <nav class="site-navigation primary-navigation" role="navigation">
+                    <div class="btn-mobile">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                    
+                    <div class="menu-menu-principal-container"><ul id="menu-menu-principal" class="nav-menu"><li id="menu-item-120" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-120"><a>Organisme</a>
+<ul class="sub-menu">
+	<li id="menu-item-34" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-34"><a href="https://www.certibat.fr/organisme/lorganisation/">L&rsquo;organisation</a></li>
+	<li id="menu-item-33" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33"><a href="https://www.certibat.fr/organisme/nos-missions/">Nos missions</a></li>
+	<li id="menu-item-32" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-32"><a href="https://www.certibat.fr/organisme/nos-clients/">Nos clients</a></li>
+</ul>
+</li>
+<li id="menu-item-20" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-20"><a href="https://www.certibat.fr/offres/">Offres</a>
+<ul class="sub-menu">
+	<li id="menu-item-8265" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-8265"><a href="https://www.certibat.fr/offres/certification-referentiel-national-qualite/">Référentiel National Qualité &#8211; QUALIOPI</a></li>
+	<li id="menu-item-80" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-80"><a href="https://www.certibat.fr/offres/agrement-formation-efficacite-energetique/">Agrément formation efficacité énergétique</a></li>
+	<li id="menu-item-79" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-79"><a href="https://www.certibat.fr/offres/organisme-de-formation-amiante/">Organisme de formation &#8211; amiante</a></li>
+	<li id="menu-item-78" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-78"><a href="https://www.certibat.fr/offres/organisme-de-formation-coordonateur-sps/">Organisme de formation &#8211; coordonnateur SPS</a></li>
+	<li id="menu-item-81" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-81"><a href="https://www.certibat.fr/offres/renovation-energetique-rge/">Rénovation énergétique RGE</a></li>
+	<li id="menu-item-82" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-82"><a href="https://www.certibat.fr/offres/systemes-de-management/">Systèmes de management</a></li>
+</ul>
+</li>
+<li id="menu-item-19" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-19"><a href="https://www.certibat.fr/devenir-certibat/">Devenir Certibat</a></li>
+<li id="menu-item-18" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-18"><a href="https://www.certibat.fr/engagements/">Engagements</a></li>
+<li id="menu-item-17" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17"><a href="https://www.certibat.fr/auditeurs/">Les intervenants</a></li>
+<li id="menu-item-1274" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1274"><a href="https://www.certibat.fr/contact/">Contact</a></li>
+</ul></div>                </nav>
+
+            </div>
+
+            <div id="search-container" class="search-box-wrapper hide">
+                <div class="search-box">
+<form class="search-form" action="/" method="get">
+    <input type="text" name="s" id="search" placeholder="Rechercher" value="" />
+    <input type="submit" value="Rechercher" />
+</form>                </div>
+            </div>
+        </div>
+    </header>
+
+<div id="main-content" class="main-content">
+
+
+    <section class="primary" class="content-area">
+        <div class="site-content" role="main">
+            <div class="header-content">
+                <div class="l-content">
+                </div>
+            </div>
+
+            <div id="main-content" class="main-content l-content col2">
+                <p>La page à laquelle vous tentez d'accéder n'existe pas.</p>
+
+                <p>
+                    <a href="https://www.certibat.fr">
+                        Retour à l'accueil ?                     </a>
+                </p>
+            </div>
+
+        </div>
+    </section>
+</div>
+    <div class="after-content">
+        <div class="l-content col6">
+                                                        <div class="col nb-1">
+                                <a href="https://www.certibat.fr/organisme/">
+                                <div class="title">Organisme</div>
+                                <div class="picto"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/organisme.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/organisme.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/organisme.png" /></div>
+                                <div class="picto2"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/organisme1.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/organisme1.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/organisme1.png" /></div>
+                                                                </a>
+                                                                                                                        <ul class="subpages">
+                                                                                                                                                                <lI><a href="https://www.certibat.fr/organisme/lorganisation/ ">
+                                                    L'organisation                                                </a></li>
+                                                                                                                                                                                                        <lI><a href="https://www.certibat.fr/organisme/nos-missions/ ">
+                                                    Nos missions                                                </a></li>
+                                                                                                                                                                                                        <lI><a href="https://www.certibat.fr/organisme/nos-clients/ ">
+                                                    Nos clients                                                </a></li>
+                                                                                                            </ul>
+                                                    </div>
+                                                                                            <div class="col nb-2">
+                                <a href="https://www.certibat.fr/offres/">
+                                <div class="title">Offres</div>
+                                <div class="picto"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/offres.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/offres.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/offres.png" /></div>
+                                <div class="picto2"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/offres1.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/offres1.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/offres1.png" /></div>
+                                                                </a>
+                                                                                                                        <ul class="subpages">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </ul>
+                                                    </div>
+                                                                                            <div class="col nb-3">
+                                <a href="https://www.certibat.fr/devenir-certibat/">
+                                <div class="title">Devenir Certibat</div>
+                                <div class="picto"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/dvnircerti.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/dvnircerti.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/dvnircerti.png" /></div>
+                                <div class="picto2"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/devenir.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/devenir.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/devenir.png" /></div>
+                                                                </a>
+                                                                                                                </div>
+                                                                                            <div class="col nb-4">
+                                <a href="https://www.certibat.fr/engagements/">
+                                <div class="title">Engagements</div>
+                                <div class="picto"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/engagement.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/engagement.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/engagement.png" /></div>
+                                <div class="picto2"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/engagements1.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/engagements1.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/engagements1.png" /></div>
+                                                                </a>
+                                                                                                                </div>
+                                                                                            <div class="col nb-5">
+                                <a href="https://www.certibat.fr/auditeurs/">
+                                <div class="title">Auditeurs</div>
+                                <div class="picto"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/auditeurs.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/auditeurs.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/auditeurs.png" /></div>
+                                <div class="picto2"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/auditeurs1.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/auditeurs1.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/auditeurs1.png" /></div>
+                                                                </a>
+                                                                                                                </div>
+                                                                                            <div class="col nb-6">
+                                <a href="https://www.certibat.fr/contact/">
+                                <div class="title">Contact</div>
+                                <div class="picto"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/contact.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/contact.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/contact.png" /></div>
+                                <div class="picto2"><img alt="https://www.certibat.fr/wp-content/uploads/2015/07/contact1.png" title="https://www.certibat.fr/wp-content/uploads/2015/07/contact1.png" class="attachment-full" src="https://www.certibat.fr/wp-content/uploads/2015/07/contact1.png" /></div>
+                                                                </a>
+                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </div>
+    </div>
+
+</div>
+
+
+
+        <footer class="site-footer" role="contentinfo">
+
+            <div class="footer-logo">
+                <p>Marque déposée par</p>
+                <a href="https://www.qualibat.com/" target="_blank">
+                    <img src="https://www.certibat.fr/wp-content/themes/webqam/images/logo-footer-certibat.png" alt="Certibat">
+                </a>
+            </div>
+
+            <nav class="site-navigation primary-navigation l-content" role="navigation">
+                <div class="menu-menu-footer-container"><ul id="menu-menu-footer" class="nav-menu"><li id="menu-item-46" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-46"><a href="https://www.certibat.fr/mentions-legales/">Mentions légales</a></li>
+<li id="menu-item-45" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-45"><a href="https://www.certibat.fr/plan-du-site/">Plan du site</a></li>
+</ul></div>            </nav>
+
+        </footer><!-- #colophon -->
+    </div>
+    <div id="contact-form" style="display: none">
+        <div role="form" class="wpcf7" id="wpcf7-f100-o1" lang="fr-FR" dir="ltr">
+<div class="screen-reader-response" role="alert" aria-live="polite"></div>
+<form action="/wp-content/uploads/2023/01/logo-certibat-rge.png#wpcf7-f100-o1" method="post" class="wpcf7-form init" novalidate="novalidate">
+<div style="display: none;">
+<input type="hidden" name="_wpcf7" value="100" />
+<input type="hidden" name="_wpcf7_version" value="5.2.1" />
+<input type="hidden" name="_wpcf7_locale" value="fr_FR" />
+<input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f100-o1" />
+<input type="hidden" name="_wpcf7_container_post" value="0" />
+<input type="hidden" name="_wpcf7_posted_data_hash" value="" />
+<input type="hidden" name="_wpcf7_recaptcha_response" value="" />
+</div>
+<div class="select-container"><span class="wpcf7-form-control-wrap menu-918"><select name="menu-918" class="wpcf7-form-control wpcf7-select" aria-invalid="false"><option value="">Civilité</option><option value="Monsieur">Monsieur</option><option value="Madame">Madame</option></select></span></div>
+<div class="prenom"><span class="wpcf7-form-control-wrap your-firstname"><input type="text" name="your-firstname" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Prénom *" /></span></div>
+<div class="nom"><span class="wpcf7-form-control-wrap your-name"><input type="text" name="your-name" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Nom *" /></span></div>
+<div class="col2">
+<div class="col"><span class="wpcf7-form-control-wrap your-company"><input type="text" name="your-company" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" placeholder="Entreprise" /></span></div>
+<div class="col"><span class="wpcf7-form-control-wrap your-function"><input type="text" name="your-function" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" placeholder="Fonction" /></span></div>
+</div>
+<div class=""><span class="wpcf7-form-control-wrap your-adresse"><input type="text" name="your-adresse" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" placeholder="Adresse" /></span></div>
+<div class="col2">
+<div class="col"><span class="wpcf7-form-control-wrap your-zip"><input type="text" name="your-zip" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" placeholder="Code postal" /></span></div>
+<div class="col"><span class="wpcf7-form-control-wrap your-city"><input type="text" name="your-city" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" placeholder="Ville" /></span></div>
+<div class="col"><span class="wpcf7-form-control-wrap your-email"><input type="email" name="your-email" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email" aria-required="true" aria-invalid="false" placeholder="Email *" /></span></div>
+<div class="col"><span class="wpcf7-form-control-wrap your-tel"><input type="tel" name="your-tel" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-tel wpcf7-validates-as-required wpcf7-validates-as-tel" aria-required="true" aria-invalid="false" placeholder="Téléphone *" /></span></div>
+<div class="" style="float: left;width: 100%;"><span class="wpcf7-form-control-wrap offers"><select name="offers" class="wpcf7-form-control wpcf7-select wpcf7-validates-as-required" aria-required="true" aria-invalid="false"><option value="">---</option><option value="RÉFÉRENTIEL NATIONAL QUALITÉ – QUALIOPI">RÉFÉRENTIEL NATIONAL QUALITÉ – QUALIOPI</option><option value="AGRÉMENT FORMATION EFFICACITÉ ÉNERGÉTIQUE">AGRÉMENT FORMATION EFFICACITÉ ÉNERGÉTIQUE</option><option value="QUALIFICATION ORGANISME DE FORMATION PROFESSIONNELLE">QUALIFICATION ORGANISME DE FORMATION PROFESSIONNELLE</option><option value="ORGANISME DE FORMATION – AMIANTE">ORGANISME DE FORMATION – AMIANTE</option><option value="ORGANISME DE FORMATION – COORDONNATEUR SPS">ORGANISME DE FORMATION – COORDONNATEUR SPS</option><option value="RÉNOVATION ÉNERGÉTIQUE RGE">RÉNOVATION ÉNERGÉTIQUE RGE</option><option value="SYSTÈMES DE MANAGEMENT">SYSTÈMES DE MANAGEMENT</option></select></span></div>
+<div class=""><span class="wpcf7-form-control-wrap your-message"><textarea name="your-message" cols="40" rows="10" class="wpcf7-form-control wpcf7-textarea" aria-invalid="false" placeholder="Descriptif de la demande"></textarea></span> </div>
+<div class=""><span class="wpcf7-form-control-wrap files"><input type="file" size="40" class="wpcf7-form-control wpcf7-drag-n-drop-file d-none" aria-invalid="false" multiple="multiple" data-name="files" data-id="100" /></span></div>
+<div class="">
+
+</div>
+<div class="col obligatoire">* Mentions obligatoires</div>
+<div class="col"><input type="submit" value="Envoyer votre demande" class="wpcf7-form-control wpcf7-submit" /></div>
+</div>
+<div class="wpcf7-response-output" role="alert" aria-hidden="true"></div></form></div>    </div>
+    <!--googleoff: all--><div id="cookie-law-info-bar"><span>En poursuivant votre navigation sur ce site, vous acceptez l’utilisation des cookies.<a role='button' tabindex='0' data-cli_action="accept" id="cookie_action_close_header"  class="medium cli-plugin-button cli-plugin-main-button cookie_action_close_header cli_action_button" style="display:inline-block; ">Accepter</a> <a href='/mentions-legales' id="CONSTANT_OPEN_URL" target="_blank"  class="cli-plugin-main-link"  style="display:inline-block;" >En savoir plus sur l’utilisation des cookies.</a></span></div><div id="cookie-law-info-again" style="display:none;"><span id="cookie_hdr_showagain">Privacy & Cookies Policy</span></div><div class="cli-modal" id="cliSettingsPopup" tabindex="-1" role="dialog" aria-labelledby="cliSettingsPopup" aria-hidden="true">
+  <div class="cli-modal-dialog" role="document">
+    <div class="cli-modal-content cli-bar-popup">
+      <button type="button" class="cli-modal-close" id="cliModalClose">
+        <svg class="" viewBox="0 0 24 24"><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"></path><path d="M0 0h24v24h-24z" fill="none"></path></svg>
+        <span class="wt-cli-sr-only">Fermer</span>
+      </button>
+      <div class="cli-modal-body">
+        <div class="cli-container-fluid cli-tab-container">
+    <div class="cli-row">
+        <div class="cli-col-12 cli-align-items-stretch cli-px-0">
+            <div class="cli-privacy-overview">
+                <h4>Privacy Overview</h4>                <div class="cli-privacy-content">
+                    <div class="cli-privacy-content-text">This website uses cookies to improve your experience while you navigate through the website. Out of these cookies, the cookies that are categorized as necessary are stored on your browser as they are essential for the working of basic functionalities of the website. We also use third-party cookies that help us analyze and understand how you use this website. These cookies will be stored in your browser only with your consent. You also have the option to opt-out of these cookies. But opting out of some of these cookies may have an effect on your browsing experience.</div>
+                </div>
+                <a class="cli-privacy-readmore" data-readmore-text="Afficher plus" data-readless-text="Afficher moins"></a>            </div>
+        </div>
+        <div class="cli-col-12 cli-align-items-stretch cli-px-0 cli-tab-section-container">
+                                                <div class="cli-tab-section">
+                        <div class="cli-tab-header">
+                            <a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="necessary" data-toggle="cli-toggle-tab">
+                                Nécessaire                            </a>
+                            <div class="wt-cli-necessary-checkbox">
+                        <input type="checkbox" class="cli-user-preference-checkbox"  id="wt-cli-checkbox-necessary" data-id="checkbox-necessary" checked="checked"  />
+                        <label class="form-check-label" for="wt-cli-checkbox-necessary">Nécessaire</label>
+                    </div>
+                    <span class="cli-necessary-caption">Toujours activé</span>                         </div>
+                        <div class="cli-tab-content">
+                            <div class="cli-tab-pane cli-fade" data-id="necessary">
+                                <p>Necessary cookies are absolutely essential for the website to function properly. This category only includes cookies that ensures basic functionalities and security features of the website. These cookies do not store any personal information.</p>
+                            </div>
+                        </div>
+                    </div>
+                                                <div class="cli-tab-section">
+                        <div class="cli-tab-header">
+                            <a role="button" tabindex="0" class="cli-nav-link cli-settings-mobile" data-target="non-necessary" data-toggle="cli-toggle-tab">
+                                Non nécessaire                            </a>
+                            <div class="cli-switch">
+                        <input type="checkbox" id="wt-cli-checkbox-non-necessary" class="cli-user-preference-checkbox"  data-id="checkbox-non-necessary"  checked='checked' />
+                        <label for="wt-cli-checkbox-non-necessary" class="cli-slider" data-cli-enable="Activé" data-cli-disable="Désactivé"><span class="wt-cli-sr-only">Non nécessaire</span></label>
+                    </div>                        </div>
+                        <div class="cli-tab-content">
+                            <div class="cli-tab-pane cli-fade" data-id="non-necessary">
+                                <p>Any cookies that may not be particularly necessary for the website to function and is used specifically to collect user personal data via analytics, ads, other embedded contents are termed as non-necessary cookies. It is mandatory to procure user consent prior to running these cookies on your website.</p>
+                            </div>
+                        </div>
+                    </div>
+            
+        </div>
+    </div>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cli-modal-backdrop cli-fade cli-settings-overlay"></div>
+<div class="cli-modal-backdrop cli-fade cli-popupbar-overlay"></div>
+<!--googleon: all--><div class="scroll-back-to-top-wrapper">
+	<span class="scroll-back-to-top-inner">
+					<i class="fa fa-lg fa-chevron-up"></i>
+			</span>
+</div>      <script type="text/javascript">
+          document.addEventListener( 'wpcf7mailsent', function( event ) {
+              if ( '100' == event.detail.contactFormId ) {
+                  window.dataLayer = window.dataLayer || [];
+                  dataLayer.push({
+                      'event': 'eventGA',
+                      'categoryGA' : 'Contact',
+                      'actionGA' : 'Contact confirmé'
+                  });
+              }
+          }, false );
+      </script>
+      <script type='text/javascript' id='contact-form-7-js-extra'>
+/* <![CDATA[ */
+var wpcf7 = {"apiSettings":{"root":"https:\/\/www.certibat.fr\/wp-json\/contact-form-7\/v1","namespace":"contact-form-7\/v1"}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=5.2.1' id='contact-form-7-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/plugins/drag-and-drop-multiple-file-upload-contact-form-7/assets/js/codedropz-uploader-min.js?ver=1.3.5.6' id='codedropz-uploader-js'></script>
+<script type='text/javascript' id='dnd-upload-cf7-js-extra'>
+/* <![CDATA[ */
+var dnd_cf7_uploader = {"ajax_url":"https:\/\/www.certibat.fr\/wp-admin\/admin-ajax.php","ajax_nonce":"0ec5f49a4f","drag_n_drop_upload":{"tag":"h3","text":"Faites glisser et d\u00e9posez les fichiers ici","or_separator":"ou","browse":"Parcourir les fichiers","server_max_error":"The uploaded file exceeds the maximum upload size of your server.","large_file":"Uploaded file is too large","inavalid_type":"Uploaded file is not allowed for file type","max_file_limit":"Note : Some of the files are not uploaded ( Only %count% files allowed )","required":"This field is required.","delete":{"text":"deleting","title":"Remove"}},"dnd_text_counter":"de","disable_btn":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/plugins/drag-and-drop-multiple-file-upload-contact-form-7/assets/js/dnd-upload-cf7.js?ver=1.3.5.6' id='dnd-upload-cf7-js'></script>
+<script type='text/javascript' id='scroll-back-to-top-js-extra'>
+/* <![CDATA[ */
+var scrollBackToTop = {"scrollDuration":"500","fadeDuration":"0.5"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/plugins/scroll-back-to-top/assets/js/scroll-back-to-top.js' id='scroll-back-to-top-js'></script>
+<script type='text/javascript' src='https://www.google.com/recaptcha/api.js?render=6LeH7SErAAAAAF3HR-U2A3gMEQX3Ypb7WJtJkTBS&#038;ver=3.0' id='google-recaptcha-js'></script>
+<script type='text/javascript' id='wpcf7-recaptcha-js-extra'>
+/* <![CDATA[ */
+var wpcf7_recaptcha = {"sitekey":"6LeH7SErAAAAAF3HR-U2A3gMEQX3Ypb7WJtJkTBS","actions":{"homepage":"homepage","contactform":"contactform"}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/plugins/contact-form-7/modules/recaptcha/script.js?ver=5.2.1' id='wpcf7-recaptcha-js'></script>
+<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js' id='select2-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/themes/webqam/js/vendor/fancybox.js?ver=0.0.2' id='fancybox-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/themes/webqam/js/vendor/scrollbar/jquery.scrollbar.min.js?ver=0.0.2' id='scrollbar-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/themes/webqam/js/vendor/owlCarousel/owl.carousel.min.js?ver=0.0.2' id='owlCarousel-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-content/themes/webqam/js/scripts.js?ver=0.0.2' id='scripts-js'></script>
+<script type='text/javascript' src='https://www.certibat.fr/wp-includes/js/wp-embed.min.js?ver=5.5.18' id='wp-embed-js'></script>
+</body>
+</html>

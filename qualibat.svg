@@ -1,0 +1,1444 @@
+<!doctype html>
+<html lang="fr" itemscope="itemscope" itemtype="https://schema.org/WebPage">
+<head>
+    <meta charset="UTF-8">
+
+    
+        <title>404 | QUALIBAT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+    
+        <link href="https://www.qualibat.com" rel="canonical" />
+<link href="/cache-buster-1775647667/front/qualibat/build/images/favicon/site.webmanifest" rel="manifest" />
+<link href="/cache-buster-1775647667/front/qualibat/build/images/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+<link href="/cache-buster-1775647667/front/qualibat/build/images/favicon/favicon.ico" rel="shortcut icon" />
+<link href="/cache-buster-1775647667/front/qualibat/build/images/favicon/favicon.svg" rel="icon" type="image/svg+xml" />
+<link href="/front/qualibat/build/images/favicon//favicon.png" rel="icon" type="image/png" />
+    
+
+            <link rel="stylesheet" href="/front/qualibat/build/theme.4a00c1f7.css" data-turbo-track="reload" integrity="sha384-QWI4q83plILl3vm9rSB2Xj32o63zMnoyrvAGg5Fto/3/b/OUy/KvmZMfYYE3NPs4">
+    
+            <script src="/front/qualibat/build/runtime.4a200e0e.js" defer async data-turbo-track="reload" integrity="sha384-d1z+ppTwJcpt6fOF3l5g5qJNIhyc36gsko5KVOb8KBxL/R2Pm4oOCn73QDeXA9sA"></script><script src="/front/qualibat/build/306.931999a1.js" defer async data-turbo-track="reload" integrity="sha384-Qbf/02VUnfOiN6pRDRSzTxGoVO8BExI6w62SZBFjNZil6LnsQlprcQPbs5AxDNoQ"></script><script src="/front/qualibat/build/theme.16165199.js" defer async data-turbo-track="reload" integrity="sha384-ktBpvV2icipgyDdGTWDuAsyzl+uL2/dRCi5bGfeVgUXtDjUA4wq58vuVoCd0Kji3"></script>
+    
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KQHSF44');</script>
+<!-- End Google Tag Manager -->
+</head>
+            <header class="relative " data-controller="menu"  >
+    <div class="absolute hidden top-0 bottom-0 left-0 right-0 w-[100%] h-[100vh] z-[8]"
+         data-menu-target="menuOverlay"></div>
+    <div id="header-nav" data-menu-target="menu" class="bg-white fixed w-[100%] left-0 right-0  border-b-[1px] border-grey-light z-[100] px-5 ">
+        <div class="flex lg:container mx-auto " data-menu-target="header">
+
+            <div class=" flex justify-between items-center align-center w-[100%] lg:w-[90px] justify-center my-2">
+                <div class="burger lg:hidden" data-menu-target="burger">
+                    <span class="navbar-toggler-icon burger-child">
+                    </span>
+
+                </div>
+                <div class="flex items-center justify-between">
+                    <a href="/" title="Back to home">
+                    <img loading="lazy" class="logo h-[60px] lg:h-[90px]" data-menu-target="logo"
+                         src="/front/qualibat/build/images/logo_qualibat.svg"
+                         alt="logo Qualibat">
+                    </a>
+                </div>
+                <div class="lg:hidden">
+
+                    <a href="https://extranet.qualibat.com/QSTRANET2018" title="Espace entreprise" target="_blank"
+                       class="rounded-[5px] text-10 bg-secondary py-2 px-3 flex items-center justify-center uppercase font-bold text-primary-dark">
+                        <span> Espace entreprise</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hidden lg:inline-block menu w-[100%]">
+                                <div data-menu-target="navbar" class="flex justify-end subnav">
+                    <div class="flex justify-end pt-[10px] items-center">
+                        <ul class="flex justify-between items-center">
+                                                            <li class="px-[20px]  relative  hover-primary text-text-color-light">
+                                                                            <div class="inline font-normal text-12 relative cursor-pointer "
+                                             data-menu-target="subheaderHandler">
+                                            <span class="">
+                                                Qui sommes-nous ?
+                                            </span>
+                                            <div
+                                                class="inline-block chevron absolute top-[60%] translate-y-[-50%] right-[-15px]">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="8.347" height="4.674"
+                                                     viewBox="0 0 8.347 4.674">
+                                                    <path data-name="Icon feather-chevron-down"
+                                                          d="m9 13.5 3.467 3.467 3.466-3.467"
+                                                          transform="translate(-8.293 -12.793)"/>
+                                                </svg>
+                                            </div>
+                                            <div
+                                                class="fixed z-[100] hidden bg-white shadow-[0_4px_6px_0_rgba(0,0,0,0.1)]"
+                                                data-menu-target="subheader">
+                                                <ul class="py-[15px] px-[18px]">
+                                                                                                            <li class=" border-b-[1px] border-grey-light pb-[8px] mb-[8px]  text-primary-dark  ">
+                                                            <a href="/notre-histoire" title="Notre histoire" target=""
+                                                               class="font-normal text-14 hover-primary ">
+                                                                Notre histoire
+                                                            </a>
+                                                        </li>
+                                                                                                            <li class=" border-b-[1px] border-grey-light pb-[8px] mb-[8px]  text-primary-dark  ">
+                                                            <a href="/notre-mission" title="Notre mission" target=""
+                                                               class="font-normal text-14 hover-primary ">
+                                                                Notre mission
+                                                            </a>
+                                                        </li>
+                                                                                                            <li class=" border-b-[1px] border-grey-light pb-[8px] mb-[8px]  text-primary-dark  ">
+                                                            <a href="/nos-valeurs" title="Nos valeurs" target=""
+                                                               class="font-normal text-14 hover-primary ">
+                                                                Nos valeurs
+                                                            </a>
+                                                        </li>
+                                                                                                            <li class=" border-b-[1px] border-grey-light pb-[8px] mb-[8px]  text-primary-dark  ">
+                                                            <a href="/nos-agences" title="Nos agences" target=""
+                                                               class="font-normal text-14 hover-primary ">
+                                                                Nos agences
+                                                            </a>
+                                                        </li>
+                                                                                                            <li class=" border-b-[1px] border-grey-light pb-[8px] mb-[8px]  text-primary-dark  ">
+                                                            <a href="/nos-auditeurs" title="Nos auditeurs" target=""
+                                                               class="font-normal text-14 hover-primary ">
+                                                                Nos auditeurs
+                                                            </a>
+                                                        </li>
+                                                                                                            <li class=" border-b-[1px] border-grey-light pb-[8px] mb-[8px]  text-primary-dark  ">
+                                                            <a href="/nos-commissions" title="Nos commissions" target=""
+                                                               class="font-normal text-14 hover-primary ">
+                                                                Nos commissions
+                                                            </a>
+                                                        </li>
+                                                                                                            <li class=" text-primary-dark  ">
+                                                            <a href="/nos-adherents" title="Nos adhérents" target=""
+                                                               class="font-normal text-14 hover-primary ">
+                                                                Nos adhérents
+                                                            </a>
+                                                        </li>
+                                                                                                    </ul>
+                                            </div>
+                                        </div>
+                                    
+
+                                </li>
+
+                                                            <li class="px-[20px]  relative  hover-primary text-text-color-light">
+                                                                            <a href="/documentation" title="Bibliothèque" target="" class="font-normal text-12 ">
+                                            Bibliothèque
+                                        </a>
+                                    
+
+                                </li>
+
+                                                            <li class="px-[20px]  relative  hover-primary text-text-color-light">
+                                                                            <a href="/actualites" title="Actualités" target="" class="font-normal text-12 ">
+                                            Actualités
+                                        </a>
+                                    
+
+                                </li>
+
+                                                            <li class="px-[20px]  relative  hover-primary text-text-color-light">
+                                                                            <a href="/nous-rejoindre" title="Nous rejoindre" target="" class="font-normal text-12 ">
+                                            Nous rejoindre
+                                        </a>
+                                    
+
+                                </li>
+
+                                                    </ul>
+                        <ul class="flex border-grey border-l-[1px] text-11 uppercase font-bold text-primary-dark ml-[10px]">
+                            <li class="px-[20px] flex align-middle">
+                                <a href="/contact"
+                                   title="Professionnels, contactez-nous"
+                                   class="hover-primary flex items-center justify-center">
+                                    <div class="mr-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25.019" height="17.078"
+                                             viewBox="0 0 25.019 17.078">
+                                            <path
+                                                d="M22.04-5.582H2.978A2.98 2.98 0 0 0 0-2.6V8.518A2.979 2.979 0 0 0 2.978 11.5H22.04a2.979 2.979 0 0 0 2.978-2.978V-2.6a2.98 2.98 0 0 0-2.978-2.982zM2.978-4.391H22.04a1.794 1.794 0 0 1 1.76 1.454l-11.291 6.29-11.288-6.29a1.794 1.794 0 0 1 1.757-1.454zM22.04 10.3H2.978a1.792 1.792 0 0 1-1.787-1.788v-10.1l11.026 6.144a.628.628 0 0 0 .292.078.565.565 0 0 0 .292-.078l11.026-6.147v10.1A1.789 1.789 0 0 1 22.04 10.3zm0 0"
+                                                transform="translate(0 5.582)" style="fill:#0d1b41"/>
+                                        </svg>
+                                    </div>
+                                    <span>Professionnels, contactez-nous</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://extranet.qualibat.com/QSTRANET2018" title="Espace entreprise" target="_blank"
+                                   class="rounded-[5px] bg-secondary py-2 px-3 flex items-center justify-center hover:bg-primary hover-bg-primary">
+                                    <div class="mr-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16.146" height="21.529"
+                                             viewBox="0 0 16.146 21.529">
+                                            <path data-name="Tracé 4981"
+                                                  d="M14.128 205.455H2.018A2.021 2.021 0 0 1 0 203.437v-9.419A2.021 2.021 0 0 1 2.018 192h12.11a2.021 2.021 0 0 1 2.018 2.018v9.419a2.021 2.021 0 0 1-2.018 2.018zm-12.11-12.11a.674.674 0 0 0-.673.673v9.419a.674.674 0 0 0 .673.673h12.11a.674.674 0 0 0 .673-.673v-9.419a.674.674 0 0 0-.673-.673zm0 0"
+                                                  transform="translate(0 -183.927)" style="fill:#0d1b41"/>
+                                            <path data-name="Tracé 4982"
+                                                  d="M74.092 9.419a.673.673 0 0 1-.673-.673V5.382a4.037 4.037 0 0 0-8.073 0v3.364a.673.673 0 0 1-1.346 0V5.382a5.382 5.382 0 1 1 10.764 0v3.364a.673.673 0 0 1-.672.673zm0 0"
+                                                  transform="translate(-61.309)" style="fill:#0d1b41"/>
+                                        </svg>
+                                    </div>
+                                    <span> Espace entreprise</span>
+                                </a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                                <div class="flex justify-end main-menu--wrapper">
+                    <ul class="flex w-[95%] xl:w-[90%]  justify-between items-center h-100">
+                                                    <li class="w-[100%] h-[100%] hover-primary">
+                                                                    <div data-menu-target="submenuHandler"
+                                         class="cursor-pointer flex items-center relative h-[100%] justify-center main-menu--item ">
+                                        <span class="inline-block max-w-[135px] py-[10px] font-semibold text-[#7c7777] text-14 relative hover:text-primary">
+                                            Nomenclature
+                                            <span class=" chevron absolute bottom-[15px] right-[-15px]">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="8.347" height="4.674" viewBox="0 0 8.347 4.674">
+                                                    <path data-name="Icon feather-chevron-down" d="m9 13.5 3.467 3.467 3.466-3.467" transform="translate(-8.293 -12.793)"></path>
+                                                </svg>
+                                            </span>
+                                        </span>
+                                    </div>
+                                                            </li>
+                                                    <li class="w-[100%] h-[100%] hover-primary">
+                                                                    <div data-menu-target="submenuHandler"
+                                         class="cursor-pointer flex items-center relative h-[100%] justify-center main-menu--item ">
+                                        <span class="inline-block max-w-[135px] py-[10px] font-semibold text-[#7c7777] text-14 relative hover:text-primary">
+                                            Faire qualifier mon entreprise
+                                            <span class=" chevron absolute bottom-[15px] right-[-15px]">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="8.347" height="4.674" viewBox="0 0 8.347 4.674">
+                                                    <path data-name="Icon feather-chevron-down" d="m9 13.5 3.467 3.467 3.466-3.467" transform="translate(-8.293 -12.793)"></path>
+                                                </svg>
+                                            </span>
+                                        </span>
+                                    </div>
+                                                            </li>
+                                                    <li class="w-[100%] h-[100%] hover-primary">
+                                                                    <a href="/annuaire-entreprises-qualifiees" title="Trouver une entreprise qualifiée" target="" class="flex items-center relative h-[100%] justify-center main-menu--item ">
+                                        <span class="inline-block max-w-[135px] py-[10px] font-semibold text-[#7c7777] text-14 hover:text-primary">Trouver une entreprise qualifiée</span>
+                                    </a>
+                                                            </li>
+                                                    <li class="w-[100%] h-[100%] hover-primary">
+                                                                    <a href="/faq" title="FAQ qualifications" target="" class="flex items-center relative h-[100%] justify-center main-menu--item ">
+                                        <span class="inline-block max-w-[135px] py-[10px] font-semibold text-[#7c7777] text-14 hover:text-primary">FAQ qualifications</span>
+                                    </a>
+                                                            </li>
+                                                    <li class="w-[100%] h-[100%] hover-primary">
+                                                                    <div data-menu-target="submenuHandler"
+                                         class="cursor-pointer flex items-center relative h-[100%] justify-center main-menu--item ">
+                                        <span class="inline-block max-w-[135px] py-[10px] font-semibold text-[#7c7777] text-14 relative hover:text-primary">
+                                            Particuliers
+                                            <span class=" chevron absolute bottom-[15px] right-[-15px]">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="8.347" height="4.674" viewBox="0 0 8.347 4.674">
+                                                    <path data-name="Icon feather-chevron-down" d="m9 13.5 3.467 3.467 3.466-3.467" transform="translate(-8.293 -12.793)"></path>
+                                                </svg>
+                                            </span>
+                                        </span>
+                                    </div>
+                                                            </li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div data-menu-target="mobileMenu" class="fixed right-0 bottom-0  w-[100%] bg-white z-20 mobile-menu ">
+        <div>
+            <ul class="ml-[40px] mr-[20px] mt-[45px]">
+
+                                    <li class=" border-secondary border-b-[1px] pb-[10px]   mb-[10px] text-22 font-bold text-primary-dark ">
+                                                    <div data-menu-target="submenuMobileHandler" class="flex justify-between items-center">
+                                <span class=" w-[80%]">
+                                    Nomenclature
+                                </span>
+                                <div class="inline-block chevron">
+                                    <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right_blue.svg" alt="picto_chevron_left">
+                                </div>
+                            </div>
+                                            </li>
+
+                                        
+                        <div data-menu-target="mobileMenuChild"
+                             class="fixed bg-white top-0 bottom-0 right-0 w-[100%] mobile-menu">
+                            <ul class="pl-[40px] pr-[20px] pt-[45px]">
+                                <li data-menu-target="mobileMenuChildBack"
+                                    class="pb-[30px] text-17 text-primary-dark font-bold uppercase flex items-center">
+                                    <div class="inline-block chevron rotate-180 mr-[15px]">
+                                        <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right_blue.svg" alt="picto_chevron_left">
+                                    </div>
+                                    <span>
+                                        Retour
+                                    </span>
+
+                                </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/nomenclature-qualibat" title="Comprendre la nomenclature" target="">
+                                            Comprendre la nomenclature
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/nomenclature" title="Rechercher dans nomenclature" target="">
+                                            Rechercher dans nomenclature
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/famille-travaux-5-energie-fluides" title="Energies et Fluides | Famille 5 " target="">
+                                            Energies et Fluides | Famille 5 
+                                        </a>
+                                    </li>
+                                                            </ul>
+                        </div>
+                                                        <li class=" border-secondary border-b-[1px] pb-[10px]   mb-[10px] text-22 font-bold text-primary-dark ">
+                                                    <div data-menu-target="submenuMobileHandler" class="flex justify-between items-center">
+                                <span class=" w-[80%]">
+                                    Faire qualifier mon entreprise
+                                </span>
+                                <div class="inline-block chevron">
+                                    <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right_blue.svg" alt="picto_chevron_left">
+                                </div>
+                            </div>
+                                            </li>
+
+                                        
+                        <div data-menu-target="mobileMenuChild"
+                             class="fixed bg-white top-0 bottom-0 right-0 w-[100%] mobile-menu">
+                            <ul class="pl-[40px] pr-[20px] pt-[45px]">
+                                <li data-menu-target="mobileMenuChildBack"
+                                    class="pb-[30px] text-17 text-primary-dark font-bold uppercase flex items-center">
+                                    <div class="inline-block chevron rotate-180 mr-[15px]">
+                                        <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right_blue.svg" alt="picto_chevron_left">
+                                    </div>
+                                    <span>
+                                        Retour
+                                    </span>
+
+                                </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/comment-devenir-qualibat" title="Comment devenir Qualibat ?" target="">
+                                            Comment devenir Qualibat ?
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/comment-devenir-qualibat-RGE" title="Comment devenir qualifié RGE ?" target="">
+                                            Comment devenir qualifié RGE ?
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/nos-qualifications-certifications" title="Nos qualifications et certifications" target="">
+                                            Nos qualifications et certifications
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/processus-qualification" title="Processus de qualification" target="">
+                                            Processus de qualification
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/demande-qualification" title="Faire qualifier mon entreprise" target="">
+                                            Faire qualifier mon entreprise
+                                        </a>
+                                    </li>
+                                                            </ul>
+                        </div>
+                                                        <li class=" border-secondary border-b-[1px] pb-[10px]   mb-[10px] text-22 font-bold text-primary-dark ">
+                                                    <a href="/annuaire-entreprises-qualifiees" title="Trouver une entreprise qualifiée" target="" class="w-[80%]">
+                                Trouver une entreprise qualifiée
+                            </a>
+                                            </li>
+
+                                                                            <li class=" border-secondary border-b-[1px] pb-[10px]   mb-[10px] text-22 font-bold text-primary-dark ">
+                                                    <a href="/faq" title="FAQ qualifications" target="" class="w-[80%]">
+                                FAQ qualifications
+                            </a>
+                                            </li>
+
+                                                                            <li class="  mb-[10px] text-22 font-bold text-primary-dark ">
+                                                    <div data-menu-target="submenuMobileHandler" class="flex justify-between items-center">
+                                <span class=" w-[80%]">
+                                    Particuliers
+                                </span>
+                                <div class="inline-block chevron">
+                                    <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right_blue.svg" alt="picto_chevron_left">
+                                </div>
+                            </div>
+                                            </li>
+
+                                        
+                        <div data-menu-target="mobileMenuChild"
+                             class="fixed bg-white top-0 bottom-0 right-0 w-[100%] mobile-menu">
+                            <ul class="pl-[40px] pr-[20px] pt-[45px]">
+                                <li data-menu-target="mobileMenuChildBack"
+                                    class="pb-[30px] text-17 text-primary-dark font-bold uppercase flex items-center">
+                                    <div class="inline-block chevron rotate-180 mr-[15px]">
+                                        <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right_blue.svg" alt="picto_chevron_left">
+                                    </div>
+                                    <span>
+                                        Retour
+                                    </span>
+
+                                </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/trouvez-une-entreprise-qualifiee-qualibat" title="Trouver une entreprise qualifiée" target="">
+                                            Trouver une entreprise qualifiée
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/qualibat-pour-les-particuliers" title="Qualibat pour les particuliers" target="">
+                                            Qualibat pour les particuliers
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/pourquoi-faire-appel-a-un-professionnel-qualibat" title="Pourquoi faire appel à un professionnel QUALIBAT RGE ?" target="">
+                                            Pourquoi faire appel à un professionnel QUALIBAT RGE ?
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/nos-services-pour-vous" title="Nos services pour les particuliers" target="">
+                                            Nos services pour les particuliers
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/aides-a-la-renovation" title="Aides à la Rénovation Energétique : comment obtenir des aides" target="">
+                                            Aides à la Rénovation Energétique : comment obtenir des aides
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/signalement" title="Signalement" target="">
+                                            Signalement
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-bold tracking-[-0.6px] text-primary">
+                                        <a href="/reclamation" title="Réclamation" target="">
+                                            Réclamation
+                                        </a>
+                                    </li>
+                                                            </ul>
+                        </div>
+                                                    <div class="border-b-[1px] border-grey-light my-[30px] py-[30px]">
+
+                    <a href="/contact"
+                       title="Professionnels, contactez-nous"
+                       class="text-17 font-bold flex uppercase items-center text-primary-dark"
+                    >
+                        <img loading="lazy" width="30"
+                             src="/front/qualibat/build/images/picto/letter.svg" alt="picto lettre"
+                             class="mr-2">
+                        <span>Professionnels, contactez-nous</span>
+                    </a>
+
+                </div>
+                                    <li class="mb-[12px] text-20 font-normal text-text-color-light ">
+                                                    <div data-menu-target="submenuMobileHandler" class="flex justify-between items-center">
+                                <span class=" w-[80%]">
+                                    Qui sommes-nous ?
+                                </span>
+                                <div class="inline-block chevron">
+                                    <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right.svg" alt="picto_chevron_left">
+                                </div>
+                            </div>
+                                            </li>
+                                        
+                        <div data-menu-target="mobileMenuChild"
+                             class="fixed bg-white top-0 bottom-0 right-0 w-[100%] mobile-menu">
+                            <ul class="pl-[40px] pr-[20px] pt-[45px]">
+                                <li data-menu-target="mobileMenuChildBack"
+                                    class="pb-[30px] text-17 text-primary-dark font-bold uppercase flex items-center">
+                                    <div class="inline-block chevron rotate-180 mr-[15px]">
+                                        <img loading="lazy" width="10" src="/front/qualibat/build/images/picto/chevron_right_blue.svg" alt="picto_chevron_left">
+                                    </div>
+                                    <span>
+                                        Retour
+                                    </span>
+                                </li>
+                                                                    <li class="mb-[30px] text-20 font-normal tracking-[-0.6px] text-text-color-light">
+                                        <a href="/notre-histoire" title="Notre histoire" target="">
+                                            Notre histoire
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-normal tracking-[-0.6px] text-text-color-light">
+                                        <a href="/notre-mission" title="Notre mission" target="">
+                                            Notre mission
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-normal tracking-[-0.6px] text-text-color-light">
+                                        <a href="/nos-valeurs" title="Nos valeurs" target="">
+                                            Nos valeurs
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-normal tracking-[-0.6px] text-text-color-light">
+                                        <a href="/nos-agences" title="Nos agences" target="">
+                                            Nos agences
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-normal tracking-[-0.6px] text-text-color-light">
+                                        <a href="/nos-auditeurs" title="Nos auditeurs" target="">
+                                            Nos auditeurs
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-normal tracking-[-0.6px] text-text-color-light">
+                                        <a href="/nos-commissions" title="Nos commissions" target="">
+                                            Nos commissions
+                                        </a>
+                                    </li>
+                                                                    <li class="mb-[30px] text-20 font-normal tracking-[-0.6px] text-text-color-light">
+                                        <a href="/nos-adherents" title="Nos adhérents" target="">
+                                            Nos adhérents
+                                        </a>
+                                    </li>
+                                                            </ul>
+                        </div>
+                                                        <li class="mb-[12px] text-20 font-normal text-text-color-light ">
+                                                    <a href="/documentation" title="Bibliothèque" target="" class="w-[80%]">
+                                Bibliothèque
+                            </a>
+                                            </li>
+                                                                            <li class="mb-[12px] text-20 font-normal text-text-color-light ">
+                                                    <a href="/actualites" title="Actualités" target="" class="w-[80%]">
+                                Actualités
+                            </a>
+                                            </li>
+                                                                            <li class="mb-[12px] text-20 font-normal text-text-color-light ">
+                                                    <a href="/nous-rejoindre" title="Nous rejoindre" target="" class="w-[80%]">
+                                Nous rejoindre
+                            </a>
+                                            </li>
+                                                        
+            </ul>
+        </div>
+    </div>
+                                        <div data-menu-target="submenu" class="fixed left-0 right-0 w-[100%] bg-white z-20 submenu">
+                <div class="container-menu mx-auto relative">
+                    <div
+                        class="grid grid-cols-3 border-r-[1px] border-grey-light left-0 right-0 top-0 bottom-0 absolute">
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                            </div>
+                    <div class="grid grid-cols-3 text-20 font-bold text-primary-dark relative z-10">
+
+                        <ul class="ml-[10px] mt-[85px]">
+                                                            <li class="mb-[20px]">
+                                    <a href="/nomenclature-qualibat" target="" class="hover-primary" title="Comprendre la nomenclature">
+                                        Comprendre la nomenclature
+                                    </a>
+                                </li>
+                                                            <li class="mb-[20px]">
+                                    <a href="/nomenclature" target="" class="hover-primary" title="Rechercher dans nomenclature">
+                                        Rechercher dans nomenclature
+                                    </a>
+                                </li>
+                                                    </ul>
+                        <ul class="ml-[10px] mt-[85px]">
+
+                                                            <li class="mb-[20px]">
+                                    <a href="/famille-travaux-5-energie-fluides" target="" class="hover-primary" title="Energies et Fluides | Famille 5 ">
+                                        Energies et Fluides | Famille 5 
+                                    </a>
+                                </li>
+
+                            
+                        </ul>
+                        <div class="text-18 mt-[20px] px-[1px]">
+                                                            <p class="mb-[20px] text-[20px] title-picto font-bold">
+                                    Nos dernières actualités
+                                </p>
+                                <a class='img-animation-scale btn-link-animation flex flex-col ' href="/actualites/1067167-qualibat-et-l-oppbtp-signature-d-une-convention-de-partenariat" title="QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat">
+    <div class="relative h-[190px] overflow-hidden  card-rounded">
+                <img loading="lazy" class="object-cover w-[100%] h-[100%] card-rounded" src="/_default_upload_bucket/784/image-thumb__784___auto_492f76b20bde5bca47e98babd856cecb/IMG_0199.acd55dab.jpg" alt="QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat">
+                <div class="title-spot-svg absolute  bottom-0 bg-contain bg-[50%_50%] p-[10px_10px_10px_0] ml-[7px]">
+            <span class="pl-[10px] pr-[30px] py-[10px] text-14 font-bold tracking-[-0.7px] text-primary-dark">9 avril 2026</span>
+        </div>
+
+    </div>
+    <div class="mt-[25px] px-[20px] mb-[20px] grow flex flex-col justify-between">
+        <div>
+            <h3 class="text-18 font-bold text-primary-dark mb-[20px]">QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat</h3>
+                    </div>
+        <div>
+            <span class="text-primary text-16 font-[600] tracking-[-0.48px] btn-card" > En savoir + </span>
+        </div>
+    </div>
+</a>                                                    </div>
+                    </div>
+                </div>
+            </div>
+                                            <div data-menu-target="submenu" class="fixed left-0 right-0 w-[100%] bg-white z-20 submenu">
+                <div class="container-menu mx-auto relative">
+                    <div
+                        class="grid grid-cols-3 border-r-[1px] border-grey-light left-0 right-0 top-0 bottom-0 absolute">
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                            </div>
+                    <div class="grid grid-cols-3 text-20 font-bold text-primary-dark relative z-10">
+
+                        <ul class="ml-[10px] mt-[85px]">
+                                                            <li class="mb-[20px]">
+                                    <a href="/comment-devenir-qualibat" target="" class="hover-primary" title="Comment devenir Qualibat ?">
+                                        Comment devenir Qualibat ?
+                                    </a>
+                                </li>
+                                                            <li class="mb-[20px]">
+                                    <a href="/comment-devenir-qualibat-RGE" target="" class="hover-primary" title="Comment devenir qualifié RGE ?">
+                                        Comment devenir qualifié RGE ?
+                                    </a>
+                                </li>
+                                                            <li class="mb-[20px]">
+                                    <a href="/nos-qualifications-certifications" target="" class="hover-primary" title="Nos qualifications et certifications">
+                                        Nos qualifications et certifications
+                                    </a>
+                                </li>
+                                                    </ul>
+                        <ul class="ml-[10px] mt-[85px]">
+
+                                                            <li class="mb-[20px]">
+                                    <a href="/processus-qualification" target="" class="hover-primary" title="Processus de qualification">
+                                        Processus de qualification
+                                    </a>
+                                </li>
+
+                                                            <li class="mb-[20px]">
+                                    <a href="/demande-qualification" target="" class="hover-primary" title="Faire qualifier mon entreprise">
+                                        Faire qualifier mon entreprise
+                                    </a>
+                                </li>
+
+                            
+                        </ul>
+                        <div class="text-18 mt-[20px] px-[1px]">
+                                                            <p class="mb-[20px] text-[20px] title-picto font-bold">
+                                    Nos dernières actualités
+                                </p>
+                                <a class='img-animation-scale btn-link-animation flex flex-col ' href="/actualites/1067167-qualibat-et-l-oppbtp-signature-d-une-convention-de-partenariat" title="QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat">
+    <div class="relative h-[190px] overflow-hidden  card-rounded">
+                <img loading="lazy" class="object-cover w-[100%] h-[100%] card-rounded" src="/_default_upload_bucket/784/image-thumb__784___auto_492f76b20bde5bca47e98babd856cecb/IMG_0199.acd55dab.jpg" alt="QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat">
+                <div class="title-spot-svg absolute  bottom-0 bg-contain bg-[50%_50%] p-[10px_10px_10px_0] ml-[7px]">
+            <span class="pl-[10px] pr-[30px] py-[10px] text-14 font-bold tracking-[-0.7px] text-primary-dark">9 avril 2026</span>
+        </div>
+
+    </div>
+    <div class="mt-[25px] px-[20px] mb-[20px] grow flex flex-col justify-between">
+        <div>
+            <h3 class="text-18 font-bold text-primary-dark mb-[20px]">QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat</h3>
+                    </div>
+        <div>
+            <span class="text-primary text-16 font-[600] tracking-[-0.48px] btn-card" > En savoir + </span>
+        </div>
+    </div>
+</a>                                                    </div>
+                    </div>
+                </div>
+            </div>
+                                                                    <div data-menu-target="submenu" class="fixed left-0 right-0 w-[100%] bg-white z-20 submenu">
+                <div class="container-menu mx-auto relative">
+                    <div
+                        class="grid grid-cols-3 border-r-[1px] border-grey-light left-0 right-0 top-0 bottom-0 absolute">
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                                    <div class="border-l-[1px] border-grey-light"></div>
+                                            </div>
+                    <div class="grid grid-cols-3 text-20 font-bold text-primary-dark relative z-10">
+
+                        <ul class="ml-[10px] mt-[85px]">
+                                                            <li class="mb-[20px]">
+                                    <a href="/trouvez-une-entreprise-qualifiee-qualibat" target="" class="hover-primary" title="Trouver une entreprise qualifiée">
+                                        Trouver une entreprise qualifiée
+                                    </a>
+                                </li>
+                                                            <li class="mb-[20px]">
+                                    <a href="/qualibat-pour-les-particuliers" target="" class="hover-primary" title="Qualibat pour les particuliers">
+                                        Qualibat pour les particuliers
+                                    </a>
+                                </li>
+                                                            <li class="mb-[20px]">
+                                    <a href="/pourquoi-faire-appel-a-un-professionnel-qualibat" target="" class="hover-primary" title="Pourquoi faire appel à un professionnel QUALIBAT RGE ?">
+                                        Pourquoi faire appel à un professionnel QUALIBAT RGE ?
+                                    </a>
+                                </li>
+                                                            <li class="mb-[20px]">
+                                    <a href="/nos-services-pour-vous" target="" class="hover-primary" title="Nos services pour les particuliers">
+                                        Nos services pour les particuliers
+                                    </a>
+                                </li>
+                                                    </ul>
+                        <ul class="ml-[10px] mt-[85px]">
+
+                                                            <li class="mb-[20px]">
+                                    <a href="/aides-a-la-renovation" target="" class="hover-primary" title="Aides à la Rénovation Energétique : comment obtenir des aides">
+                                        Aides à la Rénovation Energétique : comment obtenir des aides
+                                    </a>
+                                </li>
+
+                                                            <li class="mb-[20px]">
+                                    <a href="/signalement" target="" class="hover-primary" title="Signalement">
+                                        Signalement
+                                    </a>
+                                </li>
+
+                                                            <li class="mb-[20px]">
+                                    <a href="/reclamation" target="" class="hover-primary" title="Réclamation">
+                                        Réclamation
+                                    </a>
+                                </li>
+
+                            
+                        </ul>
+                        <div class="text-18 mt-[20px] px-[1px]">
+                                                            <p class="mb-[20px] text-[20px] title-picto font-bold">
+                                    Nos dernières actualités
+                                </p>
+                                <a class='img-animation-scale btn-link-animation flex flex-col ' href="/actualites/1067167-qualibat-et-l-oppbtp-signature-d-une-convention-de-partenariat" title="QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat">
+    <div class="relative h-[190px] overflow-hidden  card-rounded">
+                <img loading="lazy" class="object-cover w-[100%] h-[100%] card-rounded" src="/_default_upload_bucket/784/image-thumb__784___auto_492f76b20bde5bca47e98babd856cecb/IMG_0199.acd55dab.jpg" alt="QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat">
+                <div class="title-spot-svg absolute  bottom-0 bg-contain bg-[50%_50%] p-[10px_10px_10px_0] ml-[7px]">
+            <span class="pl-[10px] pr-[30px] py-[10px] text-14 font-bold tracking-[-0.7px] text-primary-dark">9 avril 2026</span>
+        </div>
+
+    </div>
+    <div class="mt-[25px] px-[20px] mb-[20px] grow flex flex-col justify-between">
+        <div>
+            <h3 class="text-18 font-bold text-primary-dark mb-[20px]">QUALIBAT et l&#039;OPPBTP : signature d&#039;une convention de partenariat</h3>
+                    </div>
+        <div>
+            <span class="text-primary text-16 font-[600] tracking-[-0.48px] btn-card" > En savoir + </span>
+        </div>
+    </div>
+</a>                                                    </div>
+                    </div>
+                </div>
+            </div>
+            </header>    <body id="body" >
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQHSF44"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+<div data-controller="body modal" data-body-target="body" data-action="modal:openModal->body#flash menu:open@window->body#flash  " >
+    <div class="pt-[90px] lg:pt-[130px] relative min-h-[90vh]">
+        <div class="container  mx-auto flex border-r-[1px] border-grey-light left-0 right-0 top-0 bottom-0 absolute">
+                            <div class="border-l-[1px] border-grey-light w-[100%]"></div>
+                            <div class="border-l-[1px] border-grey-light w-[100%]"></div>
+                            <div class="border-l-[1px] border-grey-light w-[100%]"></div>
+                            <div class="border-l-[1px] border-grey-light w-[100%]"></div>
+                    </div>
+
+
+                                    <div class="container mx-auto relative z-10 flex align-baseline px-6 mb-[20px] lg:mb-[30px] flex-wrap">
+                                                                        <a href="/" title="home">
+                                <h6 class="inline-block text-[14px] lg:text-[18px] text-primary font-bold underline leading-[1.8]">
+                                                                            <img src="/front/qualibat/build/images/picto/home.svg" alt="Pictogramme home">
+                                                                        </h6></a>
+                                                                            <div class="w-[10px] mx-[10px] flex align-middle">
+                                <img src="/front/qualibat/build/images/picto/chevron_right.svg" alt="Pictogramme chevron">
+                            </div>
+                                                                                                <h6 class="inline-block text-[14px] lg:text-[18px] text-primary-dark leading-[1.8] font-normal">404</h6>
+                                                                                    </div>
+            
+                <main id="main" class="main relative z-[5]">
+            
+    
+
+
+
+                                    <div class="pimcore_area_d13-bloc-banner pimcore_area_content ">
+            
+                                    
+
+<div class="lg:h-[430px]  max-w-[1920px] mx-auto " >
+    <div class="relative h-[100%] ">
+                    <div>
+                <picture >
+	<source srcset="/Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430.1ff947c3.avif 1x, /Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430@2x.1ff947c3.avif 2x" width="1920" height="430" type="image/avif" />
+	<source srcset="/Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430.1d278cab.webp 1x, /Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430@2x.1d278cab.webp 2x" width="1920" height="430" type="image/webp" />
+	<source srcset="/Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430.1d278cab.jpg 1x, /Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430@2x.1d278cab.jpg 2x" width="1920" height="430" type="image/jpeg" />
+	<img class="w-[100%] h-[100%] lg:h-[430px] absolute object-cover hidden md:block " src="/Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430.1d278cab.jpg" width="1920" height="430" alt="Page 404" loading="lazy" srcset="/Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430.1d278cab.jpg 1x, /Banners%20-%201920x430px%20%28D13%29/350/image-thumb__350___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-1920x430@2x.1d278cab.jpg 2x" />
+</picture>
+
+                <picture >
+	<source srcset="/Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500.89aacd42.avif 1x, /Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500@2x.89aacd42.avif 2x" width="720" height="500" type="image/avif" />
+	<source srcset="/Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500.93ba2d56.webp 1x, /Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500@2x.93ba2d56.webp 2x" width="720" height="500" type="image/webp" />
+	<source srcset="/Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500.93ba2d56.jpg 1x, /Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500@2x.93ba2d56.jpg 2x" width="720" height="500" type="image/jpeg" />
+	<img class="w-[100%] h-[100%] absolute object-cover block md:hidden " src="/Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500.93ba2d56.jpg" width="720" height="500" alt="Page 404" loading="lazy" srcset="/Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500.93ba2d56.jpg 1x, /Banners%20-%20720x500px%20%28M13%29/351/image-thumb__351___auto_40cd750bba9870f18aada2478b24840a/Qualibat-404-720x500@2x.93ba2d56.jpg 2x" />
+</picture>
+
+            </div>
+                                    <div class="h-[430px]"></div>
+        
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+                
+                            </div>
+                    
+
+
+
+
+                                    <div class="pimcore_area_d07-title-text-cta pimcore_area_content ">
+            
+                                    
+
+<div class=" left">
+        <section class="container mx-auto  container-small ">
+            <div class="px-6">
+                <div class="">
+                                            <div>
+                            
+<h1 class="subtitle">
+Erreur 404
+</h1>
+
+                        </div>
+                                                            <div class="mb-3">
+                                                                            
+                            
+<h1 class="title ">
+Désolé, cette page n&#039;est pas ou plus disponible
+</h1>
+
+                    </div>
+                                    </div>
+                <div class="
+                                grid grid-cols-1 lg:grid-cols-1 gap-8">
+                                        <div>
+                                                            <div class="mb-7 bloc_wysiwyg">
+                                    <p>La page à laquelle vous souhaitez accéder n&#039;est plus disponible ou n&#039;existe pas.<br /><br />Nous vous invitons à cliquer sur le bouton ci-dessous pour continuer de naviguer sur le site et de trouver l&#039;information que vous recherchez parmi nos nombreux contenus</p>
+                                </div>
+                            
+                            <div class="left  mb-7  ">
+                                
+                                        
+    
+                    <a href="https://www.qualibat.com/"
+           target=""
+           title=""
+           class="btn-primary-outline   "
+        >
+                            <span class="flex items-center">
+                    <span>
+                        CONTINUER MES RECHERCHES
+                    </span>
+
+                                        </span>
+                    </a>
+                                </div>
+                        </div>
+                                </div>
+                <div>
+                    
+                </div>
+
+
+            </div>
+        </section>
+
+</div>
+                
+                            </div>
+                    
+
+
+        </main>
+
+                
+        
+    </div>
+    <footer class="bg-primary-dark text-white">
+    <div class="container relative mx-auto">
+        <a href="#body" class="rounded-[6px] w-[50px] h-[50px] lg:w-[65px] lg:h-[65px] absolute right-0 bg-secondary inset-y-[-35px] z-10 flex justify-center items-center cursor-pointer mr-6 mx-lg-0" >
+            <img src="/front/qualibat/build/images/picto/arrow_up_dark.svg" alt="picto fleche">
+        </a>
+    </div>
+
+    <div class="container mx-auto pt-[60px] pb-[15px] px-6 flex flex-col">
+        <div class="hidden lg:grid lg:grid-cols-4 order-[1]">
+                                                <div class="mb-[20px]">
+    <span class="font-16 font-semibold uppercase mb-[20px] inline-block">
+        Qualibat
+    </span>
+
+            <ul class="text-15 ml-[15px]">
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/notre-histoire"
+                        target=""
+                        title="Notre histoire"
+                        class="font-normal text-text-color-light text-15 ">
+                        Notre histoire
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/notre-mission"
+                        target=""
+                        title="Notre mission"
+                        class="font-normal text-text-color-light text-15 ">
+                        Notre mission
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/nos-valeurs"
+                        target=""
+                        title="Nos valeurs"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos valeurs
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/nos-agences"
+                        target=""
+                        title="Nos agences"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos agences
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/nos-commissions"
+                        target=""
+                        title="Nos commissions"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos commissions
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/nos-auditeurs"
+                        target=""
+                        title="Nos auditeurs"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos auditeurs
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/contact"
+                        target=""
+                        title="Nous contacter"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nous contacter
+                    </a>
+                </li>
+            
+        </ul>
+    </div>                                                                <div class="mb-[20px]">
+    <span class="font-16 font-semibold uppercase mb-[20px] inline-block">
+        Qualifications
+    </span>
+
+            <ul class="text-15 ml-[15px]">
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/demande-qualification"
+                        target=""
+                        title="Devenir qualifié Qualibat"
+                        class="font-normal text-text-color-light text-15 ">
+                        Devenir qualifié Qualibat
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/comment-devenir-qualibat-RGE"
+                        target=""
+                        title="Comment devenir Qualibat RGE"
+                        class="font-normal text-text-color-light text-15 ">
+                        Comment devenir Qualibat RGE
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/comment-devenir-qualibat"
+                        target=""
+                        title="Comment faire qualifier mon entreprise ?"
+                        class="font-normal text-text-color-light text-15 ">
+                        Comment faire qualifier mon entreprise ?
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/annuaire-entreprises-qualifiees"
+                        target=""
+                        title="Trouver une entreprise qualifiée"
+                        class="font-normal text-text-color-light text-15 ">
+                        Trouver une entreprise qualifiée
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/qualifications-metiers-qualibat"
+                        target=""
+                        title="Nos qualifications métiers"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos qualifications métiers
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/certifications-metiers-qualibat"
+                        target=""
+                        title="Nos certifications"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos certifications
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/certification-amiante"
+                        target=""
+                        title="Nos certifications amiante"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos certifications amiante
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/mesures-de-permeabilite-a-lair"
+                        target=""
+                        title="Mesures et perméabilité à l&#039;air"
+                        class="font-normal text-text-color-light text-15 ">
+                        Mesures et perméabilité à l&#039;air
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/certibat"
+                        target=""
+                        title="Certibat"
+                        class="font-normal text-text-color-light text-15 ">
+                        Certibat
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/tarif"
+                        target=""
+                        title="Tarif"
+                        class="font-normal text-text-color-light text-15 ">
+                        Tarif
+                    </a>
+                </li>
+            
+        </ul>
+    </div>                                                                <div class="mb-[20px]">
+    <span class="font-16 font-semibold uppercase mb-[20px] inline-block">
+        Services PRO
+    </span>
+
+            <ul class="text-15 ml-[15px]">
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/actualites"
+                        target=""
+                        title="Actualités"
+                        class="font-normal text-text-color-light text-15 ">
+                        Actualités
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/faq"
+                        target=""
+                        title="FAQ qualifications"
+                        class="font-normal text-text-color-light text-15 ">
+                        FAQ qualifications
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/contact"
+                        target=""
+                        title="Contact"
+                        class="font-normal text-text-color-light text-15 ">
+                        Contact
+                    </a>
+                </li>
+            
+        </ul>
+    </div>                                                                <div class="mb-[20px]">
+    <span class="font-16 font-semibold uppercase mb-[20px] inline-block">
+        Particuliers
+    </span>
+
+            <ul class="text-15 ml-[15px]">
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/search/entreprise"
+                        target=""
+                        title="Trouver une entreprise qualifiée Qualibat"
+                        class="font-normal text-text-color-light text-15 ">
+                        Trouver une entreprise qualifiée Qualibat
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/pourquoi-faire-appel-a-un-professionnel-qualibat"
+                        target=""
+                        title=" Pourquoi faire appel à un professionnel QUALIBAT RGE "
+                        class="font-normal text-text-color-light text-15 ">
+                         Pourquoi faire appel à un professionnel QUALIBAT RGE 
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/nos-services-pour-vous"
+                        target=""
+                        title="Nos services pour vous"
+                        class="font-normal text-text-color-light text-15 ">
+                        Nos services pour vous
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/formulaire-signalement"
+                        target=""
+                        title="Formulaire de signalement"
+                        class="font-normal text-text-color-light text-15 ">
+                        Formulaire de signalement
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/formulaire-reclamation"
+                        target=""
+                        title="Formulaire de réclamation | QUALIBAT "
+                        class="font-normal text-text-color-light text-15 ">
+                        Formulaire de réclamation | QUALIBAT 
+                    </a>
+                </li>
+                            <li class="pb-[7px]">
+
+                    <a
+                        href="/qualibat-pour-les-particuliers"
+                        target=""
+                        title="Qualibat pour les particuliers"
+                        class="font-normal text-text-color-light text-15 ">
+                        Qualibat pour les particuliers
+                    </a>
+                </li>
+            
+        </ul>
+    </div>                            
+        </div>
+
+
+        <div class="grid lg:hidden lg:grid-cols-4 order-[3]" data-controller="accordeon" >
+                                                <div class="container-accordion">
+
+    <div class=" cursor-pointer font-16 font-semibold uppercase  my-[20px]" data-accordeon-target="header">
+        <div class="flex items-center justify-between">
+            <span class="">
+                 Qualibat
+            </span>
+                            <div class="h-[35px] ">
+                    <img loading="lazy" class="arrowDown mr-[15px]" src="/front/qualibat/build/images/picto/arrow_bottom_white.svg" alt="Picto fleche bas">
+                    <img loading="lazy" class="arrowUp hidden" src="/front/qualibat/build/images/picto/circle_close_white.svg" alt="Picto fleche haut">
+                </div>
+            
+        </div>
+    </div>
+
+            <div class="text-15 ml-[15px] overflow-hidden" data-accordeon-target="body">
+            <div class="card-body mb-[20px]">
+                            <div class="pb-[15px]">
+                    <a href="/notre-histoire" target="" title="Notre histoire" class="font-normal text-text-color-light text-15 ">
+                        Notre histoire
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/notre-mission" target="" title="Notre mission" class="font-normal text-text-color-light text-15 ">
+                        Notre mission
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/nos-valeurs" target="" title="Nos valeurs" class="font-normal text-text-color-light text-15 ">
+                        Nos valeurs
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/nos-agences" target="" title="Nos agences" class="font-normal text-text-color-light text-15 ">
+                        Nos agences
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/nos-commissions" target="" title="Nos commissions" class="font-normal text-text-color-light text-15 ">
+                        Nos commissions
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/nos-auditeurs" target="" title="Nos auditeurs" class="font-normal text-text-color-light text-15 ">
+                        Nos auditeurs
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/contact" target="" title="Nous contacter" class="font-normal text-text-color-light text-15 ">
+                        Nous contacter
+                    </a>
+                </div>
+                        </div>
+
+        </div>
+    </div>                                                    <div class="border-b-[1px] border-text-color mb-[10px]" ></div>
+                                                                <div class="container-accordion">
+
+    <div class=" cursor-pointer font-16 font-semibold uppercase  my-[20px]" data-accordeon-target="header">
+        <div class="flex items-center justify-between">
+            <span class="">
+                 Qualifications
+            </span>
+                            <div class="h-[35px] ">
+                    <img loading="lazy" class="arrowDown mr-[15px]" src="/front/qualibat/build/images/picto/arrow_bottom_white.svg" alt="Picto fleche bas">
+                    <img loading="lazy" class="arrowUp hidden" src="/front/qualibat/build/images/picto/circle_close_white.svg" alt="Picto fleche haut">
+                </div>
+            
+        </div>
+    </div>
+
+            <div class="text-15 ml-[15px] overflow-hidden" data-accordeon-target="body">
+            <div class="card-body mb-[20px]">
+                            <div class="pb-[15px]">
+                    <a href="/demande-qualification" target="" title="Devenir qualifié Qualibat" class="font-normal text-text-color-light text-15 ">
+                        Devenir qualifié Qualibat
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/comment-devenir-qualibat-RGE" target="" title="Comment devenir Qualibat RGE" class="font-normal text-text-color-light text-15 ">
+                        Comment devenir Qualibat RGE
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/comment-devenir-qualibat" target="" title="Comment faire qualifier mon entreprise ?" class="font-normal text-text-color-light text-15 ">
+                        Comment faire qualifier mon entreprise ?
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/annuaire-entreprises-qualifiees" target="" title="Trouver une entreprise qualifiée" class="font-normal text-text-color-light text-15 ">
+                        Trouver une entreprise qualifiée
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/qualifications-metiers-qualibat" target="" title="Nos qualifications métiers" class="font-normal text-text-color-light text-15 ">
+                        Nos qualifications métiers
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/certifications-metiers-qualibat" target="" title="Nos certifications" class="font-normal text-text-color-light text-15 ">
+                        Nos certifications
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/certification-amiante" target="" title="Nos certifications amiante" class="font-normal text-text-color-light text-15 ">
+                        Nos certifications amiante
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/mesures-de-permeabilite-a-lair" target="" title="Mesures et perméabilité à l&#039;air" class="font-normal text-text-color-light text-15 ">
+                        Mesures et perméabilité à l&#039;air
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/certibat" target="" title="Certibat" class="font-normal text-text-color-light text-15 ">
+                        Certibat
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/tarif" target="" title="Tarif" class="font-normal text-text-color-light text-15 ">
+                        Tarif
+                    </a>
+                </div>
+                        </div>
+
+        </div>
+    </div>                                                    <div class="border-b-[1px] border-text-color mb-[10px]" ></div>
+                                                                <div class="container-accordion">
+
+    <div class=" cursor-pointer font-16 font-semibold uppercase  my-[20px]" data-accordeon-target="header">
+        <div class="flex items-center justify-between">
+            <span class="">
+                 Services PRO
+            </span>
+                            <div class="h-[35px] ">
+                    <img loading="lazy" class="arrowDown mr-[15px]" src="/front/qualibat/build/images/picto/arrow_bottom_white.svg" alt="Picto fleche bas">
+                    <img loading="lazy" class="arrowUp hidden" src="/front/qualibat/build/images/picto/circle_close_white.svg" alt="Picto fleche haut">
+                </div>
+            
+        </div>
+    </div>
+
+            <div class="text-15 ml-[15px] overflow-hidden" data-accordeon-target="body">
+            <div class="card-body mb-[20px]">
+                            <div class="pb-[15px]">
+                    <a href="/actualites" target="" title="Actualités" class="font-normal text-text-color-light text-15 ">
+                        Actualités
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/faq" target="" title="FAQ qualifications" class="font-normal text-text-color-light text-15 ">
+                        FAQ qualifications
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/contact" target="" title="Contact" class="font-normal text-text-color-light text-15 ">
+                        Contact
+                    </a>
+                </div>
+                        </div>
+
+        </div>
+    </div>                                                    <div class="border-b-[1px] border-text-color mb-[10px]" ></div>
+                                                                <div class="container-accordion">
+
+    <div class=" cursor-pointer font-16 font-semibold uppercase  my-[20px]" data-accordeon-target="header">
+        <div class="flex items-center justify-between">
+            <span class="">
+                 Particuliers
+            </span>
+                            <div class="h-[35px] ">
+                    <img loading="lazy" class="arrowDown mr-[15px]" src="/front/qualibat/build/images/picto/arrow_bottom_white.svg" alt="Picto fleche bas">
+                    <img loading="lazy" class="arrowUp hidden" src="/front/qualibat/build/images/picto/circle_close_white.svg" alt="Picto fleche haut">
+                </div>
+            
+        </div>
+    </div>
+
+            <div class="text-15 ml-[15px] overflow-hidden" data-accordeon-target="body">
+            <div class="card-body mb-[20px]">
+                            <div class="pb-[15px]">
+                    <a href="/search/entreprise" target="" title="Trouver une entreprise qualifiée Qualibat" class="font-normal text-text-color-light text-15 ">
+                        Trouver une entreprise qualifiée Qualibat
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/pourquoi-faire-appel-a-un-professionnel-qualibat" target="" title=" Pourquoi faire appel à un professionnel QUALIBAT RGE " class="font-normal text-text-color-light text-15 ">
+                         Pourquoi faire appel à un professionnel QUALIBAT RGE 
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/nos-services-pour-vous" target="" title="Nos services pour vous" class="font-normal text-text-color-light text-15 ">
+                        Nos services pour vous
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/formulaire-signalement" target="" title="Formulaire de signalement" class="font-normal text-text-color-light text-15 ">
+                        Formulaire de signalement
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/formulaire-reclamation" target="" title="Formulaire de réclamation | QUALIBAT " class="font-normal text-text-color-light text-15 ">
+                        Formulaire de réclamation | QUALIBAT 
+                    </a>
+                </div>
+                            <div class="pb-[15px]">
+                    <a href="/qualibat-pour-les-particuliers" target="" title="Qualibat pour les particuliers" class="font-normal text-text-color-light text-15 ">
+                        Qualibat pour les particuliers
+                    </a>
+                </div>
+                        </div>
+
+        </div>
+    </div>                                                    </div>
+
+
+        <div class="order-[2] lg:order-[3] flex flex-col lg:flex-row items-center">
+            <span class="font-semibold text-[20px] tracking-[-0.6px]">Suivez-nous sur :</span>
+            <div class="flex-row flex mt-[10px] lg:mt-0">
+                                            <a class="ml-[10px] mr-[10px]" href="https://www.facebook.com/Qualibat/" target="_blank" title="Facebook">
+                    <img class="h-[30px]" src="/Pictos-reseaux-sociaux/facebook.svg" alt="Facebook">
+                </a>
+                                                            <a class="ml-[10px] mr-[10px]" href="https://www.youtube.com/@Qualibat_fr" target="_blank" title="Youtube">
+                    <img class="h-[30px]" src="/Pictos-reseaux-sociaux/youtube.svg" alt="Youtube">
+                </a>
+                                                            <a class="ml-[10px] mr-[10px]" href="https://www.linkedin.com/company/qualibat/" target="_blank" title="Linkedin">
+                    <img class="h-[30px]" src="/Pictos-reseaux-sociaux/linkedin.svg" alt="Linkedin">
+                </a>
+                                        </div>
+        </div>
+        <div class="order-[5]"></div>
+    </div>
+    <div class="border-t-[1px] border-text-color"></div>
+    <div class="container mx-auto relative py-[15px] px-6">
+        <ul class="flex flex-col lg:flex-row justify-center text-center lg:text-left text-13">
+                                <li class=" text-text-color-light">
+                        <a href="/mentions-legales" target="" title="Mentions légales" class="font-normal  text-15 ">
+                            Mentions légales
+                        </a>
+                                            </li>
+                    </ul>
+        <div class="py-[20px] lg:absolute lg:right-0 lg:top-[50%] lg:translate-y-[-50%] flex justify-center">
+            <a href="https://infra.fr/" title="infra" target="_blank">
+                <img loading="lazy" src="/front/qualibat/build/images/logo_infra.svg" alt="logo Infra">
+            </a>
+
+        </div>
+    </div>
+</footer>
+    <div class="hidden" data-modal-target="modal">
+    <div data-modal-target="modalBg" data-action="" class=" modal--background opacity-0 delay-150 ease-in-out duration-500 transition-opacity modal-dialog fixed z-[1000] bg-black/50 h-[100%] w-[100%] top-0 flex justify-center items-center">
+        <div data-modal-target="modalContent" class="max-h-[80vh] mx-[20px] overflow-y-auto opacity-0 delay-150 ease-in-out duration-500 transition modal-content  bg-white w-[800px] max-w-[100%] p-5 translate-y-[50px]">
+            <div class="flex justify-between">
+                <div>
+                    <div class="pt-2 title">
+                                                    Formulaire de contact
+                        
+                    </div>
+                </div>
+                <button class="modal-close" data-modal-target="modalBtnClose">
+                    <img src="/front/qualibat/build/images/picto/close.svg" alt="close">
+                </button>
+            </div>
+            <div data-modal-target="modalBody" class="p-2">
+                loading
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</body>
+</html>
+

@@ -1,0 +1,7 @@
+project_id = "bygdvkpjreuilqghtnka"
+
+[functions.generate-tenant]
+verify_jwt = false
+
+[functions.analyze-logo]
+verify_jwt = false
