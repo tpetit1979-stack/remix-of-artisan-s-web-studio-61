@@ -38,7 +38,7 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
               src={c.logo_url}
               alt={c.certification_name}
               title={c.certification_name}
-              className="h-8 w-auto object-contain"
+              loading="lazy" decoding="async" className="h-8 w-auto object-contain"
             />
           ) : (
             <span
@@ -65,7 +65,7 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
               src={c.logo_url}
               alt={c.certification_name}
               title={c.qualification_name ?? c.certification_name}
-              className="h-10 w-auto object-contain rounded bg-white/90 px-2 py-1"
+              loading="lazy" decoding="async" className="h-10 w-auto object-contain rounded bg-white/90 px-2 py-1"
             />
           ) : (
             <span
@@ -104,7 +104,7 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
               <img
                 src={c.logo_url}
                 alt={c.certification_name}
-                className="h-10 w-12 shrink-0 object-contain"
+                loading="lazy" decoding="async" className="h-10 w-12 shrink-0 object-contain"
               />
             ) : (
               <div className="flex h-10 w-12 shrink-0 items-center justify-center rounded-md bg-green-100">

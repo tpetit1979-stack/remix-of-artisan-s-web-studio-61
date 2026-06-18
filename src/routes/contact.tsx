@@ -175,6 +175,23 @@ function ContactPage() {
                   )}
                 </div>
               )}
+
+              {/* Google Maps embed — no API key required for the basic iframe. */}
+              {tenant?.city && (
+                <div className="mt-6 overflow-hidden rounded-lg border border-border">
+                  <iframe
+                    title={`Carte — ${tenant.city}`}
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(
+                      [tenant.address, tenant.city].filter(Boolean).join(", "),
+                    )}&output=embed`}
+                    width="100%"
+                    height="260"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="block w-full border-0"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Right — form */}

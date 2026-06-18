@@ -122,7 +122,7 @@ function FullSitePreview({ designForm, tenant }: { designForm: any; tenant: any 
       >
         <div className="flex items-center gap-2 min-w-0">
           {designForm?.logo_url ? (
-            <img src={designForm.logo_url} alt="" className="h-8 w-8 object-contain rounded shrink-0" />
+            <img src={designForm.logo_url} alt="" loading="lazy" decoding="async" className="h-8 w-8 object-contain rounded shrink-0" />
           ) : (
             <div className="h-8 w-8 rounded-lg shrink-0" style={{ backgroundColor: headerStyle === "light" ? color : "rgba(255,255,255,0.2)" }} />
           )}
@@ -1055,7 +1055,7 @@ function CertificationsTab({ tenantId, tenant, certifications }: { tenantId: str
           {certifications.map(c => (
             <Card key={c.id}>
               <CardContent className="flex items-center gap-3 py-2.5">
-                {c.logo_url && <img src={c.logo_url} alt="" className="h-7 w-7 object-contain shrink-0" />}
+                {c.logo_url && <img src={c.logo_url} alt="" loading="lazy" decoding="async" className="h-7 w-7 object-contain shrink-0" />}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm">{c.certification_name}</span>

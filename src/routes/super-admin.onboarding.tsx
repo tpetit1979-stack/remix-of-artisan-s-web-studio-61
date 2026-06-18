@@ -621,7 +621,7 @@ function OnboardingWizard() {
                   <div className="flex flex-wrap gap-1.5">
                     {uniqueCerts.map((c, i) => (
                       <Badge key={i} variant="outline" className="text-xs border-green-300 text-green-700 gap-1">
-                        {c.logo_url && <img src={c.logo_url} alt="" className="h-4 w-auto" />}
+                        {c.logo_url && <img src={c.logo_url} alt="" loading="lazy" decoding="async" className="h-4 w-auto" />}
                         {c.certification_name}
                       </Badge>
                     ))}
