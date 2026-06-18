@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
 import { useRef, useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Check, Palette } from "lucide-react";
@@ -481,7 +483,7 @@ function AdminSettings() {
             <Switch
               id="booking-enabled"
               checked={!!form.booking_enabled}
-              onCheckedChange={(v) => setForm((p: any) => ({ ...p, booking_enabled: v }))}
+              onCheckedChange={(v: boolean) => setForm((p: any) => ({ ...p, booking_enabled: v }))}
             />
           </div>
 
