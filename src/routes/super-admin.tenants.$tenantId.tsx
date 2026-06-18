@@ -74,11 +74,12 @@ export const Route = createFileRoute("/super-admin/tenants/$tenantId")({
 });
 
 /* ── Helpers ── */
-function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+function Field({ label, children, className, hint }: { label: string; children: React.ReactNode; className?: string; hint?: string }) {
   return (
     <div className={`space-y-1 ${className ?? ""}`}>
       <Label className="text-xs font-medium text-muted-foreground">{label}</Label>
       {children}
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
 }
@@ -424,7 +425,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
       <Card>
         <CardContent className="pt-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Nom *"><Input value={form.company_name ?? ""} onChange={e => set("company_name", e.target.value)} /></Field>
+            <Field label="Nom *" hint="Nom récupéré automatiquement depuis le SIRET — vous pouvez le corriger (ex : retirer la forme juridique en MAJUSCULES)."><Input value={form.company_name ?? ""} onChange={e => set("company_name", e.target.value)} /></Field>
             <Field label="Slug *"><Input value={form.slug ?? ""} onChange={e => set("slug", e.target.value)} /></Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
