@@ -98,9 +98,11 @@ export function PublicFooter() {
             <li>
               <Link to="/services" className="text-sm text-muted-foreground hover:text-foreground">Services</Link>
             </li>
-            <li>
-              <Link to="/realisations" className="text-sm text-muted-foreground hover:text-foreground">Réalisations</Link>
-            </li>
+            {hasPortfolio && (
+              <li>
+                <Link to="/realisations" className="text-sm text-muted-foreground hover:text-foreground">Réalisations</Link>
+              </li>
+            )}
             <li>
               <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link>
             </li>
