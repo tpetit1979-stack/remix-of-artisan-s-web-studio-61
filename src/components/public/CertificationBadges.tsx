@@ -30,7 +30,7 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
 
   if (variant === "header") {
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex shrink-0 items-center gap-1.5">
         {uniqueCerts.slice(0, 3).map((c) =>
           c.logo_url ? (
             <img
@@ -38,12 +38,12 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
               src={c.logo_url}
               alt={c.certification_name}
               title={c.certification_name}
-              className="h-6 w-auto object-contain"
+              className="h-8 w-auto object-contain"
             />
           ) : (
             <span
               key={c.id}
-              className="inline-flex items-center gap-1 rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-800"
+              className="inline-flex items-center gap-1 rounded bg-green-100 px-1.5 py-1 text-[10px] font-semibold text-green-800"
               title={c.certification_name}
             >
               <Shield className="h-3 w-3" />
