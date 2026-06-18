@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Star, GripVertical, Settings, Wrench,
   MapPin, Building2, ExternalLink, Wand2, Loader2, Shield, Check, Palette,
-  Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon,
+  Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon, Calendar,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
