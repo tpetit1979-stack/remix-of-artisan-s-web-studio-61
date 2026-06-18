@@ -335,6 +335,7 @@ function TenantDetail() {
           <TabsTrigger value="services"><Wrench className="h-3 w-3 mr-1" /> Services</TabsTrigger>
           <TabsTrigger value="zones"><MapPin className="h-3 w-3 mr-1" /> Zones</TabsTrigger>
           <TabsTrigger value="certifications"><Shield className="h-3 w-3 mr-1" /> RGE</TabsTrigger>
+          <TabsTrigger value="booking"><Calendar className="h-3 w-3 mr-1" /> RDV</TabsTrigger>
           <TabsTrigger value="ai"><Wand2 className="h-3 w-3 mr-1" /> IA</TabsTrigger>
         </TabsList>
 
@@ -352,6 +353,9 @@ function TenantDetail() {
         </TabsContent>
         <TabsContent value="certifications" className="mt-3">
           <CertificationsTab tenantId={tenantId} tenant={tenant} certifications={certifications} />
+        </TabsContent>
+        <TabsContent value="booking" className="mt-3">
+          <BookingTab tenantId={tenantId} settings={settings} />
         </TabsContent>
         <TabsContent value="ai" className="mt-3">
           <AiTab tenantId={tenantId} tenant={tenant} settings={settings} />
