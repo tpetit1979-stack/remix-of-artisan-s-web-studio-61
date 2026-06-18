@@ -27,11 +27,22 @@ export function BookingButton({ variant = "header", className, onNavigate }: Boo
   const { tenant, settings } = useTenant();
   const [open, setOpen] = useState(false);
 
-  if (!settings?.booking_enabled) return null;
+  // Booking columns are added by a separate migration on the user's Supabase
+  // project; cast here so the component compiles before types.ts is regenerated.
+  const s = settings as
+    | (typeof settings & {
+        booking_enabled?: boolean | null;
+        booking_url?: string | null;
+        booking_button_label?: string | null;
+      })
+    | null;
 
-  const label = settings.booking_button_label?.trim() || "Prendre rendez-vous";
-  const url = settings.booking_url?.trim() || "";
+  if (!s?.booking_enabled) return null;
+
+  const label = s.booking_button_label?.trim() || "Prendre rendez-vous";
+  const url = s.booking_url?.trim() || "";
   const ariaLabel = `${label}${tenant?.company_name ? ` avec ${tenant.company_name}` : ""}`;
+
 
   function handleClick(e: React.MouseEvent) {
     onNavigate?.();
