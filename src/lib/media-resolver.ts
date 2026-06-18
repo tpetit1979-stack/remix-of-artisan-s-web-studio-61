@@ -62,16 +62,20 @@ export interface ResolvedMedia {
   source: "tenant" | "template" | "placeholder";
 }
 
-/** Neutral inline SVG so we never depend on a static asset that could 404. */
+/** Neutral inline SVG so we never depend on a static asset that could 404.
+ *  Soft gradient only — never any "Photo à venir" / "Image en cours d'ajout"
+ *  text that would visibly admit the absence of an image. */
 const PLACEHOLDER_DATA_URL =
   "data:image/svg+xml;utf8," +
   encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
-      <rect width="100%" height="100%" fill="#e5e7eb"/>
-      <g fill="#9ca3af" font-family="system-ui,sans-serif" text-anchor="middle">
-        <text x="400" y="295" font-size="28" font-weight="600">Photo à venir</text>
-        <text x="400" y="330" font-size="16">Image en cours d'ajout</text>
-      </g>
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#e5e7eb"/>
+          <stop offset="100%" stop-color="#cbd5e1"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#g)"/>
     </svg>`,
   );
 
