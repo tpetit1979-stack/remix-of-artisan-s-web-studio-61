@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Phone, CheckCircle, Clock, Star, Shield } from "lucide-react";
+import { Phone, Shield } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
 import { getTradeTagline } from "@/lib/trade-wording";
 import { useResolvedImageUrl } from "./ResolvedImage";
