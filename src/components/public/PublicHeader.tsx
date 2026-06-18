@@ -33,16 +33,16 @@ export function PublicHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-3">
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 md:flex md:justify-between">
+        <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
           {settings?.logo_url ? (
             <img
               src={settings.logo_url}
               alt={`${tenant.company_name} logo`}
-              className="h-8 w-auto object-contain"
+              className="h-8 w-auto shrink-0 object-contain"
             />
           ) : (
-            <span className="text-lg font-bold text-foreground">
+            <span className="truncate text-sm font-bold text-foreground sm:text-base md:text-lg">
               {tenant.company_name}
             </span>
           )}
@@ -77,7 +77,7 @@ export function PublicHeader() {
           <BookingButton variant="header" />
 
           <Link to="/contact" className="hidden sm:block">
-            <Button size="sm">Être rappelé</Button>
+            <Button size="sm" className="shadow-none">Être rappelé</Button>
           </Link>
           {/* Mobile hamburger */}
           <button

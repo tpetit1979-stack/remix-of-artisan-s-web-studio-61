@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Phone, CheckCircle, Clock, Star, Shield } from "lucide-react";
+import { Phone, Shield } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
 import { getTradeTagline } from "@/lib/trade-wording";
 import { useResolvedImageUrl } from "./ResolvedImage";
@@ -82,7 +82,7 @@ export function HeroSection() {
           {/* CTA buttons */}
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link to="/contact">
-              <Button size="lg" className="h-14 text-base px-10 shadow-lg shadow-primary/25">
+              <Button size="lg" className="h-14 text-base px-10 shadow-elegant">
                 {settings?.cta_text ?? "Demander un devis gratuit"}
               </Button>
             </Link>
@@ -100,31 +100,25 @@ export function HeroSection() {
             )}
           </div>
 
-          {/* Trust indicators */}
-          <div
-            className={`mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium ${
-              hasHeroImage ? "text-white/80" : "text-muted-foreground"
-            }`}
-          >
-            <span className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15">
-                <CheckCircle className="h-3.5 w-3.5 text-primary" />
+          {/* Single strong trust signal — only when we have a real value to show. */}
+          {tenant.years_experience && tenant.years_experience > 0 && (
+            <div
+              className={`mt-10 inline-flex items-baseline gap-2 ${
+                hasHeroImage ? "text-white" : "text-foreground"
+              }`}
+            >
+              <span className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+                {tenant.years_experience}+
               </span>
-              Devis gratuit
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15">
-                <Clock className="h-3.5 w-3.5 text-primary" />
+              <span
+                className={`text-sm font-medium uppercase tracking-wider ${
+                  hasHeroImage ? "text-white/75" : "text-muted-foreground"
+                }`}
+              >
+                ans d'expérience
               </span>
-              Intervention rapide
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15">
-                <Star className="h-3.5 w-3.5 text-primary" />
-              </span>
-              Technicien certifié
-            </span>
-          </div>
+            </div>
+          )}
 
           {/* Certification badges */}
           {hasHeroImage && (
