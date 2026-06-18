@@ -96,8 +96,6 @@ function AdminSettings() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<any>(null);
   const [tenantForm, setTenantForm] = useState<any>(null);
-  const [uploading, setUploading] = useState(false);
-  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (settings) setForm({ ...settings });
@@ -114,24 +112,10 @@ function AdminSettings() {
   const currentHeaderStyle = form?.header_style ?? "solid";
   const shades = useMemo(() => generatePreviewShades(currentColor), [currentColor]);
 
-  async function uploadLogo(file: File): Promise<string> {
-    const validationErr = validateImageFile(file);
-    if (validationErr) throw new Error(validationErr);
-    // Always create a NEW path on each upload so the public URL changes
-    // (defeats CDN cache without needing upsert + version querystring).
-    const newPath = buildMediaPath({ scope: tenant!.id, kind: "logo", file });
-    await uploadImage({ bucket: "media", path: newPath, file });
-    // Best-effort: remove the previous logo file so we don't accumulate orphans.
-    const previousUrl: string | undefined = form?.logo_url ?? undefined;
-    const previousPath = previousUrl ? extractMediaPathFromPublicUrl(previousUrl) : null;
-    if (previousPath && previousPath !== newPath) {
-      await removeStorageFile("media", previousPath);
-    }
-    return bucketPublicUrl("media", newPath);
-  }
-
   const saveSettings = useMutation({
     mutationFn: async () => {
+      // logo_url, favicon_url, hero_image_url are intentionally NOT in this payload:
+      // brand visuals are managed exclusively by super-admin (DB trigger enforces this too).
       const { error } = await supabase
         .from("site_settings")
         .update({
@@ -139,7 +123,6 @@ function AdminSettings() {
           hero_subtitle: form.hero_subtitle,
           primary_color: form.primary_color,
           cta_text: form.cta_text,
-          logo_url: form.logo_url,
           seo_meta_title: form.seo_meta_title,
           seo_meta_description: form.seo_meta_description,
           border_radius: form.border_radius,
@@ -176,20 +159,6 @@ function AdminSettings() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setUploading(true);
-      const url = await uploadLogo(file);
-      setForm((p: any) => ({ ...p, logo_url: url }));
-      toast.success("Logo uploadé");
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setUploading(false);
-    }
-  }
 
   if (!form || !tenantForm) return <p className="text-muted-foreground">Chargement...</p>;
 
