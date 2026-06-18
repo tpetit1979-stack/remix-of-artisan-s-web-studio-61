@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
+import { fetchPortfolio } from "@/lib/tenant";
 import { Phone, Menu, X } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
 import { Button } from "@/components/ui/button";
@@ -8,15 +10,23 @@ import { useState } from "react";
 
 
 export function PublicHeader() {
-  const { tenant, settings } = useTenant();
+  const { tenant } = useTenant();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const { data: portfolio = [] } = useQuery({
+    queryKey: ["portfolio", tenant?.id],
+    queryFn: () => fetchPortfolio(tenant!.id),
+    enabled: !!tenant?.id,
+  });
+
   if (!tenant) return null;
+
+  const hasPortfolio = portfolio.some((p) => p.is_published);
 
   const navLinks = [
     { to: "/" as const, label: "Accueil" },
     { to: "/services" as const, label: "Services" },
-    { to: "/realisations" as const, label: "Réalisations" },
+    ...(hasPortfolio ? [{ to: "/realisations" as const, label: "Réalisations" }] : []),
     { to: "/contact" as const, label: "Contact" },
   ];
 
