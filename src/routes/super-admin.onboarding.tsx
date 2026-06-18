@@ -579,6 +579,9 @@ function OnboardingWizard() {
               <div className="space-y-2">
                 <Label>Nom entreprise *</Label>
                 <Input value={data.company_name} onChange={(e) => update("company_name", e.target.value)} required />
+                <p className="text-xs text-muted-foreground">
+                  Nom récupéré automatiquement depuis le SIRET — vous pouvez le corriger (ex : retirer la forme juridique en MAJUSCULES).
+                </p>
               </div>
               <div className="space-y-2">
                 <Label>SIRET</Label>

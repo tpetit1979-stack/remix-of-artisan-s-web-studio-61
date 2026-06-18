@@ -74,11 +74,12 @@ export const Route = createFileRoute("/super-admin/tenants/$tenantId")({
 });
 
 /* ── Helpers ── */
-function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+function Field({ label, children, className, hint }: { label: string; children: React.ReactNode; className?: string; hint?: string }) {
   return (
     <div className={`space-y-1 ${className ?? ""}`}>
       <Label className="text-xs font-medium text-muted-foreground">{label}</Label>
       {children}
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
 }
