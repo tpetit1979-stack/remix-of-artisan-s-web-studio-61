@@ -77,7 +77,7 @@ export function PublicHeader() {
           <BookingButton variant="header" />
 
           <Link to="/contact" className="hidden sm:block">
-            <Button size="sm">Être rappelé</Button>
+            <Button size="sm" className="shadow-none">Être rappelé</Button>
           </Link>
           {/* Mobile hamburger */}
           <button
