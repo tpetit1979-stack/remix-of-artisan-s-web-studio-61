@@ -3,6 +3,7 @@ import {
   Wrench,
   MapPin,
   Image,
+  Users,
   Settings,
   Mail,
   ArrowLeft,
@@ -18,6 +19,7 @@ const navItems = [
   { label: "Services", to: "/admin/services", icon: Wrench },
   { label: "Zones", to: "/admin/service-areas", icon: MapPin },
   { label: "Portfolio", to: "/admin/portfolio", icon: Image },
+  { label: "Équipe", to: "/admin/team", icon: Users },
   { label: "Site", to: "/admin/settings", icon: Settings },
   { label: "Contacts", to: "/admin/contacts", icon: Mail },
 ];

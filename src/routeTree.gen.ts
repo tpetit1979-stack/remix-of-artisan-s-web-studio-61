@@ -26,6 +26,7 @@ import { Route as SuperAdminOnboardingRouteImport } from './routes/super-admin.o
 import { Route as SuperAdminMediaLibraryRouteImport } from './routes/super-admin.media-library'
 import { Route as SuperAdminDashboardRouteImport } from './routes/super-admin.dashboard'
 import { Route as ServicesServiceSlugRouteImport } from './routes/services.$serviceSlug'
+import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as AdminServiceAreasRouteImport } from './routes/admin.service-areas'
@@ -120,6 +121,11 @@ const ServicesServiceSlugRoute = ServicesServiceSlugRouteImport.update({
   path: '/$serviceSlug',
   getParentRoute: () => ServicesRoute,
 } as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/dashboard': typeof SuperAdminDashboardRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -202,6 +209,7 @@ export interface FileRoutesByTo {
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/dashboard': typeof SuperAdminDashboardRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -229,6 +237,7 @@ export interface FileRoutesById {
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/team': typeof AdminTeamRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/dashboard': typeof SuperAdminDashboardRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/admin/service-areas'
     | '/admin/services'
     | '/admin/settings'
+    | '/admin/team'
     | '/services/$serviceSlug'
     | '/super-admin/dashboard'
     | '/super-admin/media-library'
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/admin/service-areas'
     | '/admin/services'
     | '/admin/settings'
+    | '/admin/team'
     | '/services/$serviceSlug'
     | '/super-admin/dashboard'
     | '/super-admin/media-library'
@@ -308,6 +319,7 @@ export interface FileRouteTypes {
     | '/admin/service-areas'
     | '/admin/services'
     | '/admin/settings'
+    | '/admin/team'
     | '/services/$serviceSlug'
     | '/super-admin/dashboard'
     | '/super-admin/media-library'
@@ -454,6 +466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesServiceSlugRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -519,6 +538,7 @@ interface AdminRouteChildren {
   AdminServiceAreasRoute: typeof AdminServiceAreasRoute
   AdminServicesRoute: typeof AdminServicesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTeamRoute: typeof AdminTeamRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -528,6 +548,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminServiceAreasRoute: AdminServiceAreasRoute,
   AdminServicesRoute: AdminServicesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminTeamRoute: AdminTeamRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
