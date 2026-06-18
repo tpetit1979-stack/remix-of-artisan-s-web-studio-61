@@ -66,10 +66,7 @@ function HomePage() {
           <section className="py-16 lg:py-24">
             <div className="mx-auto max-w-7xl px-4">
               <div className="mx-auto max-w-2xl text-center">
-                <span className="text-sm font-semibold uppercase tracking-wider text-primary">
-                  Ce que nous faisons
-                </span>
-                <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
+                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
                   Nos services
                 </h2>
                 <p className="mt-4 text-muted-foreground">
