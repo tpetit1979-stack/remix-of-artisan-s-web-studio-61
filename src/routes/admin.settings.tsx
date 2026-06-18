@@ -186,18 +186,22 @@ function AdminSettings() {
         </CardContent>
       </Card>
 
-      {/* Logo */}
+      {/* Logo — read-only, managed by super-admin */}
       <Card>
         <CardHeader><CardTitle>Logo & identité visuelle</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
-            {form.logo_url && (
-              <img src={form.logo_url} alt="Logo" className="h-16 object-contain rounded border bg-muted/30 p-2" />
+            {form.logo_url ? (
+              <img src={form.logo_url} alt="Logo" loading="lazy" className="h-16 object-contain rounded border bg-muted/30 p-2" />
+            ) : (
+              <div className="h-16 w-32 rounded border bg-muted/30 flex items-center justify-center text-xs text-muted-foreground">
+                Aucun logo
+              </div>
             )}
-            <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-            <Button variant="outline" onClick={() => logoInputRef.current?.click()} disabled={uploading}>
-              {uploading ? "Upload..." : form.logo_url ? "Changer le logo" : "Uploader un logo"}
-            </Button>
+            <div className="flex items-start gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+              <span>Géré par votre agence — contactez-nous pour modifier votre logo.</span>
+            </div>
           </div>
 
           <div className="border-t pt-4">
@@ -219,6 +223,7 @@ function AdminSettings() {
           </div>
         </CardContent>
       </Card>
+
 
       {/* Hero */}
       <Card>
