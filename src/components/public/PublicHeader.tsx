@@ -10,8 +10,9 @@ import { useState } from "react";
 
 
 export function PublicHeader() {
-  const { tenant } = useTenant();
+  const { tenant, settings } = useTenant();
   const [menuOpen, setMenuOpen] = useState(false);
+
 
   const { data: portfolio = [] } = useQuery({
     queryKey: ["portfolio", tenant?.id],
