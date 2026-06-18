@@ -39,7 +39,7 @@ export function PublicHeader() {
             <img
               src={settings.logo_url}
               alt={`${tenant.company_name} logo`}
-              className="h-8 w-auto shrink-0 object-contain"
+              loading="lazy" decoding="async" className="h-8 w-auto shrink-0 object-contain"
             />
           ) : (
             <span className="truncate text-sm font-bold text-foreground sm:text-base md:text-lg">
