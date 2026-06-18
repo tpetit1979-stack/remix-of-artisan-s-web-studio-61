@@ -10,6 +10,7 @@ import { HeroSection } from "@/components/public/HeroSection";
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { CTABanner } from "@/components/public/CTABanner";
 import { CertificationBadges } from "@/components/public/CertificationBadges";
+import { TeamSection } from "@/components/public/TeamSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, MapPin } from "lucide-react";
@@ -157,6 +158,8 @@ function HomePage() {
         )}
 
         <WhyChooseUs />
+
+        <TeamSection />
 
         {/* Certifications RGE - only shown if tenant has certifications */}
         <RgeCertificationsSection />
