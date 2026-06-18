@@ -467,6 +467,55 @@ function AdminSettings() {
         </CardContent>
       </Card>
 
+      {/* Online booking */}
+      <Card>
+        <CardHeader><CardTitle>Prise de rendez-vous en ligne</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="booking-enabled">Activer la prise de rendez-vous</Label>
+              <p className="text-sm text-muted-foreground">
+                Affiche un bouton "Prendre rendez-vous" sur votre site public.
+              </p>
+            </div>
+            <Switch
+              id="booking-enabled"
+              checked={!!form.booking_enabled}
+              onCheckedChange={(v) => setForm((p: any) => ({ ...p, booking_enabled: v }))}
+            />
+          </div>
+
+          {form.booking_enabled && (
+            <div className="space-y-4 border-t pt-4">
+              <div className="space-y-2">
+                <Label>Lien de prise de rendez-vous</Label>
+                <Input
+                  type="url"
+                  placeholder="https://calendly.com/votre-lien"
+                  value={form.booking_url ?? ""}
+                  onChange={(e) => setForm((p: any) => ({ ...p, booking_url: e.target.value }))}
+                />
+                {!form.booking_url?.trim() && (
+                  <p className="text-sm text-muted-foreground">
+                    Aucun lien configuré pour le moment, le bouton affichera un message d'attente sur le site public.
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Texte du bouton</Label>
+                <Input
+                  value={form.booking_button_label ?? ""}
+                  placeholder="Prendre rendez-vous"
+                  onChange={(e) => setForm((p: any) => ({ ...p, booking_button_label: e.target.value }))}
+                />
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+
+
       {/* SEO */}
       <Card>
         <CardHeader><CardTitle>SEO</CardTitle></CardHeader>
