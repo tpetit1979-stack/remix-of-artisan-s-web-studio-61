@@ -77,7 +77,7 @@ export function PublicHeader() {
           <BookingButton variant="header" />
 
           <Link to="/contact" className="hidden sm:block">
-            <Button size="sm">{settings?.cta_text ?? "Demander un devis"}</Button>
+            <Button size="sm">Être rappelé</Button>
           </Link>
           {/* Mobile hamburger */}
           <button
