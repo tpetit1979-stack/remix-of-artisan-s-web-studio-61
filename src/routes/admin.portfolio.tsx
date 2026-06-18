@@ -157,7 +157,7 @@ function AdminPortfolio() {
             <Card key={item.id} className="overflow-hidden">
               <div className="aspect-video bg-muted relative">
                 {item.image_url ? (
-                  <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                  <img src={item.image_url} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <ImageIcon className="h-8 w-8 text-muted-foreground" />
@@ -195,7 +195,7 @@ function AdminPortfolio() {
               <div className="space-y-2">
                 <Label>Image</Label>
                 {editingItem.image_url && (
-                  <img src={editingItem.image_url} alt="" className="h-32 w-full object-cover rounded-md" />
+                  <img src={editingItem.image_url} alt="" loading="lazy" decoding="async" className="h-32 w-full object-cover rounded-md" />
                 )}
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                 <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
