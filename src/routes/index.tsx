@@ -19,6 +19,39 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+/**
+ * Build a LocalBusiness JSON-LD blob for the home page from tenant + settings.
+ * Only fields with real data are included — never emit empty `address`,
+ * `geo` or `openingHours` placeholders that crawlers would penalise.
+ */
+function buildLocalBusinessJsonLd(
+  tenant: NonNullable<ReturnType<typeof useTenant>["tenant"]>,
+  settings: ReturnType<typeof useTenant>["settings"],
+) {
+  const data: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: tenant.company_name,
+    ...(settings?.logo_url && { logo: settings.logo_url, image: settings.logo_url }),
+    ...(tenant.phone && { telephone: tenant.phone }),
+    ...(tenant.email && { email: tenant.email }),
+  };
+
+  if (tenant.address || tenant.city) {
+    data.address = {
+      "@type": "PostalAddress",
+      ...(tenant.address && { streetAddress: tenant.address }),
+      ...(tenant.city && { addressLocality: tenant.city }),
+      addressCountry: "FR",
+    };
+  }
+
+  // `geo` and `openingHoursSpecification` intentionally omitted —
+  // the schema does not yet store latitude/longitude or opening hours.
+
+  return data;
+}
+
 function HomePage() {
   const { tenant, settings } = useTenant();
 
