@@ -9,18 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Check, Palette } from "lucide-react";
+import { Check, Palette, Lock } from "lucide-react";
 import { LogoAnalyzer } from "@/components/admin/LogoAnalyzer";
-import {
-  validateImageFile,
-  buildMediaPath,
-  uploadImage,
-  removeStorageFile,
-  bucketPublicUrl,
-  extractMediaPathFromPublicUrl,
-} from "@/lib/media-upload";
 
 export const Route = createFileRoute("/admin/settings")({
   component: AdminSettings,
