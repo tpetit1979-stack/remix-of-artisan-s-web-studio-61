@@ -152,10 +152,14 @@ function AdminSettings() {
           gradient_style: form.gradient_style,
           header_style: form.header_style,
           font_family: form.font_family,
-        })
+          booking_enabled: form.booking_enabled ?? false,
+          booking_url: form.booking_url ?? null,
+          booking_button_label: form.booking_button_label ?? "Prendre rendez-vous",
+        } as any)
         .eq("tenant_id", tenant!.id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["site-settings"] });
       toast.success("Paramètres enregistrés");
