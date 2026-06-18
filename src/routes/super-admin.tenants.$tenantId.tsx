@@ -1146,3 +1146,97 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
     </div>
   );
 }
+
+/* ── Booking Tab ── */
+function BookingTab({ tenantId, settings }: { tenantId: string; settings: any }) {
+  const queryClient = useQueryClient();
+  const [form, setForm] = useState<any>(null);
+
+  useEffect(() => {
+    if (settings && !form) {
+      setForm({
+        booking_enabled: !!settings.booking_enabled,
+        booking_url: settings.booking_url ?? "",
+        booking_button_label: settings.booking_button_label ?? "Prendre rendez-vous",
+      });
+    }
+  }, [settings]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("site_settings")
+        .update({
+          booking_enabled: !!form.booking_enabled,
+          booking_url: form.booking_url?.trim() ? form.booking_url.trim() : null,
+          booking_button_label: form.booking_button_label?.trim() || "Prendre rendez-vous",
+        } as any)
+        .eq("tenant_id", tenantId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sa-settings", tenantId] });
+      toast.success("Prise de rendez-vous enregistrée");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!form) return <p className="text-muted-foreground text-sm">Chargement...</p>;
+
+  return (
+    <div className="space-y-4 max-w-xl">
+      <Card>
+        <CardContent className="pt-4 space-y-4">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+            <Calendar className="h-3 w-3" /> Prise de rendez-vous en ligne
+          </p>
+
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="sa-booking-enabled">Activer la prise de rendez-vous</Label>
+              <p className="text-sm text-muted-foreground">
+                Affiche un bouton "Prendre rendez-vous" sur le site public de ce tenant.
+              </p>
+            </div>
+            <Switch
+              id="sa-booking-enabled"
+              checked={!!form.booking_enabled}
+              onCheckedChange={(v: boolean) => setForm((p: any) => ({ ...p, booking_enabled: v }))}
+            />
+          </div>
+
+          {form.booking_enabled && (
+            <div className="space-y-4 border-t pt-4">
+              <Field label="Lien de prise de rendez-vous">
+                <Input
+                  type="url"
+                  placeholder="https://calendly.com/votre-lien"
+                  value={form.booking_url ?? ""}
+                  onChange={(e) => setForm((p: any) => ({ ...p, booking_url: e.target.value }))}
+                />
+              </Field>
+              {!form.booking_url?.trim() && (
+                <p className="text-sm text-muted-foreground">
+                  Aucun lien configuré pour le moment, le bouton affichera un message d'attente sur le site public.
+                </p>
+              )}
+              <Field label="Texte du bouton">
+                <Input
+                  value={form.booking_button_label ?? ""}
+                  placeholder="Prendre rendez-vous"
+                  onChange={(e) => setForm((p: any) => ({ ...p, booking_button_label: e.target.value }))}
+                />
+              </Field>
+            </div>
+          )}
+
+          <div className="pt-2">
+            <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
+              {save.isPending ? "Enregistrement..." : "Enregistrer"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
