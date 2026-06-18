@@ -28,7 +28,7 @@ export function CTABanner({ title, subtitle }: CTABannerProps) {
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link to="/contact">
-            <Button size="lg" variant="secondary" className="h-14 px-10 text-base shadow-lg">
+            <Button size="lg" variant="secondary" className="h-14 px-10 text-base shadow-elegant">
               {settings?.cta_text ?? "Demander un devis"}
             </Button>
           </Link>
