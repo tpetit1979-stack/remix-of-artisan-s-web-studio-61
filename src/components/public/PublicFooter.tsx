@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
-import { fetchServices, fetchServiceAreas } from "@/lib/tenant";
+import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
 
 export function PublicFooter() {
   const { tenant } = useTenant();
@@ -18,7 +18,15 @@ export function PublicFooter() {
     enabled: !!tenant?.id,
   });
 
+  const { data: portfolio = [] } = useQuery({
+    queryKey: ["portfolio", tenant?.id],
+    queryFn: () => fetchPortfolio(tenant!.id),
+    enabled: !!tenant?.id,
+  });
+
   if (!tenant) return null;
+
+  const hasPortfolio = portfolio.some((p) => p.is_published);
 
   // Unique cities for footer links
   const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));
@@ -90,9 +98,11 @@ export function PublicFooter() {
             <li>
               <Link to="/services" className="text-sm text-muted-foreground hover:text-foreground">Services</Link>
             </li>
-            <li>
-              <Link to="/realisations" className="text-sm text-muted-foreground hover:text-foreground">Réalisations</Link>
-            </li>
+            {hasPortfolio && (
+              <li>
+                <Link to="/realisations" className="text-sm text-muted-foreground hover:text-foreground">Réalisations</Link>
+              </li>
+            )}
             <li>
               <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link>
             </li>

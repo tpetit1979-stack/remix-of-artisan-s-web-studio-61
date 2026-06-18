@@ -30,22 +30,25 @@ export function HeroSection() {
   // Hero image via 3-level resolver: tenant_media > trade template > placeholder.
   const hero = useResolvedImageUrl("hero", null, tenant?.company_name ?? "");
   const heroImageUrl = hero.url;
+  const heroAlt = hero.alt || `${tenant?.company_name ?? ""} — atelier`;
   const hasHeroImage = true;
 
   if (!tenant) return null;
 
   return (
     <section className="relative overflow-hidden">
-      {/* Background — always an image (tenant upload or trade default) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${heroImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-foreground/80 via-foreground/65 to-foreground/50" />
+      {/* Background image — rendered as <img> so we can prioritise the LCP. */}
+      <div className="absolute inset-0">
+        <img
+          src={heroImageUrl}
+          alt={heroAlt}
+          className="h-full w-full object-cover"
+          loading="eager"
+          // @ts-expect-error - fetchpriority is a valid HTML attribute, React types lag.
+          fetchpriority="high"
+          decoding="async"
+        />
+        <div className="absolute inset-0 bg-foreground/55" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-24 lg:py-32">
