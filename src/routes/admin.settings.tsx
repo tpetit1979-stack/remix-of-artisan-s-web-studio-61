@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
 import { useRef, useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Check, Palette } from "lucide-react";
@@ -152,10 +154,14 @@ function AdminSettings() {
           gradient_style: form.gradient_style,
           header_style: form.header_style,
           font_family: form.font_family,
-        })
+          booking_enabled: form.booking_enabled ?? false,
+          booking_url: form.booking_url ?? null,
+          booking_button_label: form.booking_button_label ?? "Prendre rendez-vous",
+        } as any)
         .eq("tenant_id", tenant!.id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["site-settings"] });
       toast.success("Paramètres enregistrés");
@@ -462,6 +468,55 @@ function AdminSettings() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Online booking */}
+      <Card>
+        <CardHeader><CardTitle>Prise de rendez-vous en ligne</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="booking-enabled">Activer la prise de rendez-vous</Label>
+              <p className="text-sm text-muted-foreground">
+                Affiche un bouton "Prendre rendez-vous" sur votre site public.
+              </p>
+            </div>
+            <Switch
+              id="booking-enabled"
+              checked={!!form.booking_enabled}
+              onCheckedChange={(v: boolean) => setForm((p: any) => ({ ...p, booking_enabled: v }))}
+            />
+          </div>
+
+          {form.booking_enabled && (
+            <div className="space-y-4 border-t pt-4">
+              <div className="space-y-2">
+                <Label>Lien de prise de rendez-vous</Label>
+                <Input
+                  type="url"
+                  placeholder="https://calendly.com/votre-lien"
+                  value={form.booking_url ?? ""}
+                  onChange={(e) => setForm((p: any) => ({ ...p, booking_url: e.target.value }))}
+                />
+                {!form.booking_url?.trim() && (
+                  <p className="text-sm text-muted-foreground">
+                    Aucun lien configuré pour le moment, le bouton affichera un message d'attente sur le site public.
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Texte du bouton</Label>
+                <Input
+                  value={form.booking_button_label ?? ""}
+                  placeholder="Prendre rendez-vous"
+                  onChange={(e) => setForm((p: any) => ({ ...p, booking_button_label: e.target.value }))}
+                />
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+
 
       {/* SEO */}
       <Card>
