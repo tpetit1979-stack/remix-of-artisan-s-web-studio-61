@@ -1,4 +1,4 @@
-import type { Tenant, Service, SiteSettings } from "./tenant";
+import type { Tenant, Service, ServiceArea, SiteSettings } from "./tenant";
 
 /**
  * Generate dynamic SEO title for a service+city page.
@@ -116,4 +116,214 @@ export function generateJsonLd(
   };
 
   return localBusiness;
+}
+
+/**
+ * Build the <title> for a page. Homepage uses the tenant's configured SEO
+ * title (falling back to company name); other pages append a suffix.
+ */
+export function buildPageTitle(
+  settings: SiteSettings | null,
+  tenant: Tenant,
+  pageSuffix?: string,
+): string {
+  if (pageSuffix) return `${pageSuffix} | ${tenant.company_name}`;
+  return (
+    settings?.seo_meta_title ||
+    `${tenant.company_name}${tenant.city ? ` — ${tenant.city}` : ""}`
+  );
+}
+
+/**
+ * Build the meta description for a page, falling back to the tagline
+ * then a generic sentence built from tenant data.
+ */
+export function buildPageDescription(
+  settings: SiteSettings | null,
+  tenant: Tenant,
+): string {
+  return (
+    settings?.seo_meta_description ||
+    tenant.tagline ||
+    `${tenant.company_name}, votre expert de confiance${tenant.city ? ` à ${tenant.city}` : ""}.`
+  );
+}
+
+const FR_DAY_TO_SCHEMA: Record<string, string> = {
+  lundi: "Mo",
+  mardi: "Tu",
+  mercredi: "We",
+  jeudi: "Th",
+  vendredi: "Fr",
+  samedi: "Sa",
+  dimanche: "Su",
+};
+
+/**
+ * Parse a single free-text time range like "9h-12h" or "9h30-18h" into
+ * "09:00-12:00". Returns null on anything that doesn't match — callers
+ * should skip the entry rather than let a malformed value break the JSON-LD.
+ */
+function parseOpeningHoursRange(range: string): string | null {
+  const match = range.trim().match(/^(\d{1,2})h(\d{2})?\s*-\s*(\d{1,2})h(\d{2})?$/i);
+  if (!match) return null;
+  const [, h1, m1, h2, m2] = match;
+  const pad = (n: string) => n.padStart(2, "0");
+  return `${pad(h1)}:${pad(m1 ?? "00")}-${pad(h2)}:${pad(m2 ?? "00")}`;
+}
+
+/**
+ * Convert the site_settings.opening_hours jsonb (French day names, free-text
+ * ranges, e.g. `{ lundi: "9h-12h, 14h-18h", samedi: "Fermé" }`) into
+ * schema.org-style `openingHours` strings (e.g. "Mo 09:00-12:00,14:00-18:00").
+ * Unparseable or closed days are silently skipped — never throws.
+ */
+export function buildOpeningHoursSchema(
+  oh: Record<string, string | null | undefined> | null | undefined,
+): string[] {
+  if (!oh) return [];
+  const lines: string[] = [];
+  for (const [frDay, value] of Object.entries(oh)) {
+    const dayCode = FR_DAY_TO_SCHEMA[frDay.trim().toLowerCase()];
+    if (!dayCode || !value) continue;
+    const ranges = value
+      .split(",")
+      .map((r) => parseOpeningHoursRange(r))
+      .filter((r): r is string => !!r);
+    if (ranges.length === 0) continue;
+    lines.push(`${dayCode} ${ranges.join(",")}`);
+  }
+  return lines;
+}
+
+type CertificationLike = {
+  certification_name: string;
+  organisme?: string | null;
+};
+
+/**
+ * Build the sitewide LocalBusiness JSON-LD (home page, richer than the
+ * per-service+city variant above): opening hours, areas served, known
+ * services and RGE-style credentials.
+ */
+export function buildSiteJsonLd(
+  tenant: Tenant,
+  settings: SiteSettings | null,
+  services: Service[],
+  areas: ServiceArea[],
+  certifications: CertificationLike[],
+  baseUrl: string,
+) {
+  const openingHours = buildOpeningHoursSchema(
+    (settings as { opening_hours?: Record<string, string | null> | null } | null)?.opening_hours,
+  );
+  const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));
+
+  const data: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: tenant.company_name,
+    url: baseUrl,
+    ...(settings?.logo_url && { logo: settings.logo_url, image: settings.logo_url }),
+    ...(tenant.phone && { telephone: tenant.phone }),
+    ...(tenant.email && { email: tenant.email }),
+    ...(openingHours.length > 0 && { openingHours }),
+  };
+
+  if (tenant.address || tenant.city) {
+    data.address = {
+      "@type": "PostalAddress",
+      ...(tenant.address && { streetAddress: tenant.address }),
+      ...(tenant.city && { addressLocality: tenant.city }),
+      addressCountry: "FR",
+    };
+  }
+
+  if (uniqueCities.length > 0) {
+    data.areaServed = uniqueCities.map((city) => ({ "@type": "City", name: city }));
+  }
+
+  if (services.length > 0) {
+    data.knowsAbout = services.map((s) => s.name);
+  }
+
+  if (certifications.length > 0) {
+    data.hasCredential = certifications.map((c) => ({
+      "@type": "EducationalOccupationalCredential",
+      name: c.certification_name,
+      ...(c.organisme && { credentialCategory: c.organisme }),
+    }));
+  }
+
+  return data;
+}
+
+/**
+ * Build a minimal sitemap.xml body covering the static pages, every active
+ * service, and every service+city page.
+ */
+export function buildSitemapXml(
+  services: Service[],
+  areas: ServiceArea[],
+  hasPortfolio: boolean,
+  baseUrl: string,
+): string {
+  const paths: string[] = ["", "/services", "/contact"];
+  if (hasPortfolio) paths.push("/realisations");
+  services.forEach((s) => paths.push(`/services/${s.slug}`));
+  areas.forEach((a) => {
+    const service = services.find((s) => s.id === a.service_id);
+    if (service) paths.push(`/${service.slug}-${a.city_slug}`);
+  });
+
+  const urlEntries = paths
+    .map((path) => `  <url><loc>${baseUrl}${path}</loc></url>`)
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries}\n</urlset>\n`;
+}
+
+/** Build robots.txt pointing crawlers at the sitemap. */
+export function buildRobotsTxt(baseUrl: string): string {
+  return `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+}
+
+/**
+ * Build llms.txt — a plain-language summary of the tenant for LLM crawlers,
+ * covering services, coverage area, certifications and contact details.
+ */
+export function buildLlmsTxt(
+  tenant: Tenant,
+  settings: SiteSettings | null,
+  services: Service[],
+  areas: ServiceArea[],
+  certifications: CertificationLike[],
+): string {
+  const lines: string[] = [`# ${tenant.company_name}`];
+
+  if (tenant.tagline) lines.push("", `> ${tenant.tagline}`);
+  lines.push("", buildPageDescription(settings, tenant));
+
+  if (services.length > 0) {
+    lines.push("", "## Services");
+    services.forEach((s) => lines.push(`- ${s.name}${s.description ? `: ${s.description}` : ""}`));
+  }
+
+  const cities = Array.from(new Set(areas.map((a) => a.city)));
+  if (cities.length > 0) {
+    lines.push("", "## Zones d'intervention", cities.join(", "));
+  }
+
+  if (certifications.length > 0) {
+    lines.push("", "## Certifications");
+    certifications.forEach((c) => lines.push(`- ${c.certification_name}`));
+  }
+
+  if (tenant.phone || tenant.email) {
+    lines.push("", "## Contact");
+    if (tenant.phone) lines.push(`Téléphone : ${tenant.phone}`);
+    if (tenant.email) lines.push(`Email : ${tenant.email}`);
+  }
+
+  return lines.join("\n") + "\n";
 }
