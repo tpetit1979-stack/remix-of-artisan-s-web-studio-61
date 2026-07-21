@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
 import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
+import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -12,6 +13,7 @@ import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { HowItWorks } from "@/components/public/HowItWorks";
 import { CTABanner } from "@/components/public/CTABanner";
 import { CertificationBadges } from "@/components/public/CertificationBadges";
+import { FaqSection } from "@/components/public/FaqSection";
 import { TeamSection } from "@/components/public/TeamSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,6 +52,10 @@ export const Route = createFileRoute("/")({
         {
           type: "application/ld+json",
           children: JSON.stringify(buildSiteJsonLd(tenant, settings, services, areas, certifications, baseUrl)),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(buildFaqJsonLd(buildFaqItems(tenant))),
         },
       ],
     };
@@ -274,6 +280,10 @@ function HomePage() {
             </div>
           </section>
         )}
+
+        <FaqSection />
+
+
 
         <CTABanner
           title={`Besoin d'un professionnel à ${tenant.city ?? "proximité"} ?`}
