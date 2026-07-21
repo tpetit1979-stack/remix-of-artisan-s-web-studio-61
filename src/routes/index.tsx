@@ -168,6 +168,8 @@ function HomePage() {
           </section>
         )}
 
+        <HowItWorks />
+
         <WhyChooseUs />
 
         <TeamSection />
