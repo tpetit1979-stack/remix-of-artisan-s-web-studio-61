@@ -108,8 +108,6 @@ function HomePage() {
     );
   }
 
-  const featuredServices = services.filter((s) => s.is_featured);
-  const displayServices = featuredServices.length > 0 ? featuredServices : services;
   const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));
   const publishedPortfolio = portfolio.filter((p) => p.is_published);
 
