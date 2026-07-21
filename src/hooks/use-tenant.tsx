@@ -18,9 +18,24 @@ const TenantContext = createContext<TenantContextType>({
   error: null,
 });
 
-export function TenantProvider({ children }: { children: ReactNode }) {
+export function TenantProvider({
+  children,
+  initialTenant = null,
+  initialSettings = null,
+}: {
+  children: ReactNode;
+  /** Tenant resolved server-side (root beforeLoad) for the SSR HTML. */
+  initialTenant?: Tenant | null;
+  /** Settings resolved server-side alongside initialTenant. */
+  initialSettings?: SiteSettings | null;
+}) {
   const impersonatedId = useImpersonation((s) => s.tenantId);
   const stopImpersonation = useImpersonation((s) => s.stopImpersonation);
+
+  // Only seed the "auto" (non-impersonated) query — never the impersonation
+  // one, otherwise a super-admin reloading mid-impersonation would have
+  // their query key seeded with the wrong (SSR-resolved public) tenant.
+  const canSeedFromSsr = !impersonatedId && !!initialTenant;
 
   // If impersonating, fetch by id; otherwise resolve from hostname.
   // Use maybeSingle() to avoid 406 (PGRST116) when the impersonated tenant
@@ -46,13 +61,18 @@ export function TenantProvider({ children }: { children: ReactNode }) {
     },
     staleTime: 1000 * 60 * 5,
     retry: 1,
+    ...(canSeedFromSsr ? { initialData: initialTenant } : {}),
   });
+
+  const canSeedSettingsFromSsr =
+    canSeedFromSsr && !!initialSettings && initialSettings.tenant_id === initialTenant?.id;
 
   const settingsQuery = useQuery({
     queryKey: ["site-settings", tenantQuery.data?.id],
     queryFn: () => fetchSiteSettings(tenantQuery.data!.id),
     enabled: !!tenantQuery.data?.id,
     staleTime: 1000 * 60 * 5,
+    ...(canSeedSettingsFromSsr ? { initialData: initialSettings } : {}),
   });
 
   return (

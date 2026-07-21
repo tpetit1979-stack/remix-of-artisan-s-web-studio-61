@@ -5,10 +5,19 @@ import { TenantProvider } from "@/hooks/use-tenant";
 import { AuthProvider } from "@/hooks/use-auth";
 import { FloatingCTA } from "@/components/public/FloatingCTA";
 import { TenantTheme } from "@/components/TenantTheme";
+import {
+  getTenantResolutionInput,
+  resolveTenantForSsr,
+  fetchSiteSettings,
+  type Tenant,
+  type SiteSettings,
+} from "@/lib/tenant";
 import appCss from "../styles.css?url";
 
 interface RouterContext {
   queryClient: QueryClient;
+  tenant: Tenant | null;
+  settings: SiteSettings | null;
 }
 
 function NotFoundComponent() {
@@ -34,6 +43,23 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
+  beforeLoad: async () => {
+    // Resolve the tenant server-side so the SSR HTML (SEO, JSON-LD, social
+    // previews) is already correct before hydration — not just once the
+    // client re-resolves from window.location. Any failure here (server fn
+    // wiring, DB error) falls back silently to { tenant: null, settings:
+    // null }, which makes TenantProvider behave exactly like it does today
+    // (client-side resolution only). Never let this take the whole route down.
+    try {
+      const input = await getTenantResolutionInput();
+      const tenant = await resolveTenantForSsr(input);
+      if (!tenant) return { tenant: null, settings: null };
+      const settings = await fetchSiteSettings(tenant.id).catch(() => null);
+      return { tenant, settings };
+    } catch {
+      return { tenant: null, settings: null };
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -65,11 +91,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
+  const { queryClient, tenant, settings } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TenantProvider>
+        <TenantProvider initialTenant={tenant} initialSettings={settings}>
           <TenantTheme />
           <Outlet />
           <FloatingCTA />
