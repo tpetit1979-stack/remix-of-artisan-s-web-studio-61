@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { CompanySearch } from "@/components/admin/CompanySearch";
 import { Wand2, Plus, X, ArrowLeft, ArrowRight, Check, Loader2, Shield, Globe, Flame, Zap, Droplets, Leaf } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { findExistingTenantByIdentity, generateSlug, toTenantMutationError } from "@/lib/tenant-admin";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
@@ -119,6 +119,8 @@ function OnboardingWizard() {
   const [newCity, setNewCity] = useState("");
   const [rgeCerts, setRgeCerts] = useState<RgeCertification[]>([]);
   const [isFetchingRge, setIsFetchingRge] = useState(false);
+  const [rgeAutoFetchAttempted, setRgeAutoFetchAttempted] = useState(false);
+  const [rgeAutoFetchedFor, setRgeAutoFetchedFor] = useState<string | null>(null);
   const [scrapedData, setScrapedData] = useState<QualitenrData | null>(null);
   const [isScraping, setIsScraping] = useState(false);
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
@@ -498,8 +500,21 @@ function OnboardingWizard() {
       toast.error(e.message || "Erreur lors de la récupération RGE");
     } finally {
       setIsFetchingRge(false);
+      setRgeAutoFetchAttempted(true);
     }
   }
+
+  // Auto-trigger the RGE lookup as soon as a valid 14-digit SIRET is present
+  // (typed manually or filled by CompanySearch) — no manual click required.
+  // Guarded by rgeAutoFetchedFor so it only fires once per distinct SIRET.
+  useEffect(() => {
+    const siret = data.siret.replace(/\s/g, "");
+    if (siret.length !== 14) return;
+    if (siret === rgeAutoFetchedFor || isFetchingRge) return;
+    setRgeAutoFetchedFor(siret);
+    fetchRgeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.siret]);
 
   async function scrapeQualitenrPage(companyName: string) {
     setIsScraping(true);
@@ -675,8 +690,18 @@ function OnboardingWizard() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Téléphone</Label>
-                <Input value={data.phone} onChange={(e) => update("phone", e.target.value)} />
+                <Label>Téléphone *</Label>
+                <Input
+                  value={data.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                  required
+                  aria-invalid={rgeAutoFetchAttempted && !data.phone.trim()}
+                />
+                {rgeAutoFetchAttempted && !data.phone.trim() && (
+                  <p className="text-xs text-amber-600">
+                    Non trouvé automatiquement — à remplir manuellement.
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Email</Label>
@@ -1103,7 +1128,7 @@ Tel: 04 67 00 00 00, certifié RGE.`}
         {step < 5 ? (
           <Button
             onClick={() => step === 0 ? goToAiStep() : setStep(step + 1)}
-            disabled={step === 0 && !data.company_name}
+            disabled={step === 0 && (!data.company_name || !data.phone.trim())}
           >
             Suivant
             <ArrowRight className="h-4 w-4 ml-2" />
