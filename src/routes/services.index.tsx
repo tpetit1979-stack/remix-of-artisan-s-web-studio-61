@@ -58,30 +58,41 @@ function ServicesPage() {
             <p className="mt-2 text-muted-foreground">
               {tenant?.company_name} vous propose une gamme complète de services professionnels.
             </p>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {services.map((s) => (
-                <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }}>
-                  <Card className="group h-full transition-all hover:border-primary hover:shadow-md">
-                    <CardContent className="flex h-full flex-col p-6">
-                      <h2 className="text-lg font-semibold text-foreground group-hover:text-primary">
-                        {s.name}
-                      </h2>
-                      {s.description && (
-                        <p className="mt-2 flex-1 text-sm text-muted-foreground line-clamp-3">{s.description}</p>
-                      )}
-                      <span className="mt-4 inline-flex items-center text-sm font-medium text-primary">
-                        En savoir plus <ArrowRight className="ml-1 h-3 w-3" />
-                      </span>
-                    </CardContent>
-                  </Card>
+            {services.length === 0 ? (
+              <div className="mt-10 rounded-lg border border-dashed border-border py-16 text-center">
+                <p className="text-muted-foreground">Aucun service disponible pour le moment.</p>
+                <Link to="/contact" className="mt-4 inline-block">
+                  <Button size="lg">Contactez-nous</Button>
                 </Link>
-              ))}
-            </div>
-            <div className="mt-10 text-center">
-              <Link to="/contact">
-                <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
-              </Link>
-            </div>
+              </div>
+            ) : (
+              <>
+                <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {services.map((s) => (
+                    <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }}>
+                      <Card className="group h-full transition-all hover:border-primary hover:shadow-md">
+                        <CardContent className="flex h-full flex-col p-6">
+                          <h2 className="text-lg font-semibold text-foreground group-hover:text-primary">
+                            {s.name}
+                          </h2>
+                          {s.description && (
+                            <p className="mt-2 flex-1 text-sm text-muted-foreground line-clamp-3">{s.description}</p>
+                          )}
+                          <span className="mt-4 inline-flex items-center text-sm font-medium text-primary">
+                            En savoir plus <ArrowRight className="ml-1 h-3 w-3" />
+                          </span>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-10 text-center">
+                  <Link to="/contact">
+                    <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
