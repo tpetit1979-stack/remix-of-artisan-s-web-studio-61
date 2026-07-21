@@ -13,6 +13,7 @@ import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { HowItWorks } from "@/components/public/HowItWorks";
 import { CTABanner } from "@/components/public/CTABanner";
 import { CertificationBadges } from "@/components/public/CertificationBadges";
+import { FaqSection } from "@/components/public/FaqSection";
 import { TeamSection } from "@/components/public/TeamSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
