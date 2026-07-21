@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchPortfolio, fetchServices } from "@/lib/tenant";
+import { fetchFirstActiveTenant, fetchSiteSettings, fetchPortfolio, fetchServices } from "@/lib/tenant";
+import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
@@ -10,14 +11,25 @@ import { MapPin } from "lucide-react";
 import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/realisations")({
-  head: () => ({
-    meta: [
-      { title: "Nos réalisations" },
-      { name: "description", content: "Découvrez nos réalisations et projets récents." },
-      { property: "og:title", content: "Nos réalisations" },
-      { property: "og:description", content: "Découvrez nos réalisations et projets récents." },
-    ],
-  }),
+  loader: async () => {
+    const tenant = await fetchFirstActiveTenant();
+    const settings = await fetchSiteSettings(tenant.id);
+    return { tenant, settings };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { tenant, settings } = loaderData;
+    const title = buildPageTitle(settings, tenant, "Nos réalisations");
+    const description = `Découvrez les réalisations de ${tenant.company_name}${tenant.city ? ` à ${tenant.city} et dans les environs` : ""}.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+    };
+  },
   component: RealisationsPage,
 });
 

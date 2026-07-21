@@ -38,12 +38,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "lignia web" },
-      { name: "description", content: "Site professionnel artisan" },
-      { property: "og:title", content: "lignia web" },
-      { name: "twitter:title", content: "lignia web" },
-      { property: "og:description", content: "Site professionnel artisan" },
-      { name: "twitter:description", content: "Site professionnel artisan" },
       { name: "twitter:card", content: "summary" },
       { property: "og:type", content: "website" },
     ],

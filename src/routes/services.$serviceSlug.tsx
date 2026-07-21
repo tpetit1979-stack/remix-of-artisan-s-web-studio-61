@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchServiceAreas, fetchPortfolio, fetchServices } from "@/lib/tenant";
+import { fetchFirstActiveTenant, fetchSiteSettings, fetchServiceAreas, fetchPortfolio, fetchServices } from "@/lib/tenant";
+import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
@@ -11,6 +12,31 @@ import { Phone, MapPin, ArrowRight } from "lucide-react";
 import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/services/$serviceSlug")({
+  loader: async ({ params }) => {
+    const tenant = await fetchFirstActiveTenant();
+    const [settings, services] = await Promise.all([
+      fetchSiteSettings(tenant.id),
+      fetchServices(tenant.id),
+    ]);
+    const service = services.find((s) => s.slug === params.serviceSlug);
+    if (!service) throw notFound();
+    return { tenant, settings, service };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { tenant, settings, service } = loaderData;
+    const title = buildPageTitle(settings, tenant, service.name);
+    const description =
+      service.description || `${service.name} par ${tenant.company_name}. Devis gratuit et intervention rapide.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+    };
+  },
   component: ServiceDetailPage,
 });
 

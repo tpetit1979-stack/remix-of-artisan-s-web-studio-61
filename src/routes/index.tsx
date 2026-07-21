@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
+import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
+import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -17,44 +18,46 @@ import { ArrowRight, MapPin } from "lucide-react";
 import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const tenant = await fetchFirstActiveTenant();
+    const [settings, services, areas, { data: certifications }] = await Promise.all([
+      fetchSiteSettings(tenant.id),
+      fetchServices(tenant.id),
+      fetchServiceAreas(tenant.id),
+      supabase
+        .from("tenant_certifications")
+        .select("certification_name, organisme")
+        .eq("tenant_id", tenant.id)
+        .eq("is_active", true),
+    ]);
+    return { tenant, settings, services, areas, certifications: certifications ?? [] };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { tenant, settings, services, areas, certifications } = loaderData;
+    const title = buildPageTitle(settings, tenant);
+    const description = buildPageDescription(settings, tenant);
+    const baseUrl = tenant.domain ? `https://${tenant.domain}` : "";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(buildSiteJsonLd(tenant, settings, services, areas, certifications, baseUrl)),
+        },
+      ],
+    };
+  },
   component: HomePage,
 });
 
-/**
- * Build a LocalBusiness JSON-LD blob for the home page from tenant + settings.
- * Only fields with real data are included — never emit empty `address`,
- * `geo` or `openingHours` placeholders that crawlers would penalise.
- */
-function buildLocalBusinessJsonLd(
-  tenant: NonNullable<ReturnType<typeof useTenant>["tenant"]>,
-  settings: ReturnType<typeof useTenant>["settings"],
-) {
-  const data: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: tenant.company_name,
-    ...(settings?.logo_url && { logo: settings.logo_url, image: settings.logo_url }),
-    ...(tenant.phone && { telephone: tenant.phone }),
-    ...(tenant.email && { email: tenant.email }),
-  };
-
-  if (tenant.address || tenant.city) {
-    data.address = {
-      "@type": "PostalAddress",
-      ...(tenant.address && { streetAddress: tenant.address }),
-      ...(tenant.city && { addressLocality: tenant.city }),
-      addressCountry: "FR",
-    };
-  }
-
-  // `geo` and `openingHoursSpecification` intentionally omitted —
-  // the schema does not yet store latitude/longitude or opening hours.
-
-  return data;
-}
-
 function HomePage() {
-  const { tenant, settings } = useTenant();
+  const { tenant, settings, isLoading, error } = useTenant();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -74,10 +77,24 @@ function HomePage() {
     enabled: !!tenant?.id,
   });
 
-  if (!tenant) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!tenant || error) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-4 text-center">
+        <p className="text-lg font-medium text-foreground">Impossible de charger ce site</p>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          Une erreur est survenue lors du chargement des informations. Veuillez réessayer dans quelques instants.
+        </p>
+        <a href="/" className="text-sm font-medium text-primary hover:underline">
+          Retour à l'accueil
+        </a>
       </div>
     );
   }
@@ -87,15 +104,8 @@ function HomePage() {
   const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));
   const publishedPortfolio = portfolio.filter((p) => p.is_published);
 
-  const jsonLd = buildLocalBusinessJsonLd(tenant, settings);
-
   return (
     <div className="flex min-h-screen flex-col">
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <PublicHeader />
 
       <main className="flex-1">

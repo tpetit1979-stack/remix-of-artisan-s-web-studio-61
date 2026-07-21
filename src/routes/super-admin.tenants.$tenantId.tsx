@@ -1085,8 +1085,8 @@ function CertificationsTab({ tenantId, tenant, certifications }: { tenantId: str
 // ═══════════════════════════════════════════════
 // AI TAB
 // ═══════════════════════════════════════════════
-function generateCitySlug(city: string) {
-  return city
+function aiTabSlug(name: string) {
+  return name
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -1094,15 +1094,19 @@ function generateCitySlug(city: string) {
     .replace(/^-|-$/g, "");
 }
 
+type SuggestedService = { name: string; description?: string; is_featured?: boolean };
+
 function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; settings: any }) {
   const queryClient = useQueryClient();
   const [brief, setBrief] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [suggestedServices, setSuggestedServices] = useState<SuggestedService[]>([]);
+  const [selectedSuggestedServices, setSelectedSuggestedServices] = useState<Record<string, boolean>>({});
   const [suggestedCities, setSuggestedCities] = useState<string[]>([]);
   const [selectedCities, setSelectedCities] = useState<Record<string, boolean>>({});
   const [selectedServiceIds, setSelectedServiceIds] = useState<Record<string, boolean>>({});
   const [markFirstPrimary, setMarkFirstPrimary] = useState(true);
-  const [isInsertingAreas, setIsInsertingAreas] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
 
   const { data: tenantServices = [] } = useQuery({
     queryKey: ["sa-services-for-ai", tenantId],
@@ -1152,6 +1156,8 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
     }
   }, [tenantServices]);
 
+  const activeSlugs = useMemo(() => new Set(tenantServices.map((s: any) => s.slug)), [tenantServices]);
+
   async function regenerate() {
     if (!brief.trim()) { toast.error("Le brief est vide"); return; }
     setIsGenerating(true);
@@ -1173,12 +1179,21 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
       }
       const cities: string[] = Array.isArray(result.cities) ? result.cities.filter(Boolean) : [];
       setSuggestedCities(cities);
-      const preSel: Record<string, boolean> = {};
-      cities.forEach((c) => { preSel[c] = true; });
-      setSelectedCities(preSel);
+      const preSelCities: Record<string, boolean> = {};
+      cities.forEach((c) => { preSelCities[c] = true; });
+      setSelectedCities(preSelCities);
+
+      const svcs: SuggestedService[] = Array.isArray(result.services)
+        ? result.services.filter((s: any) => s?.name)
+        : [];
+      setSuggestedServices(svcs);
+      const preSelServices: Record<string, boolean> = {};
+      svcs.forEach((s) => { preSelServices[aiTabSlug(s.name)] = !activeSlugs.has(aiTabSlug(s.name)); });
+      setSelectedSuggestedServices(preSelServices);
+
       queryClient.invalidateQueries({ queryKey: ["sa-settings", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["sa-tenant", tenantId] });
-      toast.success(`Contenu régénéré ! ${cities.length} ville(s) suggérée(s).`);
+      toast.success(`Contenu régénéré ! ${svcs.length} service(s) et ${cities.length} ville(s) suggéré(s).`);
     } catch (e: any) {
       toast.error(e.message || "Erreur");
     } finally {
@@ -1192,45 +1207,82 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
     return s;
   }, [existingAreas]);
 
-  async function insertSelectedAreas() {
+  async function applyServicesAndAreas() {
+    const servicesToCreate = suggestedServices
+      .filter((s) => selectedSuggestedServices[aiTabSlug(s.name)])
+      .map((s, idx) => ({
+        tenant_id: tenantId,
+        name: s.name,
+        slug: aiTabSlug(s.name),
+        description: s.description ?? "",
+        is_featured: s.is_featured ?? false,
+        is_active: true,
+        sort_order: tenantServices.length + idx,
+      }));
     const cities = suggestedCities.filter((c) => selectedCities[c]);
-    const services = tenantServices.filter((s) => selectedServiceIds[s.id]);
-    if (cities.length === 0) { toast.error("Sélectionnez au moins une ville"); return; }
-    if (services.length === 0) { toast.error("Sélectionnez au moins un service"); return; }
 
-    setIsInsertingAreas(true);
+    if (servicesToCreate.length === 0 && cities.length === 0) {
+      toast.error("Sélectionnez au moins un service ou une ville");
+      return;
+    }
+
+    setIsApplying(true);
     try {
-      const rows = services.flatMap((svc) =>
-        cities.map((city, idx) => ({
-          tenant_id: tenantId,
-          service_id: svc.id,
-          city,
-          city_slug: generateCitySlug(city),
-          is_primary: markFirstPrimary && idx === 0,
-        }))
-      );
-      const fresh = rows.filter((r) => !existingPairSet.has(`${r.service_id}::${r.city_slug}`));
-      if (fresh.length === 0) {
-        toast.info("Toutes les paires service × ville existent déjà.");
-        return;
+      let createdServices: any[] = [];
+      if (servicesToCreate.length > 0) {
+        const { data, error } = await supabase
+          .from("services")
+          .upsert(servicesToCreate, { onConflict: "tenant_id,slug" })
+          .select();
+        if (error) throw error;
+        createdServices = data ?? [];
+        queryClient.invalidateQueries({ queryKey: ["sa-services", tenantId] });
+        queryClient.invalidateQueries({ queryKey: ["sa-services-for-ai", tenantId] });
       }
-      const { data: inserted, error } = await supabase
-        .from("service_areas")
-        .upsert(fresh, { onConflict: "service_id,city_slug", ignoreDuplicates: true })
-        .select();
-      if (error) throw error;
-      queryClient.invalidateQueries({ queryKey: ["sa-areas", tenantId] });
-      queryClient.invalidateQueries({ queryKey: ["sa-areas-for-ai", tenantId] });
-      toast.success(`${inserted?.length ?? fresh.length} zone(s) insérée(s) (${cities.length} ville(s) × ${services.length} service(s))`);
+
+      let insertedAreasCount = 0;
+      if (cities.length > 0) {
+        const existingSelected = tenantServices.filter((s) => selectedServiceIds[s.id]);
+        const byId = new Map<string, any>();
+        [...existingSelected, ...createdServices].forEach((svc) => byId.set(svc.id, svc));
+        const services = Array.from(byId.values());
+
+        if (services.length === 0) {
+          toast.error("Aucun service à rattacher aux villes sélectionnées");
+        } else {
+          const rows = services.flatMap((svc) =>
+            cities.map((city, idx) => ({
+              tenant_id: tenantId,
+              service_id: svc.id,
+              city,
+              city_slug: aiTabSlug(city),
+              is_primary: markFirstPrimary && idx === 0,
+            }))
+          );
+          const fresh = rows.filter((r) => !existingPairSet.has(`${r.service_id}::${r.city_slug}`));
+          if (fresh.length > 0) {
+            const { data: inserted, error } = await supabase
+              .from("service_areas")
+              .upsert(fresh, { onConflict: "service_id,city_slug", ignoreDuplicates: true })
+              .select();
+            if (error) throw error;
+            insertedAreasCount = inserted?.length ?? fresh.length;
+            queryClient.invalidateQueries({ queryKey: ["sa-areas", tenantId] });
+            queryClient.invalidateQueries({ queryKey: ["sa-areas-for-ai", tenantId] });
+          }
+        }
+      }
+
+      toast.success(`${createdServices.length} service(s) et ${insertedAreasCount} zone(s) appliqué(s)`);
     } catch (e: any) {
-      toast.error(e.message || "Erreur d'insertion");
+      toast.error(e.message || "Erreur d'application");
     } finally {
-      setIsInsertingAreas(false);
+      setIsApplying(false);
     }
   }
 
   const cityIsCovered = (city: string) => {
-    const slug = generateCitySlug(city);
+    const slug = aiTabSlug(city);
     const activeServiceIds = tenantServices.filter((s) => selectedServiceIds[s.id]).map((s) => s.id);
     if (activeServiceIds.length === 0) return false;
     return activeServiceIds.every((sid) => existingPairSet.has(`${sid}::${slug}`));
@@ -1253,6 +1305,43 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
         </CardContent>
       </Card>
 
+      {suggestedServices.length > 0 && (
+        <Card>
+          <CardContent className="pt-4 space-y-4">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Wrench className="h-4 w-4 text-primary" /> Services suggérés par l'IA ({suggestedServices.length})
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Cochez les services à créer dans <code>services</code> (upsert sur <code>tenant_id, slug</code>). Les services déjà actifs sont ignorés par défaut.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {suggestedServices.map((s) => {
+                const slug = aiTabSlug(s.name);
+                const covered = activeSlugs.has(slug);
+                return (
+                  <label
+                    key={slug}
+                    className={`flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-sm cursor-pointer ${
+                      covered ? "border-muted bg-muted/40 text-muted-foreground" : "border-border"
+                    }`}
+                  >
+                    <Checkbox
+                      checked={!!selectedSuggestedServices[slug]}
+                      onCheckedChange={(v) =>
+                        setSelectedSuggestedServices((p) => ({ ...p, [slug]: !!v }))
+                      }
+                    />
+                    <span>{s.name}</span>
+                    {s.is_featured && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Vedette</Badge>}
+                    {covered && <span className="text-[10px] uppercase">déjà</span>}
+                  </label>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {suggestedCities.length > 0 && (
         <Card>
           <CardContent className="pt-4 space-y-4">
@@ -1260,7 +1349,7 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
               <MapPin className="h-4 w-4 text-primary" /> Villes suggérées par l'IA ({suggestedCities.length})
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Cochez les villes à insérer dans <code>service_areas</code>. Chaque ville sera rattachée à chaque service sélectionné ci-dessous. Les paires déjà existantes sont ignorées (upsert sur <code>service_id, city_slug</code>).
+              Cochez les villes à insérer dans <code>service_areas</code>. Chaque ville sera rattachée à chaque service sélectionné ci-dessous, ainsi qu'aux services suggérés cochés ci-dessus. Les paires déjà existantes sont ignorées (upsert sur <code>service_id, city_slug</code>).
             </p>
 
             <div>
@@ -1319,16 +1408,18 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
               <Checkbox checked={markFirstPrimary} onCheckedChange={(v) => setMarkFirstPrimary(!!v)} />
               Marquer la 1<sup>re</sup> ville cochée comme ville principale (par service)
             </label>
-
-            <Button onClick={insertSelectedAreas} disabled={isInsertingAreas || tenantServices.length === 0}>
-              {isInsertingAreas ? (
-                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Insertion...</>
-              ) : (
-                <><Plus className="h-4 w-4 mr-2" /> Insérer les zones sélectionnées</>
-              )}
-            </Button>
           </CardContent>
         </Card>
+      )}
+
+      {(suggestedServices.length > 0 || suggestedCities.length > 0) && (
+        <Button onClick={applyServicesAndAreas} disabled={isApplying}>
+          {isApplying ? (
+            <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Application...</>
+          ) : (
+            <><Plus className="h-4 w-4 mr-2" /> Appliquer les services et zones sélectionnés</>
+          )}
+        </Button>
       )}
     </div>
   );
