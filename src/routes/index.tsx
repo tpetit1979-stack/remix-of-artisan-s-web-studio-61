@@ -24,7 +24,8 @@ import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const tenant = await fetchFirstActiveTenant();
+    const input = await getTenantResolutionInput();
+    const tenant = (await resolveTenantForSsr(input)) ?? (await fetchFirstActiveTenant());
     const [settings, services, areas, { data: certifications }] = await Promise.all([
       fetchSiteSettings(tenant.id),
       fetchServices(tenant.id),
