@@ -16,6 +16,7 @@ import { StatsCounter } from "@/components/public/StatsCounter";
 import { CTABanner } from "@/components/public/CTABanner";
 import { CertificationBadges } from "@/components/public/CertificationBadges";
 import { FaqSection } from "@/components/public/FaqSection";
+import { SeoLongText } from "@/components/public/SeoLongText";
 import { TeamSection } from "@/components/public/TeamSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -234,7 +235,7 @@ function HomePage() {
 
         <FaqSection />
 
-
+        <SeoLongText tenant={tenant} services={services} cities={uniqueCities} />
 
         <CTABanner
           title={`Besoin d'un professionnel à ${tenant.city ?? "proximité"} ?`}
