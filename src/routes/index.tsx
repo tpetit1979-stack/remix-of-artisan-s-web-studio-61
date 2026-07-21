@@ -281,6 +281,10 @@ function HomePage() {
           </section>
         )}
 
+        <FaqSection />
+
+
+
         <CTABanner
           title={`Besoin d'un professionnel à ${tenant.city ?? "proximité"} ?`}
           subtitle="Appelez-nous maintenant ou remplissez le formulaire pour recevoir votre devis gratuit en moins de 24h."
