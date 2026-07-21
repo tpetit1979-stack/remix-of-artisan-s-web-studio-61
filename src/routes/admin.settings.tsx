@@ -485,19 +485,8 @@ function AdminSettings() {
 
 
       {/* SEO */}
-      <Card>
-        <CardHeader><CardTitle>SEO</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Meta titre</Label>
-            <Input value={form.seo_meta_title ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_title: e.target.value }))} />
-          </div>
-          <div className="space-y-2">
-            <Label>Meta description</Label>
-            <Input value={form.seo_meta_description ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_description: e.target.value }))} />
-          </div>
-        </CardContent>
-      </Card>
+      <SeoSection form={form} setForm={setForm} tenant={tenant} />
+
 
       <div className="flex justify-end">
         <Button size="lg" onClick={() => saveSettings.mutate()} disabled={saveSettings.isPending}>
@@ -507,3 +496,117 @@ function AdminSettings() {
     </div>
   );
 }
+
+/* ── SEO section with live Google preview + character counters ── */
+
+function buildDefaultSeoTitle(tenant: any): string {
+  const company = tenant?.company_name ?? "Votre entreprise";
+  const city = tenant?.city;
+  const trade = tenant?.trade_label ?? tenant?.trade ?? "Artisan";
+  const base = city ? `${trade} à ${city} — ${company}` : `${trade} — ${company}`;
+  return `${base} | Devis gratuit`;
+}
+
+function buildDefaultSeoDescription(tenant: any): string {
+  const company = tenant?.company_name ?? "Notre entreprise";
+  const city = tenant?.city;
+  const trade = (tenant?.trade_label ?? tenant?.trade ?? "artisan").toString().toLowerCase();
+  const where = city ? `à ${city} et alentours` : "près de chez vous";
+  return `${company}, ${trade} certifié, intervient ${where}. Devis gratuit, intervention rapide, travail soigné. Contactez-nous dès aujourd'hui.`.slice(0, 160);
+}
+
+function counterColor(len: number, min: number, max: number): string {
+  if (len === 0) return "text-muted-foreground";
+  if (len < min) return "text-orange-600";
+  if (len > max) return "text-red-600";
+  return "text-emerald-600";
+}
+
+function counterBarColor(len: number, min: number, max: number): string {
+  if (len === 0) return "bg-muted";
+  if (len < min) return "bg-orange-500";
+  if (len > max) return "bg-red-500";
+  return "bg-emerald-500";
+}
+
+function CharCounter({ len, min, max, hardMax }: { len: number; min: number; max: number; hardMax: number }) {
+  const pct = Math.min(100, (len / hardMax) * 100);
+  const label =
+    len === 0 ? "Vide — un titre auto sera utilisé"
+    : len < min ? `Trop court (min. ${min})`
+    : len > max ? `Trop long (max. ${max})`
+    : "Longueur optimale";
+  return (
+    <div className="space-y-1">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div className={`h-full transition-all ${counterBarColor(len, min, max)}`} style={{ width: `${pct}%` }} />
+      </div>
+      <div className="flex justify-between text-xs">
+        <span className={counterColor(len, min, max)}>{label}</span>
+        <span className={`font-mono ${counterColor(len, min, max)}`}>{len} / {max}</span>
+      </div>
+    </div>
+  );
+}
+
+function GooglePreview({ title, description, url }: { title: string; description: string; url: string }) {
+  return (
+    <div className="rounded-lg border bg-white p-4 font-sans">
+      <div className="text-xs text-[#202124]/70 truncate">{url.replace(/^https?:\/\//, "")}</div>
+      <div className="mt-0.5 text-[18px] leading-6 text-[#1a0dab] hover:underline cursor-pointer truncate">
+        {title || "Titre de votre page"}
+      </div>
+      <div className="mt-1 text-sm leading-5 text-[#4d5156] line-clamp-2">
+        {description || "La description de votre page apparaîtra ici dans les résultats de recherche Google."}
+      </div>
+    </div>
+  );
+}
+
+function SeoSection({ form, setForm, tenant }: { form: any; setForm: any; tenant: any }) {
+  const defaultTitle = useMemo(() => buildDefaultSeoTitle(tenant), [tenant]);
+  const defaultDescription = useMemo(() => buildDefaultSeoDescription(tenant), [tenant]);
+
+  const titleValue = form.seo_meta_title ?? "";
+  const descValue = form.seo_meta_description ?? "";
+  const previewTitle = titleValue.trim() || defaultTitle;
+  const previewDesc = descValue.trim() || defaultDescription;
+
+  const siteUrl = typeof window !== "undefined"
+    ? `${window.location.protocol}//${window.location.host}`
+    : "https://votresite.fr";
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>SEO</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Ces champs contrôlent l'aperçu Google de votre page d'accueil. Laissez vide pour utiliser un titre généré automatiquement.
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-2">
+          <Label>Meta titre</Label>
+          <Input
+            value={titleValue}
+            placeholder={defaultTitle}
+            onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_title: e.target.value }))}
+          />
+          <CharCounter len={titleValue.length} min={50} max={60} hardMax={65} />
+          <GooglePreview title={previewTitle} description={previewDesc} url={siteUrl} />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Meta description</Label>
+          <Input
+            value={descValue}
+            placeholder={defaultDescription}
+            onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_description: e.target.value }))}
+          />
+          <CharCounter len={descValue.length} min={120} max={155} hardMax={160} />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
