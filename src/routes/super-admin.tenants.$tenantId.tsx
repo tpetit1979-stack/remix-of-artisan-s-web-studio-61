@@ -452,8 +452,13 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
 
       <Card>
         <CardContent className="pt-4 space-y-3">
-          <Field label="Texte SEO boost">
-            <Textarea value={form.seo_boost_text ?? ""} onChange={e => set("seo_boost_text", e.target.value)} rows={3} placeholder="Texte enrichi pour le SEO..." />
+          <Field label="Texte SEO long (éditorial page d'accueil)">
+            <Textarea
+              value={form.seo_boost_text ?? ""}
+              onChange={e => set("seo_boost_text", e.target.value)}
+              rows={10}
+              placeholder="Ce texte s'affiche en bas de la page d'accueil. Généré par l'IA, éditable ici."
+            />
           </Field>
           <Separator />
           <div className="flex items-center gap-6">
