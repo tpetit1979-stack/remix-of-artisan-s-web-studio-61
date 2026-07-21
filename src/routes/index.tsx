@@ -57,7 +57,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { tenant, settings } = useTenant();
+  const { tenant, settings, isLoading, error } = useTenant();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -77,10 +77,24 @@ function HomePage() {
     enabled: !!tenant?.id,
   });
 
-  if (!tenant) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!tenant || error) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-4 text-center">
+        <p className="text-lg font-medium text-foreground">Impossible de charger ce site</p>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          Une erreur est survenue lors du chargement des informations. Veuillez réessayer dans quelques instants.
+        </p>
+        <a href="/" className="text-sm font-medium text-primary hover:underline">
+          Retour à l'accueil
+        </a>
       </div>
     );
   }
