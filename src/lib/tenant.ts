@@ -1,3 +1,5 @@
+import { createServerFn } from "@tanstack/react-start";
+import { getRequestUrl } from "@tanstack/react-start/server";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -55,6 +57,7 @@ export async function fetchFirstActiveTenant() {
     .from("tenants")
     .select("*")
     .eq("is_active", true)
+    .order("created_at", { ascending: true })
     .limit(1)
     .single();
   if (error) throw error;
@@ -68,6 +71,83 @@ export async function fetchTenant(): Promise<Tenant> {
     return fetchTenantByDomain(result.value);
   }
   return fetchFirstActiveTenant();
+}
+
+/**
+ * Normalize a Host header / hostname for tenant lookup: lowercase, strip
+ * the port, and drop a leading "www." so apex and www resolve the same
+ * tenant regardless of which form is stored in tenants.domain.
+ */
+export function normalizeHostname(host: string): string {
+  return host.trim().toLowerCase().split(":")[0].replace(/^www\./, "");
+}
+
+function isDevOrPreviewHost(host: string): boolean {
+  return (
+    !host ||
+    host === "localhost" ||
+    host.includes("lovable.app") ||
+    host.includes("lovableproject.com") ||
+    host.includes("127.0.0.1")
+  );
+}
+
+export async function fetchTenantByHostname(host: string): Promise<Tenant | null> {
+  const normalized = normalizeHostname(host);
+  if (isDevOrPreviewHost(normalized)) return null;
+  const { data, error } = await supabase
+    .from("tenants")
+    .select("*")
+    .or(`domain.eq.${normalized},domain.eq.www.${normalized}`)
+    .eq("is_active", true)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Server-only: read the incoming request's URL so the root route's
+ * beforeLoad can resolve the tenant during SSR instead of only after
+ * client hydration. The framework strips the handler body (and this
+ * server-only import) from the client bundle; on the client this becomes
+ * a network call instead.
+ */
+export const getTenantResolutionInput = createServerFn({ method: "GET" }).handler(async () => {
+  const url = getRequestUrl({ xForwardedHost: true });
+  return {
+    hostname: url.hostname,
+    tenantSlugParam: url.searchParams.get("tenant"),
+  };
+});
+
+/**
+ * Resolve the tenant for an SSR request: explicit ?tenant= param first,
+ * then custom domain, then the same "first active tenant" fallback used
+ * client-side for dev/preview hosts. Never throws — callers get null on
+ * any failure and fall back to the existing client-side resolution.
+ */
+export async function resolveTenantForSsr(input: {
+  hostname: string;
+  tenantSlugParam: string | null;
+}): Promise<Tenant | null> {
+  if (input.tenantSlugParam) {
+    try {
+      return await fetchTenantBySlug(input.tenantSlugParam);
+    } catch {
+      // Unknown slug — fall through to hostname/default resolution.
+    }
+  }
+  try {
+    const byHost = await fetchTenantByHostname(input.hostname);
+    if (byHost) return byHost;
+  } catch {
+    // Domain lookup failed — fall through to the default tenant.
+  }
+  try {
+    return await fetchFirstActiveTenant();
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchSiteSettings(tenantId: string): Promise<SiteSettings> {
