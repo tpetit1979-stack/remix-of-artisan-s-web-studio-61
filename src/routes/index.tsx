@@ -53,6 +53,10 @@ export const Route = createFileRoute("/")({
           type: "application/ld+json",
           children: JSON.stringify(buildSiteJsonLd(tenant, settings, services, areas, certifications, baseUrl)),
         },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(buildFaqJsonLd(buildFaqItems(tenant))),
+        },
       ],
     };
   },
