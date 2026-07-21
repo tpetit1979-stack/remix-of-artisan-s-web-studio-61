@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
+import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio, getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +24,8 @@ import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const tenant = await fetchFirstActiveTenant();
+    const input = await getTenantResolutionInput();
+    const tenant = (await resolveTenantForSsr(input)) ?? (await fetchFirstActiveTenant());
     const [settings, services, areas, { data: certifications }] = await Promise.all([
       fetchSiteSettings(tenant.id),
       fetchServices(tenant.id),
