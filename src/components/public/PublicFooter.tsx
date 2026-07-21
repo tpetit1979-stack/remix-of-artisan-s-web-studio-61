@@ -67,27 +67,29 @@ export function PublicFooter() {
           </ul>
         </div>
 
-        <div>
-          <h3 className="mb-3 text-sm font-semibold text-foreground">Zones d'intervention</h3>
-          <ul className="space-y-1.5">
-            {uniqueCities.slice(0, 10).map((city) => {
-              const area = areas.find((a) => a.city === city);
-              const service = area ? services.find((s) => s.id === area.service_id) : null;
-              if (!area || !service) return null;
-              return (
-                <li key={city}>
-                  <Link
-                    to="/$slug"
-                    params={{ slug: `${service.slug}-${area.city_slug}` }}
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
-                    {city}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        {uniqueCities.length > 0 && (
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-foreground">Zones d'intervention</h3>
+            <ul className="space-y-1.5">
+              {uniqueCities.slice(0, 10).map((city) => {
+                const area = areas.find((a) => a.city === city);
+                const service = area ? services.find((s) => s.id === area.service_id) : null;
+                if (!area || !service) return null;
+                return (
+                  <li key={city}>
+                    <Link
+                      to="/$slug"
+                      params={{ slug: `${service.slug}-${area.city_slug}` }}
+                      className="text-sm text-muted-foreground hover:text-foreground"
+                    >
+                      {city}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
         <div>
           <h3 className="mb-3 text-sm font-semibold text-foreground">Navigation</h3>
