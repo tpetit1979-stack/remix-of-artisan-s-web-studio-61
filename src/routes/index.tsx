@@ -11,6 +11,7 @@ import { HeroSection } from "@/components/public/HeroSection";
 
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { HowItWorks } from "@/components/public/HowItWorks";
+import { FeaturedServices } from "@/components/public/FeaturedServices";
 import { StatsCounter } from "@/components/public/StatsCounter";
 import { CTABanner } from "@/components/public/CTABanner";
 import { CertificationBadges } from "@/components/public/CertificationBadges";
