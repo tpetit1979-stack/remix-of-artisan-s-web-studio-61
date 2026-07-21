@@ -9,6 +9,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { HeroSection } from "@/components/public/HeroSection";
 
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
+import { HowItWorks } from "@/components/public/HowItWorks";
 import { CTABanner } from "@/components/public/CTABanner";
 import { CertificationBadges } from "@/components/public/CertificationBadges";
 import { TeamSection } from "@/components/public/TeamSection";
@@ -166,6 +167,8 @@ function HomePage() {
             </div>
           </section>
         )}
+
+        <HowItWorks />
 
         <WhyChooseUs />
 
