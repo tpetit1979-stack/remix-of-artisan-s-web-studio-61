@@ -485,19 +485,8 @@ function AdminSettings() {
 
 
       {/* SEO */}
-      <Card>
-        <CardHeader><CardTitle>SEO</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Meta titre</Label>
-            <Input value={form.seo_meta_title ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_title: e.target.value }))} />
-          </div>
-          <div className="space-y-2">
-            <Label>Meta description</Label>
-            <Input value={form.seo_meta_description ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, seo_meta_description: e.target.value }))} />
-          </div>
-        </CardContent>
-      </Card>
+      <SeoSection form={form} setForm={setForm} tenant={tenant} />
+
 
       <div className="flex justify-end">
         <Button size="lg" onClick={() => saveSettings.mutate()} disabled={saveSettings.isPending}>
