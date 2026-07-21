@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchServices } from "@/lib/tenant";
+import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices } from "@/lib/tenant";
+import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
@@ -10,14 +11,31 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/services/")({
-  head: () => ({
-    meta: [
-      { title: "Nos services" },
-      { name: "description", content: "Découvrez l'ensemble de nos services professionnels." },
-      { property: "og:title", content: "Nos services" },
-      { property: "og:description", content: "Découvrez l'ensemble de nos services professionnels." },
-    ],
-  }),
+  loader: async () => {
+    const tenant = await fetchFirstActiveTenant();
+    const [settings, services] = await Promise.all([
+      fetchSiteSettings(tenant.id),
+      fetchServices(tenant.id),
+    ]);
+    return { tenant, settings, services };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { tenant, settings, services } = loaderData;
+    const title = buildPageTitle(settings, tenant, "Nos services");
+    const topServiceNames = services.slice(0, 3).map((s) => s.name).join(", ");
+    const description = topServiceNames
+      ? `${tenant.company_name} vous propose : ${topServiceNames}${services.length > 3 ? " et plus encore" : ""}.`
+      : `Découvrez l'ensemble des services proposés par ${tenant.company_name}.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+    };
+  },
   component: ServicesPage,
 });
 

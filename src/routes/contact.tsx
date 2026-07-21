@@ -2,7 +2,8 @@ import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchServices } from "@/lib/tenant";
+import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices } from "@/lib/tenant";
+import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { Button } from "@/components/ui/button";
@@ -18,14 +19,27 @@ export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>): { service?: string } => ({
     service: typeof search.service === "string" ? search.service : undefined,
   }),
-  head: () => ({
-    meta: [
-      { title: "Contact – Demandez votre devis gratuit" },
-      { name: "description", content: "Contactez-nous pour un devis gratuit et personnalisé. Réponse rapide garantie." },
-      { property: "og:title", content: "Contact – Demandez votre devis gratuit" },
-      { property: "og:description", content: "Contactez-nous pour un devis gratuit et personnalisé. Réponse rapide garantie." },
-    ],
-  }),
+  loader: async () => {
+    const tenant = await fetchFirstActiveTenant();
+    const settings = await fetchSiteSettings(tenant.id);
+    return { tenant, settings };
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { tenant, settings } = loaderData;
+    const title = buildPageTitle(settings, tenant, "Contact – Demandez votre devis gratuit");
+    const description = `Contactez ${tenant.company_name} pour un devis gratuit et personnalisé. Réponse rapide garantie.`;
+    const baseUrl = tenant.domain ? `https://${tenant.domain}` : "";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+      links: baseUrl ? [{ rel: "canonical", href: `${baseUrl}/contact` }] : [],
+    };
+  },
   component: ContactPage,
 });
 
