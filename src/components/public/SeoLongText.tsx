@@ -15,7 +15,6 @@ function toSentence(items: string[]): string {
 function generateEditorial(tenant: Tenant, services: Service[], cities: string[]): string {
   const company = tenant.company_name ?? "Notre entreprise";
   const city = tenant.city ?? "votre région";
-  const trade = tenant.trade ?? "artisan";
   const years = tenant.years_experience;
   const serviceNames = services.map((s) => s.name).filter(Boolean);
   const cityNames = cities.filter(Boolean);
@@ -23,7 +22,7 @@ function generateEditorial(tenant: Tenant, services: Service[], cities: string[]
   const paragraphs: string[] = [];
 
   const p1Parts: string[] = [
-    `${company} est votre ${trade} de référence à ${city}${cityNames.length > 1 ? ` et dans les communes environnantes` : ""}.`,
+    `${company} est votre entreprise de référence à ${city}${cityNames.length > 1 ? ` et dans les communes environnantes` : ""}.`,
   ];
 
   if (serviceNames.length > 0) {
