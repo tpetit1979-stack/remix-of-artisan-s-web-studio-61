@@ -118,6 +118,9 @@ function HomePage() {
 
       <main className="flex-1">
         <HeroSection />
+        <StatsCounter />
+        
+
         
 
         {/* Services */}
