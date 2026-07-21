@@ -48,7 +48,7 @@ export const getRouter = () => {
 
   const router = createRouter({
     routeTree,
-    context: { queryClient },
+    context: { queryClient, tenant: null, settings: null },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultErrorComponent: DefaultErrorComponent,
