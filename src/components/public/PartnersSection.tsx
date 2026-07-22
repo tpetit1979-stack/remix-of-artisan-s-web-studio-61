@@ -12,10 +12,9 @@ export function PartnersSection() {
     staleTime: 1000 * 60 * 10,
   });
 
-  const withLogo = partners.filter((p) => p.logo_url);
-  if (withLogo.length === 0) return null;
+  if (partners.length === 0) return null;
 
-  const useMarquee = withLogo.length > 6;
+  const useMarquee = partners.length > 6;
 
   return (
     <section className="border-t border-border bg-muted/20 py-12 lg:py-16">
@@ -27,15 +26,15 @@ export function PartnersSection() {
         {useMarquee ? (
           <div className="mt-8 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
             <div className="flex w-max animate-partners-marquee gap-12">
-              {[...withLogo, ...withLogo].map((p, i) => (
-                <PartnerLogo key={`${p.id}-${i}`} partner={p} />
+              {[...partners, ...partners].map((p, i) => (
+                <PartnerItem key={`${p.id}-${i}`} partner={p} />
               ))}
             </div>
           </div>
         ) : (
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
-            {withLogo.map((p) => (
-              <PartnerLogo key={p.id} partner={p} />
+            {partners.map((p) => (
+              <PartnerItem key={p.id} partner={p} />
             ))}
           </div>
         )}
@@ -44,15 +43,17 @@ export function PartnersSection() {
   );
 }
 
-function PartnerLogo({ partner }: { partner: Partner }) {
-  const img = (
+function PartnerItem({ partner }: { partner: Partner }) {
+  const content = partner.logo_url ? (
     <img
-      src={partner.logo_url!}
+      src={partner.logo_url}
       alt={partner.name}
       loading="lazy"
       decoding="async"
       className="h-12 w-auto max-w-[160px] object-contain grayscale opacity-70 transition duration-300 hover:grayscale-0 hover:opacity-100 sm:h-14"
     />
+  ) : (
+    <span className="font-semibold text-muted-foreground">{partner.name}</span>
   );
 
   if (partner.website_url) {
@@ -64,9 +65,9 @@ function PartnerLogo({ partner }: { partner: Partner }) {
         aria-label={partner.name}
         className="shrink-0"
       >
-        {img}
+        {content}
       </a>
     );
   }
-  return <div className="shrink-0">{img}</div>;
+  return <div className="shrink-0">{content}</div>;
 }
