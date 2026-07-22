@@ -281,6 +281,7 @@ function ServiceCityPage() {
         <CTABanner
           title={`Besoin d'un devis pour ${service.name.toLowerCase()} à ${city} ?`}
           subtitle={`Contactez ${tenant.company_name} dès maintenant. Intervention rapide et devis gratuit.`}
+          serviceId={service.id}
         />
       </main>
 
