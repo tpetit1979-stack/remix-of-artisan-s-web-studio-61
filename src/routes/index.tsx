@@ -114,7 +114,7 @@ function HomePage() {
   const publishedPortfolio = portfolio.filter((p) => p.is_published);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col pb-20 md:pb-0">
       <PublicHeader />
 
       <main className="flex-1">
