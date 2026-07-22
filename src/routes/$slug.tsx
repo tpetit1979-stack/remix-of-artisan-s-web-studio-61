@@ -126,7 +126,7 @@ function ServiceCityPage() {
                 {introText}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/contact">
+                <Link to="/contact" search={{ service: service.id }}>
                   <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
                 </Link>
                 {tenant.phone && (
