@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Phone, Shield, ArrowRight } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
+import { StatsCounter } from "./StatsCounter";
 import { getTradeTagline } from "@/lib/trade-wording";
 import { useResolvedImageUrl } from "./ResolvedImage";
 import type { Tenant } from "@/lib/tenant";
@@ -184,6 +185,9 @@ export function HeroSection() {
           )}
         </div>
       </div>
+
+      {/* Translucent stats band at the bottom of the hero */}
+      <StatsCounter variant="hero-band" />
     </section>
   );
 }
