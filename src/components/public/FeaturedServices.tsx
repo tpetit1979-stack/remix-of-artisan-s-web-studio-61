@@ -1,8 +1,22 @@
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star } from "lucide-react";
-import { ResolvedImage } from "@/components/public/ResolvedImage";
+import {
+  ArrowRight,
+  Star,
+  Wrench,
+  Flame,
+  Droplets,
+  Zap,
+  Wind,
+  Sun,
+  Hammer,
+  Paintbrush,
+} from "lucide-react";
+import { useResolvedMedia } from "@/lib/media-resolver";
+import { useTenant } from "@/hooks/use-tenant";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import type { Service, Tenant, SiteSettings } from "@/lib/tenant";
 
 interface FeaturedServicesProps {
@@ -11,12 +25,60 @@ interface FeaturedServicesProps {
   settings?: SiteSettings | null;
 }
 
+const TRADE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  "poeles-cheminees": Flame,
+  ramoneur: Flame,
+  chauffagiste: Flame,
+  plombier: Droplets,
+  plomberie: Droplets,
+  electricien: Zap,
+  electricite: Zap,
+  climatisation: Wind,
+  cvc: Wind,
+  ventilation: Wind,
+  frigoriste: Wind,
+  photovoltaique: Sun,
+  energeticien: Sun,
+  couverture: Hammer,
+  maconnerie: Hammer,
+  charpente: Hammer,
+  carrelage: Hammer,
+  "menuiserie-agencement": Wrench,
+  peinture: Paintbrush,
+  peintre: Paintbrush,
+  serrurerie: Wrench,
+  "serrurerie-metallerie": Wrench,
+  pisciniste: Droplets,
+  paysagiste: Sun,
+};
+
+function getTradeIcon(slug: string | null | undefined) {
+  if (!slug) return Wrench;
+  return TRADE_ICONS[slug] ?? Wrench;
+}
+
 export function FeaturedServices({ services, tenant, settings }: FeaturedServicesProps) {
+  const { data: tradeSlug } = useQuery({
+    queryKey: ["trade-slug", tenant.trade_template_id],
+    queryFn: async () => {
+      if (!tenant.trade_template_id) return null;
+      const { data } = await supabase
+        .from("trade_templates")
+        .select("slug")
+        .eq("id", tenant.trade_template_id)
+        .maybeSingle();
+      return data?.slug ?? null;
+    },
+    enabled: !!tenant.trade_template_id,
+    staleTime: 1000 * 60 * 30,
+  });
+
   const featured = services.filter((s) => s.is_featured);
   const displayServices = featured.length > 0 ? featured : services;
   if (displayServices.length === 0) return null;
 
   const items = displayServices.slice(0, 5);
+  const firstFeaturedIndex = items.findIndex((s) => s.is_featured);
 
   return (
     <section className="py-16 lg:py-24">
@@ -38,14 +100,9 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
             >
               <Card className="group h-full overflow-hidden border-border transition-all hover:border-primary/30 hover:shadow-elegant">
                 <div className="relative overflow-hidden">
-                  <ResolvedImage
-                    category="service"
-                    targetId={s.id}
-                    altFallback={s.name}
-                    className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  <ServiceMedia service={s} tradeSlug={tradeSlug} />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                  {s.is_featured && (
+                  {s.is_featured && idx === firstFeaturedIndex && (
                     <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
                       <Star className="h-3 w-3 fill-current" />
                       Service phare
@@ -79,6 +136,37 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
         </div>
       </div>
     </section>
+  );
+}
+
+function ServiceMedia({ service, tradeSlug }: { service: Service; tradeSlug: string | null | undefined }) {
+  const { tenant } = useTenant();
+  const resolved = useResolvedMedia({
+    tenantId: tenant?.id ?? null,
+    tradeTemplateId: tenant?.trade_template_id ?? null,
+    category: "service",
+    targetId: service.id,
+    altFallback: service.name,
+  });
+
+  const Icon = getTradeIcon(tradeSlug);
+
+  if (resolved.source === "placeholder") {
+    return (
+      <div className="aspect-[16/10] w-full bg-gradient-to-br from-primary/15 via-primary/5 to-primary/10 flex items-center justify-center">
+        <Icon className="h-12 w-12 text-primary/50 transition-transform duration-500 group-hover:scale-110" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={resolved.url}
+      alt={resolved.alt}
+      className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      loading="lazy"
+      decoding="async"
+    />
   );
 }
 
