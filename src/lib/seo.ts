@@ -11,6 +11,8 @@ export function generateSeoTitle(
 ): string {
   if (service.seo_title_template) {
     return service.seo_title_template
+      .replace(/\{\{city\}\}/g, city)
+      .replace(/\{\{company_name\}\}/g, tenant.company_name)
       .replace("{service}", service.name)
       .replace("{city}", city)
       .replace("{company}", tenant.company_name);
@@ -29,6 +31,8 @@ export function generateSeoDescription(
 ): string {
   if (service.seo_description_template) {
     return service.seo_description_template
+      .replace(/\{\{city\}\}/g, city)
+      .replace(/\{\{company_name\}\}/g, tenant.company_name)
       .replace("{service}", service.name)
       .replace("{city}", city)
       .replace("{company}", tenant.company_name);
