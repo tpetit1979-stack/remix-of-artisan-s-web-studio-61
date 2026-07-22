@@ -418,6 +418,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
         tagline: form.tagline || null,
         years_experience: form.years_experience ? parseInt(form.years_experience) : null,
         seo_boost_text: form.seo_boost_text || null,
+        google_place_id: form.google_place_id || null,
         is_active: form.is_active, has_lignia: form.has_lignia,
         lignia_tenant_id: form.lignia_tenant_id || null,
       }).eq("id", tenantId);
@@ -452,6 +453,36 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
             <Field label="Adresse"><Input value={form.address ?? ""} onChange={e => set("address", e.target.value)} /></Field>
           </div>
           <Field label="Expérience (années)" className="max-w-[120px]"><Input type="number" value={form.years_experience ?? ""} onChange={e => set("years_experience", e.target.value)} /></Field>
+
+          <Separator />
+          <div className="space-y-2">
+            <Field label="Google Place ID">
+              <Input
+                value={form.google_place_id ?? ""}
+                onChange={e => set("google_place_id", e.target.value)}
+                placeholder="ChIJ..."
+              />
+            </Field>
+            <a
+              href="https://developers.google.com/maps/faq#whats-a-place-id"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline"
+            >
+              Comment le trouver ? <ExternalLink className="h-3 w-3" />
+            </a>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              {form.google_rating != null && (
+                <span>Note Google : <Star className="inline h-3 w-3 text-amber-500 fill-amber-500" /> {form.google_rating}</span>
+              )}
+              {form.google_review_count != null && (
+                <span>({form.google_review_count} avis)</span>
+              )}
+              {form.google_rating_updated_at && (
+                <span>Mis à jour le {new Date(form.google_rating_updated_at).toLocaleDateString("fr-FR")}</span>
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
 
