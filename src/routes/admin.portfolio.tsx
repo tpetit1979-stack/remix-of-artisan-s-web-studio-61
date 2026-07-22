@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import {
   validateImageFile,
@@ -197,10 +198,29 @@ function AdminPortfolio() {
                 {editingItem.image_url && (
                   <img src={editingItem.image_url} alt="" loading="lazy" decoding="async" className="h-32 w-full object-cover rounded-md" />
                 )}
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-                <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-                  {uploading ? "Upload..." : "Choisir une image"}
-                </Button>
+                <Tabs defaultValue="upload" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="upload">Upload fichier</TabsTrigger>
+                    <TabsTrigger value="url">URL externe</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="upload" className="pt-2">
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                    <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+                      {uploading ? "Upload..." : "Choisir une image"}
+                    </Button>
+                  </TabsContent>
+                  <TabsContent value="url" className="pt-2 space-y-2">
+                    <Input
+                      type="url"
+                      placeholder="https://images.unsplash.com/photo-..."
+                      value={editingItem.image_url ?? ""}
+                      onChange={(e) => setEditingItem((p: any) => ({ ...p, image_url: e.target.value }))}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Collez une URL d'image publique (Unsplash, CDN, etc.).
+                    </p>
+                  </TabsContent>
+                </Tabs>
               </div>
               <div className="space-y-2">
                 <Label>Titre</Label>
