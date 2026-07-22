@@ -18,19 +18,10 @@ export interface ServiceCityPageData {
 }
 
 export async function loadServiceCityPage(
+  tenant: Tenant,
   serviceSlug: string,
   citySlug: string,
 ): Promise<ServiceCityPageData | null> {
-  // Fetch tenant (first active for now)
-  const { data: tenant } = await supabase
-    .from("tenants")
-    .select("*")
-    .eq("is_active", true)
-    .limit(1)
-    .single();
-
-  if (!tenant) return null;
-
   // Fetch settings
   const { data: settings } = await supabase
     .from("site_settings")

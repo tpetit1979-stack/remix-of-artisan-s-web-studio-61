@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { loadServiceCityPage, type ServiceCityPageData } from "@/lib/tenant-loader";
 import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd, generateServiceJsonLd } from "@/lib/seo";
 import type { Service, ServiceArea, PortfolioItem } from "@/lib/tenant";
+import { getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -13,15 +14,9 @@ import { Phone, MapPin, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/$slug")({
   loader: async ({ params }) => {
     const slug = params.slug;
-    const { supabase } = await import("@/integrations/supabase/client");
 
-    const { data: tenant } = await supabase
-      .from("tenants")
-      .select("id")
-      .eq("is_active", true)
-      .limit(1)
-      .single();
-
+    const input = await getTenantResolutionInput();
+    const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
 
     const { data: areas } = await supabase
@@ -38,7 +33,7 @@ export const Route = createFileRoute("/$slug")({
     if (!match) throw notFound();
 
     const serviceSlug = (match as any).services.slug;
-    const data = await loadServiceCityPage(serviceSlug, match.city_slug);
+    const data = await loadServiceCityPage(tenant, serviceSlug, match.city_slug);
     if (!data) throw notFound();
     return data;
   },
