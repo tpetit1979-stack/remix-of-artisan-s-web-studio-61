@@ -46,6 +46,8 @@ export function HeroSection() {
 
   if (!tenant) return null;
 
+  const t = tenant as TenantWithGoogle;
+
   return (
     <section className="relative overflow-hidden">
       {/* Background image — rendered as <img> so we can prioritise the LCP. */}
