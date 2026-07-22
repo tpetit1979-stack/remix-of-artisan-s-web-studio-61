@@ -9,7 +9,6 @@ import { CTABanner } from "@/components/public/CTABanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, MapPin, ArrowRight } from "lucide-react";
-import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/services/$serviceSlug")({
   loader: async ({ params }) => {
@@ -140,7 +139,13 @@ function ServiceDetailPage() {
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {relatedPortfolio.slice(0, 6).map((p) => (
                   <Card key={p.id} className="overflow-hidden">
-                    <ResolvedImage category="portfolio" targetId={p.id} altFallback={p.title} className="aspect-video w-full object-cover" />
+                    <img
+                      src={p.image_url}
+                      alt={p.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="aspect-video w-full object-cover"
+                    />
                     <CardContent className="p-4">
                       <h3 className="font-medium text-foreground">{p.title}</h3>
                       {p.city && <span className="text-xs text-muted-foreground"><MapPin className="mr-1 inline h-3 w-3" />{p.city}</span>}

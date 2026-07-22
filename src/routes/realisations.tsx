@@ -8,7 +8,6 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
-import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/realisations")({
   loader: async () => {
@@ -68,7 +67,13 @@ function RealisationsPage() {
                   const service = services.find((s) => s.id === p.service_id);
                   return (
                     <Card key={p.id} className="overflow-hidden">
-                      <ResolvedImage category="portfolio" targetId={p.id} altFallback={p.title} className="aspect-video w-full object-cover" />
+                      <img
+                        src={p.image_url}
+                        alt={p.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-video w-full object-cover"
+                      />
                       <CardContent className="p-4">
                         <h2 className="font-semibold text-foreground">{p.title}</h2>
                         {p.description && (

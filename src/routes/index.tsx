@@ -21,7 +21,6 @@ import { PartnersSection } from "@/components/public/PartnersSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, MapPin } from "lucide-react";
-import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -155,10 +154,11 @@ function HomePage() {
                 {publishedPortfolio.slice(0, 6).map((p) => (
                   <Card key={p.id} className="group overflow-hidden border-border transition-all hover:shadow-lg hover:shadow-foreground/5">
                     <div className="relative overflow-hidden">
-                      <ResolvedImage
-                        category="portfolio"
-                        targetId={p.id}
-                        altFallback={p.title}
+                      <img
+                        src={p.image_url}
+                        alt={p.title}
+                        loading="lazy"
+                        decoding="async"
                         className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
