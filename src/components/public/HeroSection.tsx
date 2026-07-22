@@ -84,7 +84,7 @@ export function HeroSection() {
 
           {(settings?.hero_subtitle || getTradeTagline(tradeSlug)) && (
             <p
-              className={`mx-auto mt-6 max-w-2xl text-lg leading-relaxed sm:text-xl ${
+              className={`mx-auto mt-5 max-w-2xl text-lg leading-relaxed sm:text-xl ${
                 hasHeroImage ? "text-white/85" : "text-muted-foreground"
               }`}
             >
@@ -92,8 +92,19 @@ export function HeroSection() {
             </p>
           )}
 
+          <Link
+            to="/services"
+            className={`mt-5 inline-flex items-center text-sm font-semibold transition-colors ${
+              hasHeroImage
+                ? "text-white/90 hover:text-white"
+                : "text-primary hover:text-primary/80"
+            }`}
+          >
+            Voir nos services <ArrowRight className="ml-1.5 h-4 w-4" />
+          </Link>
+
           {/* CTA buttons */}
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link to="/contact">
               <Button size="lg" className="h-14 text-base px-10 shadow-elegant">
                 {settings?.cta_text ?? "Demander un devis gratuit"}
