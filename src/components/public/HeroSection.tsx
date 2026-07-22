@@ -7,6 +7,17 @@ import { Phone, Shield } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
 import { getTradeTagline } from "@/lib/trade-wording";
 import { useResolvedImageUrl } from "./ResolvedImage";
+import type { Tenant } from "@/lib/tenant";
+
+function getGoogleMapsUrl(placeId: string) {
+  return `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(placeId)}`;
+}
+
+type TenantWithGoogle = Tenant & {
+  google_place_id?: string | null;
+  google_rating?: number | null;
+  google_review_count?: number | null;
+};
 
 export function HeroSection() {
   const { tenant, settings } = useTenant();
@@ -34,6 +45,8 @@ export function HeroSection() {
   const hasHeroImage = true;
 
   if (!tenant) return null;
+
+  const t = tenant as TenantWithGoogle;
 
   return (
     <section className="relative overflow-hidden">
@@ -99,6 +112,38 @@ export function HeroSection() {
               </a>
             )}
           </div>
+
+          {/* Google reviews badge */}
+          {t.google_place_id && (
+            <a
+              href={getGoogleMapsUrl(t.google_place_id)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                hasHeroImage
+                  ? "border-white/20 bg-white/10 text-white hover:bg-white/20"
+                  : "border-border bg-background/80 text-foreground hover:bg-background"
+              }`}
+            >
+              {t.google_rating != null ? (
+                <>
+                  <span aria-hidden>⭐</span>
+                  <span>{Number(t.google_rating).toFixed(1)}</span>
+                  <span className="mx-1 opacity-60">·</span>
+                  <span>
+                    {t.google_review_count && t.google_review_count > 0
+                      ? `${t.google_review_count} avis Google`
+                      : "Voir sur Google"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>Voir nos avis Google</span>
+                  <span aria-hidden>→</span>
+                </>
+              )}
+            </a>
+          )}
 
           {/* Single strong trust signal — only when we have a real value to show. */}
           {tenant.years_experience && tenant.years_experience > 0 && (
