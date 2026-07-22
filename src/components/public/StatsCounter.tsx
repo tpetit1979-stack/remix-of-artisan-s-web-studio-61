@@ -3,7 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
 import { Briefcase, MapPin, Image, Calendar } from "lucide-react";
 
-export function StatsCounter() {
+interface StatsCounterProps {
+  variant?: "card" | "hero-band";
+}
+
+export function StatsCounter({ variant = "card" }: StatsCounterProps) {
   const { tenant } = useTenant();
 
   const { data: services = [] } = useQuery({
@@ -46,20 +50,41 @@ export function StatsCounter() {
 
   if (stats.length === 0) return null;
 
+  const gridClass =
+    stats.length === 4
+      ? "grid-cols-2 lg:grid-cols-4"
+      : stats.length === 3
+        ? "grid-cols-3"
+        : "grid-cols-2";
+
+  if (variant === "hero-band") {
+    return (
+      <div className="relative w-full border-t border-white/10 bg-foreground/40 py-5 backdrop-blur-sm sm:py-6">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className={`grid gap-6 ${gridClass}`}>
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center text-center text-white">
+                <stat.icon className="mb-2 h-5 w-5 text-white/80" />
+                <span className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                  {stat.value}
+                </span>
+                <span className="mt-1 text-xs font-medium uppercase tracking-wider text-white/75 sm:text-sm">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className="relative -mt-8 z-10 px-4">
       <div className="mx-auto max-w-4xl">
         <div className="rounded-2xl border border-border bg-card p-8 shadow-xl shadow-foreground/5">
-          <div
-            className={`grid gap-8 ${
-              stats.length === 4
-                ? "grid-cols-2 lg:grid-cols-4"
-                : stats.length === 3
-                  ? "grid-cols-3"
-                  : "grid-cols-2"
-            }`}
-          >
-            {stats.map((stat, i) => (
+          <div className={`grid gap-8 ${gridClass}`}>
+            {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col items-center text-center">
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                   <stat.icon className="h-6 w-6 text-primary" />
