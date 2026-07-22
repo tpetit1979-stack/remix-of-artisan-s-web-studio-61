@@ -139,7 +139,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
   );
 }
 
-function ServiceMedia({ service, tradeSlug }: { service: Service; tradeSlug: string | null }) {
+function ServiceMedia({ service, tradeSlug }: { service: Service; tradeSlug: string | null | undefined }) {
   const { tenant } = useTenant();
   const resolved = useResolvedMedia({
     tenantId: tenant?.id ?? null,
