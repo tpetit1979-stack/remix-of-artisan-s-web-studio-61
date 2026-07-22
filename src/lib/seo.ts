@@ -11,6 +11,8 @@ export function generateSeoTitle(
 ): string {
   if (service.seo_title_template) {
     return service.seo_title_template
+      .replace(/\{\{city\}\}/g, city)
+      .replace(/\{\{company_name\}\}/g, tenant.company_name)
       .replace("{service}", service.name)
       .replace("{city}", city)
       .replace("{company}", tenant.company_name);
@@ -29,6 +31,8 @@ export function generateSeoDescription(
 ): string {
   if (service.seo_description_template) {
     return service.seo_description_template
+      .replace(/\{\{city\}\}/g, city)
+      .replace(/\{\{company_name\}\}/g, tenant.company_name)
       .replace("{service}", service.name)
       .replace("{city}", city)
       .replace("{company}", tenant.company_name);
@@ -116,6 +120,34 @@ export function generateJsonLd(
   };
 
   return localBusiness;
+}
+
+/**
+ * Generate a standalone Service JSON-LD (schema.org) for a service+city page,
+ * distinct from the LocalBusiness+Offer blob above — a dedicated Service
+ * entity with its provider and every city it's offered in.
+ */
+export function generateServiceJsonLd(
+  service: Service,
+  tenant: Tenant,
+  areas: ServiceArea[],
+) {
+  const areaServed = Array.from(
+    new Set(areas.filter((a) => a.service_id === service.id).map((a) => a.city)),
+  );
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: service.name,
+    provider: {
+      "@type": "LocalBusiness",
+      name: tenant.company_name,
+      ...(tenant.phone && { telephone: tenant.phone }),
+    },
+    ...(areaServed.length > 0 && { areaServed }),
+    ...(service.description && { description: service.description }),
+  };
 }
 
 /**

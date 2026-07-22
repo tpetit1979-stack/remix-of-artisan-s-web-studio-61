@@ -26,6 +26,13 @@ export const Route = createFileRoute("/admin/portfolio")({
   component: AdminPortfolio,
 });
 
+interface PortfolioSuggestion {
+  id: string;
+  title: string | null;
+  image_path: string;
+  alt_text: string | null;
+}
+
 function AdminPortfolio() {
   const { tenant } = useTenant();
   const queryClient = useQueryClient();
@@ -44,6 +51,52 @@ function AdminPortfolio() {
     queryKey: ["admin-services", tenant?.id],
     queryFn: () => fetchAllServices(tenant!.id),
     enabled: !!tenant?.id,
+  });
+
+  const { data: suggestions = [] } = useQuery({
+    queryKey: ["portfolio-suggestions", tenant?.trade_template_id],
+    queryFn: async () => {
+      // Deliberate deviation: reads trade_media_library directly instead of
+      // the public_trade_media view (the usual frontend convention), because
+      // the view doesn't expose `title` and it's needed to pre-fill the draft
+      // dialog opened right after import. Allowed by RLS policy
+      // public_read_active_trade_media_via_view (is_active = true rows).
+      const { data, error } = await supabase
+        .from("trade_media_library")
+        .select("id, title, image_path, alt_text")
+        .eq("trade_template_id", tenant!.trade_template_id!)
+        .eq("media_type", "proof")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as PortfolioSuggestion[];
+    },
+    enabled: !!tenant?.trade_template_id && items.length === 0,
+  });
+
+  const applySuggestionMutation = useMutation({
+    mutationFn: async (media: PortfolioSuggestion) => {
+      const { data, error } = await supabase
+        .from("portfolio")
+        .insert({
+          tenant_id: tenant!.id,
+          title: media.title ?? "",
+          image_url: bucketPublicUrl("trade-media", media.image_path),
+          is_published: false,
+          sort_order: 0,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-portfolio"] });
+      setEditingItem({ ...data });
+      setIsDialogOpen(true);
+      toast.success("Brouillon créé à partir de la suggestion — complétez avant de publier");
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   async function uploadPortfolioImage(file: File): Promise<string> {
@@ -151,7 +204,43 @@ function AdminPortfolio() {
       {isLoading ? (
         <p className="text-muted-foreground">Chargement...</p>
       ) : items.length === 0 ? (
-        <Card><CardContent className="py-8 text-center text-muted-foreground">Aucune réalisation.</CardContent></Card>
+        <>
+          <Card><CardContent className="py-8 text-center text-muted-foreground">Aucune réalisation.</CardContent></Card>
+          {suggestions.length > 0 && (
+            <div className="mt-6">
+              <h3 className="mb-3 text-sm font-medium text-foreground">
+                Suggestions pour démarrer
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {suggestions.map((s) => (
+                  <Card key={s.id} className="overflow-hidden">
+                    <div className="aspect-video bg-muted">
+                      <img
+                        src={bucketPublicUrl("trade-media", s.image_path)}
+                        alt={s.alt_text ?? s.title ?? ""}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <CardContent className="py-3">
+                      {s.title && <p className="mb-2 truncate text-xs text-muted-foreground">{s.title}</p>}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full"
+                        disabled={applySuggestionMutation.isPending}
+                        onClick={() => applySuggestionMutation.mutate(s)}
+                      >
+                        Utiliser comme point de départ
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (

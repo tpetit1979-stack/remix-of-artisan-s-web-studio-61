@@ -6,9 +6,10 @@ import { Phone } from "lucide-react";
 interface CTABannerProps {
   title?: string;
   subtitle?: string;
+  serviceId?: string;
 }
 
-export function CTABanner({ title, subtitle }: CTABannerProps) {
+export function CTABanner({ title, subtitle, serviceId }: CTABannerProps) {
   const { tenant, settings } = useTenant();
 
   if (!tenant) return null;
@@ -27,7 +28,7 @@ export function CTABanner({ title, subtitle }: CTABannerProps) {
           {subtitle ?? `Contactez ${tenant.company_name} dès maintenant. Intervention rapide et devis gratuit.`}
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Link to="/contact">
+          <Link to="/contact" search={serviceId ? { service: serviceId } : undefined}>
             <Button size="lg" variant="secondary" className="h-14 px-10 text-base shadow-elegant">
               {settings?.cta_text ?? "Demander un devis"}
             </Button>

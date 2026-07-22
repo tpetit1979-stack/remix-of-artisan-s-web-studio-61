@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { loadServiceCityPage, type ServiceCityPageData } from "@/lib/tenant-loader";
-import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd } from "@/lib/seo";
+import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd, generateServiceJsonLd } from "@/lib/seo";
 import type { Service, ServiceArea, PortfolioItem } from "@/lib/tenant";
+import { getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -13,15 +14,9 @@ import { Phone, MapPin, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/$slug")({
   loader: async ({ params }) => {
     const slug = params.slug;
-    const { supabase } = await import("@/integrations/supabase/client");
 
-    const { data: tenant } = await supabase
-      .from("tenants")
-      .select("id")
-      .eq("is_active", true)
-      .limit(1)
-      .single();
-
+    const input = await getTenantResolutionInput();
+    const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
 
     const { data: areas } = await supabase
@@ -38,15 +33,16 @@ export const Route = createFileRoute("/$slug")({
     if (!match) throw notFound();
 
     const serviceSlug = (match as any).services.slug;
-    const data = await loadServiceCityPage(serviceSlug, match.city_slug);
+    const data = await loadServiceCityPage(tenant, serviceSlug, match.city_slug);
     if (!data) throw notFound();
     return data;
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
-    const { service, city, tenant, settings } = loaderData;
+    const { service, city, citySlug, tenant, settings, allAreas } = loaderData;
     const title = generateSeoTitle(service, city, tenant);
     const description = generateSeoDescription(service, city, tenant);
+    const pageUrl = tenant.domain ? `https://${tenant.domain}/${service.slug}-${citySlug}` : "";
     return {
       meta: [
         { title },
@@ -59,8 +55,12 @@ export const Route = createFileRoute("/$slug")({
         {
           type: "application/ld+json",
           children: JSON.stringify(
-            generateJsonLd(service, city, tenant, settings, typeof window !== "undefined" ? window.location.href : ""),
+            generateJsonLd(service, city, tenant, settings, pageUrl),
           ),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(generateServiceJsonLd(service, tenant, allAreas)),
         },
       ],
     };
@@ -122,7 +122,7 @@ function ServiceCityPage() {
                 {introText}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/contact">
+                <Link to="/contact" search={{ service: service.id }}>
                   <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
                 </Link>
                 {tenant.phone && (
@@ -277,6 +277,7 @@ function ServiceCityPage() {
         <CTABanner
           title={`Besoin d'un devis pour ${service.name.toLowerCase()} à ${city} ?`}
           subtitle={`Contactez ${tenant.company_name} dès maintenant. Intervention rapide et devis gratuit.`}
+          serviceId={service.id}
         />
       </main>
 

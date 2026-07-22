@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchFirstActiveTenant, fetchSiteSettings, fetchServiceAreas, fetchPortfolio, fetchServices } from "@/lib/tenant";
+import { fetchSiteSettings, fetchServiceAreas, fetchPortfolio, fetchServices, getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -9,11 +9,12 @@ import { CTABanner } from "@/components/public/CTABanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, MapPin, ArrowRight } from "lucide-react";
-import { ResolvedImage } from "@/components/public/ResolvedImage";
 
 export const Route = createFileRoute("/services/$serviceSlug")({
   loader: async ({ params }) => {
-    const tenant = await fetchFirstActiveTenant();
+    const input = await getTenantResolutionInput();
+    const tenant = await resolveTenantForSsr(input);
+    if (!tenant) throw notFound();
     const [settings, services] = await Promise.all([
       fetchSiteSettings(tenant.id),
       fetchServices(tenant.id),
@@ -140,7 +141,13 @@ function ServiceDetailPage() {
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {relatedPortfolio.slice(0, 6).map((p) => (
                   <Card key={p.id} className="overflow-hidden">
-                    <ResolvedImage category="portfolio" targetId={p.id} altFallback={p.title} className="aspect-video w-full object-cover" />
+                    <img
+                      src={p.image_url}
+                      alt={p.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="aspect-video w-full object-cover"
+                    />
                     <CardContent className="p-4">
                       <h3 className="font-medium text-foreground">{p.title}</h3>
                       {p.city && <span className="text-xs text-muted-foreground"><MapPin className="mr-1 inline h-3 w-3" />{p.city}</span>}
