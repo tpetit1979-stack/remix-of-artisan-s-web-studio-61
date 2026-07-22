@@ -32,6 +32,7 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
 
   const uniqueCities = new Set(areas.map((a) => a.city)).size;
   const publishedCount = portfolio.filter((p) => p.is_published).length;
+  const googleRating = (tenant as { google_rating?: number | null }).google_rating ?? null;
 
   const stats = [
     tenant.years_experience
@@ -48,27 +49,32 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
       : null,
   ].filter(Boolean) as { icon: typeof Calendar; value: string; label: string }[];
 
-  if (stats.length === 0) return null;
+  // Visibility guard: only show band when at least one meaningful signal exists.
+  const hasSignal =
+    (tenant.years_experience ?? 0) > 0 || googleRating != null || services.length > 0;
+  if (!hasSignal || stats.length === 0) return null;
 
   const gridClass =
     stats.length === 4
       ? "grid-cols-2 lg:grid-cols-4"
       : stats.length === 3
         ? "grid-cols-3"
-        : "grid-cols-2";
+        : stats.length === 2
+          ? "grid-cols-2"
+          : "grid-cols-1";
 
   if (variant === "hero-band") {
     return (
-      <div className="relative w-full border-t border-white/10 bg-foreground/40 py-5 backdrop-blur-sm sm:py-6">
+      <div className="relative w-full border-t border-white/10 bg-black/20 py-2 text-white backdrop-blur-sm">
         <div className="mx-auto max-w-5xl px-4">
           <div className={`grid gap-6 ${gridClass}`}>
             {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col items-center text-center text-white">
-                <stat.icon className="mb-2 h-5 w-5 text-white/80" />
+                <stat.icon className="mb-1 h-5 w-5 text-white/80" />
                 <span className="text-2xl font-extrabold tracking-tight sm:text-3xl">
                   {stat.value}
                 </span>
-                <span className="mt-1 text-xs font-medium uppercase tracking-wider text-white/75 sm:text-sm">
+                <span className="mt-0.5 text-xs font-medium uppercase tracking-wider text-white/75 sm:text-sm">
                   {stat.label}
                 </span>
               </div>
