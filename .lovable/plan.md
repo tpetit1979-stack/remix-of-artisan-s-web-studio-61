@@ -1,41 +1,68 @@
-## Analyse
+## Objectif
 
-La table `tenant_partners` existe déjà (id, tenant_id, name, logo_url, website_url, sort_order, is_active). Je reproduis le pattern déjà éprouvé de la feature "Équipe" (team) : couche data → composant admin partagé → route admin dédiée → onglet super-admin → section publique. Cela garantit cohérence UX et minimise le code neuf.
+Appliquer les 4 correctifs identifiés par l'audit Claude Code, dans l'ordre, avec un diff avant chaque commit.
 
-Le drag & drop pour `sort_order` demande une dépendance (`@dnd-kit/core` + `@dnd-kit/sortable`). Si tu préfères éviter la dépendance, je peux fallback sur des boutons flèches ↑/↓ + input numérique (comme TeamManager aujourd'hui). Par défaut le plan prévoit **@dnd-kit** puisque tu l'as demandé explicitement.
+---
 
-## Fichiers à créer
+### 1. Badge "Service phare" unique — `src/components/public/FeaturedServices.tsx`
 
-1. **`src/lib/partners.ts`** — couche data (types + CRUD Supabase), calqué sur `src/lib/team.ts`. Fonctions : `fetchPartners`, `fetchActivePartners`, `insertPartner`, `updatePartner`, `deletePartner`, `reorderPartners` (bulk update sort_order).
+État actuel (lignes 80-81, 105-110) : la logique `firstFeaturedIndex = items.findIndex(...)` existe déjà, et le badge est conditionné à `s.is_featured && idx === firstFeaturedIndex`.
 
-2. **`src/components/admin/PartnersManager.tsx`** — composant CRUD partagé (props: `tenantId`), calqué sur `TeamManager.tsx`. Upload logo via `media-upload` (bucket `media`, subFolder `partners`), champs nom + URL, switch actif, drag & drop via @dnd-kit. Réutilisé à l'identique par admin client et super-admin.
+**Action :** aligner strictement sur la formulation demandée par Claude (renommer `firstFeaturedIndex` → `featuredIndex`, calculer sur `services` en amont du slice, garder la garde `featuredIndex !== -1`). Comportement identique, code identique à la spec fournie.
 
-3. **`src/components/public/PartnersSection.tsx`** — bannière publique. Requête `fetchActivePartners`. Retourne `null` si liste vide. Logos en `grayscale opacity-70`, `hover:grayscale-0 hover:opacity-100`, transition douce. Layout :
-   - ≤ 6 logos : grille statique centrée
-   - > 6 logos : marquee CSS auto-scroll infini (pure CSS keyframes, pas de JS)
-   - Titre discret "Ils nous font confiance"
-   - Chaque logo est un `<a href={website_url} target="_blank" rel="noopener">` si URL fournie, sinon `<div>`
+Commit : `fix(services): show 'Service phare' badge only on first featured card`
 
-4. **`src/routes/admin.partners.tsx`** — route admin client, mince (identique à `admin.team.tsx`) : `AdminPageHeader` + `<PartnersManager tenantId={tenant.id} />`.
+---
 
-## Fichiers à modifier
+### 2. StatsCounter en bande translucide dans le hero — `src/components/public/HeroSection.tsx`
 
-5. **`src/components/admin/AdminSidebar.tsx`** — ajouter entrée `{ label: "Partenaires", to: "/admin/partners", icon: Handshake }` (lucide) après "Équipe".
+État actuel : `StatsCounter` est déjà appelé avec `variant="hero-band"` en fin de `<section>` du hero (ligne 190), et rend une bande `bg-foreground/40 backdrop-blur-sm py-5` (StatsCounter.tsx ligne 62).
 
-6. **`src/routes/super-admin.tenants.$tenantId.tsx`** — ajouter onglet `TabsTrigger value="partners"` (icône Handshake) + `TabsContent` rendant `<PartnersManager tenantId={tenantId} />`. Insérer entre "team" et "booking".
+**Action :**
+- Ajuster la bande translucide aux specs demandées : `bg-black/20`, `text-white`, `py-2` (au lieu de `bg-foreground/40` et `py-5/6`).
+- Ajouter la condition d'affichage globale : la bande ne s'affiche que si au moins une valeur est non nulle parmi `years_experience`, `google_rating`, ou `services.length > 0`. Le filtre `stats.length === 0 → return null` couvre déjà les 3 premières mais pas `google_rating` (absent de stats aujourd'hui). On étend la garde en amont.
+- Ne pas toucher à la variante `card` (utilisée nulle part actuellement d'après `index.tsx`) pour éviter les régressions.
 
-7. **`src/routes/index.tsx`** — importer `PartnersSection` et l'insérer entre `<FeaturedServices />` et `<HowItWorks />` (position demandée : après services, avant "Comment ça se passe").
+Commit : `refactor(hero): tighten translucent stats band styling + visibility guard`
 
-## Dépendance à installer
+---
 
-- `@dnd-kit/core` + `@dnd-kit/sortable` (`bun add`). Confirme si tu préfères la version boutons ↑/↓ sans dépendance.
+### 3. Icônes Lucide par mot-clé sur cards sans image — `src/components/public/FeaturedServices.tsx`
 
-## Points d'attention
+État actuel (lignes 28-58, 152-160) : mapping `TRADE_ICONS` par slug de métier du tenant → une seule icône pour toutes les cards du tenant. Dégradé `from-primary/15 via-primary/5 to-primary/10`.
 
-- **RLS/GRANTS** : je suppose que la migration qui a créé `tenant_partners` a déjà posé les `GRANT` + policies (INSERT/UPDATE/DELETE scoped par `tenant_id`, SELECT public sur `is_active=true`). Si ce n'est pas le cas les mutations retourneront un permission denied — dis-le moi et je fournis le SQL.
-- **Types générés** : `tenant_partners` n'étant probablement pas encore dans `src/integrations/supabase/types.ts`, je passe par un cast `(supabase as any).from("tenant_partners")` comme dans `src/lib/team.ts`.
-- **Storage** : réutilise le bucket `media` existant, préfixe `partners/{tenant_id}/{uuid}.{ext}` via `buildMediaPath({ scope: tenantId, kind: "partner", subFolder: "partners", file })`.
-- **Cache invalidation** : après mutation j'invalide `["partners", tenantId]` (admin) et `["public-partners", tenantId]` (public), comme pour team.
-- **Aucune modification** du SSR loader d'`index.tsx` — les partenaires se chargent client-side (comme la section équipe aujourd'hui). Si tu veux qu'ils soient dans le HTML SSR, dis-le et j'ajoute le fetch au loader.
+**Action :**
+- Remplacer la logique "icône par métier tenant" par "icône par mot-clé dans `service.name`" (case-insensitive, accents normalisés) selon le mapping exact demandé :
+  - `ramon` | `poêle` | `cheminée` → `Flame`
+  - `clim` | `climatisation` | `froid` → `Wind`
+  - `entretien` | `maintenance` | `sav` → `Wrench`
+  - `installation` | `pose` → `Settings`
+  - `plomb` | `eau` → `Droplets`
+  - `électr` | `elec` → `Zap`
+  - défaut → `Wrench` (Lucide n'expose pas `Tool` ; `Wrench` est l'équivalent canonique — je le signale)
+- Mettre à jour le dégradé : `from-primary/20 to-primary/5`.
+- Supprimer la query `trade-slug` et le mapping `TRADE_ICONS` devenus inutiles dans ce composant (le hero garde sa propre logique).
 
-Confirme (et précise pour @dnd-kit vs boutons ↑/↓) et je code.
+Commit : `feat(services): keyword-based icon fallback on cards without image`
+
+**Point à confirmer :** OK pour utiliser `Wrench` comme défaut (Lucide n'a pas `Tool`) ?
+
+---
+
+### 4. Micro-interactions cards services — `src/components/public/FeaturedServices.tsx`
+
+État actuel (ligne 101) : `hover:border-primary/30 hover:shadow-elegant`, pas de scale, pas de restriction desktop.
+
+**Action :** ajouter `lg:hover:shadow-md lg:hover:scale-[1.01] transition-transform duration-200` sur la Card, en gardant les hovers existants. Le préfixe `lg:hover:` isole l'effet au desktop pour éviter le "sticky hover" mobile.
+
+Commit : `feat(services): add desktop-only hover micro-interactions on cards`
+
+---
+
+### Vérification
+
+Après chaque étape : `bun run build` doit passer, puis diff présenté avant commit. Points 1, 3 et 4 touchent le même fichier — je les livre en 3 diffs successifs pour respecter la demande "diff avant chaque commit".
+
+### Hors scope
+
+Points 3–7 de l'audit Claude (partners, SeoLongText, HowItWorks, espacement FAQ, hero image placeholder) : non demandés dans ce lot, non traités.

@@ -78,7 +78,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
   if (displayServices.length === 0) return null;
 
   const items = displayServices.slice(0, 5);
-  const firstFeaturedIndex = items.findIndex((s) => s.is_featured);
+  const featuredIndex = items.findIndex((s) => s.is_featured);
 
   return (
     <section className="py-16 lg:py-24">
@@ -98,11 +98,11 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
               params={{ serviceSlug: s.slug }}
               className={getGridClass(items.length, idx)}
             >
-              <Card className="group h-full overflow-hidden border-border transition-all hover:border-primary/30 hover:shadow-elegant">
+              <Card className="group h-full overflow-hidden border-border transition-all hover:border-primary/30 hover:shadow-elegant lg:hover:shadow-md lg:hover:scale-[1.01] transition-transform duration-200">
                 <div className="relative overflow-hidden">
                   <ServiceMedia service={s} tradeSlug={tradeSlug} />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                  {s.is_featured && idx === firstFeaturedIndex && (
+                  {featuredIndex !== -1 && idx === featuredIndex && (
                     <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
                       <Star className="h-3 w-3 fill-current" />
                       Service phare
