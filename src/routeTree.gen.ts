@@ -34,6 +34,7 @@ import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as AdminServiceAreasRouteImport } from './routes/admin.service-areas'
 import { Route as AdminPortfolioRouteImport } from './routes/admin.portfolio'
+import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as SuperAdminTenantsIndexRouteImport } from './routes/super-admin.tenants.index'
 import { Route as SuperAdminTenantsTenantIdRouteImport } from './routes/super-admin.tenants.$tenantId'
@@ -164,6 +165,11 @@ const AdminPortfolioRoute = AdminPortfolioRouteImport.update({
   path: '/portfolio',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminPartnersRoute = AdminPartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
   id: '/contacts',
   path: '/contacts',
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
@@ -229,6 +236,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
@@ -260,6 +268,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/super-admin'
     | '/admin/contacts'
+    | '/admin/partners'
     | '/admin/portfolio'
     | '/admin/service-areas'
     | '/admin/services'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/admin/contacts'
+    | '/admin/partners'
     | '/admin/portfolio'
     | '/admin/service-areas'
     | '/admin/services'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/super-admin'
     | '/admin/contacts'
+    | '/admin/partners'
     | '/admin/portfolio'
     | '/admin/service-areas'
     | '/admin/services'
@@ -561,6 +573,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPortfolioRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/partners': {
+      id: '/admin/partners'
+      path: '/partners'
+      fullPath: '/admin/partners'
+      preLoaderRoute: typeof AdminPartnersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/contacts': {
       id: '/admin/contacts'
       path: '/contacts'
@@ -594,6 +613,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminContactsRoute: typeof AdminContactsRoute
+  AdminPartnersRoute: typeof AdminPartnersRoute
   AdminPortfolioRoute: typeof AdminPortfolioRoute
   AdminServiceAreasRoute: typeof AdminServiceAreasRoute
   AdminServicesRoute: typeof AdminServicesRoute
@@ -604,6 +624,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminContactsRoute: AdminContactsRoute,
+  AdminPartnersRoute: AdminPartnersRoute,
   AdminPortfolioRoute: AdminPortfolioRoute,
   AdminServiceAreasRoute: AdminServiceAreasRoute,
   AdminServicesRoute: AdminServicesRoute,
