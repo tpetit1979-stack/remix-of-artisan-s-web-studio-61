@@ -421,7 +421,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
         google_place_id: form.google_place_id || null,
         is_active: form.is_active, has_lignia: form.has_lignia,
         lignia_tenant_id: form.lignia_tenant_id || null,
-      }).eq("id", tenantId);
+      } as any).eq("id", tenantId);
       if (error) throw error;
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-tenant", tenantId] }); toast.success("Entreprise mise à jour"); },
