@@ -1,27 +1,39 @@
 import { Phone } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useTenant } from "@/hooks/use-tenant";
 import { BookingButton } from "./BookingButton";
 
 /**
- * Floating phone button on mobile — sticky bottom-right.
- * Only visible on small screens when tenant has a phone number.
- * Also renders the booking button when enabled.
+ * Sticky bottom CTA bar on mobile (md:hidden).
+ * - Left: tel:{phone} "Appeler" — hidden if phone is null.
+ * - Right: /contact "Devis gratuit" — always visible.
+ * BookingButton (floating variant) remains above when enabled.
  */
 export function FloatingCTA() {
   const { tenant } = useTenant();
+  const phone = tenant?.phone?.trim();
 
   return (
     <>
       <BookingButton variant="floating" />
-      {tenant?.phone && (
-        <a
-          href={`tel:${tenant.phone.replace(/\s/g, "")}`}
-          className="fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 active:scale-95 md:hidden"
-          aria-label={`Appeler ${tenant.company_name}`}
+      <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-border bg-background/95 p-3 shadow-elegant backdrop-blur supports-[backdrop-filter]:bg-background/80 md:hidden">
+        {phone && (
+          <a
+            href={`tel:${phone.replace(/\s/g, "")}`}
+            className="flex flex-1 items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground active:scale-95"
+            aria-label={`Appeler ${tenant?.company_name ?? ""}`}
+          >
+            <Phone className="h-4 w-4" />
+            Appeler
+          </a>
+        )}
+        <Link
+          to="/contact"
+          className="flex flex-1 items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground active:scale-95"
         >
-          <Phone className="h-6 w-6" />
-        </a>
-      )}
+          Devis gratuit
+        </Link>
+      </div>
     </>
   );
 }
