@@ -39,9 +39,10 @@ export const Route = createFileRoute("/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
-    const { service, city, tenant, settings, allAreas } = loaderData;
+    const { service, city, citySlug, tenant, settings, allAreas } = loaderData;
     const title = generateSeoTitle(service, city, tenant);
     const description = generateSeoDescription(service, city, tenant);
+    const pageUrl = tenant.domain ? `https://${tenant.domain}/${service.slug}-${citySlug}` : "";
     return {
       meta: [
         { title },
@@ -54,7 +55,7 @@ export const Route = createFileRoute("/$slug")({
         {
           type: "application/ld+json",
           children: JSON.stringify(
-            generateJsonLd(service, city, tenant, settings, typeof window !== "undefined" ? window.location.href : ""),
+            generateJsonLd(service, city, tenant, settings, pageUrl),
           ),
         },
         {
