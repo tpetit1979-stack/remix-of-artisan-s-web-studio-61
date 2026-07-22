@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { loadServiceCityPage, type ServiceCityPageData } from "@/lib/tenant-loader";
-import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd } from "@/lib/seo";
+import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd, generateServiceJsonLd } from "@/lib/seo";
 import type { Service, ServiceArea, PortfolioItem } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
-    const { service, city, tenant, settings } = loaderData;
+    const { service, city, tenant, settings, allAreas } = loaderData;
     const title = generateSeoTitle(service, city, tenant);
     const description = generateSeoDescription(service, city, tenant);
     return {
@@ -61,6 +61,10 @@ export const Route = createFileRoute("/$slug")({
           children: JSON.stringify(
             generateJsonLd(service, city, tenant, settings, typeof window !== "undefined" ? window.location.href : ""),
           ),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(generateServiceJsonLd(service, tenant, allAreas)),
         },
       ],
     };
