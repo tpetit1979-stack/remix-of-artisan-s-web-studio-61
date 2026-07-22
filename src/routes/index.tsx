@@ -120,11 +120,6 @@ function HomePage() {
       <main className="flex-1">
         <HeroSection />
 
-        
-        
-
-        
-
         <FeaturedServices services={services} tenant={tenant} settings={settings} />
 
         <PartnersSection />
