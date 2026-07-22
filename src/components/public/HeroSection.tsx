@@ -7,6 +7,17 @@ import { Phone, Shield } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
 import { getTradeTagline } from "@/lib/trade-wording";
 import { useResolvedImageUrl } from "./ResolvedImage";
+import type { Tenant } from "@/lib/tenant";
+
+function getGoogleMapsUrl(placeId: string) {
+  return `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(placeId)}`;
+}
+
+type TenantWithGoogle = Tenant & {
+  google_place_id?: string | null;
+  google_rating?: number | null;
+  google_review_count?: number | null;
+};
 
 export function HeroSection() {
   const { tenant, settings } = useTenant();
