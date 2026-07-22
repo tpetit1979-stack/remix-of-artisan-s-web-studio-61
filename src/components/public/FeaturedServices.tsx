@@ -9,14 +9,10 @@ import {
   Droplets,
   Zap,
   Wind,
-  Sun,
-  Hammer,
-  Paintbrush,
+  Settings,
 } from "lucide-react";
 import { useResolvedMedia } from "@/lib/media-resolver";
 import { useTenant } from "@/hooks/use-tenant";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import type { Service, Tenant, SiteSettings } from "@/lib/tenant";
 
 interface FeaturedServicesProps {
@@ -25,54 +21,26 @@ interface FeaturedServicesProps {
   settings?: SiteSettings | null;
 }
 
-const TRADE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  "poeles-cheminees": Flame,
-  ramoneur: Flame,
-  chauffagiste: Flame,
-  plombier: Droplets,
-  plomberie: Droplets,
-  electricien: Zap,
-  electricite: Zap,
-  climatisation: Wind,
-  cvc: Wind,
-  ventilation: Wind,
-  frigoriste: Wind,
-  photovoltaique: Sun,
-  energeticien: Sun,
-  couverture: Hammer,
-  maconnerie: Hammer,
-  charpente: Hammer,
-  carrelage: Hammer,
-  "menuiserie-agencement": Wrench,
-  peinture: Paintbrush,
-  peintre: Paintbrush,
-  serrurerie: Wrench,
-  "serrurerie-metallerie": Wrench,
-  pisciniste: Droplets,
-  paysagiste: Sun,
-};
+function normalize(input: string): string {
+  return input
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
 
-function getTradeIcon(slug: string | null | undefined) {
-  if (!slug) return Wrench;
-  return TRADE_ICONS[slug] ?? Wrench;
+function getServiceIcon(name: string): React.ComponentType<{ className?: string }> {
+  const n = normalize(name);
+  // Order matters: more specific keywords first.
+  if (/(ramon|poele|cheminee)/.test(n)) return Flame;
+  if (/(clim|climatisation|froid)/.test(n)) return Wind;
+  if (/(plomb|eau)/.test(n)) return Droplets;
+  if (/(electr|elec)/.test(n)) return Zap;
+  if (/(entretien|maintenance|sav)/.test(n)) return Wrench;
+  if (/(installation|pose)/.test(n)) return Settings;
+  return Wrench;
 }
 
 export function FeaturedServices({ services, tenant, settings }: FeaturedServicesProps) {
-  const { data: tradeSlug } = useQuery({
-    queryKey: ["trade-slug", tenant.trade_template_id],
-    queryFn: async () => {
-      if (!tenant.trade_template_id) return null;
-      const { data } = await supabase
-        .from("trade_templates")
-        .select("slug")
-        .eq("id", tenant.trade_template_id)
-        .maybeSingle();
-      return data?.slug ?? null;
-    },
-    enabled: !!tenant.trade_template_id,
-    staleTime: 1000 * 60 * 30,
-  });
-
   const featured = services.filter((s) => s.is_featured);
   const displayServices = featured.length > 0 ? featured : services;
   if (displayServices.length === 0) return null;
@@ -98,9 +66,9 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
               params={{ serviceSlug: s.slug }}
               className={getGridClass(items.length, idx)}
             >
-              <Card className="group h-full overflow-hidden border-border transition-all hover:border-primary/30 hover:shadow-elegant lg:hover:shadow-md lg:hover:scale-[1.01] transition-transform duration-200">
+              <Card className="group h-full overflow-hidden border-border transition-all duration-200 hover:border-primary/30 hover:shadow-elegant lg:hover:shadow-md lg:hover:scale-[1.01]">
                 <div className="relative overflow-hidden">
-                  <ServiceMedia service={s} tradeSlug={tradeSlug} />
+                  <ServiceMedia service={s} />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                   {featuredIndex !== -1 && idx === featuredIndex && (
                     <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
@@ -139,7 +107,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
   );
 }
 
-function ServiceMedia({ service, tradeSlug }: { service: Service; tradeSlug: string | null | undefined }) {
+function ServiceMedia({ service }: { service: Service }) {
   const { tenant } = useTenant();
   const resolved = useResolvedMedia({
     tenantId: tenant?.id ?? null,
@@ -149,12 +117,12 @@ function ServiceMedia({ service, tradeSlug }: { service: Service; tradeSlug: str
     altFallback: service.name,
   });
 
-  const Icon = getTradeIcon(tradeSlug);
+  const Icon = getServiceIcon(service.name);
 
   if (resolved.source === "placeholder") {
     return (
-      <div className="aspect-[16/10] w-full bg-gradient-to-br from-primary/15 via-primary/5 to-primary/10 flex items-center justify-center">
-        <Icon className="h-12 w-12 text-primary/50 transition-transform duration-500 group-hover:scale-110" />
+      <div className="aspect-[16/10] w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+        <Icon className="h-14 w-14 text-primary/70 transition-transform duration-500 group-hover:scale-110" />
       </div>
     );
   }
