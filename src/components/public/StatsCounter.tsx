@@ -1,7 +1,7 @@
 import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
-import { Briefcase, MapPin, Image, Calendar } from "lucide-react";
+import { Briefcase, MapPin, Image, Calendar, Star } from "lucide-react";
 
 interface StatsCounterProps {
   variant?: "card" | "hero-band";
@@ -32,11 +32,23 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
 
   const uniqueCities = new Set(areas.map((a) => a.city)).size;
   const publishedCount = portfolio.filter((p) => p.is_published).length;
-  const googleRating = (tenant as { google_rating?: number | null }).google_rating ?? null;
+  const t = tenant as { google_rating?: number | null; google_review_count?: number | null };
+  const googleRating = t.google_rating ?? null;
+  const googleReviewCount = t.google_review_count ?? null;
 
   const stats = [
     tenant.years_experience
       ? { icon: Calendar, value: `${tenant.years_experience}+`, label: "Ans d'expérience" }
+      : null,
+    googleRating != null
+      ? {
+          icon: Star,
+          value: Number(googleRating).toFixed(1),
+          label:
+            googleReviewCount && googleReviewCount > 0
+              ? `${googleReviewCount} avis Google`
+              : "Avis Google",
+        }
       : null,
     services.length > 0
       ? { icon: Briefcase, value: `${services.length}`, label: "Services" }
