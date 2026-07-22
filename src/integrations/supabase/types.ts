@@ -581,6 +581,10 @@ export type Database = {
           created_at: string | null
           domain: string | null
           email: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_rating_updated_at: string | null
+          google_review_count: number | null
           has_lignia: boolean | null
           id: string
           is_active: boolean | null
@@ -602,6 +606,10 @@ export type Database = {
           created_at?: string | null
           domain?: string | null
           email?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_rating_updated_at?: string | null
+          google_review_count?: number | null
           has_lignia?: boolean | null
           id?: string
           is_active?: boolean | null
@@ -623,6 +631,10 @@ export type Database = {
           created_at?: string | null
           domain?: string | null
           email?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_rating_updated_at?: string | null
+          google_review_count?: number | null
           has_lignia?: boolean | null
           id?: string
           is_active?: boolean | null
