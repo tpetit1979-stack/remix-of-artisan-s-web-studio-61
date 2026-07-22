@@ -17,13 +17,14 @@ import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Star, GripVertical, Settings, Wrench,
   MapPin, Building2, ExternalLink, Wand2, Loader2, Shield, Check, Palette,
-  Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon, Calendar, Users,
+  Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon, Calendar, Users, Handshake,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
+import { PartnersManager } from "@/components/admin/PartnersManager";
 
 /* ── Presets ── */
 const SECTOR_PRESETS = [
@@ -338,6 +339,7 @@ function TenantDetail() {
           <TabsTrigger value="zones"><MapPin className="h-3 w-3 mr-1" /> Zones</TabsTrigger>
           <TabsTrigger value="certifications"><Shield className="h-3 w-3 mr-1" /> RGE</TabsTrigger>
           <TabsTrigger value="team"><Users className="h-3 w-3 mr-1" /> Équipe</TabsTrigger>
+          <TabsTrigger value="partners"><Handshake className="h-3 w-3 mr-1" /> Partenaires</TabsTrigger>
           <TabsTrigger value="booking"><Calendar className="h-3 w-3 mr-1" /> RDV</TabsTrigger>
           <TabsTrigger value="ai"><Wand2 className="h-3 w-3 mr-1" /> IA</TabsTrigger>
         </TabsList>
@@ -359,6 +361,9 @@ function TenantDetail() {
         </TabsContent>
         <TabsContent value="team" className="mt-3">
           <TeamManager tenantId={tenantId} />
+        </TabsContent>
+        <TabsContent value="partners" className="mt-3">
+          <PartnersManager tenantId={tenantId} />
         </TabsContent>
         <TabsContent value="booking" className="mt-3">
           <BookingTab tenantId={tenantId} settings={settings} />

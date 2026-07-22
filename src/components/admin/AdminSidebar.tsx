@@ -4,6 +4,7 @@ import {
   MapPin,
   Image,
   Users,
+  Handshake,
   Settings,
   Mail,
   ArrowLeft,
@@ -20,6 +21,7 @@ const navItems = [
   { label: "Zones", to: "/admin/service-areas", icon: MapPin },
   { label: "Portfolio", to: "/admin/portfolio", icon: Image },
   { label: "Équipe", to: "/admin/team", icon: Users },
+  { label: "Partenaires", to: "/admin/partners", icon: Handshake },
   { label: "Site", to: "/admin/settings", icon: Settings },
   { label: "Contacts", to: "/admin/contacts", icon: Mail },
 ];

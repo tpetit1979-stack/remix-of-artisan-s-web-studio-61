@@ -18,6 +18,7 @@ import { CertificationBadges } from "@/components/public/CertificationBadges";
 import { FaqSection } from "@/components/public/FaqSection";
 import { SeoLongText } from "@/components/public/SeoLongText";
 import { TeamSection } from "@/components/public/TeamSection";
+import { PartnersSection } from "@/components/public/PartnersSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, MapPin } from "lucide-react";
@@ -125,6 +126,8 @@ function HomePage() {
         
 
         <FeaturedServices services={services} tenant={tenant} settings={settings} />
+
+        <PartnersSection />
 
         <HowItWorks />
 
