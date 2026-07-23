@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { CompanySearch } from "@/components/admin/CompanySearch";
+import { TenantCreatedRecap, type TenantCreatedRecapTenant } from "@/components/admin/TenantCreatedRecap";
 import { toast } from "sonner";
 import { findExistingTenantByIdentity, generateSlug, toTenantMutationError } from "@/lib/tenant-admin";
 
