@@ -58,8 +58,7 @@ export function HeroSection() {
           alt={heroAlt}
           className="h-full w-full object-cover"
           loading="eager"
-          // @ts-expect-error - fetchpriority is a valid HTML attribute, React types lag.
-          fetchpriority="high"
+          fetchPriority="high"
           decoding="async"
         />
         <div className="absolute inset-0 bg-foreground/55" />
