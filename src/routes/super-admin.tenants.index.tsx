@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { CompanySearch } from "@/components/admin/CompanySearch";
+import { TenantCreatedRecap, type TenantCreatedRecapTenant } from "@/components/admin/TenantCreatedRecap";
 import { toast } from "sonner";
 import { findExistingTenantByIdentity, generateSlug, toTenantMutationError } from "@/lib/tenant-admin";
 
@@ -25,10 +26,12 @@ export const Route = createFileRoute("/super-admin/tenants/")({
 
 function TenantsIndex() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [createdTenant, setCreatedTenant] = useState<TenantCreatedRecapTenant | null>(null);
 
   const { data: tenants = [], isLoading } = useQuery({
     queryKey: ["sa-tenants"],
@@ -150,12 +153,19 @@ function TenantsIndex() {
         primary_color: "#2563eb",
       });
       if (settingsError) throw settingsError;
+      return newTenant;
     },
-    onSuccess: () => {
+    onSuccess: (newTenant: any) => {
       queryClient.invalidateQueries({ queryKey: ["sa-tenants"] });
       setIsDialogOpen(false);
       setEditing(null);
       toast.success("Tenant créé");
+      setCreatedTenant({
+        id: newTenant.id,
+        company_name: newTenant.company_name,
+        slug: newTenant.slug,
+        domain: newTenant.domain,
+      });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -214,6 +224,22 @@ function TenantsIndex() {
         <Icon className="h-3 w-3" />
         {has ? <Check className="h-3 w-3" /> : <XIcon className="h-3 w-3" />}
       </span>
+    );
+  }
+
+  if (createdTenant) {
+    return (
+      <div className="space-y-6 max-w-3xl mx-auto">
+        <AdminPageHeader
+          title="Client créé"
+          description="Voici le récapitulatif et les étapes restantes pour finaliser l'accès."
+        />
+        <TenantCreatedRecap
+          tenant={createdTenant}
+          onOpenTenant={() => navigate({ to: "/super-admin/tenants/$tenantId", params: { tenantId: createdTenant.id } })}
+          onBackToList={() => setCreatedTenant(null)}
+        />
+      </div>
     );
   }
 
