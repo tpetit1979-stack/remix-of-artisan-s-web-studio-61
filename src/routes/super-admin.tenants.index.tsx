@@ -26,10 +26,12 @@ export const Route = createFileRoute("/super-admin/tenants/")({
 
 function TenantsIndex() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [createdTenant, setCreatedTenant] = useState<TenantCreatedRecapTenant | null>(null);
 
   const { data: tenants = [], isLoading } = useQuery({
     queryKey: ["sa-tenants"],
