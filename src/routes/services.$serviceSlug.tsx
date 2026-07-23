@@ -186,6 +186,7 @@ function ServiceDetailPage() {
         <CTABanner
           title={`Besoin de ${service.name.toLowerCase()} ?`}
           subtitle={`Contactez ${tenant.company_name} pour un devis gratuit et personnalisé.`}
+          serviceId={service.id}
         />
       </main>
       <PublicFooter />

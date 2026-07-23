@@ -42,10 +42,10 @@ function getServiceIcon(name: string): React.ComponentType<{ className?: string 
 
 export function FeaturedServices({ services, tenant, settings }: FeaturedServicesProps) {
   const featured = services.filter((s) => s.is_featured);
-  const displayServices = featured.length > 0 ? featured : services;
-  if (displayServices.length === 0) return null;
+  const regular = services.filter((s) => !s.is_featured);
+  const items = [...featured, ...regular].slice(0, 5);
+  if (items.length === 0) return null;
 
-  const items = displayServices.slice(0, 5);
   const featuredIndex = items.findIndex((s) => s.is_featured);
 
   return (
