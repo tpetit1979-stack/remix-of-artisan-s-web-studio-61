@@ -19,6 +19,7 @@ import { getDefaultPrimaryColorForTrade } from "@/lib/defaults";
 import { fetchServiceTemplatesForTrades, activateTenantTrades, PARETO_MIN_SCORE } from "@/lib/tenant-trades";
 import { getTradeShortName } from "@/lib/trade-wording";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TenantCreatedRecap } from "@/components/admin/TenantCreatedRecap";
 
 const tradeIcons: Record<string, React.ReactNode> = {
   Flame: <Flame className="h-6 w-6" />,
