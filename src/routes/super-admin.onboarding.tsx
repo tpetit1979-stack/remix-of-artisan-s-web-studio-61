@@ -125,6 +125,7 @@ function OnboardingWizard() {
   const [isScraping, setIsScraping] = useState(false);
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
   const [complementaryTradeIds, setComplementaryTradeIds] = useState<string[]>([]);
+  const [createdTenant, setCreatedTenant] = useState<{ id: string; company_name: string; slug: string } | null>(null);
 
   // Fetch trade categories + templates
   const { data: tradeCategories = [] } = useQuery({
@@ -409,7 +410,7 @@ function OnboardingWizard() {
     },
     onSuccess: (tenant) => {
       toast.success(`${data.company_name} créé avec succès !`);
-      navigate({ to: "/super-admin/tenants/$tenantId", params: { tenantId: tenant.id } });
+      setCreatedTenant({ id: tenant.id, company_name: tenant.company_name, slug: tenant.slug });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -541,6 +542,71 @@ function OnboardingWizard() {
       setBrief(autoBrief);
     }
     setStep(1);
+  }
+
+  if (createdTenant) {
+    const siteUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/?tenant=${createdTenant.slug}`;
+    const loginUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/login`;
+    const checklist = [
+      { label: "Compte Auth créé (Supabase Dashboard)" },
+      { label: "Ligne dans tenant_members reliant l'utilisateur au tenant" },
+      { label: "Rôle tenant_admin attribué" },
+      { label: "Accès envoyés à l'artisan (email + mot de passe temporaire)" },
+    ];
+    return (
+      <div className="space-y-6 max-w-3xl mx-auto">
+        <AdminPageHeader
+          title="Client créé"
+          description="Voici le récapitulatif et les étapes restantes pour finaliser l'accès."
+        />
+        <Card className="border-green-500/40 bg-green-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
+              <Check className="h-5 w-5" />
+              {createdTenant.company_name}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-[140px_1fr] gap-y-2 text-sm">
+              <span className="text-muted-foreground">Entreprise</span>
+              <span className="font-medium">{createdTenant.company_name}</span>
+              <span className="text-muted-foreground">Slug</span>
+              <span className="font-mono text-xs">{createdTenant.slug}</span>
+              <span className="text-muted-foreground">URL du site</span>
+              <a href={siteUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{siteUrl}</a>
+              <span className="text-muted-foreground">URL de connexion</span>
+              <a href={loginUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{loginUrl}</a>
+              <span className="text-muted-foreground">État du compte</span>
+              <span className="text-amber-700 dark:text-amber-400">À configurer manuellement</span>
+            </div>
+
+            <div className="border-t border-border pt-4">
+              <p className="text-sm font-medium mb-2">Checklist administrateur</p>
+              <ul className="space-y-1.5 text-sm">
+                {checklist.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded border border-muted-foreground/40 text-muted-foreground">☐</span>
+                    <span>{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Ces étapes ne sont pas encore automatisées : effectuez-les manuellement avant de transmettre les accès à l'artisan.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button onClick={() => navigate({ to: "/super-admin/tenants/$tenantId", params: { tenantId: createdTenant.id } })}>
+                Ouvrir la fiche client
+              </Button>
+              <Button variant="outline" onClick={() => navigate({ to: "/super-admin/tenants" })}>
+                Retour à la liste
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
