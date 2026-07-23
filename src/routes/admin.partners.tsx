@@ -14,7 +14,7 @@ function AdminPartnersPage() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Partenaires"
+        title="Marques & certifications"
         description="Ajoutez les logos de vos marques et partenaires pour renforcer votre crédibilité."
       />
       <PartnersManager tenantId={tenant.id} />

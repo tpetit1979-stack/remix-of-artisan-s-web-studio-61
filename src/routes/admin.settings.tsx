@@ -164,7 +164,7 @@ function AdminSettings() {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title="Paramètres du site" description="Personnalisez l'apparence de votre site" />
+      <AdminPageHeader title="Mon site" description="Personnalisez l'apparence de votre site" />
 
       {/* Coordonnées */}
       <Card>

@@ -14,7 +14,7 @@ function AdminTeamPage() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Équipe"
+        title="Mon équipe"
         description="Présentez les visages de votre entreprise sur la page d'accueil."
       />
       <TeamManager tenantId={tenant.id} />

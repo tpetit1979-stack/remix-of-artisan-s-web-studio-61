@@ -100,7 +100,7 @@ function AdminServiceAreas() {
     <div className="space-y-6">
       <AdminPageHeader
         title="Zones d'intervention"
-        description="Gérez les villes par service"
+        description="Gérez les villes couvertes par chaque service"
         actions={
           <Button onClick={() => setIsDialogOpen(true)} disabled={services.length === 0}>
             <Plus className="h-4 w-4 mr-1" />Ajouter une ville
