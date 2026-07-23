@@ -227,6 +227,22 @@ function TenantsIndex() {
     );
   }
 
+  if (createdTenant) {
+    return (
+      <div className="space-y-6 max-w-3xl mx-auto">
+        <AdminPageHeader
+          title="Client créé"
+          description="Voici le récapitulatif et les étapes restantes pour finaliser l'accès."
+        />
+        <TenantCreatedRecap
+          tenant={createdTenant}
+          onOpenTenant={() => navigate({ to: "/super-admin/tenants/$tenantId", params: { tenantId: createdTenant.id } })}
+          onBackToList={() => setCreatedTenant(null)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
