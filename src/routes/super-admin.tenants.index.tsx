@@ -153,12 +153,19 @@ function TenantsIndex() {
         primary_color: "#2563eb",
       });
       if (settingsError) throw settingsError;
+      return newTenant;
     },
-    onSuccess: () => {
+    onSuccess: (newTenant: any) => {
       queryClient.invalidateQueries({ queryKey: ["sa-tenants"] });
       setIsDialogOpen(false);
       setEditing(null);
       toast.success("Tenant créé");
+      setCreatedTenant({
+        id: newTenant.id,
+        company_name: newTenant.company_name,
+        slug: newTenant.slug,
+        domain: newTenant.domain,
+      });
     },
     onError: (e: Error) => toast.error(e.message),
   });
