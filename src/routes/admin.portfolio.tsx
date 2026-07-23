@@ -196,7 +196,7 @@ function AdminPortfolio() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Portfolio"
+        title="Mes réalisations"
         description="Gérez vos réalisations"
         actions={<Button onClick={openNew}><Plus className="h-4 w-4 mr-1" />Ajouter</Button>}
       />

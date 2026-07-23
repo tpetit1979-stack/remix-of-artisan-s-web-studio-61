@@ -38,7 +38,7 @@ function AdminContacts() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Contacts"
+        title="Demandes reçues"
         description={`${contacts.length} message${contacts.length > 1 ? "s" : ""} · ${unread} non lu${unread > 1 ? "s" : ""}`}
       />
 

@@ -17,13 +17,13 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 
 const navItems = [
-  { label: "Services", to: "/admin/services", icon: Wrench },
-  { label: "Zones", to: "/admin/service-areas", icon: MapPin },
-  { label: "Portfolio", to: "/admin/portfolio", icon: Image },
-  { label: "Équipe", to: "/admin/team", icon: Users },
-  { label: "Partenaires", to: "/admin/partners", icon: Handshake },
-  { label: "Site", to: "/admin/settings", icon: Settings },
-  { label: "Contacts", to: "/admin/contacts", icon: Mail },
+  { label: "Mes services", to: "/admin/services", icon: Wrench },
+  { label: "Zones d'intervention", to: "/admin/service-areas", icon: MapPin },
+  { label: "Mes réalisations", to: "/admin/portfolio", icon: Image },
+  { label: "Mon équipe", to: "/admin/team", icon: Users },
+  { label: "Marques & certifications", to: "/admin/partners", icon: Handshake },
+  { label: "Mon site", to: "/admin/settings", icon: Settings },
+  { label: "Demandes reçues", to: "/admin/contacts", icon: Mail },
 ];
 
 export function AdminSidebar() {

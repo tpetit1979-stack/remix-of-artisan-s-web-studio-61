@@ -437,7 +437,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
         <CardContent className="pt-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <Field label="Nom *" hint="Nom récupéré automatiquement depuis le SIRET — vous pouvez le corriger (ex : retirer la forme juridique en MAJUSCULES)."><Input value={form.company_name ?? ""} onChange={e => set("company_name", e.target.value)} /></Field>
-            <Field label="Slug *"><Input value={form.slug ?? ""} onChange={e => set("slug", e.target.value)} /></Field>
+            <Field label="Slug" hint="Le slug identifie techniquement le site. Il ne doit plus être modifié après la création du client."><Input value={form.slug ?? ""} readOnly disabled className="bg-muted cursor-not-allowed" /></Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Domaine"><Input value={form.domain ?? ""} onChange={e => set("domain", e.target.value)} placeholder="monsite.fr" /></Field>

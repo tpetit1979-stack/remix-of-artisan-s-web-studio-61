@@ -117,7 +117,7 @@ function AdminServices() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Services"
+        title="Mes services"
         description="Gérez les services proposés"
         actions={<Button onClick={openNew}><Plus className="h-4 w-4 mr-1" />Ajouter</Button>}
       />
