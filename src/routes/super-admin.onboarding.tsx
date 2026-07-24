@@ -289,6 +289,10 @@ function OnboardingWizard() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      if (!selectedTradeId) {
+        throw new Error("Sélectionnez un métier avant de créer le client.");
+      }
+
       const baseSlug = generateSlug(data.company_name);
       const existingTenant = await findExistingTenantByIdentity({
         companyName: data.company_name,
@@ -312,7 +316,7 @@ function OnboardingWizard() {
           city: data.city || null,
           address: data.address || null,
           seo_boost_text: data.seo_boost_text || null,
-          trade_template_id: selectedTradeId || null,
+          trade_template_id: selectedTradeId,
           is_active: true,
         } as any)
         .select()
@@ -334,14 +338,12 @@ function OnboardingWizard() {
       if (settingsErr) throw settingsErr;
 
       // 3. Activate trades (primary + complementary). Trigger keeps tenants.trade_template_id in sync.
-      if (selectedTradeId) {
-        await activateTenantTrades({
-          tenantId: tenant.id,
-          primaryTradeId: selectedTradeId,
-          complementaryTradeIds,
-          source: "onboarding",
-        });
-      }
+      await activateTenantTrades({
+        tenantId: tenant.id,
+        primaryTradeId: selectedTradeId,
+        complementaryTradeIds,
+        source: "onboarding",
+      });
 
       // 4. Create services (use draft's pre-resolved slug + SEO templates)
       if (data.services.length > 0) {
