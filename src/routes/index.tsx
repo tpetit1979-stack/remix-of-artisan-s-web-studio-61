@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio, getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
+import { fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio, getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,7 +25,8 @@ import { ArrowRight, MapPin } from "lucide-react";
 export const Route = createFileRoute("/")({
   loader: async () => {
     const input = await getTenantResolutionInput();
-    const tenant = (await resolveTenantForSsr(input)) ?? (await fetchFirstActiveTenant());
+    const tenant = await resolveTenantForSsr(input);
+    if (!tenant) throw notFound();
     const [settings, services, areas, { data: certifications }] = await Promise.all([
       fetchSiteSettings(tenant.id),
       fetchServices(tenant.id),

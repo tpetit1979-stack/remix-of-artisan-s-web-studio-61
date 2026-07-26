@@ -121,10 +121,19 @@ export const getTenantResolutionInput = createServerFn({ method: "GET" }).handle
 });
 
 /**
- * Resolve the tenant for an SSR request: explicit ?tenant= param first,
- * then custom domain, then the same "first active tenant" fallback used
- * client-side for dev/preview hosts. Never throws — callers get null on
- * any failure and fall back to the existing client-side resolution.
+ * Resolve the tenant for an SSR request. Single source of truth for every
+ * public route and server handler — never duplicate this logic elsewhere.
+ *
+ * - Explicit ?tenant= is authoritative: matches or fails closed (null),
+ *   never falls back to hostname or to the default tenant.
+ * - A known hostname resolves to its tenant.
+ * - An unmatched dev/preview host (localhost, *.lovable.app,
+ *   *.lovableproject.com) falls back to the first active tenant — the
+ *   same convenience fallback used client-side for these hosts.
+ * - An unmatched real production hostname fails closed (null) — it must
+ *   never silently serve another tenant's site.
+ *
+ * Never throws — callers get null on any failure.
  */
 export async function resolveTenantForSsr(input: {
   hostname: string;
@@ -134,15 +143,26 @@ export async function resolveTenantForSsr(input: {
     try {
       return await fetchTenantBySlug(input.tenantSlugParam);
     } catch {
-      // Unknown slug — fall through to hostname/default resolution.
+      // Explicit ?tenant= is authoritative: fail closed, never fall back
+      // to hostname or to the default tenant.
+      return null;
     }
   }
   try {
     const byHost = await fetchTenantByHostname(input.hostname);
     if (byHost) return byHost;
   } catch {
-    // Domain lookup failed — fall through to the default tenant.
+    return null;
   }
+
+  // fetchTenantByHostname returned null either because this is a
+  // dev/preview host (no real domain to resolve against) or because a
+  // real production hostname matched no tenant. Only the former may fall
+  // back to the default tenant — an unmatched production domain must not.
+  if (!isDevOrPreviewHost(normalizeHostname(input.hostname))) {
+    return null;
+  }
+
   try {
     return await fetchFirstActiveTenant();
   } catch {
