@@ -1,13 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices, fetchServiceAreas } from "@/lib/tenant";
+import { resolveTenantForSsr, fetchSiteSettings, fetchServices, fetchServiceAreas } from "@/lib/tenant";
 import { buildLlmsTxt } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/llms.txt")({
   server: {
     handlers: {
-      GET: async () => {
-        const tenant = await fetchFirstActiveTenant();
+      GET: async ({ request }) => {
+        const url = new URL(request.url);
+        const tenant = await resolveTenantForSsr({
+          hostname: url.hostname,
+          tenantSlugParam: url.searchParams.get("tenant"),
+        });
+        if (!tenant) {
+          return new Response("", {
+            status: 404,
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+          });
+        }
         const [settings, services, areas, { data: certifications }] = await Promise.all([
           fetchSiteSettings(tenant.id),
           fetchServices(tenant.id),

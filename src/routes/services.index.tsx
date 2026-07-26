@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant } from "@/hooks/use-tenant";
-import { fetchFirstActiveTenant, fetchSiteSettings, fetchServices } from "@/lib/tenant";
+import { getTenantResolutionInput, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -12,7 +12,9 @@ import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/services/")({
   loader: async () => {
-    const tenant = await fetchFirstActiveTenant();
+    const input = await getTenantResolutionInput();
+    const tenant = await resolveTenantForSsr(input);
+    if (!tenant) throw notFound();
     const [settings, services] = await Promise.all([
       fetchSiteSettings(tenant.id),
       fetchServices(tenant.id),
