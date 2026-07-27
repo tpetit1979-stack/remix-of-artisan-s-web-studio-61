@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio, getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
@@ -69,6 +69,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { tenant, settings, isLoading, error } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -179,7 +180,7 @@ function HomePage() {
               </div>
               {publishedPortfolio.length > 6 && (
                 <div className="mt-8 text-center">
-                  <Link to="/realisations">
+                  <Link to="/realisations" search={previewTenant}>
                     <Button variant="outline" size="lg">Voir toutes nos réalisations</Button>
                   </Link>
                 </div>
@@ -213,6 +214,7 @@ function HomePage() {
                       key={city}
                       to="/$slug"
                       params={{ slug: `${service.slug}-${area.city_slug}` }}
+                      search={previewTenant}
                       className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-medium transition-all hover:border-primary hover:text-primary hover:shadow-sm"
                     >
                       <MapPin className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -222,7 +224,7 @@ function HomePage() {
                 })}
               </div>
               <div className="mt-10 text-center">
-                <Link to="/contact">
+                <Link to="/contact" search={previewTenant}>
                   <Button size="lg" className="h-12 px-8">
                     {settings?.cta_text ?? "Demander un devis"}
                   </Button>

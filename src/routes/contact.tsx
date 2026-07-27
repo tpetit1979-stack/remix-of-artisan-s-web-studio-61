@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useSearch, notFound } from "@tanstack/react-router";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getTenantResolutionInput, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
@@ -16,8 +16,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/contact")({
-  validateSearch: (search: Record<string, unknown>): { service?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { service?: string; tenant?: string } => ({
     service: typeof search.service === "string" ? search.service : undefined,
+    tenant: typeof search.tenant === "string" ? search.tenant : undefined,
   }),
   loader: async () => {
     const input = await getTenantResolutionInput();
@@ -47,6 +48,7 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const { tenant, settings } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
   const { service: prefilledService } = Route.useSearch();
 
   const { data: services = [] } = useQuery({
@@ -111,7 +113,7 @@ function ContactPage() {
                 </a>
               </p>
             )}
-            <Link to="/" className="mt-6 inline-block">
+            <Link to="/" search={previewTenant} className="mt-6 inline-block">
               <Button variant="outline">Retour à l'accueil</Button>
             </Link>
           </div>

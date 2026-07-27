@@ -3,6 +3,7 @@ import { loadServiceCityPage, type ServiceCityPageData } from "@/lib/tenant-load
 import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd, generateServiceJsonLd } from "@/lib/seo";
 import type { Service, ServiceArea, PortfolioItem } from "@/lib/tenant";
 import { getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
+import { usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -66,19 +67,22 @@ export const Route = createFileRoute("/$slug")({
     };
   },
   component: ServiceCityPage,
-  notFoundComponent: () => (
-    <div className="flex min-h-screen flex-col">
-      <PublicHeader />
-      <div className="flex flex-1 items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground">Page non trouvée</h1>
-          <p className="mt-2 text-muted-foreground">Ce service ou cette ville n'existe pas.</p>
-          <Link to="/" className="mt-4 inline-block text-primary hover:underline">Retour à l'accueil</Link>
+  notFoundComponent: () => {
+    const previewTenant = usePreviewTenantSearch();
+    return (
+      <div className="flex min-h-screen flex-col">
+        <PublicHeader />
+        <div className="flex flex-1 items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-foreground">Page non trouvée</h1>
+            <p className="mt-2 text-muted-foreground">Ce service ou cette ville n'existe pas.</p>
+            <Link to="/" search={previewTenant} className="mt-4 inline-block text-primary hover:underline">Retour à l'accueil</Link>
+          </div>
         </div>
+        <PublicFooter />
       </div>
-      <PublicFooter />
-    </div>
-  ),
+    );
+  },
 });
 
 function ServiceCityPage() {
@@ -97,6 +101,7 @@ function ServiceCityPage() {
   const h1 = generateH1(service, city, tenant);
   const introText = generateIntroText(service, city, tenant);
 
+  const previewTenant = usePreviewTenantSearch();
   const otherServices = allServices.filter((s: Service) => s.id !== service.id);
 
   const crossLinks = allAreas
@@ -122,7 +127,7 @@ function ServiceCityPage() {
                 {introText}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/contact" search={{ service: service.id }}>
+                <Link to="/contact" search={{ service: service.id, ...previewTenant }}>
                   <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
                 </Link>
                 {tenant.phone && (
@@ -167,6 +172,7 @@ function ServiceCityPage() {
                     key={a.id}
                     to="/$slug"
                     params={{ slug: `${service.slug}-${a.city_slug}` }}
+                    search={previewTenant}
                     className="rounded-full border border-border bg-background px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
                   >
                     {a.city}
@@ -207,7 +213,7 @@ function ServiceCityPage() {
                 ))}
               </div>
               <div className="mt-6 text-center">
-                <Link to="/realisations">
+                <Link to="/realisations" search={previewTenant}>
                   <Button variant="outline">
                     Voir toutes nos réalisations <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -229,6 +235,7 @@ function ServiceCityPage() {
                     key={a.id}
                     to="/$slug"
                     params={{ slug: `${s.slug}-${a.city_slug}` }}
+                    search={previewTenant}
                     className="group rounded-lg border border-border bg-background p-4 transition-colors hover:border-primary"
                   >
                     <h3 className="font-medium text-foreground group-hover:text-primary">
@@ -259,6 +266,7 @@ function ServiceCityPage() {
                     key={s.id}
                     to="/services/$serviceSlug"
                     params={{ serviceSlug: s.slug }}
+                    search={previewTenant}
                     className="group rounded-lg border border-border bg-background p-4 transition-colors hover:border-primary"
                   >
                     <h3 className="font-medium text-foreground group-hover:text-primary">

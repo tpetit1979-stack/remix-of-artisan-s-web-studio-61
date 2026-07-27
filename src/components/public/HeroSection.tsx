@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Phone, Shield, ArrowRight } from "lucide-react";
@@ -22,6 +22,7 @@ type TenantWithGoogle = Tenant & {
 
 export function HeroSection() {
   const { tenant, settings } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
 
   // Resolve trade slug ONLY for tagline copy (image is now handled by the resolver).
   const { data: tradeSlug } = useQuery({
@@ -94,6 +95,7 @@ export function HeroSection() {
 
           <Link
             to="/services"
+            search={previewTenant}
             className={`mt-5 inline-flex items-center text-sm font-semibold transition-colors ${
               hasHeroImage
                 ? "text-white/90 hover:text-white"
@@ -105,7 +107,7 @@ export function HeroSection() {
 
           {/* CTA buttons */}
           <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link to="/contact">
+            <Link to="/contact" search={previewTenant}>
               <Button size="lg" className="h-14 text-base px-10 shadow-elegant">
                 {settings?.cta_text ?? "Demander un devis gratuit"}
               </Button>

@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
 
 export function PublicFooter() {
   const { tenant } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -58,6 +59,7 @@ export function PublicFooter() {
                 <Link
                   to="/services/$serviceSlug"
                   params={{ serviceSlug: s.slug }}
+                  search={previewTenant}
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   {s.name}
@@ -80,6 +82,7 @@ export function PublicFooter() {
                     <Link
                       to="/$slug"
                       params={{ slug: `${service.slug}-${area.city_slug}` }}
+                      search={previewTenant}
                       className="text-sm text-muted-foreground hover:text-foreground"
                     >
                       {city}
@@ -95,21 +98,21 @@ export function PublicFooter() {
           <h3 className="mb-3 text-sm font-semibold text-foreground">Navigation</h3>
           <ul className="space-y-1.5">
             <li>
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">Accueil</Link>
+              <Link to="/" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Accueil</Link>
             </li>
             <li>
-              <Link to="/services" className="text-sm text-muted-foreground hover:text-foreground">Services</Link>
+              <Link to="/services" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Services</Link>
             </li>
             {hasPortfolio && (
               <li>
-                <Link to="/realisations" className="text-sm text-muted-foreground hover:text-foreground">Réalisations</Link>
+                <Link to="/realisations" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Réalisations</Link>
               </li>
             )}
             <li>
-              <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link>
+              <Link to="/contact" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Contact</Link>
             </li>
             <li>
-              <Link to="/mentions-legales" className="text-sm text-muted-foreground hover:text-foreground">Mentions légales</Link>
+              <Link to="/mentions-legales" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Mentions légales</Link>
             </li>
           </ul>
         </div>

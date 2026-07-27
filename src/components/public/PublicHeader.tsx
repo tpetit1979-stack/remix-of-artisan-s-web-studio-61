@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { fetchPortfolio } from "@/lib/tenant";
 import { Phone, Menu, X } from "lucide-react";
 import { CertificationBadges } from "./CertificationBadges";
@@ -11,6 +11,7 @@ import { useState } from "react";
 
 export function PublicHeader() {
   const { tenant, settings } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
   const [menuOpen, setMenuOpen] = useState(false);
 
 
@@ -34,7 +35,7 @@ export function PublicHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 md:flex md:justify-between">
-        <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
+        <Link to="/" search={previewTenant} className="flex min-w-0 items-center gap-2 sm:gap-3">
           {settings?.logo_url ? (
             <img
               src={settings.logo_url}
@@ -55,6 +56,7 @@ export function PublicHeader() {
             <Link
               key={link.to}
               to={link.to}
+              search={previewTenant}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "text-sm font-medium text-foreground" }}
             >
@@ -76,7 +78,7 @@ export function PublicHeader() {
           )}
           <BookingButton variant="header" />
 
-          <Link to="/contact" className="hidden sm:block">
+          <Link to="/contact" search={previewTenant} className="hidden sm:block">
             <Button size="sm" className="shadow-none">Être rappelé</Button>
           </Link>
           {/* Mobile hamburger */}
@@ -98,6 +100,7 @@ export function PublicHeader() {
               <Link
                 key={link.to}
                 to={link.to}
+                search={previewTenant}
                 className="rounded-md px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
                 activeProps={{ className: "rounded-md px-3 py-2.5 text-sm font-medium bg-primary/10 text-primary" }}
                 onClick={() => setMenuOpen(false)}
@@ -117,7 +120,7 @@ export function PublicHeader() {
             )}
             <BookingButton variant="mobile-menu" onNavigate={() => setMenuOpen(false)} />
 
-            <Link to="/contact" onClick={() => setMenuOpen(false)}>
+            <Link to="/contact" search={previewTenant} onClick={() => setMenuOpen(false)}>
               <Button className="w-full">{settings?.cta_text ?? "Demander un devis"}</Button>
             </Link>
           </div>

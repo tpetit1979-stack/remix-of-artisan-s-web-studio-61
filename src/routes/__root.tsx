@@ -1,7 +1,7 @@
 import { Outlet, Link, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { TenantProvider } from "@/hooks/use-tenant";
+import { TenantProvider, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { AuthProvider } from "@/hooks/use-auth";
 import { FloatingCTA } from "@/components/public/FloatingCTA";
 import { TenantTheme } from "@/components/TenantTheme";
@@ -21,6 +21,7 @@ interface RouterContext {
 }
 
 function NotFoundComponent() {
+  const previewTenant = usePreviewTenantSearch();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -32,6 +33,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
+            search={previewTenant}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Retour à l'accueil

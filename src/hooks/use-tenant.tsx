@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearch } from "@tanstack/react-router";
 import { fetchTenant, fetchSiteSettings, fetchTenantBySlug, type Tenant, type SiteSettings } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { useImpersonation } from "@/stores/impersonation";
@@ -91,4 +92,15 @@ export function TenantProvider({
 
 export function useTenant() {
   return useContext(TenantContext);
+}
+
+/**
+ * Reads the current `?tenant=` search param (used on dev/preview hosts,
+ * see resolveTenantForSsr) so public-site links can carry it forward on
+ * client-side navigation. Returns {} when absent — on a real production
+ * domain this never adds anything to `search`, so behavior is unchanged.
+ */
+export function usePreviewTenantSearch(): { tenant?: string } {
+  const search = useSearch({ strict: false }) as { tenant?: string };
+  return search?.tenant ? { tenant: search.tenant } : {};
 }

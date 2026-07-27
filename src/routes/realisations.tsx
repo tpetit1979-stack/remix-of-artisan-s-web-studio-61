@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { getTenantResolutionInput, resolveTenantForSsr, fetchSiteSettings, fetchPortfolio, fetchServices } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/realisations")({
 
 function RealisationsPage() {
   const { tenant } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
 
   const { data: portfolio = [] } = useQuery({
     queryKey: ["portfolio", tenant?.id],
@@ -91,6 +92,7 @@ function RealisationsPage() {
                             <Link
                               to="/services/$serviceSlug"
                               params={{ serviceSlug: service.slug }}
+                              search={previewTenant}
                               className="text-xs text-primary hover:underline"
                             >
                               {service.name}

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { fetchSiteSettings, fetchServiceAreas, fetchPortfolio, fetchServices, getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -44,6 +44,7 @@ export const Route = createFileRoute("/services/$serviceSlug")({
 function ServiceDetailPage() {
   const { serviceSlug } = Route.useParams();
   const { tenant, settings } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -95,7 +96,7 @@ function ServiceDetailPage() {
               <p className="mt-6 max-w-3xl text-lg text-muted-foreground">{service.description}</p>
             )}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/contact" search={{ service: service.id }}>
+              <Link to="/contact" search={{ service: service.id, ...previewTenant }}>
                 <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
               </Link>
               {tenant.phone && (
@@ -122,6 +123,7 @@ function ServiceDetailPage() {
                     key={a.id}
                     to="/$slug"
                     params={{ slug: `${service.slug}-${a.city_slug}` }}
+                    search={previewTenant}
                     className="rounded-full border border-border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
                   >
                     <MapPin className="mr-1 inline h-3 w-3" />
@@ -166,7 +168,7 @@ function ServiceDetailPage() {
               <h2 className="text-2xl font-semibold text-foreground">Nos autres services</h2>
               <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {otherServices.map((s) => (
-                  <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }}>
+                  <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }} search={previewTenant}>
                     <Card className="group h-full transition-colors hover:border-primary">
                       <CardContent className="p-4">
                         <h3 className="font-medium text-foreground group-hover:text-primary">{s.name}</h3>

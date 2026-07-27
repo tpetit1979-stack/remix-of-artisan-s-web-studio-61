@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { Button } from "@/components/ui/button";
 import { Phone } from "lucide-react";
 
@@ -11,6 +11,7 @@ interface CTABannerProps {
 
 export function CTABanner({ title, subtitle, serviceId }: CTABannerProps) {
   const { tenant, settings } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
 
   if (!tenant) return null;
 
@@ -28,7 +29,7 @@ export function CTABanner({ title, subtitle, serviceId }: CTABannerProps) {
           {subtitle ?? `Contactez ${tenant.company_name} dès maintenant. Intervention rapide et devis gratuit.`}
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Link to="/contact" search={serviceId ? { service: serviceId } : undefined}>
+          <Link to="/contact" search={{ ...(serviceId ? { service: serviceId } : {}), ...previewTenant }}>
             <Button size="lg" variant="secondary" className="h-14 px-10 text-base shadow-elegant">
               {settings?.cta_text ?? "Demander un devis"}
             </Button>

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { getTenantResolutionInput, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -43,6 +43,7 @@ export const Route = createFileRoute("/services/")({
 
 function ServicesPage() {
   const { tenant, settings } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -63,7 +64,7 @@ function ServicesPage() {
             {services.length === 0 ? (
               <div className="mt-10 rounded-lg border border-dashed border-border py-16 text-center">
                 <p className="text-muted-foreground">Aucun service disponible pour le moment.</p>
-                <Link to="/contact" className="mt-4 inline-block">
+                <Link to="/contact" search={previewTenant} className="mt-4 inline-block">
                   <Button size="lg">Contactez-nous</Button>
                 </Link>
               </div>
@@ -71,7 +72,7 @@ function ServicesPage() {
               <>
                 <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {services.map((s) => (
-                    <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }}>
+                    <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }} search={previewTenant}>
                       <Card className="group h-full transition-all hover:border-primary hover:shadow-md">
                         <CardContent className="flex h-full flex-col p-6">
                           <h2 className="text-lg font-semibold text-foreground group-hover:text-primary">
@@ -89,7 +90,7 @@ function ServicesPage() {
                   ))}
                 </div>
                 <div className="mt-10 text-center">
-                  <Link to="/contact">
+                  <Link to="/contact" search={previewTenant}>
                     <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
                   </Link>
                 </div>

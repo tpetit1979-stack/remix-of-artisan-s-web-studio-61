@@ -1,6 +1,6 @@
 import { Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { BookingButton } from "./BookingButton";
 
 /**
@@ -11,6 +11,7 @@ import { BookingButton } from "./BookingButton";
  */
 export function FloatingCTA() {
   const { tenant } = useTenant();
+  const previewTenant = usePreviewTenantSearch();
   const phone = tenant?.phone?.trim();
 
   return (
@@ -29,6 +30,7 @@ export function FloatingCTA() {
         )}
         <Link
           to="/contact"
+          search={previewTenant}
           className="flex flex-1 items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground active:scale-95"
         >
           Devis gratuit

@@ -12,7 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useResolvedMedia } from "@/lib/media-resolver";
-import { useTenant } from "@/hooks/use-tenant";
+import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import type { Service, Tenant, SiteSettings } from "@/lib/tenant";
 
 interface FeaturedServicesProps {
@@ -41,6 +41,7 @@ function getServiceIcon(name: string): React.ComponentType<{ className?: string 
 }
 
 export function FeaturedServices({ services, tenant, settings }: FeaturedServicesProps) {
+  const previewTenant = usePreviewTenantSearch();
   const featured = services.filter((s) => s.is_featured);
   const regular = services.filter((s) => !s.is_featured);
   const items = [...featured, ...regular].slice(0, 5);
@@ -64,6 +65,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
               key={s.id}
               to="/services/$serviceSlug"
               params={{ serviceSlug: s.slug }}
+              search={previewTenant}
               className={getGridClass(items.length, idx)}
             >
               <Card className="group h-full overflow-hidden border-border transition-all duration-200 hover:border-primary/30 hover:shadow-elegant lg:hover:shadow-md lg:hover:scale-[1.01]">
@@ -96,7 +98,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
         </div>
 
         <div className="mt-10 text-center">
-          <Link to="/contact">
+          <Link to="/contact" search={previewTenant}>
             <Button size="lg" className="h-12 px-8">
               {settings?.cta_text ?? "Demander un devis"}
             </Button>
