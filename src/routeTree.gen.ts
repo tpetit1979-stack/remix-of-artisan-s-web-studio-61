@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as SuperAdminRouteImport } from './routes/super-admin'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
@@ -17,6 +18,7 @@ import { Route as RealisationsRouteImport } from './routes/realisations'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SlugRouteImport } from './routes/$slug'
@@ -40,6 +42,11 @@ import { Route as SuperAdminTenantsIndexRouteImport } from './routes/super-admin
 import { Route as SuperAdminTenantsTenantIdRouteImport } from './routes/super-admin.tenants.$tenantId'
 import { Route as SuperAdminTenantsTenantIdMediaRouteImport } from './routes/super-admin.tenants.$tenantId.media'
 
+const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
+  id: '/update-password',
+  path: '/update-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuperAdminRoute = SuperAdminRouteImport.update({
   id: '/super-admin',
   path: '/super-admin',
@@ -78,6 +85,11 @@ const LoginRoute = LoginRouteImport.update({
 const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
   id: '/llms.txt',
   path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -198,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/login': typeof LoginRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -206,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
+  '/update-password': typeof UpdatePasswordRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
@@ -229,12 +243,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/login': typeof LoginRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/realisations': typeof RealisationsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
@@ -259,6 +275,7 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/login': typeof LoginRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -267,6 +284,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
+  '/update-password': typeof UpdatePasswordRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
@@ -293,6 +311,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/admin'
     | '/contact'
+    | '/forgot-password'
     | '/llms.txt'
     | '/login'
     | '/mentions-legales'
@@ -301,6 +320,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/super-admin'
+    | '/update-password'
     | '/admin/contacts'
     | '/admin/partners'
     | '/admin/portfolio'
@@ -324,12 +344,14 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/contact'
+    | '/forgot-password'
     | '/llms.txt'
     | '/login'
     | '/mentions-legales'
     | '/realisations'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/update-password'
     | '/admin/contacts'
     | '/admin/partners'
     | '/admin/portfolio'
@@ -353,6 +375,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/admin'
     | '/contact'
+    | '/forgot-password'
     | '/llms.txt'
     | '/login'
     | '/mentions-legales'
@@ -361,6 +384,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/super-admin'
+    | '/update-password'
     | '/admin/contacts'
     | '/admin/partners'
     | '/admin/portfolio'
@@ -386,6 +410,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   LoginRoute: typeof LoginRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -394,10 +419,18 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuperAdminRoute: typeof SuperAdminRouteWithChildren
+  UpdatePasswordRoute: typeof UpdatePasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/update-password': {
+      id: '/update-password'
+      path: '/update-password'
+      fullPath: '/update-password'
+      preLoaderRoute: typeof UpdatePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/super-admin': {
       id: '/super-admin'
       path: '/super-admin'
@@ -452,6 +485,13 @@ declare module '@tanstack/react-router' {
       path: '/llms.txt'
       fullPath: '/llms.txt'
       preLoaderRoute: typeof LlmsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -701,6 +741,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
   LoginRoute: LoginRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
@@ -709,6 +750,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuperAdminRoute: SuperAdminRouteWithChildren,
+  UpdatePasswordRoute: UpdatePasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
