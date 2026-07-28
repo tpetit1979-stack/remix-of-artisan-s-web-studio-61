@@ -1,10 +1,19 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSearch } from "@tanstack/react-router";
+import { useLocation, useSearch } from "@tanstack/react-router";
 import { fetchTenant, fetchSiteSettings, fetchTenantBySlug, type Tenant, type SiteSettings } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { useImpersonation } from "@/stores/impersonation";
 import { useAuth } from "@/hooks/use-auth";
+
+/**
+ * True for /admin/* and /super-admin/*. The public resolver (TenantProvider
+ * below) must never run its query there — see useAdminTenant() for why.
+ * Shared with __root.tsx so the two checks can't drift apart.
+ */
+export function isAdminRoute(pathname: string): boolean {
+  return pathname.startsWith("/admin") || pathname.startsWith("/super-admin");
+}
 
 interface TenantContextType {
   tenant: Tenant | null;
@@ -33,6 +42,14 @@ export function TenantProvider({
 }) {
   const impersonatedId = useImpersonation((s) => s.tenantId);
   const stopImpersonation = useImpersonation((s) => s.stopImpersonation);
+  const location = useLocation();
+  // /admin and /super-admin have their own resolver (useAdminTenant). This
+  // provider's query must never run there — not just "go unread": on a real
+  // production domain that happens to match a *different* tenant's own
+  // custom domain, hostname resolution would otherwise still succeed, and
+  // TenantTheme/FloatingCTA (mounted for every route) would apply that
+  // other tenant's colors/phone number on top of the admin UI.
+  const disabledOnAdminRoute = isAdminRoute(location.pathname);
 
   // Only seed the "auto" (non-impersonated) query — never the impersonation
   // one, otherwise a super-admin reloading mid-impersonation would have
@@ -61,6 +78,7 @@ export function TenantProvider({
       }
       return fetchTenant();
     },
+    enabled: !disabledOnAdminRoute,
     staleTime: 1000 * 60 * 5,
     retry: 1,
     ...(canSeedFromSsr ? { initialData: initialTenant } : {}),
@@ -72,7 +90,7 @@ export function TenantProvider({
   const settingsQuery = useQuery({
     queryKey: ["site-settings", tenantQuery.data?.id],
     queryFn: () => fetchSiteSettings(tenantQuery.data!.id),
-    enabled: !!tenantQuery.data?.id,
+    enabled: !disabledOnAdminRoute && !!tenantQuery.data?.id,
     staleTime: 1000 * 60 * 5,
     ...(canSeedSettingsFromSsr ? { initialData: initialSettings } : {}),
   });

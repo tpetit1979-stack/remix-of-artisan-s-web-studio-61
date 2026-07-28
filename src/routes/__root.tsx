@@ -1,7 +1,7 @@
-import { Outlet, Link, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { TenantProvider, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { TenantProvider, usePreviewTenantSearch, isAdminRoute } from "@/hooks/use-tenant";
 import { AuthProvider } from "@/hooks/use-auth";
 import { FloatingCTA } from "@/components/public/FloatingCTA";
 import { TenantTheme } from "@/components/TenantTheme";
@@ -103,13 +103,19 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient, tenant, settings } = Route.useRouteContext();
+  const location = useLocation();
+  // TenantTheme (global :root color/font override) and FloatingCTA (phone
+  // number + link out to /contact) belong to the public site only — never
+  // render them on /admin or /super-admin, on top of not resolving any
+  // tenant data there in the first place (see TenantProvider).
+  const onAdminRoute = isAdminRoute(location.pathname);
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TenantProvider initialTenant={tenant} initialSettings={settings}>
-          <TenantTheme />
+          {!onAdminRoute && <TenantTheme />}
           <Outlet />
-          <FloatingCTA />
+          {!onAdminRoute && <FloatingCTA />}
           <Toaster position="top-right" richColors />
         </TenantProvider>
       </AuthProvider>
