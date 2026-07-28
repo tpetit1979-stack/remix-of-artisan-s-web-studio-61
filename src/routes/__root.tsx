@@ -45,7 +45,7 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     // Resolve the tenant server-side so the SSR HTML (SEO, JSON-LD, social
     // previews) is already correct before hydration — not just once the
     // client re-resolves from window.location. Any failure here (server fn
@@ -58,11 +58,21 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     // (useAdminTenant), resolved client-side after the session is known.
     // Skipping this entirely for those paths guarantees no other tenant's
     // data is ever present in their SSR HTML.
+    //
+    // IMPORTANT: this check uses the router's own `location.pathname`, not
+    // a pathname read inside getTenantResolutionInput() via getRequestUrl().
+    // A createServerFn is invoked over its own dedicated /_serverFn/<hash>
+    // RPC request whenever this beforeLoad re-runs client-side (e.g. the
+    // /login → /admin/settings redirect after sign-in) — getRequestUrl()
+    // inside that handler then reflects the RPC endpoint's own URL, not the
+    // page being navigated to, so pathname read that way is unreliable.
+    // location.pathname comes from the router itself and is correct in
+    // both the SSR and client-navigation case.
+    if (location.pathname.startsWith("/admin") || location.pathname.startsWith("/super-admin")) {
+      return { tenant: null, settings: null };
+    }
     try {
       const input = await getTenantResolutionInput();
-      if (input.pathname.startsWith("/admin") || input.pathname.startsWith("/super-admin")) {
-        return { tenant: null, settings: null };
-      }
       const tenant = await resolveTenantForSsr(input);
       if (!tenant) return { tenant: null, settings: null };
       const settings = await fetchSiteSettings(tenant.id).catch(() => null);

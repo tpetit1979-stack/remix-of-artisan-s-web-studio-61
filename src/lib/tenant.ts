@@ -86,13 +86,20 @@ export async function fetchTenantByHostname(host: string): Promise<Tenant | null
  * client hydration. The framework strips the handler body (and this
  * server-only import) from the client bundle; on the client this becomes
  * a network call instead.
+ *
+ * Deliberately does NOT return a pathname: a createServerFn is invoked
+ * over its own dedicated /_serverFn/<hash> RPC request whenever this is
+ * called client-side (e.g. on a client-side route transition), and
+ * getRequestUrl() inside the handler then reflects that RPC endpoint's
+ * own URL — never the page actually being navigated to. Route-type checks
+ * must use the router's own `location.pathname` (see __root.tsx), not
+ * anything derived from this function.
  */
 export const getTenantResolutionInput = createServerFn({ method: "GET" }).handler(async () => {
   const url = getRequestUrl({ xForwardedHost: true });
   return {
     hostname: url.hostname,
     tenantSlugParam: url.searchParams.get("tenant"),
-    pathname: url.pathname,
   };
 });
 
