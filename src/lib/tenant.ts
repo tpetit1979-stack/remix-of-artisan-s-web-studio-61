@@ -10,26 +10,6 @@ export type ServiceArea = Tables<"service_areas">;
 export type PortfolioItem = Tables<"portfolio">;
 export type Contact = Tables<"contacts">;
 
-/**
- * Detect tenant slug from hostname.
- * In dev, fallback to first active tenant.
- */
-export function getTenantSlugFromHostname(): { type: "domain"; value: string } | { type: "slug"; value: string } | null {
-  if (typeof window === "undefined") return null;
-
-  // Dev override: ?tenant=slug
-  const params = new URLSearchParams(window.location.search);
-  const tenantSlug = params.get("tenant");
-  if (tenantSlug) return { type: "slug", value: tenantSlug };
-
-  const hostname = window.location.hostname;
-  if (hostname === "localhost" || hostname.includes("lovable.app") || hostname.includes("lovableproject.com") || hostname.includes("127.0.0.1")) {
-    return null; // Will use fallback query
-  }
-  // Custom domain: lookup by domain
-  return { type: "domain", value: hostname };
-}
-
 export async function fetchTenantByDomain(domain: string) {
   const { data, error } = await supabase
     .from("tenants")
@@ -52,25 +32,20 @@ export async function fetchTenantBySlug(slug: string) {
   return data;
 }
 
-export async function fetchFirstActiveTenant() {
-  const { data, error } = await supabase
-    .from("tenants")
-    .select("*")
-    .eq("is_active", true)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .single();
-  if (error) throw error;
-  return data;
-}
-
+/**
+ * Client-side counterpart to resolveTenantForSsr, used by TenantProvider's
+ * "auto" (non-impersonated) query. Reuses the same fail-closed resolution —
+ * never a separate implementation — so the public site behaves identically
+ * whether resolved server-side or re-resolved after hydration.
+ */
 export async function fetchTenant(): Promise<Tenant> {
-  const result = getTenantSlugFromHostname();
-  if (result) {
-    if (result.type === "slug") return fetchTenantBySlug(result.value);
-    return fetchTenantByDomain(result.value);
-  }
-  return fetchFirstActiveTenant();
+  if (typeof window === "undefined") throw new Error("fetchTenant is client-only");
+  const tenant = await resolveTenantForSsr({
+    hostname: window.location.hostname,
+    tenantSlugParam: new URLSearchParams(window.location.search).get("tenant"),
+  });
+  if (!tenant) throw new Error("No tenant resolved for this host");
+  return tenant;
 }
 
 /**
@@ -117,6 +92,7 @@ export const getTenantResolutionInput = createServerFn({ method: "GET" }).handle
   return {
     hostname: url.hostname,
     tenantSlugParam: url.searchParams.get("tenant"),
+    pathname: url.pathname,
   };
 });
 
@@ -124,14 +100,14 @@ export const getTenantResolutionInput = createServerFn({ method: "GET" }).handle
  * Resolve the tenant for an SSR request. Single source of truth for every
  * public route and server handler — never duplicate this logic elsewhere.
  *
+ * Fail-closed, no exceptions:
  * - Explicit ?tenant= is authoritative: matches or fails closed (null),
- *   never falls back to hostname or to the default tenant.
- * - A known hostname resolves to its tenant.
- * - An unmatched dev/preview host (localhost, *.lovable.app,
- *   *.lovableproject.com) falls back to the first active tenant — the
- *   same convenience fallback used client-side for these hosts.
- * - An unmatched real production hostname fails closed (null) — it must
- *   never silently serve another tenant's site.
+ *   never falls back to hostname.
+ * - Otherwise resolves strictly by hostname.
+ * - No dev/preview host ever falls back to a default/first tenant — an
+ *   unmatched host (real domain OR bare preview URL without ?tenant=)
+ *   always resolves to null. Callers must treat null as "no tenant" and
+ *   fail closed (throw notFound()), never render with a guessed tenant.
  *
  * Never throws — callers get null on any failure.
  */
@@ -144,27 +120,12 @@ export async function resolveTenantForSsr(input: {
       return await fetchTenantBySlug(input.tenantSlugParam);
     } catch {
       // Explicit ?tenant= is authoritative: fail closed, never fall back
-      // to hostname or to the default tenant.
+      // to hostname.
       return null;
     }
   }
   try {
-    const byHost = await fetchTenantByHostname(input.hostname);
-    if (byHost) return byHost;
-  } catch {
-    return null;
-  }
-
-  // fetchTenantByHostname returned null either because this is a
-  // dev/preview host (no real domain to resolve against) or because a
-  // real production hostname matched no tenant. Only the former may fall
-  // back to the default tenant — an unmatched production domain must not.
-  if (!isDevOrPreviewHost(normalizeHostname(input.hostname))) {
-    return null;
-  }
-
-  try {
-    return await fetchFirstActiveTenant();
+    return await fetchTenantByHostname(input.hostname);
   } catch {
     return null;
   }

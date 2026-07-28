@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useAdminTenant } from "@/hooks/use-tenant";
 import { fetchPortfolio, fetchAllServices } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -34,7 +34,7 @@ interface PortfolioSuggestion {
 }
 
 function AdminPortfolio() {
-  const { tenant } = useTenant();
+  const { tenant } = useAdminTenant();
   const queryClient = useQueryClient();
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

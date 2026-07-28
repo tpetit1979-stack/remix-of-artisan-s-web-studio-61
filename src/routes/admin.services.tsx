@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useAdminTenant } from "@/hooks/use-tenant";
 import { fetchAllServices } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/admin/services")({
 });
 
 function AdminServices() {
-  const { tenant } = useTenant();
+  const { tenant } = useAdminTenant();
   const queryClient = useQueryClient();
   const [editingService, setEditingService] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

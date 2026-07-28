@@ -52,8 +52,17 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     // wiring, DB error) falls back silently to { tenant: null, settings:
     // null }, which makes TenantProvider behave exactly like it does today
     // (client-side resolution only). Never let this take the whole route down.
+    //
+    // /admin and /super-admin never resolve a public tenant here: their
+    // "current tenant" comes exclusively from the authenticated session
+    // (useAdminTenant), resolved client-side after the session is known.
+    // Skipping this entirely for those paths guarantees no other tenant's
+    // data is ever present in their SSR HTML.
     try {
       const input = await getTenantResolutionInput();
+      if (input.pathname.startsWith("/admin") || input.pathname.startsWith("/super-admin")) {
+        return { tenant: null, settings: null };
+      }
       const tenant = await resolveTenantForSsr(input);
       if (!tenant) return { tenant: null, settings: null };
       const settings = await fetchSiteSettings(tenant.id).catch(() => null);

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useAdminTenant } from "@/hooks/use-tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
@@ -92,7 +92,7 @@ function generatePreviewShades(hex: string) {
 }
 
 function AdminSettings() {
-  const { tenant, settings } = useTenant();
+  const { tenant, settings } = useAdminTenant();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<any>(null);
   const [tenantForm, setTenantForm] = useState<any>(null);

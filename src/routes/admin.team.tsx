@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useTenant } from "@/hooks/use-tenant";
+import { useAdminTenant } from "@/hooks/use-tenant";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { TeamManager } from "@/components/admin/TeamManager";
 
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/team")({
 });
 
 function AdminTeamPage() {
-  const { tenant } = useTenant();
+  const { tenant } = useAdminTenant();
   if (!tenant) return <p className="text-muted-foreground">Chargement...</p>;
 
   return (

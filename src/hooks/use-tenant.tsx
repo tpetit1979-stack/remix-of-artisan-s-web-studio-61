@@ -4,6 +4,7 @@ import { useSearch } from "@tanstack/react-router";
 import { fetchTenant, fetchSiteSettings, fetchTenantBySlug, type Tenant, type SiteSettings } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { useImpersonation } from "@/stores/impersonation";
+import { useAuth } from "@/hooks/use-auth";
 
 interface TenantContextType {
   tenant: Tenant | null;
@@ -103,4 +104,56 @@ export function useTenant() {
 export function usePreviewTenantSearch(): { tenant?: string } {
   const search = useSearch({ strict: false }) as { tenant?: string };
   return search?.tenant ? { tenant: search.tenant } : {};
+}
+
+/**
+ * The tenant an authenticated /admin/* session manages. Deliberately
+ * independent from TenantProvider/useTenant above (hostname/?tenant=
+ * driven — the public resolver): admin pages must never inherit whichever
+ * tenant the current preview host happens to resolve to.
+ *
+ * Source of the tenant id, by authenticated identity only:
+ *   - super_admin with active impersonation → the impersonated tenant
+ *   - tenant_admin → their own tenant_members.tenant_id (from useAuth)
+ *   - anything else (not authenticated yet, wrong role, no impersonation)
+ *     → no id, no query — the route's own auth guard decides what to show
+ *
+ * No query fires while useAuth().isLoading is true, and the query key
+ * carries the resolved id itself, so switching impersonation targets (or
+ * signing in as a different tenant_admin) always starts a fresh query —
+ * no previous tenant's cached data is ever shown while the new one loads.
+ */
+export function useAdminTenant() {
+  const { role, tenantId, isLoading: authLoading } = useAuth();
+  const impersonatedId = useImpersonation((s) => s.tenantId);
+
+  const resolvedTenantId =
+    role === "super_admin" ? impersonatedId : role === "tenant_admin" ? tenantId : null;
+
+  const tenantQuery = useQuery({
+    queryKey: ["admin-tenant", resolvedTenantId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("tenants")
+        .select("*")
+        .eq("id", resolvedTenantId!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !authLoading && !!resolvedTenantId,
+  });
+
+  const settingsQuery = useQuery({
+    queryKey: ["admin-tenant-settings", resolvedTenantId],
+    queryFn: () => fetchSiteSettings(resolvedTenantId!),
+    enabled: !authLoading && !!resolvedTenantId,
+  });
+
+  return {
+    tenant: (tenantQuery.data ?? null) as Tenant | null,
+    settings: (settingsQuery.data ?? null) as SiteSettings | null,
+    isLoading: authLoading || tenantQuery.isLoading || settingsQuery.isLoading,
+    error: (tenantQuery.error ?? settingsQuery.error) as Error | null,
+  };
 }

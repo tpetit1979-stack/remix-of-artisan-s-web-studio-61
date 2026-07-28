@@ -1,11 +1,10 @@
 import { createFileRoute, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { useAuth } from "@/hooks/use-auth";
 import { useImpersonation } from "@/stores/impersonation";
+import { useAdminTenant } from "@/hooks/use-tenant";
 import { TenantAdminBanner, ImpersonationBanner } from "@/components/admin/RoleBanner";
-import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -39,15 +38,10 @@ function AdminLayout() {
     }
   }, [isAuthenticated, isLoading, canAccess, isSuperAdmin, navigate, location.pathname]);
 
-  // Fetch own tenant name for tenant_admin banner
-  const { data: ownTenant } = useQuery({
-    queryKey: ["own-tenant", tenantId],
-    enabled: !!tenantId && isTenantAdmin,
-    queryFn: async () => {
-      const { data } = await supabase.from("tenants").select("company_name").eq("id", tenantId!).maybeSingle();
-      return data;
-    },
-  });
+  // Single source of truth for "which tenant does this admin session
+  // manage" — same hook every /admin/* page uses, so the banner always
+  // agrees with the page content underneath it.
+  const { tenant: ownTenant } = useAdminTenant();
 
   if (isLoading || !isAuthenticated || !canAccess) {
     return (

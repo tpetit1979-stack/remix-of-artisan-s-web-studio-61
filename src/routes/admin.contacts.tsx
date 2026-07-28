@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTenant } from "@/hooks/use-tenant";
+import { useAdminTenant } from "@/hooks/use-tenant";
 import { fetchContacts } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/admin/contacts")({
 });
 
 function AdminContacts() {
-  const { tenant } = useTenant();
+  const { tenant } = useAdminTenant();
   const queryClient = useQueryClient();
 
   const { data: contacts = [], isLoading } = useQuery({
