@@ -59,7 +59,7 @@ function AdminLayout() {
         <TenantAdminBanner companyName={ownTenant?.company_name} />
       )}
       <div className="flex flex-1">
-        <AdminSidebar />
+        <AdminSidebar tenant={ownTenant} />
         <main className="flex-1 overflow-auto">
           <div className="mx-auto max-w-5xl p-4 pt-16 md:p-8 md:pt-8">
             <Outlet />

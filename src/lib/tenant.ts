@@ -10,6 +10,17 @@ export type ServiceArea = Tables<"service_areas">;
 export type PortfolioItem = Tables<"portfolio">;
 export type Contact = Tables<"contacts">;
 
+/**
+ * The URL to open to view a tenant's public site — single source of truth
+ * so every "view site" link/button builds the same address. A real domain
+ * is used as-is; otherwise falls back to the dev/preview `?tenant=`
+ * convention. Never a bare "/" — resolveTenantForSsr fails closed on that
+ * now, so a link without the tenant would just 404.
+ */
+export function buildPublicSiteUrl(tenant: Pick<Tenant, "domain" | "slug">): string {
+  return tenant.domain ? `https://${tenant.domain}` : `/?tenant=${tenant.slug}`;
+}
+
 export async function fetchTenantByDomain(domain: string) {
   const { data, error } = await supabase
     .from("tenants")

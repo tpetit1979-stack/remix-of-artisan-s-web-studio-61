@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
+import { buildPublicSiteUrl } from "@/lib/tenant";
 
 export const Route = createFileRoute("/super-admin/tenants/")({
   component: TenantsIndex,
@@ -244,7 +245,7 @@ function TenantsIndex() {
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <a
-                      href={t.domain ? `https://${t.domain}` : `/?tenant=${t.slug}`}
+                      href={buildPublicSiteUrl(t)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

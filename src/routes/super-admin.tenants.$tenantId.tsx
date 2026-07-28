@@ -22,6 +22,7 @@ import {
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
+import { buildPublicSiteUrl } from "@/lib/tenant";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
 import { PartnersManager } from "@/components/admin/PartnersManager";
@@ -280,7 +281,7 @@ function TenantDetail() {
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl font-bold text-foreground truncate">{tenant?.company_name ?? "Chargement..."}</h1>
             {tenant && (
-              <a href={tenant.domain ? `https://${tenant.domain}` : `/?tenant=${tenant.slug}`} target="_blank" rel="noopener noreferrer">
+              <a href={buildPublicSiteUrl(tenant)} target="_blank" rel="noopener noreferrer">
                 <Badge variant="outline" className="gap-1 cursor-pointer hover:bg-muted text-[10px]">
                   <ExternalLink className="h-3 w-3" /> Voir le site
                 </Badge>
@@ -381,7 +382,7 @@ function TenantDetail() {
               <p className="text-xs text-muted-foreground">Version pleine largeur en bas, comme une vraie page.</p>
             </div>
             {tenant && (
-              <a href={tenant.domain ? `https://${tenant.domain}` : `/?tenant=${tenant.slug}`} target="_blank" rel="noopener noreferrer">
+              <a href={buildPublicSiteUrl(tenant)} target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" size="sm" className="h-8 text-xs gap-1">
                   <ExternalLink className="h-3.5 w-3.5" /> Ouvrir le site
                 </Button>

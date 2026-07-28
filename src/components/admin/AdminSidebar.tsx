@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { buildPublicSiteUrl, type Tenant } from "@/lib/tenant";
 
 const navItems = [
   { label: "Mes services", to: "/admin/services", icon: Wrench },
@@ -26,7 +27,7 @@ const navItems = [
   { label: "Demandes reçues", to: "/admin/contacts", icon: Mail },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ tenant }: { tenant: Tenant | null }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
@@ -90,13 +91,17 @@ export function AdminSidebar() {
               {user.email}
             </div>
           )}
-          <Link
-            to="/"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Retour au site
-          </Link>
+          {tenant && (
+            <a
+              href={buildPublicSiteUrl(tenant)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voir mon site
+            </a>
+          )}
           <button
             onClick={() => signOut().then(() => navigate({ to: "/login", search: { redirect: "" } }))}
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
