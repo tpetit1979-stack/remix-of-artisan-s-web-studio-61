@@ -18,7 +18,11 @@ export type Contact = Tables<"contacts">;
  * now, so a link without the tenant would just 404.
  */
 export function buildPublicSiteUrl(tenant: Pick<Tenant, "domain" | "slug">): string {
-  return tenant.domain ? `https://${tenant.domain}` : `/?tenant=${tenant.slug}`;
+  if (tenant.domain) {
+    const domain = tenant.domain.trim();
+    return /^https?:\/\//i.test(domain) ? domain : `https://${domain}`;
+  }
+  return `/?tenant=${encodeURIComponent(tenant.slug)}`;
 }
 
 export async function fetchTenantByDomain(domain: string) {

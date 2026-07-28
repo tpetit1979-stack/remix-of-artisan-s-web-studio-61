@@ -37,6 +37,7 @@ import {
   bucketPublicUrl, extractMediaPathFromPublicUrl,
 } from "@/lib/media-upload";
 import { invalidateResolvedMedia, type MediaCategory } from "@/lib/media-resolver";
+import { buildPublicSiteUrl } from "@/lib/tenant";
 
 export const Route = createFileRoute("/super-admin/tenants/$tenantId/media")({
   component: TenantMediaPage,
@@ -376,7 +377,7 @@ function TenantMediaPage() {
     );
   }
 
-  const previewHref = tenant.domain ? `https://${tenant.domain}` : `/?tenant=${tenant.slug}`;
+  const previewHref = buildPublicSiteUrl(tenant);
   const customCount = media.filter((m) => !m.source_template_media_id).length;
   const inheritedCount = media.length - customCount;
 
