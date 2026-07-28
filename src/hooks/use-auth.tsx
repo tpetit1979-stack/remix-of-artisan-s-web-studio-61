@@ -50,12 +50,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!newSession) {
         setRole(null);
         setTenantId(null);
+        setIsLoading(false);
       } else {
+        // isAuthenticated flips true here, before role/tenantId are known —
+        // keep isLoading true so route guards don't treat "role not fetched
+        // yet" as "access denied" and bounce back to /login mid-sign-in.
+        setIsLoading(true);
         // Defer Supabase calls to avoid deadlock inside the callback
         setTimeout(() => {
           fetchRoleAndTenant(newSession.user.id).then(({ role, tenantId }) => {
             setRole(role);
             setTenantId(tenantId);
+            setIsLoading(false);
           });
         }, 0);
       }
