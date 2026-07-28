@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
-import { getTenantResolutionInput, resolveTenantForSsr, fetchSiteSettings, fetchPortfolio, fetchServices } from "@/lib/tenant";
+import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchPortfolio, fetchServices } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -11,7 +11,7 @@ import { MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/realisations")({
   loader: async () => {
-    const input = await getTenantResolutionInput();
+    const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
     const settings = await fetchSiteSettings(tenant.id);

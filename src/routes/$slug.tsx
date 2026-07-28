@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { loadServiceCityPage, type ServiceCityPageData } from "@/lib/tenant-loader";
 import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd, generateServiceJsonLd } from "@/lib/seo";
 import type { Service, ServiceArea, PortfolioItem } from "@/lib/tenant";
-import { getTenantResolutionInput, resolveTenantForSsr } from "@/lib/tenant";
+import { resolveTenantInputForRoute, resolveTenantForSsr } from "@/lib/tenant";
 import { usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/$slug")({
   loader: async ({ params }) => {
     const slug = params.slug;
 
-    const input = await getTenantResolutionInput();
+    const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
 

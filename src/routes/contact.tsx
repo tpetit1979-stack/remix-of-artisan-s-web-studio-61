@@ -2,7 +2,7 @@ import { createFileRoute, Link, useSearch, notFound } from "@tanstack/react-rout
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { getTenantResolutionInput, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
+import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/contact")({
     tenant: typeof search.tenant === "string" ? search.tenant : undefined,
   }),
   loader: async () => {
-    const input = await getTenantResolutionInput();
+    const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
     const settings = await fetchSiteSettings(tenant.id);

@@ -6,7 +6,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { FloatingCTA } from "@/components/public/FloatingCTA";
 import { TenantTheme } from "@/components/TenantTheme";
 import {
-  getTenantResolutionInput,
+  resolveTenantInputForRoute,
   resolveTenantForSsr,
   fetchSiteSettings,
   type Tenant,
@@ -72,7 +72,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       return { tenant: null, settings: null };
     }
     try {
-      const input = await getTenantResolutionInput();
+      const input = await resolveTenantInputForRoute();
       const tenant = await resolveTenantForSsr(input);
       if (!tenant) return { tenant: null, settings: null };
       const settings = await fetchSiteSettings(tenant.id).catch(() => null);

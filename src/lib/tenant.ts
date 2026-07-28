@@ -53,12 +53,20 @@ export async function fetchTenantBySlug(slug: string) {
  * never a separate implementation — so the public site behaves identically
  * whether resolved server-side or re-resolved after hydration.
  */
-export async function fetchTenant(): Promise<Tenant> {
-  if (typeof window === "undefined") throw new Error("fetchTenant is client-only");
-  const tenant = await resolveTenantForSsr({
+/**
+ * hostname/?tenant= read directly from window.location — never through
+ * getTenantResolutionInput() client-side, see resolveTenantInputForRoute().
+ */
+function getClientTenantResolutionInput(): { hostname: string; tenantSlugParam: string | null } {
+  return {
     hostname: window.location.hostname,
     tenantSlugParam: new URLSearchParams(window.location.search).get("tenant"),
-  });
+  };
+}
+
+export async function fetchTenant(): Promise<Tenant> {
+  if (typeof window === "undefined") throw new Error("fetchTenant is client-only");
+  const tenant = await resolveTenantForSsr(getClientTenantResolutionInput());
   if (!tenant) throw new Error("No tenant resolved for this host");
   return tenant;
 }
@@ -96,19 +104,22 @@ export async function fetchTenantByHostname(host: string): Promise<Tenant | null
 }
 
 /**
- * Server-only: read the incoming request's URL so the root route's
- * beforeLoad can resolve the tenant during SSR instead of only after
- * client hydration. The framework strips the handler body (and this
- * server-only import) from the client bundle; on the client this becomes
- * a network call instead.
+ * Server-only: read the incoming request's URL so a route's loader can
+ * resolve the tenant during real SSR. The framework strips the handler
+ * body (and this server-only import) from the client bundle.
  *
- * Deliberately does NOT return a pathname: a createServerFn is invoked
- * over its own dedicated /_serverFn/<hash> RPC request whenever this is
- * called client-side (e.g. on a client-side route transition), and
- * getRequestUrl() inside the handler then reflects that RPC endpoint's
- * own URL — never the page actually being navigated to. Route-type checks
- * must use the router's own `location.pathname` (see __root.tsx), not
- * anything derived from this function.
+ * Do not call this directly from a route loader/beforeLoad — use
+ * resolveTenantInputForRoute() below instead. Calling this specific
+ * function client-side (e.g. on a client-side route transition, which
+ * re-runs every loader in the browser) turns it into a network call to
+ * its own dedicated /_serverFn/<hash> RPC endpoint, whose URL carries
+ * none of the calling page's search string — confirmed in production:
+ * tenantSlugParam always reads back as undefined that way, silently
+ * breaking every internal ?tenant= link on client-side navigation.
+ *
+ * Deliberately does NOT return a pathname either, for the same reason:
+ * route-type checks must use the router's own `location.pathname` (see
+ * __root.tsx), never anything derived from this function.
  */
 export const getTenantResolutionInput = createServerFn({ method: "GET" }).handler(async () => {
   const url = getRequestUrl({ xForwardedHost: true });
@@ -117,6 +128,28 @@ export const getTenantResolutionInput = createServerFn({ method: "GET" }).handle
     tenantSlugParam: url.searchParams.get("tenant"),
   };
 });
+
+/**
+ * The {hostname, tenantSlugParam} input for resolveTenantForSsr, safe to
+ * call from any public route's loader/beforeLoad on both the server (SSR)
+ * and the client (SPA navigation) — see getTenantResolutionInput's own
+ * docs for why calling that createServerFn directly is not safe there.
+ *
+ * Server: getTenantResolutionInput() runs in-process against the real
+ * incoming page request — correct.
+ * Client (typeof window !== "undefined", i.e. a loader re-running during
+ * client-side navigation): reads window.location directly, no server
+ * round trip at all — correct by construction, no RPC involved.
+ */
+export async function resolveTenantInputForRoute(): Promise<{
+  hostname: string;
+  tenantSlugParam: string | null;
+}> {
+  if (typeof window !== "undefined") {
+    return getClientTenantResolutionInput();
+  }
+  return getTenantResolutionInput();
+}
 
 /**
  * Resolve the tenant for an SSR request. Single source of truth for every
