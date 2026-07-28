@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useImpersonation } from "@/stores/impersonation";
 
 export type AppRole = "super_admin" | "tenant_admin";
 
@@ -42,6 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<AppRole | null>(null);
   const [tenantId, setTenantId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const stopImpersonation = useImpersonation((s) => s.stopImpersonation);
 
   useEffect(() => {
     // 1. Listener FIRST (synchronous state update only)
@@ -100,6 +104,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    // A persisted impersonation target (localStorage) or a cached
+    // admin-tenant query must never survive into whichever session comes
+    // next on this browser/device.
+    stopImpersonation();
+    queryClient.removeQueries({ queryKey: ["admin-tenant"] });
+    queryClient.removeQueries({ queryKey: ["admin-tenant-settings"] });
   };
 
   return (
