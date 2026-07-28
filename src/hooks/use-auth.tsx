@@ -58,11 +58,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         // Defer Supabase calls to avoid deadlock inside the callback
         setTimeout(() => {
-          fetchRoleAndTenant(newSession.user.id).then(({ role, tenantId }) => {
-            setRole(role);
-            setTenantId(tenantId);
-            setIsLoading(false);
-          });
+          fetchRoleAndTenant(newSession.user.id)
+            .then(({ role, tenantId }) => {
+              setRole(role);
+              setTenantId(tenantId);
+            })
+            .catch((err) => {
+              console.error("fetchRoleAndTenant failed:", err);
+              setRole(null);
+              setTenantId(null);
+            })
+            .finally(() => setIsLoading(false));
         }, 0);
       }
     });
@@ -71,9 +77,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(async ({ data: { session: existing } }) => {
       setSession(existing);
       if (existing) {
-        const { role, tenantId } = await fetchRoleAndTenant(existing.user.id);
-        setRole(role);
-        setTenantId(tenantId);
+        try {
+          const { role, tenantId } = await fetchRoleAndTenant(existing.user.id);
+          setRole(role);
+          setTenantId(tenantId);
+        } catch (err) {
+          console.error("fetchRoleAndTenant failed:", err);
+          setRole(null);
+          setTenantId(null);
+        }
       }
       setIsLoading(false);
     });
