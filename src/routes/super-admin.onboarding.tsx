@@ -38,6 +38,7 @@ type ServiceDraft = {
   description: string;
   is_featured: boolean;
   trade_template_id: string | null;
+  trade_service_template_id: string | null;
   priority_score: number;
   seo_title_template: string | null;
   seo_description_template: string | null;
@@ -202,6 +203,7 @@ function OnboardingWizard() {
       description: t.description || "",
       is_featured: isPrimaryPareto,
       trade_template_id: t.trade_template_id,
+      trade_service_template_id: t.id,
       priority_score: t.priority_score ?? 0,
       seo_title_template: t.seo_title_template,
       seo_description_template: t.seo_description_template,
@@ -272,6 +274,7 @@ function OnboardingWizard() {
           description: s.description || "",
           is_featured: s.is_featured ?? false,
           trade_template_id: selectedTradeId,
+          trade_service_template_id: null,
           priority_score: 0,
           seo_title_template: null,
           seo_description_template: null,
@@ -357,6 +360,7 @@ function OnboardingWizard() {
           sort_order: i,
           seo_title_template: s.seo_title_template,
           seo_description_template: s.seo_description_template,
+          trade_service_template_id: s.trade_service_template_id,
         }));
         const { data: createdServices, error: svcErr } = await supabase
           .from("services")
@@ -431,6 +435,7 @@ function OnboardingWizard() {
           description: "",
           is_featured: false,
           trade_template_id: selectedTradeId,
+          trade_service_template_id: null,
           priority_score: 0,
           seo_title_template: null,
           seo_description_template: null,
