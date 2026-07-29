@@ -261,6 +261,10 @@ export type Database = {
       site_settings: {
         Row: {
           ai_analysis: Json | null
+          booking_button_label: string | null
+          booking_enabled: boolean
+          booking_provider: string | null
+          booking_url: string | null
           border_radius: number | null
           cta_text: string | null
           favicon_url: string | null
@@ -271,6 +275,7 @@ export type Database = {
           hero_subtitle: string | null
           hero_title: string | null
           logo_url: string | null
+          opening_hours: Json | null
           primary_color: string | null
           seo_meta_description: string | null
           seo_meta_title: string | null
@@ -280,6 +285,10 @@ export type Database = {
         }
         Insert: {
           ai_analysis?: Json | null
+          booking_button_label?: string | null
+          booking_enabled?: boolean
+          booking_provider?: string | null
+          booking_url?: string | null
           border_radius?: number | null
           cta_text?: string | null
           favicon_url?: string | null
@@ -290,6 +299,7 @@ export type Database = {
           hero_subtitle?: string | null
           hero_title?: string | null
           logo_url?: string | null
+          opening_hours?: Json | null
           primary_color?: string | null
           seo_meta_description?: string | null
           seo_meta_title?: string | null
@@ -299,6 +309,10 @@ export type Database = {
         }
         Update: {
           ai_analysis?: Json | null
+          booking_button_label?: string | null
+          booking_enabled?: boolean
+          booking_provider?: string | null
+          booking_url?: string | null
           border_radius?: number | null
           cta_text?: string | null
           favicon_url?: string | null
@@ -309,6 +323,7 @@ export type Database = {
           hero_subtitle?: string | null
           hero_title?: string | null
           logo_url?: string | null
+          opening_hours?: Json | null
           primary_color?: string | null
           seo_meta_description?: string | null
           seo_meta_title?: string | null
@@ -524,6 +539,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tenant_partners_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_team_members: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          is_active: boolean
+          photo_url: string | null
+          role_title: string
+          sort_order: number
+          storage_path: string | null
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          is_active?: boolean
+          photo_url?: string | null
+          role_title: string
+          sort_order?: number
+          storage_path?: string | null
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          photo_url?: string | null
+          role_title?: string
+          sort_order?: number
+          storage_path?: string | null
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_team_members_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
