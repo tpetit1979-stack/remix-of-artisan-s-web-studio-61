@@ -6,6 +6,7 @@ import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
+import { ServiceMedia } from "@/components/public/ServiceMedia";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
@@ -73,7 +74,8 @@ function ServicesPage() {
                 <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {services.map((s) => (
                     <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }} search={previewTenant}>
-                      <Card className="group h-full transition-all hover:border-primary hover:shadow-md">
+                      <Card className="group h-full overflow-hidden transition-all hover:border-primary hover:shadow-md">
+                        <ServiceMedia service={s} />
                         <CardContent className="flex h-full flex-col p-6">
                           <h2 className="text-lg font-semibold text-foreground group-hover:text-primary">
                             {s.name}
