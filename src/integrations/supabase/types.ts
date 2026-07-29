@@ -103,39 +103,48 @@ export type Database = {
       portfolio: {
         Row: {
           city: string | null
+          content_kind: string
           created_at: string | null
           description: string | null
           id: string
           image_url: string
           is_published: boolean | null
+          media_origin: string
           service_id: string | null
           sort_order: number | null
+          source_template_media_id: string | null
           tenant_id: string
           title: string
           updated_at: string | null
         }
         Insert: {
           city?: string | null
+          content_kind?: string
           created_at?: string | null
           description?: string | null
           id?: string
           image_url: string
           is_published?: boolean | null
+          media_origin?: string
           service_id?: string | null
           sort_order?: number | null
+          source_template_media_id?: string | null
           tenant_id: string
           title: string
           updated_at?: string | null
         }
         Update: {
           city?: string | null
+          content_kind?: string
           created_at?: string | null
           description?: string | null
           id?: string
           image_url?: string
           is_published?: boolean | null
+          media_origin?: string
           service_id?: string | null
           sort_order?: number | null
+          source_template_media_id?: string | null
           tenant_id?: string
           title?: string
           updated_at?: string | null
@@ -146,6 +155,20 @@ export type Database = {
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolio_source_template_media_id_fkey"
+            columns: ["source_template_media_id"]
+            isOneToOne: false
+            referencedRelation: "public_trade_media"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolio_source_template_media_id_fkey"
+            columns: ["source_template_media_id"]
+            isOneToOne: false
+            referencedRelation: "trade_media_library"
             referencedColumns: ["id"]
           },
           {
