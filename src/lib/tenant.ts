@@ -237,6 +237,24 @@ export async function fetchPortfolio(tenantId: string): Promise<PortfolioItem[]>
   return data ?? [];
 }
 
+/**
+ * Cheap existence check (PD-001): does this tenant have at least one
+ * authentic, published portfolio item? Used to gate discoverability of the
+ * whole "Réalisations" feature (route, sitemap) — deliberately a minimal
+ * `id`-only query, not a reuse of `fetchPortfolio()`, since callers here
+ * only need a boolean, not the full rows.
+ */
+export async function hasPublishedPortfolioItem(tenantId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("portfolio")
+    .select("id")
+    .eq("tenant_id", tenantId)
+    .eq("is_published", true)
+    .limit(1);
+  if (error) throw error;
+  return (data?.length ?? 0) > 0;
+}
+
 export async function fetchContacts(tenantId: string): Promise<Contact[]> {
   const { data, error } = await supabase
     .from("contacts")

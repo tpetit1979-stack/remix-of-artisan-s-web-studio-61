@@ -1,14 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
-import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchPortfolio, fetchServices } from "@/lib/tenant";
+import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchPortfolio, fetchServices, hasPublishedPortfolioItem } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/realisations")({
   loader: async () => {
@@ -18,13 +17,7 @@ export const Route = createFileRoute("/realisations")({
     // PD-001: a portfolio with no authentic published item must not be
     // publicly reachable — same "hide, never show emptiness" rule already
     // applied to its entry points (header, footer, sitemap).
-    const { data: published } = await supabase
-      .from("portfolio")
-      .select("id")
-      .eq("tenant_id", tenant.id)
-      .eq("is_published", true)
-      .limit(1);
-    if (!published || published.length === 0) throw notFound();
+    if (!(await hasPublishedPortfolioItem(tenant.id))) throw notFound();
     const settings = await fetchSiteSettings(tenant.id);
     return { tenant, settings };
   },

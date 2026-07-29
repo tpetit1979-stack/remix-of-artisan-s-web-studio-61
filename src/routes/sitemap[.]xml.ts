@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { resolveTenantForSsr, fetchServices, fetchServiceAreas } from "@/lib/tenant";
+import { resolveTenantForSsr, fetchServices, fetchServiceAreas, hasPublishedPortfolioItem } from "@/lib/tenant";
 import { buildSitemapXml } from "@/lib/seo";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
@@ -20,18 +19,12 @@ export const Route = createFileRoute("/sitemap.xml")({
             },
           });
         }
-        const [services, areas, { data: portfolio }] = await Promise.all([
+        const [services, areas, hasPortfolio] = await Promise.all([
           fetchServices(tenant.id),
           fetchServiceAreas(tenant.id),
-          supabase
-            .from("portfolio")
-            .select("id")
-            .eq("tenant_id", tenant.id)
-            .eq("is_published", true)
-            .limit(1),
+          hasPublishedPortfolioItem(tenant.id),
         ]);
         const baseUrl = tenant.domain ? `https://${tenant.domain}` : url.origin;
-        const hasPortfolio = (portfolio ?? []).length > 0;
         return new Response(buildSitemapXml(services, areas, hasPortfolio, baseUrl), {
           headers: {
             "Content-Type": "application/xml; charset=utf-8",
