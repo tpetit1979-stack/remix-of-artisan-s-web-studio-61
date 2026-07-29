@@ -8,12 +8,23 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/realisations")({
   loader: async () => {
     const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
+    // PD-001: a portfolio with no authentic published item must not be
+    // publicly reachable — same "hide, never show emptiness" rule already
+    // applied to its entry points (header, footer, sitemap).
+    const { data: published } = await supabase
+      .from("portfolio")
+      .select("id")
+      .eq("tenant_id", tenant.id)
+      .eq("is_published", true)
+      .limit(1);
+    if (!published || published.length === 0) throw notFound();
     const settings = await fetchSiteSettings(tenant.id);
     return { tenant, settings };
   },
@@ -62,49 +73,47 @@ function RealisationsPage() {
             <p className="mt-2 text-muted-foreground">
               La preuve par l'exemple. Découvrez les projets réalisés par {tenant?.company_name}.
             </p>
-            {published.length === 0 ? (
-              <p className="mt-8 text-muted-foreground">Aucune réalisation pour le moment.</p>
-            ) : (
-              <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {published.map((p) => {
-                  const service = services.find((s) => s.id === p.service_id);
-                  return (
-                    <Card key={p.id} className="overflow-hidden">
-                      <img
-                        src={p.image_url}
-                        alt={p.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="aspect-video w-full object-cover"
-                      />
-                      <CardContent className="p-4">
-                        <h2 className="font-semibold text-foreground">{p.title}</h2>
-                        {p.description && (
-                          <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{p.description}</p>
+            {/* The loader already guarantees at least one published item exists
+                (PD-001 / US-01) — no empty state to handle here. */}
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {published.map((p) => {
+                const service = services.find((s) => s.id === p.service_id);
+                return (
+                  <Card key={p.id} className="overflow-hidden">
+                    <img
+                      src={p.image_url}
+                      alt={p.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="aspect-video w-full object-cover"
+                    />
+                    <CardContent className="p-4">
+                      <h2 className="font-semibold text-foreground">{p.title}</h2>
+                      {p.description && (
+                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{p.description}</p>
+                      )}
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {p.city && (
+                          <span className="text-xs text-muted-foreground">
+                            <MapPin className="mr-1 inline h-3 w-3" />{p.city}
+                          </span>
                         )}
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {p.city && (
-                            <span className="text-xs text-muted-foreground">
-                              <MapPin className="mr-1 inline h-3 w-3" />{p.city}
-                            </span>
-                          )}
-                          {service && (
-                            <Link
-                              to="/services/$serviceSlug"
-                              params={{ serviceSlug: service.slug }}
-                              search={previewTenant}
-                              className="text-xs text-primary hover:underline"
-                            >
-                              {service.name}
-                            </Link>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
+                        {service && (
+                          <Link
+                            to="/services/$serviceSlug"
+                            params={{ serviceSlug: service.slug }}
+                            search={previewTenant}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            {service.name}
+                          </Link>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
         </div>
 
