@@ -238,6 +238,7 @@ export type Database = {
           slug: string
           sort_order: number | null
           tenant_id: string
+          trade_service_template_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -252,6 +253,7 @@ export type Database = {
           slug: string
           sort_order?: number | null
           tenant_id: string
+          trade_service_template_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -266,6 +268,7 @@ export type Database = {
           slug?: string
           sort_order?: number | null
           tenant_id?: string
+          trade_service_template_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -274,6 +277,13 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_trade_service_template_id_fkey"
+            columns: ["trade_service_template_id"]
+            isOneToOne: false
+            referencedRelation: "trade_service_templates"
             referencedColumns: ["id"]
           },
         ]
@@ -775,6 +785,7 @@ export type Database = {
           media_type: string
           sort_order: number
           title: string | null
+          trade_service_template_id: string | null
           trade_template_id: string
           updated_at: string
         }
@@ -787,6 +798,7 @@ export type Database = {
           media_type: string
           sort_order?: number
           title?: string | null
+          trade_service_template_id?: string | null
           trade_template_id: string
           updated_at?: string
         }
@@ -799,10 +811,18 @@ export type Database = {
           media_type?: string
           sort_order?: number
           title?: string | null
+          trade_service_template_id?: string | null
           trade_template_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "trade_media_library_trade_service_template_id_fkey"
+            columns: ["trade_service_template_id"]
+            isOneToOne: false
+            referencedRelation: "trade_service_templates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "trade_media_library_trade_template_id_fkey"
             columns: ["trade_template_id"]
