@@ -980,6 +980,7 @@ export type Database = {
           image_path: string | null
           media_type: string | null
           sort_order: number | null
+          trade_service_template_id: string | null
           trade_template_id: string | null
         }
         Insert: {
@@ -988,6 +989,7 @@ export type Database = {
           image_path?: string | null
           media_type?: string | null
           sort_order?: number | null
+          trade_service_template_id?: string | null
           trade_template_id?: string | null
         }
         Update: {
@@ -996,9 +998,17 @@ export type Database = {
           image_path?: string | null
           media_type?: string | null
           sort_order?: number | null
+          trade_service_template_id?: string | null
           trade_template_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "trade_media_library_trade_service_template_id_fkey"
+            columns: ["trade_service_template_id"]
+            isOneToOne: false
+            referencedRelation: "trade_service_templates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "trade_media_library_trade_template_id_fkey"
             columns: ["trade_template_id"]

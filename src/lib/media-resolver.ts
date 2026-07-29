@@ -93,6 +93,9 @@ export interface ResolveMediaInput {
   targetId?: string | null;
   /** Meaningful alt fallback when neither tenant nor template provides one. */
   altFallback?: string | null;
+  /** services.trade_service_template_id — enables precise service-type matching
+   *  in the library before falling back to the generic trade-level pool. */
+  tradeServiceTemplateId?: string | null;
 }
 
 /** Stable query key used by both the hook and the Realtime invalidator. */
@@ -103,6 +106,7 @@ export function resolvedMediaQueryKey(input: ResolveMediaInput) {
     input.category,
     input.targetId ?? null,
     input.tradeTemplateId ?? null,
+    input.tradeServiceTemplateId ?? null,
   ] as const;
 }
 
@@ -111,7 +115,7 @@ export function resolvedMediaQueryKey(input: ResolveMediaInput) {
  * outside React. Same logic as the hook below.
  */
 export async function resolveMedia(input: ResolveMediaInput): Promise<ResolvedMedia> {
-  const { tenantId, tradeTemplateId, category, targetId, altFallback } = input;
+  const { tenantId, tradeTemplateId, category, targetId, altFallback, tradeServiceTemplateId } = input;
 
   // Level 1 — tenant override.
   // When `targetId` is provided (service/portfolio/certification card),
@@ -142,7 +146,8 @@ export async function resolveMedia(input: ResolveMediaInput): Promise<ResolvedMe
     }
   }
 
-  // Level 2 — trade template default.
+  // Level 2 — trade template default. Only ever serves media that
+  // `public_trade_media` has already vetted (is_active + review_status='approved').
   // Try each candidate media_type in order. For categories like portfolio
   // (gallery → proof → service_card) this gives richer template coverage.
   // When `targetId` is provided, we deterministically pick the Nth template
@@ -151,32 +156,78 @@ export async function resolveMedia(input: ResolveMediaInput): Promise<ResolvedMe
   const candidates = templateMediaTypesFor(category);
   if (tradeTemplateId && candidates.length > 0) {
     for (const mediaType of candidates) {
-      const { data, error } = await supabase
-        .from("public_trade_media")
-        .select("image_path, alt_text")
-        .eq("trade_template_id", tradeTemplateId)
-        .eq("media_type", mediaType)
-        .order("sort_order", { ascending: true });
+      // Level 2a — precise service-type pool. Only ever tried when we have a
+      // real trade_service_template_id to match; never used as a generic
+      // fallback, so a media rattaché to a DIFFERENT service-type can never
+      // leak into another service's card.
+      if (tradeServiceTemplateId) {
+        const picked = await pickFromTemplatePool({
+          tradeTemplateId,
+          mediaType,
+          tradeServiceTemplateId,
+          targetId,
+        });
+        if (picked) return buildTemplateResult(picked, altFallback);
+      }
 
-      if (error || !data || data.length === 0) continue;
-
-      const pick = targetId
-        ? data[stableIndex(targetId, data.length)]
-        : data[0];
-
-      const { data: pub } = supabase.storage
-        .from("trade-media")
-        .getPublicUrl(pick.image_path as string);
-      return {
-        url: pub.publicUrl,
-        alt: ((pick.alt_text as string | null) ?? altFallback ?? "").trim(),
-        source: "template",
-      };
+      // Level 2b — generic trade-level pool. Always excludes media that are
+      // rattachés to a specific service-type — those must only ever surface
+      // through 2a for the service they actually belong to.
+      const picked = await pickFromTemplatePool({
+        tradeTemplateId,
+        mediaType,
+        tradeServiceTemplateId: null,
+        targetId,
+      });
+      if (picked) return buildTemplateResult(picked, altFallback);
     }
   }
 
   // Level 3 — neutral placeholder
   return { ...PLACEHOLDER, alt: (altFallback ?? "").trim() };
+}
+
+interface TemplatePoolPick {
+  image_path: string;
+  alt_text: string | null;
+}
+
+/** Queries `public_trade_media` for one media_type, either matching an exact
+ *  trade_service_template_id (precise pool) or requiring it to be null
+ *  (generic pool) — never both mixed together. */
+async function pickFromTemplatePool(params: {
+  tradeTemplateId: string;
+  mediaType: string;
+  tradeServiceTemplateId: string | null;
+  targetId: string | null | undefined;
+}): Promise<TemplatePoolPick | null> {
+  const { tradeTemplateId, mediaType, tradeServiceTemplateId, targetId } = params;
+
+  let q = supabase
+    .from("public_trade_media")
+    .select("image_path, alt_text")
+    .eq("trade_template_id", tradeTemplateId)
+    .eq("media_type", mediaType)
+    .order("sort_order", { ascending: true });
+
+  q = tradeServiceTemplateId
+    ? q.eq("trade_service_template_id", tradeServiceTemplateId)
+    : q.is("trade_service_template_id", null);
+
+  const { data, error } = await q;
+  if (error || !data || data.length === 0) return null;
+
+  const pick = targetId ? data[stableIndex(targetId, data.length)] : data[0];
+  return pick as TemplatePoolPick;
+}
+
+function buildTemplateResult(pick: TemplatePoolPick, altFallback: string | null | undefined): ResolvedMedia {
+  const { data: pub } = supabase.storage.from("trade-media").getPublicUrl(pick.image_path);
+  return {
+    url: pub.publicUrl,
+    alt: (pick.alt_text ?? altFallback ?? "").trim(),
+    source: "template",
+  };
 }
 
 /** Deterministic 0..length-1 index from any string id (FNV-1a hash). */

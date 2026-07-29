@@ -36,6 +36,7 @@ export function ServiceMedia({ service }: { service: Service }) {
     category: "service",
     targetId: service.id,
     altFallback: service.name,
+    tradeServiceTemplateId: service.trade_service_template_id ?? null,
   });
 
   const Icon = getServiceIcon(service.name);
