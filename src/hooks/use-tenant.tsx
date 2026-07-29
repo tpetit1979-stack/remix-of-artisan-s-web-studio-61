@@ -109,6 +109,18 @@ export function TenantProvider({
   );
 }
 
+/**
+ * Public-site tenant context (hostname / `?tenant=` resolution only).
+ *
+ * For the public website exclusively. Never use this in /admin, /super-admin,
+ * or any non-public rendering context (PDF export, email, background jobs) —
+ * those must resolve the tenant explicitly (see `useAdminTenant` below for
+ * the admin case) rather than inherit whichever tenant the public resolver
+ * happens to be showing. Conflating the two was a real, shipped bug in this
+ * codebase (cross-tenant data exposure in /admin) before `useAdminTenant`
+ * existed — don't reintroduce it by using this hook somewhere it doesn't
+ * belong.
+ */
 export function useTenant() {
   return useContext(TenantContext);
 }
