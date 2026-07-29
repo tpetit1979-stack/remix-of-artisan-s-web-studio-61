@@ -778,12 +778,19 @@ export type Database = {
       trade_media_library: {
         Row: {
           alt_text: string | null
+          author_credit: string | null
           created_at: string
           id: string
           image_path: string
           is_active: boolean
+          license_code: string | null
           media_type: string
+          metadata: Json
+          review_status: string
           sort_order: number
+          source_provider: string | null
+          source_reference: string | null
+          source_type: string
           title: string | null
           trade_service_template_id: string | null
           trade_template_id: string
@@ -791,12 +798,19 @@ export type Database = {
         }
         Insert: {
           alt_text?: string | null
+          author_credit?: string | null
           created_at?: string
           id?: string
           image_path: string
           is_active?: boolean
+          license_code?: string | null
           media_type: string
+          metadata?: Json
+          review_status?: string
           sort_order?: number
+          source_provider?: string | null
+          source_reference?: string | null
+          source_type?: string
           title?: string | null
           trade_service_template_id?: string | null
           trade_template_id: string
@@ -804,12 +818,19 @@ export type Database = {
         }
         Update: {
           alt_text?: string | null
+          author_credit?: string | null
           created_at?: string
           id?: string
           image_path?: string
           is_active?: boolean
+          license_code?: string | null
           media_type?: string
+          metadata?: Json
+          review_status?: string
           sort_order?: number
+          source_provider?: string | null
+          source_reference?: string | null
+          source_type?: string
           title?: string | null
           trade_service_template_id?: string | null
           trade_template_id?: string
