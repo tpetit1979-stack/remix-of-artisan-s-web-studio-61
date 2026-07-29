@@ -5,7 +5,6 @@
  * pour tous les champs image du produit :
  *   - site_settings.logo_url
  *   - site_settings.hero_image_url
- *   - services.image_url
  *   - portfolio.image_url
  *   - tenant_certifications.logo_url
  *

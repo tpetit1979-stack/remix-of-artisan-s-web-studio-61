@@ -11,8 +11,9 @@
  *   - Preview iframe live (split view desktop) qui se rafraîchit via Realtime
  *
  * Source de vérité : table `tenant_media` (+ resolver `useResolvedMedia` côté
- * site public). On n'écrit plus dans site_settings.logo_url / hero_image_url /
- * services.image_url etc. — ces colonnes restent en lecture pour la rétro-compat.
+ * site public). On n'écrit plus dans site_settings.logo_url / hero_image_url
+ * etc. — ces colonnes restent en lecture pour la rétro-compat.
+ * (`services.image_url` a été supprimée, elle n'a jamais été utilisée — voir US-02.)
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
