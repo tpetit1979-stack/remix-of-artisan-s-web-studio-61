@@ -205,7 +205,14 @@ function AdminPortfolio() {
         <p className="text-muted-foreground">Chargement...</p>
       ) : items.length === 0 ? (
         <>
-          <Card><CardContent className="py-8 text-center text-muted-foreground">Aucune réalisation.</CardContent></Card>
+          <Card>
+            <CardContent className="space-y-1 py-8 text-center text-muted-foreground">
+              <p className="font-medium text-foreground">Aucune réalisation publiée</p>
+              <p className="text-sm">
+                Ajoutez et publiez une première réalisation pour faire apparaître la section sur l'accueil et la page Réalisations.
+              </p>
+            </CardContent>
+          </Card>
           {suggestions.length > 0 && (
             <div className="mt-6">
               <h3 className="mb-3 text-sm font-medium text-foreground">

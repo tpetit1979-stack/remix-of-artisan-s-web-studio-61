@@ -3,7 +3,7 @@
  *
  * UNE seule page pour gérer toutes les images d'un client :
  *   - Upload multiple (drag & drop)
- *   - Filtres par catégorie (Toutes / Hero / Logo / Services / Portfolio / Certifs)
+ *   - Filtres par catégorie (Toutes / Hero / Services / Portfolio / Certifs / Galerie)
  *   - Badges 🟢 Personnalisée (tenant_media) / 🔵 Héritée (template métier)
  *   - Édition alt_text inline
  *   - Remplacement / suppression / assignation
@@ -11,8 +11,11 @@
  *   - Preview iframe live (split view desktop) qui se rafraîchit via Realtime
  *
  * Source de vérité : table `tenant_media` (+ resolver `useResolvedMedia` côté
- * site public). On n'écrit plus dans site_settings.logo_url / hero_image_url
- * etc. — ces colonnes restent en lecture pour la rétro-compat.
+ * site public) — SAUF pour le logo, qui reste piloté par `site_settings.logo_url`
+ * (géré dans l'onglet Design de la fiche tenant, PAS ici) : `PublicHeader.tsx` ne
+ * lit jamais `tenant_media` pour le logo, donc la catégorie "logo" a été retirée
+ * du sélecteur d'upload ci-dessous pour ne pas créer un faux parcours (upload
+ * réussi ici sans aucun effet visible sur le site public).
  * (`services.image_url` a été supprimée, elle n'a jamais été utilisée — voir US-02.)
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -67,10 +70,12 @@ type TemplateMediaRow = {
   sort_order: number;
 };
 
+// "logo" is deliberately absent: PublicHeader.tsx never reads tenant_media
+// for the logo (only site_settings.logo_url, managed in the tenant's Design
+// tab) — offering it here would be a dead-end upload with no visible effect.
 const CATEGORIES: { value: MediaCategory | "all"; label: string }[] = [
   { value: "all", label: "Toutes" },
   { value: "hero", label: "Hero" },
-  { value: "logo", label: "Logo" },
   { value: "favicon", label: "Favicon" },
   { value: "service", label: "Services" },
   { value: "portfolio", label: "Portfolio" },

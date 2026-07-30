@@ -26,6 +26,7 @@ import { buildPublicSiteUrl } from "@/lib/tenant";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
 import { PartnersManager } from "@/components/admin/PartnersManager";
+import { TenantLogoManager } from "@/components/admin/TenantLogoManager";
 
 /* ── Presets ── */
 const SECTOR_PRESETS = [
@@ -308,6 +309,20 @@ function TenantDetail() {
           >
             <UserCog className="h-3.5 w-3.5" /> Gérer ce site
           </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 text-xs gap-1.5"
+            disabled={!tenant}
+            onClick={() => {
+              if (!tenant) return;
+              startImpersonation(tenant.id, tenant.company_name);
+              toast.success(`Impersonation : ${tenant.company_name}`);
+              navigate({ to: "/admin/portfolio" });
+            }}
+          >
+            <ImageIcon className="h-3.5 w-3.5" /> Gérer les réalisations
+          </Button>
           <div className="hidden md:flex items-center gap-1.5">
             {completionItems.map(item => (
               <Badge key={item.label} variant={item.ok ? "secondary" : "outline"} className="text-[10px] px-1.5 py-0">
@@ -537,12 +552,19 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
   const fontFamily = designForm?.font_family ?? "inter";
   const headerStyle = designForm?.header_style ?? "solid";
 
+  // Logo is intentionally excluded from this payload: it has its own
+  // immediate mutation (TenantLogoManager, writing site_settings.logo_url
+  // directly) so there must be exactly one path that can write that column —
+  // never two concurrent writers racing each other. `logoBusy` below disables
+  // this button while that other path is active, and vice versa.
+  const [logoBusy, setLogoBusy] = useState(false);
+
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("site_settings").update({
         hero_title: designForm.hero_title, hero_subtitle: designForm.hero_subtitle,
         primary_color: designForm.primary_color, cta_text: designForm.cta_text,
-        logo_url: designForm.logo_url, seo_meta_title: designForm.seo_meta_title,
+        seo_meta_title: designForm.seo_meta_title,
         seo_meta_description: designForm.seo_meta_description, border_radius: designForm.border_radius,
         gradient_style: designForm.gradient_style, header_style: designForm.header_style,
         font_family: designForm.font_family,
@@ -563,10 +585,15 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5"><Settings className="h-3 w-3" /> Contenu</p>
           <Field label="Titre hero"><Input value={designForm.hero_title ?? ""} onChange={e => setDesignField("hero_title", e.target.value)} placeholder="Votre expert en..." /></Field>
           <Field label="Sous-titre hero"><Input value={designForm.hero_subtitle ?? ""} onChange={e => setDesignField("hero_subtitle", e.target.value)} /></Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Texte CTA"><Input value={designForm.cta_text ?? ""} onChange={e => setDesignField("cta_text", e.target.value)} /></Field>
-            <Field label="URL logo"><Input value={designForm.logo_url ?? ""} onChange={e => setDesignField("logo_url", e.target.value)} placeholder="https://..." /></Field>
-          </div>
+          <Field label="Texte CTA"><Input value={designForm.cta_text ?? ""} onChange={e => setDesignField("cta_text", e.target.value)} /></Field>
+
+          <TenantLogoManager
+            tenantId={tenantId}
+            logoUrl={designForm.logo_url ?? null}
+            onLogoChange={(url) => setDesignField("logo_url", url)}
+            disabled={save.isPending}
+            onBusyChange={setLogoBusy}
+          />
         </CardContent>
       </Card>
 
@@ -656,7 +683,7 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
 
       {/* Save — sticky */}
       <div className="sticky bottom-0 bg-background/95 backdrop-blur border-t -mx-4 px-4 py-3 flex justify-end">
-        <Button onClick={() => save.mutate()} disabled={save.isPending} size="lg">
+        <Button onClick={() => save.mutate()} disabled={save.isPending || logoBusy} size="lg">
           {save.isPending ? "Enregistrement..." : "Enregistrer le design"}
         </Button>
       </div>
