@@ -15,6 +15,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Trash2, Upload, Pencil, Image as ImageIcon, Loader2, RefreshCw,
   Check, X, RotateCcw,
@@ -23,6 +24,7 @@ import { toast } from "sonner";
 import {
   TRADE_MEDIA_BUCKET,
   tradeMediaPublicUrl,
+  MEDIA_TYPE_OPTIONS,
   type TradeMediaType,
 } from "@/lib/trade-media";
 import {
@@ -33,18 +35,14 @@ import {
   withCacheBuster,
 } from "@/lib/media-upload";
 import { getTradeShortName } from "@/lib/trade-wording";
+import { PixabayImportPanel } from "@/components/admin/PixabayImportPanel";
 import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/super-admin/media-library")({
   component: MediaLibraryPage,
 });
 
-const MEDIA_TYPES: { value: TradeMediaType; label: string }[] = [
-  { value: "hero", label: "Hero" },
-  { value: "service_card", label: "Carte service" },
-  { value: "proof", label: "Preuve / chantier" },
-  { value: "gallery", label: "Galerie" },
-];
+const MEDIA_TYPES = MEDIA_TYPE_OPTIONS;
 
 /** The 4 source_type values a human is ever allowed to pick. `unclassified` and
  *  `legacy_unknown` are backfill/default states only — never a manual choice. */
@@ -390,96 +388,112 @@ function MediaLibraryPage() {
         description="Images par défaut affichées sur les sites des tenants qui n'ont pas uploadé leur propre visuel. Toute image doit être approuvée avant d'être servie sur un site public."
       />
 
-      {/* Upload */}
+      {/* Import */}
       <Card>
-        <CardContent className="space-y-4 p-4">
-          <div className="grid gap-3 md:grid-cols-2">
-            <div>
-              <Label>Métier</Label>
-              <Select
-                value={uploadTrade}
-                onValueChange={(v) => { setUploadTrade(v); setUploadServiceTemplateId("none"); }}
-              >
-                <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
-                <SelectContent>
-                  {trades.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>
-                      {getTradeShortName(t.slug, t.name)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Type</Label>
-              <Select value={uploadType} onValueChange={(v) => setUploadType(v as TradeMediaType)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {MEDIA_TYPES.map((t) => (
-                    <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Service (optionnel)</Label>
-              <Select
-                value={uploadServiceTemplateId}
-                onValueChange={setUploadServiceTemplateId}
-                disabled={!uploadTrade}
-              >
-                <SelectTrigger><SelectValue placeholder="Générique métier" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">— Générique métier —</SelectItem>
-                  {uploadServiceTemplates.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Provenance</Label>
-              <Select value={uploadSourceType} onValueChange={(v) => setUploadSourceType(v as TradeMediaSourceType)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {SOURCE_TYPE_OPTIONS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {selectedSourceOption.providerRequired && (
-              <div className="md:col-span-2">
-                <Label>Fournisseur / source {selectedSourceOption.providerRequired && "*"}</Label>
-                <Input
-                  value={uploadSourceProvider}
-                  onChange={(e) => setUploadSourceProvider(e.target.value)}
-                  placeholder={uploadSourceType === "ai_generated" ? "ex. Gemini, Midjourney…" : "ex. Shutterstock, nom du fabricant…"}
-                />
+        <CardContent className="p-4">
+          <Tabs defaultValue="manual">
+            <TabsList>
+              <TabsTrigger value="manual">Import manuel</TabsTrigger>
+              <TabsTrigger value="pixabay">Rechercher sur Pixabay</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="manual" className="space-y-4 pt-4">
+              <div className="grid gap-3 md:grid-cols-2">
+                <div>
+                  <Label>Métier</Label>
+                  <Select
+                    value={uploadTrade}
+                    onValueChange={(v) => { setUploadTrade(v); setUploadServiceTemplateId("none"); }}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Choisir…" /></SelectTrigger>
+                    <SelectContent>
+                      {trades.map((t) => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {getTradeShortName(t.slug, t.name)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Type</Label>
+                  <Select value={uploadType} onValueChange={(v) => setUploadType(v as TradeMediaType)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {MEDIA_TYPES.map((t) => (
+                        <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Service (optionnel)</Label>
+                  <Select
+                    value={uploadServiceTemplateId}
+                    onValueChange={setUploadServiceTemplateId}
+                    disabled={!uploadTrade}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Générique métier" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">— Générique métier —</SelectItem>
+                      {uploadServiceTemplates.map((s) => (
+                        <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Provenance</Label>
+                  <Select value={uploadSourceType} onValueChange={(v) => setUploadSourceType(v as TradeMediaSourceType)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {SOURCE_TYPE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectedSourceOption.providerRequired && (
+                  <div className="md:col-span-2">
+                    <Label>Fournisseur / source {selectedSourceOption.providerRequired && "*"}</Label>
+                    <Input
+                      value={uploadSourceProvider}
+                      onChange={(e) => setUploadSourceProvider(e.target.value)}
+                      placeholder={uploadSourceType === "ai_generated" ? "ex. Gemini, Midjourney…" : "ex. Shutterstock, nom du fabricant…"}
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/avif"
-              className="hidden"
-              onChange={onFileSelected}
-            />
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading || !uploadTrade}
-              className="gap-2"
-            >
-              {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-              {uploading ? "Upload en cours…" : "Uploader une image"}
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Formats acceptés : JPG, PNG, WebP, AVIF — max 8 Mo. {trades.length} métiers disponibles.
-            Toute image importée reste "En attente" jusqu'à approbation explicite.
-          </p>
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  className="hidden"
+                  onChange={onFileSelected}
+                />
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading || !uploadTrade}
+                  className="gap-2"
+                >
+                  {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {uploading ? "Upload en cours…" : "Uploader une image"}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Formats acceptés : JPG, PNG, WebP, AVIF — max 8 Mo. {trades.length} métiers disponibles.
+                Toute image importée reste "En attente" jusqu'à approbation explicite.
+              </p>
+            </TabsContent>
+
+            <TabsContent value="pixabay" className="pt-4">
+              <PixabayImportPanel
+                trades={trades}
+                onImported={() => queryClient.invalidateQueries({ queryKey: ["trade-media-library"] })}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
@@ -493,7 +507,7 @@ function MediaLibraryPage() {
       />
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      <div id="media-library-grid" className="flex flex-wrap gap-3">
         <div className="w-56">
           <Label className="text-xs">Filtrer métier</Label>
           <Select value={tradeFilter} onValueChange={setTradeFilter}>
