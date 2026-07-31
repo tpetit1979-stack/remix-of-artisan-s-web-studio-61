@@ -14,12 +14,9 @@ function normalize(value: string | null | undefined): string {
 }
 
 /**
-
  * Mapping organisme / famille de qualification → logo URL.
- * Les visuels Qualit'EnR suivent la charte 2024 (fond coloré + pictogramme
- * blanc à droite) : QualiPAC, QualiPV, Qualisol, Qualibois, et les 3 familles
- * ajoutées avec la nouvelle identité : Ventilation +, Chauffage + (chaudières
- * à condensation, distinct de QualiPAC) et Recharge Elec + (bornes VE).
+ *
+ * Provenance de chaque fichier documentée dans public/logos/README.md.
  */
 const CERTIFICATION_LOGOS: Record<string, string> = {
   qualibois: "/logos/qualibois.png",
@@ -75,7 +72,6 @@ function guessLogoUrl(organisme: string, certName: string): string {
 
   return CERTIFICATION_LOGOS[org] ?? "";
 }
-
 
 export type RgeCertification = {
   certification_name: string;
