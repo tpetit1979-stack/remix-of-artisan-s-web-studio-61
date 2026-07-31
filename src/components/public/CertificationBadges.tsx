@@ -81,80 +81,84 @@ export function CertificationBadges() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="text-center">
-        <span className="text-sm font-semibold uppercase tracking-wider text-primary">
-          Certifications officielles
-        </span>
-        <h3 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">
-          Artisan certifié RGE
-        </h3>
-      </div>
+    <section className="border-t border-border bg-muted/30 py-16 lg:py-24">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="mx-auto max-w-3xl space-y-5">
+          <div className="text-center">
+            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+              Certifications officielles
+            </span>
+            <h3 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">
+              Artisan certifié RGE
+            </h3>
+          </div>
 
-      <div className="space-y-4">
-        {Array.from(groups.entries()).map(([groupName, rawQuals]) => {
-          const quals = dedupeQualifications(rawQuals);
-          const logoUrl = quals.find((q) => q.logo_url)?.logo_url ?? null;
-          return (
-            <div key={groupName} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
-              <div className="flex items-center gap-3">
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt={groupName}
-                    loading="lazy" decoding="async"
-                    className="h-10 w-auto shrink-0 object-contain"
-                  />
-                ) : (
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-green-100">
-                    <Shield className="h-5 w-5 text-green-600" />
-                  </div>
-                )}
-                <span className="text-base font-semibold text-foreground">{groupName}</span>
-              </div>
-
-              <ul className="mt-4 space-y-3">
-                {quals.map((q) => {
-                  // The raw import text (qualification_name) can be verbose
-                  // and, in real data, carries encoding artefacts from the
-                  // RGE API (missing accents) — not fixed here (out of
-                  // scope: the import, not this display). `domaine`, when
-                  // present, is short and human-written, so it takes the
-                  // primary slot; the technical name becomes secondary.
-                  const rawName = q.qualification_name ?? q.qualification_code ?? "Qualification";
-                  const primaryLabel = q.domaine ?? rawName;
-                  const secondaryLabel = q.domaine ? rawName : null;
-                  const showCode = !!q.qualification_code && !labelContainsCode(rawName, q.qualification_code);
-                  return (
-                    <li key={qualificationKey(q)} className="flex items-start gap-2.5">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-600" aria-hidden />
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-foreground">
-                          {primaryLabel}
-                          {showCode && <span className="ml-1.5 text-xs text-muted-foreground">({q.qualification_code})</span>}
-                        </p>
-                        {secondaryLabel && (
-                          <p className="text-xs text-muted-foreground">{secondaryLabel}</p>
-                        )}
-                        {q.url_qualification && (
-                          <a
-                            href={q.url_qualification}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs font-medium text-primary hover:underline"
-                          >
-                            Voir la qualification officielle →
-                          </a>
-                        )}
+          <div className="space-y-4">
+            {Array.from(groups.entries()).map(([groupName, rawQuals]) => {
+              const quals = dedupeQualifications(rawQuals);
+              const logoUrl = quals.find((q) => q.logo_url)?.logo_url ?? null;
+              return (
+                <div key={groupName} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                  <div className="flex items-center gap-3">
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={groupName}
+                        loading="lazy" decoding="async"
+                        className="h-10 w-auto shrink-0 object-contain"
+                      />
+                    ) : (
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-green-100">
+                        <Shield className="h-5 w-5 text-green-600" />
                       </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          );
-        })}
+                    )}
+                    <span className="text-base font-semibold text-foreground">{groupName}</span>
+                  </div>
+
+                  <ul className="mt-4 space-y-3">
+                    {quals.map((q) => {
+                      // The raw import text (qualification_name) can be verbose
+                      // and, in real data, carries encoding artefacts from the
+                      // RGE API (missing accents) — not fixed here (out of
+                      // scope: the import, not this display). `domaine`, when
+                      // present, is short and human-written, so it takes the
+                      // primary slot; the technical name becomes secondary.
+                      const rawName = q.qualification_name ?? q.qualification_code ?? "Qualification";
+                      const primaryLabel = q.domaine ?? rawName;
+                      const secondaryLabel = q.domaine ? rawName : null;
+                      const showCode = !!q.qualification_code && !labelContainsCode(rawName, q.qualification_code);
+                      return (
+                        <li key={qualificationKey(q)} className="flex items-start gap-2.5">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-600" aria-hidden />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-foreground">
+                              {primaryLabel}
+                              {showCode && <span className="ml-1.5 text-xs text-muted-foreground">({q.qualification_code})</span>}
+                            </p>
+                            {secondaryLabel && (
+                              <p className="text-xs text-muted-foreground">{secondaryLabel}</p>
+                            )}
+                            {q.url_qualification && (
+                              <a
+                                href={q.url_qualification}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs font-medium text-primary hover:underline"
+                              >
+                                Voir la qualification officielle →
+                              </a>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

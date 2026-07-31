@@ -131,8 +131,10 @@ function HomePage() {
 
         <TeamSection />
 
-        {/* Certifications RGE - only shown if tenant has certifications */}
-        <RgeCertificationsSection />
+        {/* Certifications RGE - only shown if tenant has certifications; the
+            component (incl. its wrapping <section>) self-hides via its own
+            query, see CertificationBadges */}
+        <CertificationBadges />
 
         <CTABanner />
 
@@ -246,36 +248,5 @@ function HomePage() {
 
       <PublicFooter />
     </div>
-  );
-}
-
-function RgeCertificationsSection() {
-  const { tenant } = useTenant();
-
-  const { data: certifications = [] } = useQuery({
-    queryKey: ["certifications", tenant?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("tenant_certifications")
-        .select("id")
-        .eq("tenant_id", tenant!.id)
-        .eq("is_active", true)
-        .limit(1);
-      return data ?? [];
-    },
-    enabled: !!tenant?.id,
-    staleTime: 1000 * 60 * 10,
-  });
-
-  if (certifications.length === 0) return null;
-
-  return (
-    <section className="border-t border-border bg-muted/30 py-16 lg:py-24">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="mx-auto max-w-3xl">
-          <CertificationBadges />
-        </div>
-      </div>
-    </section>
   );
 }
