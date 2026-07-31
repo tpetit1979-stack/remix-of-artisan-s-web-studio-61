@@ -1,61 +1,69 @@
-# Diagnostic : la preview n'est ni désynchronisée, ni en cache périmé
+# Bug « • Qualification » sur /?tenant=sasu-energies-d-oc
 
-## 1. Ta vérification est juste — le reset est annulé
+## Réponse à ta question
 
-`src/components/public/CertificationBadges.tsx` est **strictement identique** entre `6eb8320` et l'état actuel de `main`.
-
-Diff complet entre les deux commits, tous fichiers confondus :
+Non. La section affiche toujours l'état dégradé. Test réel sur `/?tenant=sasu-energies-d-oc` :
 
 ```text
-M  .lovable/plan.md     (fichier de plan interne Lovable)
-M  bun.lock
-M  package.json         (@lovable.dev/vite-tanstack-config 2.7.7 -> 2.8.2)
+CERTIFICATIONS OFFICIELLES
+Artisan certifié RGE
+
+Qualification
+
+logos <img>                        : 0
+liens "Voir la qualification..."   : 0
 ```
 
-Aucun fichier applicatif ne diffère. Les deux commits `39421bb` ("Work in progress") et `12f0475` ("Update plan") sont des commits d'intendance de la plateforme : une montée de version de l'outillage de build et le fichier de plan. Le reset `--hard` n'apporterait donc rien, et je ne le recommande plus. L'arbre de travail est par ailleurs propre (`git status` vide), et le fichier sur disque est identique au commit.
+Un seul groupe, sans titre, une seule puce « Qualification », aucun logo, aucun lien.
 
-## 2. Pourquoi la preview semblait afficher un état inconnu
+## Les données ne sont pas en cause
 
-Ce n'est pas un cache de build. Le serveur de développement a d'ailleurs redémarré à 10:34 sur le code courant, et le comportement est inchangé — parce qu'il est **voulu par le code**.
-
-La page d'accueil renvoie un 404 applicatif, pas une erreur de build :
+La base renvoie bien des lignes complètes et exploitables pour ce tenant (`af0210e9-...`) :
 
 ```text
-GET http://localhost:8080/                        -> HTTP 404
-GET http://localhost:8080/?tenant=bfie-easydep    -> HTTP 200
+Qualisol Combi                    code 12  logo /logos/qualisol.png  url ok
+Ventilation +                     code 71  logo null                 url ok
+QualiPAC module Chauffage et ECS  code 43  logo /logos/qualipac.png  url ok
+QualiPAC module Chauffage et ECS  code 41  logo /logos/qualipac.png  url ok
+QualiPV 36                        code ..  logo ...                  url ok
 ```
 
-Le HTML rendu le confirme : le routeur résout `__root__` puis `notFound`, avec `tenant: null, settings: null`.
+Soit bien 4 groupes distincts après regroupement par `certification_name`, avec `domaine`, `qualification_code`, `logo_url` et `url_qualification` renseignés.
 
-Cause exacte, dans `src/routes/index.tsx` ligne 29 :
+## Cause réelle : deux requêtes différentes partagent la même clé de cache
 
-```ts
-const tenant = await resolveTenantForSsr(input);
-if (!tenant) throw notFound();
-```
+Deux composants interrogent `tenant_certifications` avec la **même** `queryKey` mais un `select` différent :
 
-Et `resolveTenantForSsr` dans `src/lib/tenant.ts` est documenté comme **fail-closed**, volontairement :
+- `src/routes/index.tsx`, `RgeCertificationsSection` (ligne 256) :
+  `queryKey: ["certifications", tenant?.id]` avec `.select("id").limit(1)`
+- `src/components/public/CertificationBadges.tsx` (ligne 60) :
+  `queryKey: ["certifications", tenant?.id]` avec `.select("*")`
 
-- un `?tenant=` explicite est autoritaire ;
-- sinon la résolution se fait strictement par nom d'hôte ;
-- aucun hôte de preview ne retombe sur un tenant par défaut.
+React Query déduplique sur la clé : la première requête montée gagne, et son résultat est servi aux deux composants. En pratique c'est la version `select("id").limit(1)` qui peuple le cache. `CertificationBadges` reçoit donc **une seule ligne ne contenant que `id`** :
 
-L'URL de preview `id-preview--f9d7add1-...lovable.app` ne correspond à aucun `tenant.domain`. Sans paramètre `?tenant=`, la home rend donc la page 404 générique — ce qui, vu depuis le navigateur, ressemble à une preview cassée ou périmée, alors que c'est le comportement attendu de la sécurité multi-tenant.
+- `certifications.length === 0` est faux, la section s'affiche ;
+- `certification_name` est `undefined` → un seul groupe au titre vide ;
+- `domaine`, `qualification_name`, `qualification_code` sont `undefined` → le libellé retombe sur le littéral `"Qualification"` (ligne 124) ;
+- `logo_url` et `url_qualification` sont `undefined` → ni logo ni lien.
 
-C'est aussi pour cette raison que tous les audits précédents pointaient sur `?tenant=bfie-easydep`.
+Cela explique très exactement les 4 symptômes observés, y compris le `limit(1)` qui produit un groupe unique.
 
-## 3. Conclusion
+## Correction proposée
 
-- Aucune action Git n'est nécessaire. L'historique reste intact.
-- Aucun rebuild forcé n'est nécessaire : le serveur sert déjà le HEAD courant de `main`, et un redémarrage ne changerait pas le 404.
-- Pour visualiser un site en preview, utiliser une URL portant le tenant, par exemple `/?tenant=bfie-easydep`.
+Supprimer la requête redondante plutôt que de renommer les clés : `CertificationBadges` sait déjà se masquer seul (`if (certifications.length === 0) return null;`).
 
-## 4. Décision à prendre (aucune modification effectuée)
+1. Dans `src/routes/index.tsx` : supprimer le composant `RgeCertificationsSection` et sa requête `["certifications", …]`. Déplacer son habillage (`<section className="border-t border-border bg-muted/30 py-16 lg:py-24">` + conteneur `max-w-3xl`) à l'intérieur de `CertificationBadges`, qui devient responsable de son propre rendu et de son propre masquage. La home appelle alors `<CertificationBadges />` directement.
+2. Dans `src/components/public/CertificationBadges.tsx` : englober le rendu dans cette `<section>` et conserver le `return null` quand il n'y a aucune certification, afin qu'aucune bande vide n'apparaisse pour les tenants sans RGE.
+3. Ne rien changer au `select` du `loader` de `index.tsx` (lignes 34-38) : il n'utilise pas React Query, ne participe pas à la collision, et alimente uniquement le JSON-LD.
+4. Aucune modification de la logique de regroupement, de déduplication ou de résolution de tenant.
 
-Trois options possibles, à ton choix :
+## Vérification après correction
 
-**A. Ne rien changer.** Le comportement fail-closed est correct en production. On continue à tester avec `?tenant=`.
+Sur `/?tenant=sasu-energies-d-oc`, attendre :
 
-**B. Améliorer seulement l'écran 404 sur hôte non résolu.** Afficher, uniquement sur les hôtes de preview, un message explicite du type « Aucun site associé à cette adresse » avec la liste des tenants disponibles en lien. La règle de résolution reste inchangée, aucun tenant n'est deviné.
+- 4 blocs : QualiPAC module Chauffage et ECS, QualiPV 36, Qualisol Combi, Ventilation + ;
+- 3 logos affichés, et l'icône bouclier de repli pour « Ventilation + » (`logo_url` est `null` en base) ;
+- un lien « Voir la qualification officielle » par qualification ;
+- le groupe QualiPAC listant bien ses deux qualifications (codes 41 et 43).
 
-**C. Rediriger l'hôte de preview nu vers un tenant de démonstration.** Plus confortable pour les démonstrations client, mais cela affaiblit le principe fail-closed et introduit un tenant par défaut. Non recommandé.
+Contrôle de non-régression : sur un tenant sans certification active, aucune section ne doit apparaître.
