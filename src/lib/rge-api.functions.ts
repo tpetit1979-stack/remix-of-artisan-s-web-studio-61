@@ -4,7 +4,17 @@ import { z } from "zod";
 const ADEME_API_URL =
   "https://data.ademe.fr/data-fair/api/v1/datasets/liste-des-entreprises-rge-2/lines";
 
+/** Minuscules sans accents, pour des comparaisons de libellés fiables
+ *  (les données ADEME arrivent parfois sans accents). */
+function normalize(value: string | null | undefined): string {
+  return (value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 /**
+
  * Mapping organisme / famille de qualification → logo URL.
  * Les visuels Qualit'EnR suivent la charte 2024 (fond coloré + pictogramme
  * blanc à droite) : QualiPAC, QualiPV, Qualisol, Qualibois, et les 3 familles
