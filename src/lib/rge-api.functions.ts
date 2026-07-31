@@ -4,34 +4,78 @@ import { z } from "zod";
 const ADEME_API_URL =
   "https://data.ademe.fr/data-fair/api/v1/datasets/liste-des-entreprises-rge-2/lines";
 
+/** Minuscules sans accents, pour des comparaisons de libellés fiables
+ *  (les données ADEME arrivent parfois sans accents). */
+function normalize(value: string | null | undefined): string {
+  return (value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 /**
- * Mapping organisme → logo URL (public logos from Qualit'EnR / official sources)
+
+ * Mapping organisme / famille de qualification → logo URL.
+ * Les visuels Qualit'EnR suivent la charte 2024 (fond coloré + pictogramme
+ * blanc à droite) : QualiPAC, QualiPV, Qualisol, Qualibois, et les 3 familles
+ * ajoutées avec la nouvelle identité : Ventilation +, Chauffage + (chaudières
+ * à condensation, distinct de QualiPAC) et Recharge Elec + (bornes VE).
  */
 const CERTIFICATION_LOGOS: Record<string, string> = {
   qualibois: "/logos/qualibois.png",
   qualipac: "/logos/qualipac.png",
   qualisol: "/logos/qualisol.png",
   qualipv: "/logos/qualipv.png",
+  ventilation_plus: "/logos/ventilation-plus.png",
+  chauffage_plus: "/logos/chauffage-plus.png",
+  recharge_elec_plus: "/logos/recharge-elec-plus.png",
+  qualitenr: "/logos/qualitenr.png",
   qualibat: "/logos/qualibat.svg",
   qualifelec: "/logos/qualifelec.png",
   certibat: "/logos/certibat.png",
   cnoa: "",
 };
 
+/**
+ * Résout le logo à partir de l'organisme et du libellé de certification.
+ *
+ * Attention : on ne matche JAMAIS le simple mot "chauffage" en substring —
+ * les lignes QualiPAC contiennent déjà "chauffage" (ex. "QualiPAC module
+ * Chauffage et ECS", domaine "Pompe à chaleur : chauffage"). Les familles
+ * QualiPAC/QualiPV/Qualisol/Qualibois sont donc testées d'abord, puis
+ * "chauffage +" / "chaudière à condensation" pour Chauffage +.
+ */
 function guessLogoUrl(organisme: string, certName: string): string {
-  const org = organisme?.toLowerCase() ?? "";
-  const name = certName?.toLowerCase() ?? "";
+  const org = normalize(organisme);
+  const name = normalize(certName);
 
+  // Familles historiques Qualit'EnR — testées en premier pour éviter toute
+  // collision avec les mots-clés génériques ci-dessous.
   if (name.includes("qualibois")) return CERTIFICATION_LOGOS.qualibois;
   if (name.includes("qualipac")) return CERTIFICATION_LOGOS.qualipac;
   if (name.includes("qualisol")) return CERTIFICATION_LOGOS.qualisol;
   if (name.includes("qualipv")) return CERTIFICATION_LOGOS.qualipv;
+
+  // Nouvelles familles (identité modernisée Qualit'EnR).
+  if (name.includes("ventilation")) return CERTIFICATION_LOGOS.ventilation_plus;
+  if (name.includes("recharge")) return CERTIFICATION_LOGOS.recharge_elec_plus;
+  if (
+    name.includes("chauffage +") ||
+    name.includes("chauffage+") ||
+    name.includes("chaudiere a condensation") ||
+    name.includes("chaudieres a condensation")
+  ) {
+    return CERTIFICATION_LOGOS.chauffage_plus;
+  }
+
   if (org.includes("qualibat")) return CERTIFICATION_LOGOS.qualibat;
   if (org.includes("qualifelec")) return CERTIFICATION_LOGOS.qualifelec;
   if (org.includes("certibat")) return CERTIFICATION_LOGOS.certibat;
+  if (org.includes("qualitenr") || org.includes("qualit enr")) return CERTIFICATION_LOGOS.qualitenr;
 
   return CERTIFICATION_LOGOS[org] ?? "";
 }
+
 
 export type RgeCertification = {
   certification_name: string;
