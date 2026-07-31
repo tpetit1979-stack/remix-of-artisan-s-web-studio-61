@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { fetchPortfolio } from "@/lib/tenant";
 import { Phone, Menu, X } from "lucide-react";
-import { CertificationBadges } from "./CertificationBadges";
 import { Button } from "@/components/ui/button";
 import { BookingButton } from "./BookingButton";
 import { useState } from "react";
@@ -47,7 +46,6 @@ export function PublicHeader() {
               {tenant.company_name}
             </span>
           )}
-          <CertificationBadges variant="header" />
         </Link>
 
         {/* Desktop nav */}

@@ -4,7 +4,6 @@ import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Phone, Shield, ArrowRight } from "lucide-react";
-import { CertificationBadges } from "./CertificationBadges";
 import { StatsCounter } from "./StatsCounter";
 import { getTradeTagline } from "@/lib/trade-wording";
 import { useResolvedImageUrl } from "./ResolvedImage";
@@ -175,13 +174,6 @@ export function HeroSection() {
               >
                 ans d'expérience
               </span>
-            </div>
-          )}
-
-          {/* Certification badges */}
-          {hasHeroImage && (
-            <div className="mt-8">
-              <CertificationBadges variant="hero" />
             </div>
           )}
         </div>

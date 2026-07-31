@@ -1,9 +1,59 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/use-tenant";
-import { Shield } from "lucide-react";
+import { Check, Shield } from "lucide-react";
 
-export function CertificationBadges({ variant = "header" }: { variant?: "header" | "hero" | "full" }) {
+type CertificationRow = {
+  id: string;
+  certification_name: string;
+  qualification_name: string | null;
+  qualification_code: string | null;
+  domaine: string | null;
+  logo_url: string | null;
+  url_qualification: string | null;
+};
+
+/** True only if `label` already contains the code in parenthesised form,
+ *  e.g. "...pole et insert) (21)" already contains "(21)" — a plain
+ *  substring check on bare digits would false-positive on short codes
+ *  appearing anywhere else in the text. */
+function labelContainsCode(label: string, code: string): boolean {
+  return label.toLowerCase().includes(`(${code.toLowerCase()})`);
+}
+
+function qualificationKey(q: CertificationRow): string {
+  return [q.qualification_name ?? "", q.qualification_code ?? "", q.url_qualification ?? ""].join("|");
+}
+
+/** The RGE import can contain exact duplicate qualification rows (confirmed
+ *  on real data: same qualification_name + code + url repeated 2-3x for the
+ *  same certification_name group). Dedupe on that composite key before
+ *  render — `id` alone would never dedupe anything, since each duplicate is
+ *  still a distinct DB row. */
+function dedupeQualifications(quals: CertificationRow[]): CertificationRow[] {
+  const seen = new Set<string>();
+  const result: CertificationRow[] = [];
+  for (const q of quals) {
+    const key = qualificationKey(q);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(q);
+  }
+  return result;
+}
+
+// Certifications are a reassurance block, not decoration — they live only in
+// this dedicated section (rendered once, on the homepage). Previously also
+// squeezed into the header (next to the tenant's own logo) and the Hero,
+// competing with the tenant's identity and the commercial pitch respectively
+// — both removed. This is now the only place they exist.
+//
+// Rows are grouped by `certification_name` for display (one logo, one
+// heading per group of certification). This is a display grouping only —
+// real data shows values like "Qualibois Air", "Qualibois Eau", "QualiPAC
+// module Chauffage et ECS", which are certification/qualification families,
+// not necessarily the name of the certifying body itself.
+export function CertificationBadges() {
   const { tenant } = useTenant();
 
   const { data: certifications = [] } = useQuery({
@@ -15,7 +65,7 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
         .eq("tenant_id", tenant!.id)
         .eq("is_active", true)
         .order("certification_name");
-      return data ?? [];
+      return (data ?? []) as CertificationRow[];
     },
     enabled: !!tenant?.id,
     staleTime: 1000 * 60 * 10,
@@ -23,67 +73,13 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
 
   if (certifications.length === 0) return null;
 
-  // Deduplicate by certification_name for logo display
-  const uniqueCerts = certifications.filter(
-    (c, i, arr) => arr.findIndex((x) => x.certification_name === c.certification_name) === i,
-  );
-
-  if (variant === "header") {
-    return (
-      <div className="flex shrink-0 items-center gap-1.5">
-        {uniqueCerts.slice(0, 3).map((c) =>
-          c.logo_url ? (
-            <img
-              key={c.id}
-              src={c.logo_url}
-              alt={c.certification_name}
-              title={c.certification_name}
-              loading="lazy" decoding="async" className="h-8 w-auto object-contain"
-            />
-          ) : (
-            <span
-              key={c.id}
-              className="inline-flex items-center gap-1 rounded bg-green-100 px-1.5 py-1 text-[10px] font-semibold text-green-800"
-              title={c.certification_name}
-            >
-              <Shield className="h-3 w-3" />
-              RGE
-            </span>
-          ),
-        )}
-      </div>
-    );
+  const groups = new Map<string, CertificationRow[]>();
+  for (const c of certifications) {
+    const list = groups.get(c.certification_name) ?? [];
+    list.push(c);
+    groups.set(c.certification_name, list);
   }
 
-  if (variant === "hero") {
-    return (
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        {uniqueCerts.map((c) =>
-          c.logo_url ? (
-            <img
-              key={c.id}
-              src={c.logo_url}
-              alt={c.certification_name}
-              title={c.qualification_name ?? c.certification_name}
-              loading="lazy" decoding="async" className="h-10 w-auto object-contain rounded bg-white/90 px-2 py-1"
-            />
-          ) : (
-            <span
-              key={c.id}
-              className="inline-flex items-center gap-1.5 rounded-full bg-green-500/20 px-3 py-1 text-xs font-semibold text-green-300"
-            >
-              <Shield className="h-3.5 w-3.5" />
-              {c.certification_name}
-            </span>
-          ),
-        )}
-      </div>
-    );
-  }
-
-  // variant === "full" — compact 1-line layout per qualification.
-  // Goal: reassure at a glance, not inform in detail.
-  // Each row: logo + short name + domain + verification link.
   return (
     <div className="space-y-5">
       <div className="text-center">
@@ -94,51 +90,71 @@ export function CertificationBadges({ variant = "header" }: { variant?: "header"
           Artisan certifié RGE
         </h3>
       </div>
-      <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
-        {certifications.map((c) => (
-          <li
-            key={c.id}
-            className="flex items-center gap-4 px-4 py-3 sm:px-6"
-          >
-            {c.logo_url ? (
-              <img
-                src={c.logo_url}
-                alt={c.certification_name}
-                loading="lazy" decoding="async" className="h-10 w-12 shrink-0 object-contain"
-              />
-            ) : (
-              <div className="flex h-10 w-12 shrink-0 items-center justify-center rounded-md bg-green-100">
-                <Shield className="h-5 w-5 text-green-600" />
+
+      <div className="space-y-4">
+        {Array.from(groups.entries()).map(([groupName, rawQuals]) => {
+          const quals = dedupeQualifications(rawQuals);
+          const logoUrl = quals.find((q) => q.logo_url)?.logo_url ?? null;
+          return (
+            <div key={groupName} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+              <div className="flex items-center gap-3">
+                {logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt={groupName}
+                    loading="lazy" decoding="async"
+                    className="h-10 w-auto shrink-0 object-contain"
+                  />
+                ) : (
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-green-100">
+                    <Shield className="h-5 w-5 text-green-600" />
+                  </div>
+                )}
+                <span className="text-base font-semibold text-foreground">{groupName}</span>
               </div>
-            )}
-            <div className="flex min-w-0 flex-1 flex-col sm:flex-row sm:items-center sm:gap-3">
-              <span className="truncate text-sm font-semibold text-foreground">
-                {c.qualification_code ?? c.qualification_name ?? c.certification_name}
-              </span>
-              {c.domaine && (
-                <span className="truncate text-xs text-muted-foreground">
-                  · {c.domaine}
-                </span>
-              )}
+
+              <ul className="mt-4 space-y-3">
+                {quals.map((q) => {
+                  // The raw import text (qualification_name) can be verbose
+                  // and, in real data, carries encoding artefacts from the
+                  // RGE API (missing accents) — not fixed here (out of
+                  // scope: the import, not this display). `domaine`, when
+                  // present, is short and human-written, so it takes the
+                  // primary slot; the technical name becomes secondary.
+                  const rawName = q.qualification_name ?? q.qualification_code ?? "Qualification";
+                  const primaryLabel = q.domaine ?? rawName;
+                  const secondaryLabel = q.domaine ? rawName : null;
+                  const showCode = !!q.qualification_code && !labelContainsCode(rawName, q.qualification_code);
+                  return (
+                    <li key={qualificationKey(q)} className="flex items-start gap-2.5">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-600" aria-hidden />
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">
+                          {primaryLabel}
+                          {showCode && <span className="ml-1.5 text-xs text-muted-foreground">({q.qualification_code})</span>}
+                        </p>
+                        {secondaryLabel && (
+                          <p className="text-xs text-muted-foreground">{secondaryLabel}</p>
+                        )}
+                        {q.url_qualification && (
+                          <a
+                            href={q.url_qualification}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-medium text-primary hover:underline"
+                          >
+                            Voir la qualification officielle →
+                          </a>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-            <span className="hidden shrink-0 items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800 sm:inline-flex">
-              <Shield className="h-3 w-3" />
-              Certifié
-            </span>
-            {c.url_qualification && (
-              <a
-                href={c.url_qualification}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 text-xs font-medium text-primary hover:underline"
-                aria-label={`Vérifier la certification ${c.qualification_code ?? c.certification_name}`}
-              >
-                Vérifier
-              </a>
-            )}
-          </li>
-        ))}
-      </ul>
+          );
+        })}
+      </div>
     </div>
   );
 }

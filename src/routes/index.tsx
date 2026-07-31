@@ -273,7 +273,7 @@ function RgeCertificationsSection() {
     <section className="border-t border-border bg-muted/30 py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4">
         <div className="mx-auto max-w-3xl">
-          <CertificationBadges variant="full" />
+          <CertificationBadges />
         </div>
       </div>
     </section>
