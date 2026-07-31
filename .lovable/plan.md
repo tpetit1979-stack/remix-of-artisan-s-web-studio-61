@@ -1,40 +1,61 @@
-# Rétablir `main` sur le bon commit
+# Diagnostic : la preview n'est ni désynchronisée, ni en cache périmé
 
-## Diagnostic confirmé
+## 1. Ta vérification est juste — le reset est annulé
 
-- Le commit attendu `6eb8320` existe bien.
-- La branche distante `origin/main` pointe actuellement sur `12f0475`.
-- Deux commits supplémentaires ont été ajoutés après le commit attendu : `39421bb` et `12f0475`.
-- Ces commits modifient seulement `package.json` et `bun.lock`.
-- Il ne faut donc pas chercher un sélecteur de branche dans Lovable : la branche GitHub `main` elle-même doit être rétablie.
+`src/components/public/CertificationBadges.tsx` est **strictement identique** entre `6eb8320` et l'état actuel de `main`.
 
-## Action recommandée — Terminal local
-
-Depuis un clone local du dépôt `tpetit1979-stack/remix-of-artisan-s-web-studio-61` :
-
-```bash
-git fetch origin
-git switch main
-git pull --ff-only origin main
-git branch backup/main-before-restore-2026-07-31
-git reset --hard 6eb8320a29797ab8bb5d576d9f26c8cb37ad874c
-git push --force-with-lease origin main
-```
-
-La branche `backup/main-before-restore-2026-07-31` conserve une sauvegarde locale de l'état actuel. `--force-with-lease` refuse l'écriture si quelqu'un a poussé une nouvelle modification entre-temps.
-
-## Vérification
-
-Sur GitHub, ouvrir la branche `main` et vérifier que le dernier commit est :
+Diff complet entre les deux commits, tous fichiers confondus :
 
 ```text
-6eb8320 refactor(public): consolidate RGE certifications into a single dedicated section
+M  .lovable/plan.md     (fichier de plan interne Lovable)
+M  bun.lock
+M  package.json         (@lovable.dev/vite-tanstack-config 2.7.7 -> 2.8.2)
 ```
 
-Revenir ensuite dans Lovable. La synchronisation GitHub bidirectionnelle doit recharger le projet automatiquement. Si nécessaire, actualiser la page une seule fois, puis demander une vérification du SHA réellement chargé.
+Aucun fichier applicatif ne diffère. Les deux commits `39421bb` ("Work in progress") et `12f0475` ("Update plan") sont des commits d'intendance de la plateforme : une montée de version de l'outillage de build et le fichier de plan. Le reset `--hard` n'apporterait donc rien, et je ne le recommande plus. L'arbre de travail est par ailleurs propre (`git status` vide), et le fichier sur disque est identique au commit.
 
-## Résultat attendu
+## 2. Pourquoi la preview semblait afficher un état inconnu
 
-- `main` et `origin/main` pointent sur `6eb8320`.
-- Les deux commits parasites restent récupérables via la branche locale de sauvegarde.
-- Aucun fichier n'est modifié manuellement et aucun composant n'est régénéré.
+Ce n'est pas un cache de build. Le serveur de développement a d'ailleurs redémarré à 10:34 sur le code courant, et le comportement est inchangé — parce qu'il est **voulu par le code**.
+
+La page d'accueil renvoie un 404 applicatif, pas une erreur de build :
+
+```text
+GET http://localhost:8080/                        -> HTTP 404
+GET http://localhost:8080/?tenant=bfie-easydep    -> HTTP 200
+```
+
+Le HTML rendu le confirme : le routeur résout `__root__` puis `notFound`, avec `tenant: null, settings: null`.
+
+Cause exacte, dans `src/routes/index.tsx` ligne 29 :
+
+```ts
+const tenant = await resolveTenantForSsr(input);
+if (!tenant) throw notFound();
+```
+
+Et `resolveTenantForSsr` dans `src/lib/tenant.ts` est documenté comme **fail-closed**, volontairement :
+
+- un `?tenant=` explicite est autoritaire ;
+- sinon la résolution se fait strictement par nom d'hôte ;
+- aucun hôte de preview ne retombe sur un tenant par défaut.
+
+L'URL de preview `id-preview--f9d7add1-...lovable.app` ne correspond à aucun `tenant.domain`. Sans paramètre `?tenant=`, la home rend donc la page 404 générique — ce qui, vu depuis le navigateur, ressemble à une preview cassée ou périmée, alors que c'est le comportement attendu de la sécurité multi-tenant.
+
+C'est aussi pour cette raison que tous les audits précédents pointaient sur `?tenant=bfie-easydep`.
+
+## 3. Conclusion
+
+- Aucune action Git n'est nécessaire. L'historique reste intact.
+- Aucun rebuild forcé n'est nécessaire : le serveur sert déjà le HEAD courant de `main`, et un redémarrage ne changerait pas le 404.
+- Pour visualiser un site en preview, utiliser une URL portant le tenant, par exemple `/?tenant=bfie-easydep`.
+
+## 4. Décision à prendre (aucune modification effectuée)
+
+Trois options possibles, à ton choix :
+
+**A. Ne rien changer.** Le comportement fail-closed est correct en production. On continue à tester avec `?tenant=`.
+
+**B. Améliorer seulement l'écran 404 sur hôte non résolu.** Afficher, uniquement sur les hôtes de preview, un message explicite du type « Aucun site associé à cette adresse » avec la liste des tenants disponibles en lien. La règle de résolution reste inchangée, aucun tenant n'est deviné.
+
+**C. Rediriger l'hôte de preview nu vers un tenant de démonstration.** Plus confortable pour les démonstrations client, mais cela affaiblit le principe fail-closed et introduit un tenant par défaut. Non recommandé.
