@@ -27,6 +27,7 @@ import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
 import { PartnersManager } from "@/components/admin/PartnersManager";
 import { TenantLogoManager } from "@/components/admin/TenantLogoManager";
+import { TenantGooglePlacesManager } from "@/components/admin/TenantGooglePlacesManager";
 
 /* ── Presets ── */
 const SECTOR_PRESETS = [
@@ -419,6 +420,11 @@ function TenantDetail() {
 function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<any>(null);
+  // Google fields have their own immediate mutations (TenantGooglePlacesManager,
+  // writing straight to `tenants`) so there must be exactly one path that can
+  // write those columns — never this generic save racing it. `googleBusy`
+  // disables this button while that other path is active.
+  const [googleBusy, setGoogleBusy] = useState(false);
 
   useEffect(() => {
     if (tenant) setForm({ ...tenant });
@@ -434,7 +440,6 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
         tagline: form.tagline || null,
         years_experience: form.years_experience ? parseInt(form.years_experience) : null,
         seo_boost_text: form.seo_boost_text || null,
-        google_place_id: form.google_place_id || null,
         is_active: form.is_active, has_lignia: form.has_lignia,
         lignia_tenant_id: form.lignia_tenant_id || null,
       } as any).eq("id", tenantId);
@@ -471,34 +476,12 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
           <Field label="Expérience (années)" className="max-w-[120px]"><Input type="number" value={form.years_experience ?? ""} onChange={e => set("years_experience", e.target.value)} /></Field>
 
           <Separator />
-          <div className="space-y-2">
-            <Field label="Google Place ID">
-              <Input
-                value={form.google_place_id ?? ""}
-                onChange={e => set("google_place_id", e.target.value)}
-                placeholder="ChIJ..."
-              />
-            </Field>
-            <a
-              href="https://developers.google.com/maps/faq#whats-a-place-id"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline"
-            >
-              Comment le trouver ? <ExternalLink className="h-3 w-3" />
-            </a>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-              {form.google_rating != null && (
-                <span>Note Google : <Star className="inline h-3 w-3 text-amber-500 fill-amber-500" /> {form.google_rating}</span>
-              )}
-              {form.google_review_count != null && (
-                <span>({form.google_review_count} avis)</span>
-              )}
-              {form.google_rating_updated_at && (
-                <span>Mis à jour le {new Date(form.google_rating_updated_at).toLocaleDateString("fr-FR")}</span>
-              )}
-            </div>
-          </div>
+          <TenantGooglePlacesManager
+            tenantId={tenantId}
+            tenant={tenant}
+            disabled={save.isPending}
+            onBusyChange={setGoogleBusy}
+          />
         </CardContent>
       </Card>
 
@@ -530,7 +513,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
       </Card>
 
       <div className="flex justify-end">
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>
+        <Button onClick={() => save.mutate()} disabled={save.isPending || googleBusy}>
           {save.isPending ? "Enregistrement..." : "Enregistrer"}
         </Button>
       </div>
