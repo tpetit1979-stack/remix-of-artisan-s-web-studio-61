@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/use-tenant";
+import { getRgeFamilyDescriptor, type RgeFamilyDescriptor } from "@/lib/rge-labels";
 import { Check, Shield } from "lucide-react";
 
 type CertificationRow = {
@@ -48,11 +49,13 @@ function dedupeQualifications(quals: CertificationRow[]): CertificationRow[] {
 // competing with the tenant's identity and the commercial pitch respectively
 // — both removed. This is now the only place they exist.
 //
-// Rows are grouped by `certification_name` for display (one logo, one
-// heading per group of certification). This is a display grouping only —
-// real data shows values like "Qualibois Air", "Qualibois Eau", "QualiPAC
-// module Chauffage et ECS", which are certification/qualification families,
-// not necessarily the name of the certifying body itself.
+// Rows are grouped by their resolved public family (getRgeFamilyDescriptor),
+// not by raw certification_name — real data has cases where two distinct
+// certification_name values belong to the same public family (e.g. a tenant
+// with both "Qualibois Air" and "Qualibois Eau" as separate certification_name
+// rows, which must render as ONE "Chauffage au bois" card, not two identically
+// titled cards). Grouping by certification_name directly would duplicate the
+// title in that case.
 export function CertificationBadges() {
   const { tenant } = useTenant();
 
@@ -73,11 +76,15 @@ export function CertificationBadges() {
 
   if (certifications.length === 0) return null;
 
-  const groups = new Map<string, CertificationRow[]>();
+  const groups = new Map<string, { descriptor: RgeFamilyDescriptor; rows: CertificationRow[] }>();
   for (const c of certifications) {
-    const list = groups.get(c.certification_name) ?? [];
-    list.push(c);
-    groups.set(c.certification_name, list);
+    const descriptor = getRgeFamilyDescriptor(c.certification_name, c.qualification_name);
+    const existing = groups.get(descriptor.familyKey);
+    if (existing) {
+      existing.rows.push(c);
+    } else {
+      groups.set(descriptor.familyKey, { descriptor, rows: [c] });
+    }
   }
 
   return (
@@ -94,16 +101,16 @@ export function CertificationBadges() {
           </div>
 
           <div className="space-y-4">
-            {Array.from(groups.entries()).map(([groupName, rawQuals]) => {
+            {Array.from(groups.entries()).map(([familyKey, { descriptor, rows: rawQuals }]) => {
               const quals = dedupeQualifications(rawQuals);
               const logoUrl = quals.find((q) => q.logo_url)?.logo_url ?? null;
               return (
-                <div key={groupName} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                <div key={familyKey} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
                   <div className="flex items-center gap-3">
                     {logoUrl ? (
                       <img
                         src={logoUrl}
-                        alt={groupName}
+                        alt={descriptor.titreCarte}
                         loading="lazy" decoding="async"
                         className="h-10 w-auto shrink-0 object-contain"
                       />
@@ -112,7 +119,12 @@ export function CertificationBadges() {
                         <Shield className="h-5 w-5 text-green-600" />
                       </div>
                     )}
-                    <span className="text-base font-semibold text-foreground">{groupName}</span>
+                    <div className="min-w-0">
+                      <span className="text-base font-semibold text-foreground">{descriptor.titreCarte}</span>
+                      {descriptor.explication && (
+                        <p className="text-sm text-muted-foreground">{descriptor.explication}</p>
+                      )}
+                    </div>
                   </div>
 
                   <ul className="mt-4 space-y-3">
