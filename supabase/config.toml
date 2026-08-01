@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.media-import]
 verify_jwt = true
+
+[functions.google-places]
+verify_jwt = true
