@@ -2,7 +2,6 @@ import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchPortfolio, fetchServiceAreas } from "@/lib/tenant";
-import { DEFAULT_YEARS_EXPERIENCE } from "@/lib/defaults";
 import { Hammer, Calendar, MapPin, ShieldCheck } from "lucide-react";
 
 /**
@@ -68,13 +67,15 @@ export function WhyChooseUs() {
   // A single number floating in whitespace looks worse than no section.
   if (realSignalCount < 2) return null;
 
-  const years = tenant.years_experience ?? DEFAULT_YEARS_EXPERIENCE;
+  const years = tenant.years_experience ?? 0;
 
   const stats = [
     publishedCount > 0
       ? { icon: Hammer, value: `${publishedCount}`, label: publishedCount > 1 ? "Chantiers réalisés" : "Chantier réalisé" }
       : null,
-    { icon: Calendar, value: `${years}+`, label: years > 1 ? "Ans d'expérience" : "An d'expérience" },
+    hasYears
+      ? { icon: Calendar, value: `${years}+`, label: years > 1 ? "Ans d'expérience" : "An d'expérience" }
+      : null,
     cityCount > 0
       ? { icon: MapPin, value: `${cityCount}`, label: cityCount > 1 ? "Villes desservies" : "Ville desservie" }
       : null,

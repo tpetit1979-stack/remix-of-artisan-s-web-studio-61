@@ -127,13 +127,6 @@ export function getDefaultServiceImage(serviceSlug: string): string {
 }
 
 /**
- * Default years_experience to display when not set on the tenant.
- * Used only when other real stats exist alongside it — never as the
- * only chiffre on the page (see WhyChooseUs visibility rule).
- */
-export const DEFAULT_YEARS_EXPERIENCE = 5;
-
-/**
  * Suggested primary color per trade slug.
  * Applied at onboarding when the artisan hasn't picked a brand color.
  * Avoids the generic "blue SaaS" look that fights against the trade identity
