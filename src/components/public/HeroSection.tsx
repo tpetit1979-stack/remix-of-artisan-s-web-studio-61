@@ -146,26 +146,6 @@ export function HeroSection() {
               <span>{t.google_review_count} avis Google</span>
             </a>
           )}
-
-          {/* Single strong trust signal — only when we have a real value to show. */}
-          {tenant.years_experience && tenant.years_experience > 0 && (
-            <div
-              className={`mt-10 inline-flex items-baseline gap-2 ${
-                hasHeroImage ? "text-white" : "text-foreground"
-              }`}
-            >
-              <span className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-                {tenant.years_experience}+
-              </span>
-              <span
-                className={`text-sm font-medium uppercase tracking-wider ${
-                  hasHeroImage ? "text-white/75" : "text-muted-foreground"
-                }`}
-              >
-                ans d'expérience
-              </span>
-            </div>
-          )}
         </div>
       </div>
 
