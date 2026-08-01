@@ -34,7 +34,12 @@ const CERTIFICATION_LOGOS: Record<string, string> = {
 };
 
 /**
- * Résout le logo à partir de l'organisme et du libellé de certification.
+ * Résout le logo à partir de l'organisme et des libellés de certification.
+ *
+ * `certName` (certification_name) ET `qualificationName` (qualification_name)
+ * sont inspectés ensemble : sur des données réelles, une ligne peut avoir un
+ * certification_name générique ("RGE") alors que le nom de famille
+ * ("Qualibois Bois & Granulés") n'existe que dans qualification_name.
  *
  * Attention : on ne matche JAMAIS le simple mot "chauffage" en substring —
  * les lignes QualiPAC contiennent déjà "chauffage" (ex. "QualiPAC module
@@ -42,9 +47,9 @@ const CERTIFICATION_LOGOS: Record<string, string> = {
  * QualiPAC/QualiPV/Qualisol/Qualibois sont donc testées d'abord, puis
  * "chauffage +" / "chaudière à condensation" pour Chauffage +.
  */
-function guessLogoUrl(organisme: string, certName: string): string {
+function guessLogoUrl(organisme: string, certName: string, qualificationName: string): string {
   const org = normalize(organisme);
-  const name = normalize(certName);
+  const name = `${normalize(certName)} ${normalize(qualificationName)}`;
 
   // Familles historiques Qualit'EnR — testées en premier pour éviter toute
   // collision avec les mots-clés génériques ci-dessous.
@@ -130,7 +135,7 @@ export const fetchRgeBySiret = createServerFn({ method: "POST" })
       date_debut: r.lien_date_debut ?? "",
       date_fin: r.lien_date_fin ?? "",
       url_qualification: r.url_qualification ?? "",
-      logo_url: guessLogoUrl(r.organisme ?? "", r.nom_certificat ?? ""),
+      logo_url: guessLogoUrl(r.organisme ?? "", r.nom_certificat ?? "", r.nom_qualification ?? ""),
       is_active: (r.lien_date_fin ?? "") >= now,
       company_name: r.nom_entreprise ?? "",
       address: r.adresse ?? "",
