@@ -1,7 +1,7 @@
 import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
-import { Briefcase, MapPin, Image, Calendar, Star } from "lucide-react";
+import { Briefcase, MapPin, Image, Calendar } from "lucide-react";
 
 interface StatsCounterProps {
   variant?: "card" | "hero-band";
@@ -32,23 +32,12 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
 
   const uniqueCities = new Set(areas.map((a) => a.city)).size;
   const publishedCount = portfolio.filter((p) => p.is_published).length;
-  const t = tenant as { google_rating?: number | null; google_review_count?: number | null };
-  const googleRating = t.google_rating ?? null;
-  const googleReviewCount = t.google_review_count ?? null;
 
+  // Google rating/reviews are shown only as the Hero badge (HeroSection.tsx)
+  // — never here too, to avoid the same figure appearing twice on one page.
   const stats = [
     tenant.years_experience
       ? { icon: Calendar, value: `${tenant.years_experience}+`, label: "Ans d'expérience" }
-      : null,
-    googleRating != null
-      ? {
-          icon: Star,
-          value: Number(googleRating).toFixed(1),
-          label:
-            googleReviewCount && googleReviewCount > 0
-              ? `${googleReviewCount} avis Google`
-              : "Avis Google",
-        }
       : null,
     services.length > 0
       ? { icon: Briefcase, value: `${services.length}`, label: "Services" }
@@ -61,10 +50,9 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
       : null,
   ].filter(Boolean) as { icon: typeof Calendar; value: string; label: string }[];
 
-  // Visibility guard: only show band when at least one meaningful signal exists.
-  const hasSignal =
-    (tenant.years_experience ?? 0) > 0 || googleRating != null || services.length > 0;
-  if (!hasSignal || stats.length === 0) return null;
+  // Visibility guard: the filtered stats array is the source of truth — years
+  // and services aren't the only real signals (cities, portfolio count too).
+  if (stats.length === 0) return null;
 
   const gridClass =
     stats.length === 4

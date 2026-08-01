@@ -125,8 +125,11 @@ export function HeroSection() {
             )}
           </div>
 
-          {/* Google reviews badge */}
-          {t.google_place_id && (
+          {/* Google reviews badge — only when there's an actual rating backed
+              by at least one review; a linked place with no rating yet, or
+              zero reviews, is not shown as public "social proof". Google is
+              optional evidence, never a gap the page has to visibly fill. */}
+          {t.google_place_id && t.google_rating != null && (t.google_review_count ?? 0) > 0 && (
             <a
               href={getGoogleMapsUrl(t.google_place_id)}
               target="_blank"
@@ -137,23 +140,10 @@ export function HeroSection() {
                   : "border-border bg-background/80 text-foreground hover:bg-background"
               }`}
             >
-              {t.google_rating != null ? (
-                <>
-                  <span aria-hidden>⭐</span>
-                  <span>{Number(t.google_rating).toFixed(1)}</span>
-                  <span className="mx-1 opacity-60">·</span>
-                  <span>
-                    {t.google_review_count && t.google_review_count > 0
-                      ? `${t.google_review_count} avis Google`
-                      : "Voir sur Google"}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span>Voir nos avis Google</span>
-                  <span aria-hidden>→</span>
-                </>
-              )}
+              <span aria-hidden>⭐</span>
+              <span>{Number(t.google_rating).toFixed(1)}</span>
+              <span className="mx-1 opacity-60">·</span>
+              <span>{t.google_review_count} avis Google</span>
             </a>
           )}
 
