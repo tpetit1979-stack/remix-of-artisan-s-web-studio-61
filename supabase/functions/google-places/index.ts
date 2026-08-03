@@ -6,7 +6,7 @@
 //  - Google is optional evidence, never a prerequisite. No action here is
 //    ever triggered automatically from onboarding, SIRET import, RGE
 //    import, or tenant creation — every call originates from an explicit
-//    super-admin click (LOT 6C, not built yet).
+//    super-admin click (LOT 6C, super-admin UI).
 //  - unlink is centralised here rather than a direct client-side UPDATE for
 //    governance consistency and a future audit trail — NOT because it's
 //    the only line of defense: the enforce_tenant_platform_fields_locked
@@ -33,14 +33,14 @@
 // full search query/address, or Google's raw response body — only
 // google_http_status and our own normalised error_code.
 //
-// NOT independently verified in this environment (no Deno/Supabase CLI
-// available here to deploy — `deno check`/`deno lint` were run via a
-// temporary npm-installed binary, not the real Supabase CLI, so this has
-// never actually been deployed or invoked): the exact env var name
-// Supabase injects for the anon key on this project (assumed
-// SUPABASE_ANON_KEY, the historical default) — confirm at first deploy,
-// per the "publishable/secret key" migration Supabase has been rolling
-// out.
+// Verification status: `deno check`/`deno lint` pass (via a temporary
+// npm-installed binary, not the Supabase CLI — still no Supabase CLI in
+// this environment). Deployed and invoked (search's tenant read was
+// exercised live and its DATABASE_ERROR — a stale `postal_code` column
+// reference — fixed and redeployed). SUPABASE_ANON_KEY was confirmed to
+// be the correct injected env var name by that same live invocation.
+// NOT yet verified: a full search → select → refresh → unlink pass
+// through the Google Places API from the super-admin UI.
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -246,7 +246,6 @@ type TenantSearchFields = {
   id: string;
   company_name: string | null;
   address: string | null;
-  postal_code: string | null;
   city: string | null;
 };
 
@@ -366,7 +365,7 @@ Deno.serve(async (req) => {
 
     const { data: tenant, error: tenantError } = await supabase
       .from("tenants")
-      .select("id, company_name, address, postal_code, city")
+      .select("id, company_name, address, city")
       .eq("id", tenantId)
       .maybeSingle<TenantSearchFields>();
 
@@ -381,7 +380,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const defaultQuery = [tenant.company_name, tenant.address, tenant.postal_code, tenant.city]
+    const defaultQuery = [tenant.company_name, tenant.address, tenant.city]
       .filter(Boolean)
       .join(" ");
     const textQuery = queryOverride || defaultQuery;
