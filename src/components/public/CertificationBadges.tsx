@@ -14,14 +14,6 @@ type CertificationRow = {
   url_qualification: string | null;
 };
 
-/** True only if `label` already contains the code in parenthesised form,
- *  e.g. "...pole et insert) (21)" already contains "(21)" — a plain
- *  substring check on bare digits would false-positive on short codes
- *  appearing anywhere else in the text. */
-function labelContainsCode(label: string, code: string): boolean {
-  return label.toLowerCase().includes(`(${code.toLowerCase()})`);
-}
-
 function qualificationKey(q: CertificationRow): string {
   return [q.qualification_name ?? "", q.qualification_code ?? "", q.url_qualification ?? ""].join("|");
 }
@@ -129,27 +121,14 @@ export function CertificationBadges() {
 
                   <ul className="mt-4 space-y-3">
                     {quals.map((q) => {
-                      // The raw import text (qualification_name) can be verbose
-                      // and, in real data, carries encoding artefacts from the
-                      // RGE API (missing accents) — not fixed here (out of
-                      // scope: the import, not this display). `domaine`, when
-                      // present, is short and human-written, so it takes the
-                      // primary slot; the technical name becomes secondary.
-                      const rawName = q.qualification_name ?? q.qualification_code ?? "Qualification";
-                      const primaryLabel = q.domaine ?? rawName;
-                      const secondaryLabel = q.domaine ? rawName : null;
-                      const showCode = !!q.qualification_code && !labelContainsCode(rawName, q.qualification_code);
+                      // Never qualification_name/qualification_code (raw ADEME text/codes) — see docs/runtime/rge-display.md
+                      const primaryLabel = q.domaine ?? descriptor.titreCarte;
                       return (
                         <li key={qualificationKey(q)} className="flex items-start gap-2.5">
                           <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-600" aria-hidden />
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-foreground">
-                              {primaryLabel}
-                              {showCode && <span className="ml-1.5 text-xs text-muted-foreground">({q.qualification_code})</span>}
-                            </p>
-                            {secondaryLabel && (
-                              <p className="text-xs text-muted-foreground">{secondaryLabel}</p>
-                            )}
+                            <p className="text-sm font-medium text-foreground">{primaryLabel}</p>
+                            <p className="text-xs text-muted-foreground">{q.certification_name}</p>
                             {q.url_qualification && (
                               <a
                                 href={q.url_qualification}
