@@ -65,9 +65,28 @@ Le même schéma existe dans `src/routes/admin.tsx` (lignes 28 et 35).
 
 Sans objet ici : le commit attendu est déjà celui servi. Si un doute revient, le contrôle est celui exécuté ci-dessus (`git fetch` + comparaison des trois SHA + `git diff`). Pour lever un cache de navigateur, un rechargement forcé de l'onglet de preview suffit.
 
+## Erreur de typage présente dans le commit lui-même
+
+Le typecheck échoue sur le code de synchronisation d'onglets, sur `22e86b6`, arbre de travail propre (`git diff --stat` vide — l'erreur n'est donc pas due à une modification de ma part) :
+
+```text
+src/routes/super-admin.tenants.$tenantId.tsx(227,53)
+error TS7006: Parameter 'prev' implicitly has an 'any' type.
+```
+
+Ligne concernée :
+
+```ts
+if (isTabValue(value)) routeNavigate({ search: (prev) => ({ ...prev, tab: value }) });
+```
+
+Le paramètre `prev` du updater de `search` n'est pas inféré ici. Le commit `22e86b6` est donc déployé mais non sain au typecheck.
+
 ## Correction proposée (si tu la valides)
 
-1. Se connecter en super-admin dans la preview et ouvrir `/super-admin/tenants/<id>?tab=rdv` pour confirmer que la synchronisation d'onglets fonctionne bien une fois la page accessible.
-2. Corriger la perte de query string dans les redirections d'authentification : utiliser le chemin complet (pathname + search) comme valeur de `redirect` dans `src/routes/super-admin.tsx` et `src/routes/admin.tsx`, et restaurer cette valeur telle quelle après connexion dans `src/routes/login.tsx`.
+1. Typer explicitement l'updater de search dans `src/routes/super-admin.tenants.$tenantId.tsx` (ligne 227) : `(prev: { tab?: TabValue })` — correction purement de typage, aucun changement de comportement.
+2. Se connecter en super-admin dans la preview et ouvrir `/super-admin/tenants/<id>?tab=rdv` pour confirmer que la synchronisation d'onglets fonctionne bien une fois la page accessible.
+3. Corriger la perte de query string dans les redirections d'authentification : utiliser le chemin complet (pathname + search) comme valeur de `redirect` dans `src/routes/super-admin.tsx` et `src/routes/admin.tsx`, et restaurer cette valeur telle quelle après connexion dans `src/routes/login.tsx`.
 
-Aucun fichier n'a été modifié pendant cette vérification.
+Aucun fichier source n'a été modifié pendant cette vérification.
+
