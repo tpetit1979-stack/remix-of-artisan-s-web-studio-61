@@ -74,8 +74,22 @@ function hexToOklchPreview(hex: string) {
   return { l: L, c: C, h: H };
 }
 
+// Must stay in sync with the `TabsTrigger`/`TabsContent` value= list below
+// (the "Tabs" section of TenantDetail) — adding a tab there without adding
+// it here makes it unreachable via ?tab= but doesn't fail visibly.
+const VALID_TABS = [
+  "tenant", "settings", "services", "zones", "certifications", "team", "partners", "booking", "ai",
+] as const;
+type TabValue = (typeof VALID_TABS)[number];
+function isTabValue(value: string): value is TabValue {
+  return (VALID_TABS as readonly string[]).includes(value);
+}
+
 export const Route = createFileRoute("/super-admin/tenants/$tenantId")({
   component: TenantDetail,
+  validateSearch: (search: Record<string, unknown>): { tab?: TabValue } => ({
+    tab: typeof search.tab === "string" && isTabValue(search.tab) ? search.tab : undefined,
+  }),
 });
 
 /* ── Helpers ── */
@@ -201,10 +215,17 @@ function FullSitePreview({ designForm, tenant }: { designForm: any; tenant: any 
    ══════════════════════════════════════════════════════ */
 function TenantDetail() {
   const { tenantId } = Route.useParams();
+  const { tab } = Route.useSearch();
+  const activeTab: TabValue = tab ?? "tenant";
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const routeNavigate = Route.useNavigate();
   const { startImpersonation } = useImpersonation();
   const [previewOpen, setPreviewOpen] = useState(true);
+
+  const setTab = useCallback((value: string) => {
+    if (isTabValue(value)) routeNavigate({ search: (prev) => ({ ...prev, tab: value }) });
+  }, [routeNavigate]);
 
   // Design form state lifted here so preview updates live
   const [designForm, setDesignForm] = useState<any>(null);
@@ -347,8 +368,8 @@ function TenantDetail() {
         </Button>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="settings">
+      {/* Tabs — value= list must stay in sync with VALID_TABS above */}
+      <Tabs value={activeTab} onValueChange={setTab}>
         <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="tenant"><Building2 className="h-3 w-3 mr-1" /> Entreprise</TabsTrigger>
           <TabsTrigger value="settings"><Palette className="h-3 w-3 mr-1" /> Design</TabsTrigger>
