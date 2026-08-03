@@ -1,69 +1,92 @@
-# Bug « • Qualification » sur /?tenant=sasu-energies-d-oc
+# Vérification factuelle : synchronisation GitHub ↔ preview
 
-## Réponse à ta question
-
-Non. La section affiche toujours l'état dégradé. Test réel sur `/?tenant=sasu-energies-d-oc` :
+## 1. SHA réellement déployé dans la preview
 
 ```text
-CERTIFICATIONS OFFICIELLES
-Artisan certifié RGE
-
-Qualification
-
-logos <img>                        : 0
-liens "Voir la qualification..."   : 0
+HEAD (branche de travail de la preview) : 22e86b6c4befa6023714f282db49bbd104ca31b7
+  edit/edt-54f61f7c-7ddf-4aad-9462-3c129b38d5f0
+main (local)                            : 22e86b6c4befa6023714f282db49bbd104ca31b7
+origin/main (après git fetch)            : 22e86b6c4befa6023714f282db49bbd104ca31b7
+git diff HEAD origin/main               : (vide)
+git status --porcelain                  : (vide)
 ```
 
-Un seul groupe, sans titre, une seule puce « Qualification », aucun logo, aucun lien.
-
-## Les données ne sont pas en cause
-
-La base renvoie bien des lignes complètes et exploitables pour ce tenant (`af0210e9-...`) :
+Derniers commits :
 
 ```text
-Qualisol Combi                    code 12  logo /logos/qualisol.png  url ok
-Ventilation +                     code 71  logo null                 url ok
-QualiPAC module Chauffage et ECS  code 43  logo /logos/qualipac.png  url ok
-QualiPAC module Chauffage et ECS  code 41  logo /logos/qualipac.png  url ok
-QualiPV 36                        code ..  logo ...                  url ok
+22e86b6 feat(admin): sync tenant detail tabs with ?tab= search param
+5488c8b fix(google-places): remove invalid postal code lookup
+01e5660 Syncé avec main (SHA 912c561)
 ```
 
-Soit bien 4 groupes distincts après regroupement par `certification_name`, avec `domaine`, `qualification_code`, `logo_url` et `url_qualification` renseignés.
+## 2. Est-ce bien `22e86b6` ?
 
-## Cause réelle : deux requêtes différentes partagent la même clé de cache
+Oui. C'est le HEAD de `origin/main`, le HEAD local et l'arbre de travail servi par la preview, avec zéro différence et zéro fichier modifié. Aucune resynchronisation n'est nécessaire.
 
-Deux composants interrogent `tenant_certifications` avec la **même** `queryKey` mais un `select` différent :
+## 3. Construction automatique ou cache ?
 
-- `src/routes/index.tsx`, `RgeCertificationsSection` (ligne 256) :
-  `queryKey: ["certifications", tenant?.id]` avec `.select("id").limit(1)`
-- `src/components/public/CertificationBadges.tsx` (ligne 60) :
-  `queryKey: ["certifications", tenant?.id]` avec `.select("*")`
+La preview sert directement l'arbre de travail du dépôt via le serveur de dev (Vite, HMR) — il n'y a pas d'étape de build figée côté serveur à invalider. Vérifié : `node_modules/.vite/deps` daté du 3 août 12:52, soit régénéré à l'ouverture de la session. Le seul cache réellement en jeu est celui de **l'onglet du navigateur** (bundle JS déjà chargé), pas un cache de déploiement.
 
-React Query déduplique sur la clé : la première requête montée gagne, et son résultat est servi aux deux composants. En pratique c'est la version `select("id").limit(1)` qui peuple le cache. `CertificationBadges` reçoit donc **une seule ligne ne contenant que `id`** :
+## 4. Le code `?tab=` est bien présent
 
-- `certifications.length === 0` est faux, la section s'affiche ;
-- `certification_name` est `undefined` → un seul groupe au titre vide ;
-- `domaine`, `qualification_name`, `qualification_code` sont `undefined` → le libellé retombe sur le littéral `"Qualification"` (ligne 124) ;
-- `logo_url` et `url_qualification` sont `undefined` → ni logo ni lien.
+Contenu vérifié dans `src/routes/super-admin.tenants.$tenantId.tsx` :
 
-Cela explique très exactement les 4 symptômes observés, y compris le `limit(1)` qui produit un groupe unique.
+- ligne 80 : liste `VALID_TABS` (tenant, settings, services, zones, certifications, team, partners, booking, ai)
+- lignes 88-93 : `validateSearch` qui parse `?tab=`
+- lignes 218-219 : `Route.useSearch()` → `activeTab`
+- lignes 226-228 : `setTab` qui écrit dans la search param
+- ligne 372 : `<Tabs value={activeTab} onValueChange={setTab}>`
 
-## Correction proposée
+Le code est donc bel et bien déployé. Ce qui a été observé en preview n'est pas un décalage de commit.
 
-Supprimer la requête redondante plutôt que de renommer les clés : `CertificationBadges` sait déjà se masquer seul (`if (certifications.length === 0) return null;`).
+### Ce que montre l'inspection de la preview ouverte
 
-1. Dans `src/routes/index.tsx` : supprimer le composant `RgeCertificationsSection` et sa requête `["certifications", …]`. Déplacer son habillage (`<section className="border-t border-border bg-muted/30 py-16 lg:py-24">` + conteneur `max-w-3xl`) à l'intérieur de `CertificationBadges`, qui devient responsable de son propre rendu et de son propre masquage. La home appelle alors `<CertificationBadges />` directement.
-2. Dans `src/components/public/CertificationBadges.tsx` : englober le rendu dans cette `<section>` et conserver le `return null` quand il n'y a aucune certification, afin qu'aucune bande vide n'apparaisse pour les tenants sans RGE.
-3. Ne rien changer au `select` du `loader` de `index.tsx` (lignes 34-38) : il n'utilise pas React Query, ne participe pas à la collision, et alimente uniquement le JSON-LD.
-4. Aucune modification de la logique de regroupement, de déduplication ou de résolution de tenant.
+L'onglet de preview actuellement ouvert est sur :
 
-## Vérification après correction
+```text
+/login?redirect=%2Flogin      (aucun élément [role="tab"] dans le DOM)
+```
 
-Sur `/?tenant=sasu-energies-d-oc`, attendre :
+Une requête directe sur `/super-admin/tenants/<id>?tab=rdv` renvoie **307** (redirection). La page est protégée : `src/routes/super-admin.tsx` (lignes 19-24) redirige toute session non `super_admin` vers `/login`. Tant que la session n'est pas authentifiée en super-admin, la page ne s'affiche pas du tout — donc `?tab=` ne peut pas être observé.
 
-- 4 blocs : QualiPAC module Chauffage et ECS, QualiPV 36, Qualisol Combi, Ventilation + ;
-- 3 logos affichés, et l'icône bouclier de repli pour « Ventilation + » (`logo_url` est `null` en base) ;
-- un lien « Voir la qualification officielle » par qualification ;
-- le groupe QualiPAC listant bien ses deux qualifications (codes 41 et 43).
+### Anomalie réelle identifiée (à confirmer avec toi avant correction)
 
-Contrôle de non-régression : sur un tenant sans certification active, aucune section ne doit apparaître.
+Le garde de `/super-admin` fait :
+
+```ts
+navigate({ to: "/login", search: { redirect: location.pathname } })
+```
+
+`location.pathname` **exclut la query string**. Conséquence : un lien `/super-admin/tenants/<id>?tab=rdv` ouvert sans session valide perd le `?tab=rdv` au passage par `/login`, et après connexion l'utilisateur retombe sur l'onglet par défaut (`tenant`). C'est cohérent avec le symptôme décrit, et c'est un défaut de code, pas de synchronisation.
+
+Le même schéma existe dans `src/routes/admin.tsx` (lignes 28 et 35).
+
+## 5. Procédure de resynchronisation
+
+Sans objet ici : le commit attendu est déjà celui servi. Si un doute revient, le contrôle est celui exécuté ci-dessus (`git fetch` + comparaison des trois SHA + `git diff`). Pour lever un cache de navigateur, un rechargement forcé de l'onglet de preview suffit.
+
+## Erreur de typage présente dans le commit lui-même
+
+Le typecheck échoue sur le code de synchronisation d'onglets, sur `22e86b6`, arbre de travail propre (`git diff --stat` vide — l'erreur n'est donc pas due à une modification de ma part) :
+
+```text
+src/routes/super-admin.tenants.$tenantId.tsx(227,53)
+error TS7006: Parameter 'prev' implicitly has an 'any' type.
+```
+
+Ligne concernée :
+
+```ts
+if (isTabValue(value)) routeNavigate({ search: (prev) => ({ ...prev, tab: value }) });
+```
+
+Le paramètre `prev` du updater de `search` n'est pas inféré ici. Le commit `22e86b6` est donc déployé mais non sain au typecheck.
+
+## Correction proposée (si tu la valides)
+
+1. Typer explicitement l'updater de search dans `src/routes/super-admin.tenants.$tenantId.tsx` (ligne 227) : `(prev: { tab?: TabValue })` — correction purement de typage, aucun changement de comportement.
+2. Se connecter en super-admin dans la preview et ouvrir `/super-admin/tenants/<id>?tab=rdv` pour confirmer que la synchronisation d'onglets fonctionne bien une fois la page accessible.
+3. Corriger la perte de query string dans les redirections d'authentification : utiliser le chemin complet (pathname + search) comme valeur de `redirect` dans `src/routes/super-admin.tsx` et `src/routes/admin.tsx`, et restaurer cette valeur telle quelle après connexion dans `src/routes/login.tsx`.
+
+Aucun fichier source n'a été modifié pendant cette vérification.
+
