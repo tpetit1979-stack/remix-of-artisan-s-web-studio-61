@@ -9,6 +9,8 @@ type Variant = "header" | "mobile-menu" | "floating" | "inline";
 interface WhatsAppButtonProps {
   variant?: Variant;
   className?: string;
+  /** Button text for header/mobile-menu/inline variants. Defaults to "WhatsApp". */
+  label?: string;
 }
 
 /**
@@ -16,7 +18,7 @@ interface WhatsAppButtonProps {
  * enabled it AND provided a number. Never assumes WhatsApp is available.
  * Plain wa.me link, no third-party script/widget.
  */
-export function WhatsAppButton({ variant = "inline", className }: WhatsAppButtonProps) {
+export function WhatsAppButton({ variant = "inline", className, label = "WhatsApp" }: WhatsAppButtonProps) {
   const { settings } = useTenant();
 
   if (!settings?.whatsapp_enabled || !settings.whatsapp_number?.trim()) return null;
@@ -31,7 +33,7 @@ export function WhatsAppButton({ variant = "inline", className }: WhatsAppButton
         rel="noopener noreferrer"
         aria-label="Discuter sur WhatsApp"
         className={cn(
-          "fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 active:scale-95 md:hidden",
+          "fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 active:scale-95",
           className,
         )}
       >
@@ -52,7 +54,7 @@ export function WhatsAppButton({ variant = "inline", className }: WhatsAppButton
         )}
       >
         <MessageCircle className="h-4 w-4" />
-        <span>WhatsApp</span>
+        <span>{label}</span>
       </Button>
     </a>
   );

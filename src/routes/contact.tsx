@@ -129,7 +129,7 @@ function ContactPage() {
         .single();
       if (error) throw error;
       setSent(true);
-      toast.success("Demande envoyée ! Nous vous rappelons rapidement.");
+      toast.success("Merci. Votre demande a bien été enregistrée. Nous vous recontactons dès que possible.");
 
       // Fire-and-forget: the visitor's success screen never depends on this.
       // A failure here (network, provider outage) is silent -- the contact is
@@ -153,7 +153,7 @@ function ContactPage() {
             <CheckCircle className="mx-auto h-16 w-16 text-primary" />
             <h1 className="mt-6 text-2xl font-bold text-foreground">Demande envoyée !</h1>
             <p className="mt-3 text-muted-foreground">
-              Merci pour votre demande. {tenant?.company_name} vous recontactera dans les plus brefs délais.
+              Merci. Votre demande a bien été enregistrée. Nous vous recontactons dès que possible.
             </p>
             {tenant?.phone && (
               <p className="mt-4 text-sm text-muted-foreground">
@@ -182,10 +182,10 @@ function ContactPage() {
             {/* Left — trust & contact info */}
             <div className="lg:col-span-2">
               <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-                Demandez votre devis gratuit
+                Demande de contact
               </h1>
               <p className="mt-4 text-muted-foreground">
-                Remplissez le formulaire ou appelez-nous directement. Nous répondons sous 24h.
+                Décrivez votre besoin. Nous vous recontactons pour préciser les conditions avant toute intervention.
               </p>
 
               {/* Trust badges */}
@@ -235,13 +235,24 @@ function ContactPage() {
                       <span>{tenant.email}</span>
                     </a>
                   )}
-                  <WhatsAppButton variant="inline" className="mt-1" />
+                  <WhatsAppButton variant="inline" className="mt-1" label="Écrire sur WhatsApp" />
                   {(tenant.address || tenant.city) && (
                     <div className="flex items-start gap-3 text-sm text-muted-foreground">
                       <MapPin className="mt-0.5 h-4 w-4" />
                       <span>{[tenant.address, tenant.city].filter(Boolean).join(", ")}</span>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Optional WhatsApp block — only when the tenant has explicitly opted in and provided a number. */}
+              {settings?.whatsapp_enabled && settings.whatsapp_number?.trim() && (
+                <div className="mt-6 rounded-lg border border-border bg-muted/30 p-5">
+                  <p className="text-sm font-semibold text-foreground">Vous préférez WhatsApp ?</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Envoyez-nous un message ou des photos directement sur WhatsApp.
+                  </p>
+                  <WhatsAppButton variant="inline" className="mt-3" label="Écrire sur WhatsApp" />
                 </div>
               )}
 
@@ -336,13 +347,16 @@ function ContactPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="photos">Ajouter des photos (optionnel)</Label>
+                <Label htmlFor="photos">Photos (optionnel)</Label>
+                <p className="text-xs text-muted-foreground">
+                  Ajoutez jusqu'à {MAX_CONTACT_PHOTOS} photos pour illustrer votre installation ou le problème constaté (JPEG, PNG, WebP — 8 Mo max).
+                </p>
                 <label
                   htmlFor="photos"
                   className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-border px-4 py-3 text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground"
                 >
                   <Paperclip className="h-4 w-4" />
-                  {photos.length > 0 ? `${photos.length} photo(s) sélectionnée(s)` : "Ajouter des photos de votre projet"}
+                  {photos.length > 0 ? `${photos.length} photo(s) sélectionnée(s)` : "Ajouter des photos"}
                 </label>
                 <input
                   id="photos"
@@ -381,7 +395,7 @@ function ContactPage() {
                       onChange={(e) => setConsent(e.target.checked)}
                       className="mt-0.5"
                     />
-                    <span>J'autorise l'envoi de ces photos pour le traitement de ma demande.</span>
+                    <span>J'autorise l'envoi de ces photos uniquement pour le traitement de ma demande.</span>
                   </label>
                 )}
               </div>

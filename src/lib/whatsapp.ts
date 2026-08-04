@@ -17,7 +17,7 @@ export function normalizeWhatsAppNumber(raw: string): string {
   return digits;
 }
 
-const DEFAULT_MESSAGE = "Bonjour, je souhaite un devis.";
+const DEFAULT_MESSAGE = "Bonjour, je vous contacte depuis votre site. Voici mon besoin :";
 
 export function buildWhatsAppUrl(number: string, message?: string | null): string {
   const digits = normalizeWhatsAppNumber(number);
