@@ -137,6 +137,9 @@ function AdminSettings() {
           quote_is_free: form.quote_is_free ?? null,
           quote_response_delay_hours: form.quote_response_delay_hours ?? null,
           emergency_service_available: form.emergency_service_available ?? null,
+          whatsapp_enabled: form.whatsapp_enabled ?? false,
+          whatsapp_number: form.whatsapp_number ?? null,
+          whatsapp_message_template: form.whatsapp_message_template ?? null,
         } as any)
         .eq("tenant_id", tenant!.id);
       if (error) throw error;
@@ -251,6 +254,47 @@ function AdminSettings() {
             <Label>Sous-titre</Label>
             <Input value={form.hero_subtitle ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, hero_subtitle: e.target.value }))} />
           </div>
+        </CardContent>
+      </Card>
+
+      {/* WhatsApp */}
+      <Card>
+        <CardHeader><CardTitle>WhatsApp</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="wa-enabled">Activer le bouton WhatsApp</Label>
+              <p className="text-sm text-muted-foreground">
+                Affiche un bouton WhatsApp sur votre site public.
+              </p>
+            </div>
+            <Switch
+              id="wa-enabled"
+              checked={!!form.whatsapp_enabled}
+              onCheckedChange={(v: boolean) => setForm((p: any) => ({ ...p, whatsapp_enabled: v }))}
+            />
+          </div>
+          {form.whatsapp_enabled && (
+            <div className="space-y-4 border-t pt-4">
+              <div className="space-y-2">
+                <Label>Numéro WhatsApp</Label>
+                <Input
+                  type="tel"
+                  placeholder="06 XX XX XX XX"
+                  value={form.whatsapp_number ?? ""}
+                  onChange={(e) => setForm((p: any) => ({ ...p, whatsapp_number: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Message pré-rempli</Label>
+                <Input
+                  placeholder="Bonjour, je souhaite un devis."
+                  value={form.whatsapp_message_template ?? ""}
+                  onChange={(e) => setForm((p: any) => ({ ...p, whatsapp_message_template: e.target.value }))}
+                />
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

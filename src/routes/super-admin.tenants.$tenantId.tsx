@@ -576,6 +576,9 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
         quote_is_free: designForm.quote_is_free,
         quote_response_delay_hours: designForm.quote_response_delay_hours,
         emergency_service_available: designForm.emergency_service_available,
+        whatsapp_enabled: designForm.whatsapp_enabled ?? false,
+        whatsapp_number: designForm.whatsapp_number,
+        whatsapp_message_template: designForm.whatsapp_message_template,
       }).eq("tenant_id", tenantId);
       if (error) throw error;
     },
@@ -611,6 +614,41 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
             disabled={save.isPending}
             onBusyChange={setLogoBusy}
           />
+        </CardContent>
+      </Card>
+
+      {/* WhatsApp */}
+      <Card>
+        <CardContent className="pt-4 space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">WhatsApp</p>
+          <div className="flex items-center justify-between gap-4">
+            <Label htmlFor="wa-enabled" className="text-xs font-normal">Activer le bouton WhatsApp</Label>
+            <Switch
+              id="wa-enabled"
+              checked={!!designForm.whatsapp_enabled}
+              onCheckedChange={(v: boolean) => setDesignField("whatsapp_enabled", v)}
+            />
+          </div>
+          {designForm.whatsapp_enabled && (
+            <>
+              <Field label="Numéro WhatsApp">
+                <Input
+                  className="h-8 text-xs"
+                  placeholder="06 XX XX XX XX"
+                  value={designForm.whatsapp_number ?? ""}
+                  onChange={(e) => setDesignField("whatsapp_number", e.target.value)}
+                />
+              </Field>
+              <Field label="Message pré-rempli">
+                <Input
+                  className="h-8 text-xs"
+                  placeholder="Bonjour, je souhaite un devis."
+                  value={designForm.whatsapp_message_template ?? ""}
+                  onChange={(e) => setDesignField("whatsapp_message_template", e.target.value)}
+                />
+              </Field>
+            </>
+          )}
         </CardContent>
       </Card>
 

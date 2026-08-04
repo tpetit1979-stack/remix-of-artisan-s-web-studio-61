@@ -2,6 +2,7 @@ import { Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { BookingButton } from "./BookingButton";
+import { WhatsAppButton } from "./WhatsAppButton";
 
 /**
  * Sticky bottom CTA bar on mobile (md:hidden).
@@ -17,6 +18,7 @@ export function FloatingCTA() {
   return (
     <>
       <BookingButton variant="floating" />
+      <WhatsAppButton variant="floating" />
       <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-border bg-background/95 p-3 shadow-elegant backdrop-blur supports-[backdrop-filter]:bg-background/80 md:hidden">
         {phone && (
           <a

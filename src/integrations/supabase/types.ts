@@ -58,6 +58,7 @@ export type Database = {
           message: string | null
           name: string
           phone: string | null
+          photo_urls: string[] | null
           service_id: string | null
           tenant_id: string
         }
@@ -69,6 +70,7 @@ export type Database = {
           message?: string | null
           name: string
           phone?: string | null
+          photo_urls?: string[] | null
           service_id?: string | null
           tenant_id: string
         }
@@ -80,6 +82,7 @@ export type Database = {
           message?: string | null
           name?: string
           phone?: string | null
+          photo_urls?: string[] | null
           service_id?: string | null
           tenant_id?: string
         }
@@ -316,6 +319,9 @@ export type Database = {
           social_links: Json | null
           tenant_id: string
           updated_at: string | null
+          whatsapp_enabled: boolean
+          whatsapp_message_template: string | null
+          whatsapp_number: string | null
         }
         Insert: {
           ai_analysis?: Json | null
@@ -344,6 +350,9 @@ export type Database = {
           social_links?: Json | null
           tenant_id: string
           updated_at?: string | null
+          whatsapp_enabled?: boolean
+          whatsapp_message_template?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
           ai_analysis?: Json | null
@@ -372,6 +381,9 @@ export type Database = {
           social_links?: Json | null
           tenant_id?: string
           updated_at?: string | null
+          whatsapp_enabled?: boolean
+          whatsapp_message_template?: string | null
+          whatsapp_number?: string | null
         }
         Relationships: [
           {
@@ -1106,6 +1118,9 @@ export type Database = {
           social_links: Json | null
           tenant_id: string
           updated_at: string | null
+          whatsapp_enabled: boolean
+          whatsapp_message_template: string | null
+          whatsapp_number: string | null
         }
       }
       seed_trade_service_template: {
