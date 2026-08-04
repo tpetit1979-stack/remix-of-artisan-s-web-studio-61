@@ -18,9 +18,9 @@ function SuperAdminLayout() {
   useEffect(() => {
     if (isLoading) return;
     if (!isAuthenticated || role !== "super_admin") {
-      navigate({ to: "/login", search: { redirect: location.pathname } });
+      navigate({ to: "/login", search: { redirect: location.href } });
     }
-  }, [isAuthenticated, role, isLoading, navigate, location.pathname]);
+  }, [isAuthenticated, role, isLoading, navigate, location.href]);
 
   if (isLoading || !isAuthenticated || role !== "super_admin") {
     return (

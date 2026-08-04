@@ -29,11 +29,18 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect once authenticated and role is known
+  // Redirect once authenticated and role is known. `search.redirect` is the
+  // full href (pathname + search) captured by the auth guards, so it must be
+  // split back into `to`/`search` -- passing "?tab=rdv" embedded in `to`
+  // would not be parsed as query params by the router.
   useEffect(() => {
     if (isLoading || !isAuthenticated) return;
     const target = search.redirect || (role === "super_admin" ? "/super-admin" : "/admin/settings");
-    navigate({ to: target });
+    const [path, queryString] = target.split("?");
+    navigate({
+      to: path,
+      search: queryString ? Object.fromEntries(new URLSearchParams(queryString)) : undefined,
+    });
   }, [isAuthenticated, role, isLoading, search.redirect, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {

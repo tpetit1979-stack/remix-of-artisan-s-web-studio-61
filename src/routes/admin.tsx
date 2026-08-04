@@ -25,7 +25,7 @@ function AdminLayout() {
   useEffect(() => {
     if (isLoading) return;
     if (!isAuthenticated) {
-      navigate({ to: "/login", search: { redirect: location.pathname } });
+      navigate({ to: "/login", search: { redirect: location.href } });
       return;
     }
     if (!canAccess) {
@@ -33,10 +33,10 @@ function AdminLayout() {
       if (isSuperAdmin) {
         navigate({ to: "/super-admin/tenants" });
       } else {
-        navigate({ to: "/login", search: { redirect: location.pathname } });
+        navigate({ to: "/login", search: { redirect: location.href } });
       }
     }
-  }, [isAuthenticated, isLoading, canAccess, isSuperAdmin, navigate, location.pathname]);
+  }, [isAuthenticated, isLoading, canAccess, isSuperAdmin, navigate, location.href]);
 
   // Single source of truth for "which tenant does this admin session
   // manage" — same hook every /admin/* page uses, so the banner always
