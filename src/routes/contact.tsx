@@ -114,18 +114,29 @@ function ContactPage() {
         photoPaths.push(path);
       }
 
-      const { error } = await supabase.from("contacts").insert({
-        tenant_id: tenant.id,
-        name: form.name.trim(),
-        phone: form.phone.trim() || null,
-        email: form.email.trim() || null,
-        service_id: form.service_id || null,
-        message: form.message.trim() || null,
-        photo_urls: photoPaths.length > 0 ? photoPaths : null,
-      });
+      const { data: inserted, error } = await supabase
+        .from("contacts")
+        .insert({
+          tenant_id: tenant.id,
+          name: form.name.trim(),
+          phone: form.phone.trim() || null,
+          email: form.email.trim() || null,
+          service_id: form.service_id || null,
+          message: form.message.trim() || null,
+          photo_urls: photoPaths.length > 0 ? photoPaths : null,
+        })
+        .select("id")
+        .single();
       if (error) throw error;
       setSent(true);
       toast.success("Demande envoyée ! Nous vous rappelons rapidement.");
+
+      // Fire-and-forget: the visitor's success screen never depends on this.
+      // A failure here (network, provider outage) is silent -- the contact is
+      // already safely stored and visible in Super Admin regardless.
+      if (inserted?.id) {
+        supabase.functions.invoke("notify-contact", { body: { contactId: inserted.id } }).catch(() => {});
+      }
     } catch {
       toast.error("Erreur lors de l'envoi. Veuillez réessayer.");
     } finally {

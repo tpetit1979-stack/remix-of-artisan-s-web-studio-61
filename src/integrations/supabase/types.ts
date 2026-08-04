@@ -57,6 +57,7 @@ export type Database = {
           is_read: boolean | null
           message: string | null
           name: string
+          notified_at: string | null
           phone: string | null
           photo_urls: string[] | null
           service_id: string | null
@@ -69,6 +70,7 @@ export type Database = {
           is_read?: boolean | null
           message?: string | null
           name: string
+          notified_at?: string | null
           phone?: string | null
           photo_urls?: string[] | null
           service_id?: string | null
@@ -81,6 +83,7 @@ export type Database = {
           is_read?: boolean | null
           message?: string | null
           name?: string
+          notified_at?: string | null
           phone?: string | null
           photo_urls?: string[] | null
           service_id?: string | null
