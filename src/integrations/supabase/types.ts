@@ -49,6 +49,51 @@ export type Database = {
           },
         ]
       }
+      brands: {
+        Row: {
+          brand_type: string | null
+          category: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          logo_dark_url: string | null
+          logo_url: string | null
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          brand_type?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          brand_type?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           created_at: string | null
@@ -398,6 +443,48 @@ export type Database = {
           },
         ]
       }
+      tenant_brands: {
+        Row: {
+          brand_id: string
+          created_at: string
+          id: string
+          is_featured: boolean
+          sort_order: number
+          tenant_id: string
+        }
+        Insert: {
+          brand_id: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          sort_order?: number
+          tenant_id: string
+        }
+        Update: {
+          brand_id?: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean
+          sort_order?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_brands_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_brands_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_certifications: {
         Row: {
           certification_name: string
@@ -596,6 +683,55 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tenant_partners_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_service_brands: {
+        Row: {
+          brand_id: string
+          created_at: string
+          id: string
+          service_id: string
+          sort_order: number
+          tenant_id: string
+        }
+        Insert: {
+          brand_id: string
+          created_at?: string
+          id?: string
+          service_id: string
+          sort_order?: number
+          tenant_id: string
+        }
+        Update: {
+          brand_id?: string
+          created_at?: string
+          id?: string
+          service_id?: string
+          sort_order?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_service_brands_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_service_brands_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_service_brands_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -1071,6 +1207,13 @@ export type Database = {
             foreignKeyName: "trade_media_library_trade_service_template_id_fkey"
             columns: ["trade_service_template_id"]
             isOneToOne: false
+            referencedRelation: "trade_service_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_media_library_trade_template_id_fkey"
+            columns: ["trade_template_id"]
+            isOneToOne: false
             referencedRelation: "trade_templates"
             referencedColumns: ["id"]
           },
@@ -1124,6 +1267,12 @@ export type Database = {
           whatsapp_enabled: boolean
           whatsapp_message_template: string | null
           whatsapp_number: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "site_settings"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
       seed_trade_service_template: {
