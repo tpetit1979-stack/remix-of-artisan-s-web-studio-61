@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   LogOut,
+  Tag,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,8 @@ const navItems = [
   { label: "Zones d'intervention", to: "/admin/service-areas", icon: MapPin },
   { label: "Mes réalisations", to: "/admin/portfolio", icon: Image },
   { label: "Mon équipe", to: "/admin/team", icon: Users },
-  { label: "Marques & certifications", to: "/admin/partners", icon: Handshake },
+  { label: "Mes marques", to: "/admin/brands", icon: Tag },
+  { label: "Logos partenaires", to: "/admin/partners", icon: Handshake },
   { label: "Mon site", to: "/admin/settings", icon: Settings },
   { label: "Demandes reçues", to: "/admin/contacts", icon: Mail },
 ];

@@ -3,6 +3,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAdminTenant } from "@/hooks/use-tenant";
 import { fetchAllServices } from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  fetchActiveBrands,
+  fetchServiceBrands,
+  addServiceBrand,
+  removeServiceBrand,
+} from "@/lib/brands";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { useState } from "react";
@@ -249,6 +256,14 @@ function AdminServices() {
                   rows={2}
                 />
               </div>
+              {editingService.id ? (
+                <ServiceBrandsSection tenantId={tenant.id} serviceId={editingService.id} />
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Enregistrez le service pour pouvoir y associer des marques.
+                </p>
+              )}
+
               <div className="flex justify-end gap-2 pt-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Annuler</Button>
                 <Button type="submit" disabled={saveMutation.isPending}>
@@ -259,6 +274,69 @@ function AdminServices() {
           )}
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+/** Scopes the tenant's brand catalogue selection to one service -- e.g. only
+ *  Daikin/Atlantic show up here for "Installation climatisation", never a
+ *  poêle brand. Only offers brands the tenant has already picked in "Mes
+ *  marques" (admin/brands) -- a service can't surface a brand the tenant
+ *  hasn't confirmed working with. */
+function ServiceBrandsSection({ tenantId, serviceId }: { tenantId: string; serviceId: string }) {
+  const queryClient = useQueryClient();
+
+  const { data: tenantBrandIds = [] } = useQuery({
+    queryKey: ["tenant-brand-ids", tenantId],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("tenant_brands").select("brand_id").eq("tenant_id", tenantId);
+      if (error) throw error;
+      return (data ?? []).map((r) => r.brand_id);
+    },
+  });
+
+  const { data: allBrands = [] } = useQuery({
+    queryKey: ["active-brands"],
+    queryFn: fetchActiveBrands,
+  });
+
+  const { data: serviceBrands = [] } = useQuery({
+    queryKey: ["service-brands", serviceId],
+    queryFn: () => fetchServiceBrands(serviceId),
+  });
+
+  const availableBrands = allBrands.filter((b) => tenantBrandIds.includes(b.id));
+  const selectedIds = new Set(serviceBrands.map((sb) => sb.brand_id));
+
+  const toggleMutation = useMutation({
+    mutationFn: async ({ brandId, checked }: { brandId: string; checked: boolean }) => {
+      if (checked) await addServiceBrand(tenantId, serviceId, brandId);
+      else await removeServiceBrand(serviceId, brandId);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["service-brands", serviceId] }),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <div className="space-y-2 border-t pt-3">
+      <Label>Marques pour ce service</Label>
+      {availableBrands.length === 0 ? (
+        <p className="text-xs text-muted-foreground">
+          Aucune marque sélectionnée dans "Mes marques". Ajoutez-en d'abord pour pouvoir les associer ici.
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          {availableBrands.map((b) => (
+            <label key={b.id} className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={selectedIds.has(b.id)}
+                onCheckedChange={(v) => toggleMutation.mutate({ brandId: b.id, checked: !!v })}
+              />
+              {b.name}
+            </label>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

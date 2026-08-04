@@ -179,7 +179,7 @@ export function PartnersManager({ tenantId }: Props) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Marques partenaires</h3>
+          <h3 className="text-sm font-semibold text-foreground">Logos partenaires</h3>
           <p className="text-xs text-muted-foreground">
             Glissez-déposez pour réordonner. La bannière est masquée si aucun partenaire actif.
           </p>

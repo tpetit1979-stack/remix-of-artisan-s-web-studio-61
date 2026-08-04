@@ -39,6 +39,7 @@ import { Route as AdminServiceAreasRouteImport } from './routes/admin.service-ar
 import { Route as AdminPortfolioRouteImport } from './routes/admin.portfolio'
 import { Route as AdminPartnersRouteImport } from './routes/admin.partners'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
+import { Route as AdminBrandsRouteImport } from './routes/admin.brands'
 import { Route as SuperAdminTenantsIndexRouteImport } from './routes/super-admin.tenants.index'
 import { Route as SuperAdminTenantsTenantIdRouteImport } from './routes/super-admin.tenants.$tenantId'
 import { Route as SuperAdminTenantsTenantIdMediaRouteImport } from './routes/super-admin.tenants.$tenantId.media'
@@ -193,6 +194,11 @@ const AdminContactsRoute = AdminContactsRouteImport.update({
   path: '/contacts',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBrandsRoute = AdminBrandsRouteImport.update({
+  id: '/brands',
+  path: '/brands',
+  getParentRoute: () => AdminRoute,
+} as any)
 const SuperAdminTenantsIndexRoute = SuperAdminTenantsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
   '/update-password': typeof UpdatePasswordRoute
+  '/admin/brands': typeof AdminBrandsRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/admin/brands': typeof AdminBrandsRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
   '/update-password': typeof UpdatePasswordRoute
+  '/admin/brands': typeof AdminBrandsRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/portfolio': typeof AdminPortfolioRoute
@@ -330,6 +339,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/super-admin'
     | '/update-password'
+    | '/admin/brands'
     | '/admin/contacts'
     | '/admin/partners'
     | '/admin/portfolio'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/update-password'
+    | '/admin/brands'
     | '/admin/contacts'
     | '/admin/partners'
     | '/admin/portfolio'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/super-admin'
     | '/update-password'
+    | '/admin/brands'
     | '/admin/contacts'
     | '/admin/partners'
     | '/admin/portfolio'
@@ -646,6 +658,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/brands': {
+      id: '/admin/brands'
+      path: '/brands'
+      fullPath: '/admin/brands'
+      preLoaderRoute: typeof AdminBrandsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/super-admin/tenants/': {
       id: '/super-admin/tenants/'
       path: '/'
@@ -671,6 +690,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBrandsRoute: typeof AdminBrandsRoute
   AdminContactsRoute: typeof AdminContactsRoute
   AdminPartnersRoute: typeof AdminPartnersRoute
   AdminPortfolioRoute: typeof AdminPortfolioRoute
@@ -682,6 +702,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBrandsRoute: AdminBrandsRoute,
   AdminContactsRoute: AdminContactsRoute,
   AdminPartnersRoute: AdminPartnersRoute,
   AdminPortfolioRoute: AdminPortfolioRoute,

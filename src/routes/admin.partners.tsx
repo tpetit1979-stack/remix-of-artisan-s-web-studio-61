@@ -14,8 +14,8 @@ function AdminPartnersPage() {
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Marques & certifications"
-        description="Ajoutez les logos de vos marques et partenaires pour renforcer votre crédibilité."
+        title="Logos partenaires"
+        description="Logos affichés en bannière de confiance (partenaires, certifications visuelles). Pour les marques d'équipement que vous installez, voir « Mes marques »."
       />
       <PartnersManager tenantId={tenant.id} />
     </div>

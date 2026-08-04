@@ -80,37 +80,20 @@ export async function fetchTenantBrands(tenantId: string): Promise<(TenantBrand 
   return (data ?? []) as (TenantBrand & { brand: Brand })[];
 }
 
-/** Replace the tenant's general brand selection in one pass: inserts the
- *  newly-checked brand ids, deletes the unchecked ones. Never touches rows
- *  for brand ids outside `brandIds` that belong to other tenants (scoped by
- *  tenant_id on both statements). */
-export async function setTenantBrands(tenantId: string, brandIds: string[]) {
-  const { data: existing, error: fetchErr } = await supabase
+export async function addTenantBrand(tenantId: string, brandId: string) {
+  const { error } = await supabase
     .from("tenant_brands")
-    .select("brand_id")
-    .eq("tenant_id", tenantId);
-  if (fetchErr) throw fetchErr;
+    .insert({ tenant_id: tenantId, brand_id: brandId });
+  if (error) throw error;
+}
 
-  const existingIds = new Set((existing ?? []).map((r) => r.brand_id));
-  const nextIds = new Set(brandIds);
-
-  const toInsert = brandIds.filter((id) => !existingIds.has(id));
-  const toDelete = [...existingIds].filter((id) => !nextIds.has(id));
-
-  if (toInsert.length > 0) {
-    const { error } = await supabase
-      .from("tenant_brands")
-      .insert(toInsert.map((brand_id) => ({ tenant_id: tenantId, brand_id })));
-    if (error) throw error;
-  }
-  if (toDelete.length > 0) {
-    const { error } = await supabase
-      .from("tenant_brands")
-      .delete()
-      .eq("tenant_id", tenantId)
-      .in("brand_id", toDelete);
-    if (error) throw error;
-  }
+export async function removeTenantBrand(tenantId: string, brandId: string) {
+  const { error } = await supabase
+    .from("tenant_brands")
+    .delete()
+    .eq("tenant_id", tenantId)
+    .eq("brand_id", brandId);
+  if (error) throw error;
 }
 
 export async function setTenantBrandFeatured(tenantId: string, brandId: string, isFeatured: boolean) {
@@ -132,32 +115,18 @@ export async function fetchServiceBrands(serviceId: string): Promise<(TenantServ
   return (data ?? []) as (TenantServiceBrand & { brand: Brand })[];
 }
 
-/** Same replace-set approach as setTenantBrands, scoped to one service. */
-export async function setServiceBrands(tenantId: string, serviceId: string, brandIds: string[]) {
-  const { data: existing, error: fetchErr } = await supabase
+export async function addServiceBrand(tenantId: string, serviceId: string, brandId: string) {
+  const { error } = await supabase
     .from("tenant_service_brands")
-    .select("brand_id")
-    .eq("service_id", serviceId);
-  if (fetchErr) throw fetchErr;
+    .insert({ tenant_id: tenantId, service_id: serviceId, brand_id: brandId });
+  if (error) throw error;
+}
 
-  const existingIds = new Set((existing ?? []).map((r) => r.brand_id));
-  const nextIds = new Set(brandIds);
-
-  const toInsert = brandIds.filter((id) => !existingIds.has(id));
-  const toDelete = [...existingIds].filter((id) => !nextIds.has(id));
-
-  if (toInsert.length > 0) {
-    const { error } = await supabase.from("tenant_service_brands").insert(
-      toInsert.map((brand_id) => ({ tenant_id: tenantId, service_id: serviceId, brand_id })),
-    );
-    if (error) throw error;
-  }
-  if (toDelete.length > 0) {
-    const { error } = await supabase
-      .from("tenant_service_brands")
-      .delete()
-      .eq("service_id", serviceId)
-      .in("brand_id", toDelete);
-    if (error) throw error;
-  }
+export async function removeServiceBrand(serviceId: string, brandId: string) {
+  const { error } = await supabase
+    .from("tenant_service_brands")
+    .delete()
+    .eq("service_id", serviceId)
+    .eq("brand_id", brandId);
+  if (error) throw error;
 }
