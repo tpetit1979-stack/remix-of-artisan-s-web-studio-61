@@ -297,8 +297,10 @@ export type Database = {
           booking_url: string | null
           border_radius: number | null
           cta_text: string | null
+          emergency_service_available: boolean | null
           favicon_url: string | null
           font_family: string | null
+          free_quote_claim_reviewed_at: string | null
           gradient_style: string | null
           header_style: string | null
           hero_image_url: string | null
@@ -307,6 +309,8 @@ export type Database = {
           logo_url: string | null
           opening_hours: Json | null
           primary_color: string | null
+          quote_is_free: boolean | null
+          quote_response_delay_hours: number | null
           seo_meta_description: string | null
           seo_meta_title: string | null
           social_links: Json | null
@@ -321,8 +325,10 @@ export type Database = {
           booking_url?: string | null
           border_radius?: number | null
           cta_text?: string | null
+          emergency_service_available?: boolean | null
           favicon_url?: string | null
           font_family?: string | null
+          free_quote_claim_reviewed_at?: string | null
           gradient_style?: string | null
           header_style?: string | null
           hero_image_url?: string | null
@@ -331,6 +337,8 @@ export type Database = {
           logo_url?: string | null
           opening_hours?: Json | null
           primary_color?: string | null
+          quote_is_free?: boolean | null
+          quote_response_delay_hours?: number | null
           seo_meta_description?: string | null
           seo_meta_title?: string | null
           social_links?: Json | null
@@ -345,8 +353,10 @@ export type Database = {
           booking_url?: string | null
           border_radius?: number | null
           cta_text?: string | null
+          emergency_service_available?: boolean | null
           favicon_url?: string | null
           font_family?: string | null
+          free_quote_claim_reviewed_at?: string | null
           gradient_style?: string | null
           header_style?: string | null
           hero_image_url?: string | null
@@ -355,6 +365,8 @@ export type Database = {
           logo_url?: string | null
           opening_hours?: Json | null
           primary_color?: string | null
+          quote_is_free?: boolean | null
+          quote_response_delay_hours?: number | null
           seo_meta_description?: string | null
           seo_meta_title?: string | null
           social_links?: Json | null
@@ -973,6 +985,44 @@ export type Database = {
       }
     }
     Views: {
+      public_tenant_media: {
+        Row: {
+          alt_text: string | null
+          category: string | null
+          id: string | null
+          public_url: string | null
+          sort_order: number | null
+          target_id: string | null
+          tenant_id: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          category?: string | null
+          id?: string | null
+          public_url?: string | null
+          sort_order?: number | null
+          target_id?: string | null
+          tenant_id?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          category?: string | null
+          id?: string | null
+          public_url?: string | null
+          sort_order?: number | null
+          target_id?: string | null
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_media_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       public_trade_media: {
         Row: {
           alt_text: string | null
@@ -1006,13 +1056,6 @@ export type Database = {
             foreignKeyName: "trade_media_library_trade_service_template_id_fkey"
             columns: ["trade_service_template_id"]
             isOneToOne: false
-            referencedRelation: "trade_service_templates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "trade_media_library_trade_template_id_fkey"
-            columns: ["trade_template_id"]
-            isOneToOne: false
             referencedRelation: "trade_templates"
             referencedColumns: ["id"]
           },
@@ -1029,6 +1072,42 @@ export type Database = {
       }
       is_super_admin: { Args: never; Returns: boolean }
       is_tenant_member: { Args: { _tenant_id: string }; Returns: boolean }
+      mentions_free_quote: { Args: { _text: string }; Returns: boolean }
+      reconcile_free_quote_claim: {
+        Args: {
+          p_decision: string
+          p_neutral_cta_text?: string
+          p_tenant_id: string
+        }
+        Returns: {
+          ai_analysis: Json | null
+          booking_button_label: string | null
+          booking_enabled: boolean
+          booking_provider: string | null
+          booking_url: string | null
+          border_radius: number | null
+          cta_text: string | null
+          emergency_service_available: boolean | null
+          favicon_url: string | null
+          font_family: string | null
+          free_quote_claim_reviewed_at: string | null
+          gradient_style: string | null
+          header_style: string | null
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          logo_url: string | null
+          opening_hours: Json | null
+          primary_color: string | null
+          quote_is_free: boolean | null
+          quote_response_delay_hours: number | null
+          seo_meta_description: string | null
+          seo_meta_title: string | null
+          social_links: Json | null
+          tenant_id: string
+          updated_at: string | null
+        }
+      }
       seed_trade_service_template: {
         Args: {
           _description: string
