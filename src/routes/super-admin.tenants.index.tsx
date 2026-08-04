@@ -8,13 +8,90 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import {
   Plus, Globe, Phone, Mail, Zap, ExternalLink, Search,
-  Wrench, MapPin, Shield, Image, Check, X as XIcon, ArrowRight, Trash2,
+  Wrench, MapPin, Shield, Image, Check, X as XIcon, ArrowRight, Trash2, AlertTriangle,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { buildPublicSiteUrl } from "@/lib/tenant";
+import { detectCommercialPromiseIssues } from "@/lib/commercial-promises";
+
+type ReconcileTarget = { id: string; company_name: string; ctaText: string | null };
+
+function ReconcileFreeQuoteDialog({ target, onClose }: { target: ReconcileTarget; onClose: () => void }) {
+  const queryClient = useQueryClient();
+  const [decision, setDecision] = useState<"confirmed_free" | "confirmed_not_free" | "left_unspecified">("confirmed_free");
+  const [neutralCta, setNeutralCta] = useState("Demander un devis");
+
+  const reconcile = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc("reconcile_free_quote_claim", {
+        p_tenant_id: target.id,
+        p_decision: decision,
+        p_neutral_cta_text: decision === "confirmed_free" ? undefined : neutralCta,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sa-promise-data"] });
+      toast.success("Réconciliation enregistrée");
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const needsNeutralCta = decision !== "confirmed_free";
+
+  return (
+    <Dialog open onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Réconcilier la promesse de gratuité — {target.company_name}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            CTA actuel : <span className="font-medium text-foreground">« {target.ctaText} »</span> — évoque la gratuité, non confirmée par le tenant.
+          </p>
+
+          <RadioGroup value={decision} onValueChange={(v) => setDecision(v as typeof decision)}>
+            <div className="flex items-start gap-2">
+              <RadioGroupItem value="confirmed_free" id="opt-free" className="mt-0.5" />
+              <Label htmlFor="opt-free" className="font-normal">Confirmer gratuit — le CTA reste inchangé, quote_is_free passe à vrai</Label>
+            </div>
+            <div className="flex items-start gap-2">
+              <RadioGroupItem value="confirmed_not_free" id="opt-paid" className="mt-0.5" />
+              <Label htmlFor="opt-paid" className="font-normal">Confirmer non gratuit — le CTA est remplacé par un texte neutre</Label>
+            </div>
+            <div className="flex items-start gap-2">
+              <RadioGroupItem value="left_unspecified" id="opt-unset" className="mt-0.5" />
+              <Label htmlFor="opt-unset" className="font-normal">Laisser non renseigné — le CTA est remplacé par un texte neutre</Label>
+            </div>
+          </RadioGroup>
+
+          {needsNeutralCta && (
+            <div className="space-y-2">
+              <Label>Nouveau texte du CTA (neutre, sans mention de gratuité)</Label>
+              <Input value={neutralCta} onChange={(e) => setNeutralCta(e.target.value)} />
+            </div>
+          )}
+        </div>
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={onClose}>Annuler</Button>
+          <Button
+            onClick={() => reconcile.mutate()}
+            disabled={reconcile.isPending || (needsNeutralCta && !neutralCta.trim())}
+          >
+            {reconcile.isPending ? "Enregistrement..." : "Valider"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export const Route = createFileRoute("/super-admin/tenants/")({
   component: TenantsIndex,
@@ -83,6 +160,36 @@ function TenantsIndex() {
     },
   });
 
+  const { data: promiseDataByTenant = {} } = useQuery({
+    queryKey: ["sa-promise-data"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("tenant_id, cta_text, quote_is_free, quote_response_delay_hours, emergency_service_available");
+      if (error) throw error;
+      const map: Record<string, { ctaText: string | null; quoteIsFree: boolean | null }> = {};
+      data.forEach((s) => {
+        map[s.tenant_id] = { ctaText: s.cta_text, quoteIsFree: s.quote_is_free };
+      });
+      return map;
+    },
+  });
+
+  const promiseIssuesByTenant = useMemo(() => {
+    const map: Record<string, ReturnType<typeof detectCommercialPromiseIssues>> = {};
+    for (const [tenantId, d] of Object.entries(promiseDataByTenant)) {
+      map[tenantId] = detectCommercialPromiseIssues({
+        ctaText: d.ctaText,
+        quoteIsFree: d.quoteIsFree,
+        quoteResponseDelayHours: null,
+        emergencyServiceAvailable: null,
+      });
+    }
+    return map;
+  }, [promiseDataByTenant]);
+
+  const [reconcileTarget, setReconcileTarget] = useState<ReconcileTarget | null>(null);
+
   // Filter tenants
   const filteredTenants = useMemo(() => {
     let result = tenants;
@@ -102,8 +209,11 @@ function TenantsIndex() {
     if (statusFilter === "incomplete") {
       result = result.filter((t) => !servicesByTenant[t.id] || !areasByTenant[t.id]);
     }
+    if (statusFilter === "promise_issue") {
+      result = result.filter((t) => (promiseIssuesByTenant[t.id]?.length ?? 0) > 0);
+    }
     return result;
-  }, [tenants, searchQuery, statusFilter, servicesByTenant, areasByTenant]);
+  }, [tenants, searchQuery, statusFilter, servicesByTenant, areasByTenant, promiseIssuesByTenant]);
 
   const deleteMutation = useMutation({
     mutationFn: async (tenantId: string) => {
@@ -179,6 +289,7 @@ function TenantsIndex() {
             <SelectItem value="inactive">Inactifs</SelectItem>
             <SelectItem value="lignia">LIGNIA</SelectItem>
             <SelectItem value="incomplete">Incomplets</SelectItem>
+            <SelectItem value="promise_issue">Promesse à vérifier</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -212,6 +323,23 @@ function TenantsIndex() {
                           <Zap className="h-3 w-3 mr-1" />
                           LIGNIA
                         </Badge>
+                      )}
+                      {(promiseIssuesByTenant[t.id]?.length ?? 0) > 0 && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setReconcileTarget({
+                              id: t.id,
+                              company_name: t.company_name,
+                              ctaText: promiseDataByTenant[t.id]?.ctaText ?? null,
+                            })
+                          }
+                          className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800 hover:bg-amber-200 transition-colors"
+                          title="Le CTA évoque la gratuité sans confirmation — cliquer pour réconcilier"
+                        >
+                          <AlertTriangle className="h-3 w-3" />
+                          Promesse à vérifier
+                        </button>
                       )}
                     </div>
                     <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
@@ -280,6 +408,9 @@ function TenantsIndex() {
         </div>
       )}
 
+      {reconcileTarget && (
+        <ReconcileFreeQuoteDialog target={reconcileTarget} onClose={() => setReconcileTarget(null)} />
+      )}
     </div>
   );
 }
