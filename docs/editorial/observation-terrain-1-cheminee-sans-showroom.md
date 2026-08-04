@@ -1,12 +1,23 @@
-# Trade Knowledge Kit — Artisan cheminée pur
+# Observation de terrain n°1 — Petit artisan cheministe, sans showroom
 
-**Statut :** pilote (v1.0) — corpus de référence, pas encore branché à un moteur de génération.
+**Statut :** observation de terrain — photographie d'une réalité métier, pas encore un composant logiciel, pas encore un modèle, pas encore une architecture. À enrichir, pas à factoriser avec l'observation n°2 tant qu'un nombre suffisant de cas réels n'a pas fait émerger les invariants.
+
+**Persona d'entreprise observé :** professionnel du chauffage bois sans showroom, conseil à domicile uniquement. Taille d'équipe, statut (artisan indépendant, entreprise, franchise) et volume d'activité **non observés — ne pas présumer**.
+
 **Périmètre :** poêles à bois, poêles à granulés, inserts, cheminées, tubage de conduit, ramonage, entretien et dépannage chauffage bois.
-**Hors périmètre (ne jamais mentionner) :** climatisation, pompe à chaleur, chaudière, chauffage central, plomberie, électricité, showroom, magasin, boutique — cet artisan n'a pas de point de vente, conseil à domicile uniquement.
+**Hors périmètre observé pour ce persona :** climatisation, pompe à chaleur, chaudière, chauffage central, plomberie, électricité, showroom, magasin, boutique.
 
-Ce document est un socle de contenu réutilisable, pas un contenu publié. Chaque champ ci-dessous alimente soit un point de rendu existant (Hero, Présentation, `service.description`), soit sert de garde-fou de validation avant publication. Aucun fait (certification, promesse commerciale, chiffre) ne doit être publié à partir de ce document sans être confirmé par les données réelles du tenant concerné — voir la checklist de validation en fin de document.
+Ce document est une note d'étude, pas un contenu publié. Aucun fait (certification, promesse commerciale, chiffre) ne doit être publié à partir de ce document sans être confirmé par les données réelles du tenant concerné — voir la checklist de validation en fin de document.
 
-## Règles de base du kit
+## Ce que cette observation permet de dire
+
+**Probablement vrai pour la catégorie** (chauffage bois, indépendamment du showroom) : l'achat est engageant et réfléchi ; l'esthétique compte autant que la performance ; la sécurité (feu, fumée, monoxyde de carbone) est une préoccupation constante ; le client a besoin d'être rassuré avant de signer ; le vocabulaire client est concret, jamais technique.
+
+**Variable d'un professionnel à l'autre** : présence d'un showroom, volume relatif pose/entretien/dépannage, marques distribuées, taille de l'équipe, rayon d'intervention, activités annexes (climatisation, autres métiers du bâtiment).
+
+**À confirmer systématiquement chez le tenant avant publication** : gratuité de l'étude et/ou du devis (deux notions distinctes), certifications réellement détenues (RGE, Qualibois, Qualibat), marques réellement distribuées ou entretenues, existence et étendue du SAV, délais habituels, zones d'intervention réelles.
+
+## Règles de base observées sur ce persona
 
 - Ne jamais mentionner la climatisation, le froid, la pompe à chaleur, le fluide frigorigène.
 - Ne jamais mentionner showroom, magasin, boutique, exposition, modèles visibles en boutique.
@@ -14,7 +25,7 @@ Ce document est un socle de contenu réutilisable, pas un contenu publié. Chaqu
 - Ne jamais citer une marque d'appareil (Ravelli, Palazzetti, Invicta, etc.) sauf si le tenant la distribue réellement.
 - Ton : artisan terrain, diagnostic à domicile, conseil concret. Pas de jargon, pas de vente agressive, pas de promesse marketing.
 
-## Les 10 champs du kit
+## Les 10 champs observés
 
 ### 1. Problèmes clients fréquents
 
@@ -267,7 +278,7 @@ Ce qui ne compte pas comme preuve pour ce profil : "Plus de X clients satisfaits
 - [ ] Le vocabulaire client est utilisé (pas de jargon technique inutile)
 - [ ] Une phrase courte sur le déroulé du chantier est présente près du CTA
 
-## Structure JSON du kit (référence technique, pour le futur Sprint 5)
+## Structure JSON (référence technique, pour un usage futur — pas encore un composant)
 
 ```json
 {
@@ -428,4 +439,4 @@ Ce qui ne compte pas comme preuve pour ce profil : "Plus de X clients satisfaits
 
 ---
 
-*Kit conçu pour un artisan cheminée pur (chauffage bois uniquement, pas de climatisation, pas de showroom). Sert de socle éditorial de référence — pas encore branché à un moteur de génération ni à un point de rendu automatisé. Les faits vérifiables (certifications, zones, réalisations, avis) proviennent exclusivement des données réelles du tenant concerné ; ce document n'en invente et n'en garantit aucun.*
+*Observation de terrain n°1 sur 3 (à ce jour). Persona : petit artisan cheministe, sans showroom, chauffage bois uniquement. Ne pas factoriser avec les observations n°2 et n°3 avant qu'un nombre suffisant de cas réels n'ait fait émerger les invariants. Les faits vérifiables (certifications, zones, réalisations, avis) proviennent exclusivement des données réelles du tenant concerné ; ce document n'en invente et n'en garantit aucun.*
