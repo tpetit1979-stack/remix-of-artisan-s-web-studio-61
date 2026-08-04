@@ -22,6 +22,7 @@ import {
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
+import { detectCommercialPromiseIssues } from "@/lib/commercial-promises";
 import { buildPublicSiteUrl } from "@/lib/tenant";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
@@ -572,6 +573,9 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
         seo_meta_description: designForm.seo_meta_description, border_radius: designForm.border_radius,
         gradient_style: designForm.gradient_style, header_style: designForm.header_style,
         font_family: designForm.font_family,
+        quote_is_free: designForm.quote_is_free,
+        quote_response_delay_hours: designForm.quote_response_delay_hours,
+        emergency_service_available: designForm.emergency_service_available,
       }).eq("tenant_id", tenantId);
       if (error) throw error;
     },
@@ -580,6 +584,15 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
   });
 
   if (!designForm) return <p className="text-muted-foreground text-sm">Chargement...</p>;
+
+  // Pure, local check — no RPC call. Only warns; the actual reconciliation
+  // (and the only path allowed to clear the warning) is reconcile_free_quote_claim (Lot B2).
+  const promiseIssues = detectCommercialPromiseIssues({
+    ctaText: designForm.cta_text ?? null,
+    quoteIsFree: designForm.quote_is_free ?? null,
+    quoteResponseDelayHours: designForm.quote_response_delay_hours ?? null,
+    emergencyServiceAvailable: designForm.emergency_service_available ?? null,
+  });
 
   return (
     <div className="space-y-4 max-w-xl">
@@ -598,6 +611,66 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
             disabled={save.isPending}
             onBusyChange={setLogoBusy}
           />
+        </CardContent>
+      </Card>
+
+      {/* Engagements commerciaux */}
+      <Card>
+        <CardContent className="pt-4 space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Engagements commerciaux</p>
+          <p className="text-xs text-muted-foreground">
+            Ne renseigner que ce qui est confirmé par le tenant. "Non précisé" n'affiche jamais une promesse.
+          </p>
+
+          {promiseIssues.length > 0 && (
+            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              Le texte CTA évoque la gratuité mais "Devis gratuit" n'est pas confirmé à "Oui" ci-dessous.
+              La réconciliation (Lot B2) sera nécessaire avant que ce tenant ne soit considéré à jour.
+            </div>
+          )}
+
+          <Field label="Devis gratuit">
+            <Select
+              value={designForm.quote_is_free === null || designForm.quote_is_free === undefined ? "unset" : String(designForm.quote_is_free)}
+              onValueChange={(v) => setDesignField("quote_is_free", v === "unset" ? null : v === "true")}
+            >
+              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="unset">Non précisé</SelectItem>
+                <SelectItem value="true">Oui, gratuit</SelectItem>
+                <SelectItem value="false">Non, payant</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+
+          <Field label="Intervention d'urgence">
+            <Select
+              value={designForm.emergency_service_available === null || designForm.emergency_service_available === undefined ? "unset" : String(designForm.emergency_service_available)}
+              onValueChange={(v) => setDesignField("emergency_service_available", v === "unset" ? null : v === "true")}
+            >
+              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="unset">Non précisé</SelectItem>
+                <SelectItem value="true">Oui</SelectItem>
+                <SelectItem value="false">Non</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+
+          <Field label="Délai de réponse habituel (heures)">
+            <Input
+              type="number"
+              min={1}
+              max={720}
+              className="h-8 text-xs"
+              value={designForm.quote_response_delay_hours ?? ""}
+              placeholder="Non précisé"
+              onChange={(e) => {
+                const raw = e.target.value;
+                setDesignField("quote_response_delay_hours", raw === "" ? null : Math.min(720, Math.max(1, parseInt(raw, 10))));
+              }}
+            />
+          </Field>
         </CardContent>
       </Card>
 

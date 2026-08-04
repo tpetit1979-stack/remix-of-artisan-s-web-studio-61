@@ -8,11 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Check, Palette, Lock } from "lucide-react";
 import { LogoAnalyzer } from "@/components/admin/LogoAnalyzer";
+import { detectCommercialPromiseIssues } from "@/lib/commercial-promises";
 
 export const Route = createFileRoute("/admin/settings")({
   component: AdminSettings,
@@ -132,6 +134,9 @@ function AdminSettings() {
           booking_enabled: form.booking_enabled ?? false,
           booking_url: form.booking_url ?? null,
           booking_button_label: form.booking_button_label ?? "Prendre rendez-vous",
+          quote_is_free: form.quote_is_free ?? null,
+          quote_response_delay_hours: form.quote_response_delay_hours ?? null,
+          emergency_service_available: form.emergency_service_available ?? null,
         } as any)
         .eq("tenant_id", tenant!.id);
       if (error) throw error;
@@ -161,6 +166,15 @@ function AdminSettings() {
 
 
   if (!form || !tenantForm) return <p className="text-muted-foreground">Chargement...</p>;
+
+  // Pure, local check — no network call. Only warns; the actual reconciliation is a
+  // Super Admin action (Lot B2), never automatic here.
+  const promiseIssues = detectCommercialPromiseIssues({
+    ctaText: form.cta_text ?? null,
+    quoteIsFree: form.quote_is_free ?? null,
+    quoteResponseDelayHours: form.quote_response_delay_hours ?? null,
+    emergencyServiceAvailable: form.emergency_service_available ?? null,
+  });
 
   return (
     <div className="space-y-6">
@@ -236,6 +250,71 @@ function AdminSettings() {
           <div className="space-y-2">
             <Label>Sous-titre</Label>
             <Input value={form.hero_subtitle ?? ""} onChange={(e) => setForm((p: any) => ({ ...p, hero_subtitle: e.target.value }))} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Devis & engagements */}
+      <Card>
+        <CardHeader><CardTitle>Devis & engagements</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Ne renseignez que ce qui est vrai pour votre entreprise. "Non précisé" n'affiche jamais de promesse sur votre site.
+          </p>
+
+          {promiseIssues.length > 0 && (
+            <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              Votre bouton d'appel à l'action évoque la gratuité, mais "Devis gratuit" n'est pas réglé sur "Oui" ci-dessous.
+              Corrigez l'un des deux pour rester cohérent.
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Devis gratuit</Label>
+              <Select
+                value={form.quote_is_free === null || form.quote_is_free === undefined ? "unset" : String(form.quote_is_free)}
+                onValueChange={(v) => setForm((p: any) => ({ ...p, quote_is_free: v === "unset" ? null : v === "true" }))}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unset">Non précisé</SelectItem>
+                  <SelectItem value="true">Oui, gratuit</SelectItem>
+                  <SelectItem value="false">Non, payant</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Intervention d'urgence</Label>
+              <Select
+                value={form.emergency_service_available === null || form.emergency_service_available === undefined ? "unset" : String(form.emergency_service_available)}
+                onValueChange={(v) => setForm((p: any) => ({ ...p, emergency_service_available: v === "unset" ? null : v === "true" }))}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unset">Non précisé</SelectItem>
+                  <SelectItem value="true">Oui</SelectItem>
+                  <SelectItem value="false">Non</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Délai de réponse habituel (heures)</Label>
+            <Input
+              type="number"
+              min={1}
+              max={720}
+              value={form.quote_response_delay_hours ?? ""}
+              placeholder="Non précisé"
+              onChange={(e) => {
+                const raw = e.target.value;
+                setForm((p: any) => ({
+                  ...p,
+                  quote_response_delay_hours: raw === "" ? null : Math.min(720, Math.max(1, parseInt(raw, 10))),
+                }));
+              }}
+            />
           </div>
         </CardContent>
       </Card>
