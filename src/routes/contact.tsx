@@ -61,7 +61,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { tenant, settings } = useTenant();
   const previewTenant = usePreviewTenantSearch();
-  const { responseTimeNote } = useCommercialPromises();
+  const { responseTimeNote, responseTimeHeading } = useCommercialPromises();
   const { service: prefilledService } = Route.useSearch();
 
   const { data: services = [] } = useQuery({
@@ -202,24 +202,18 @@ function ContactPage() {
                 <div className="flex items-start gap-3">
                   <Clock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                   <div>
-                    <p className="font-medium text-foreground">Réponse rapide</p>
+                    <p className="font-medium text-foreground">{responseTimeHeading}</p>
                     <p className="text-sm text-muted-foreground">{responseTimeNote}</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Shield className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                  {settings?.quote_is_free === true ? (
+                {settings?.quote_is_free === true && (
+                  <div className="flex items-start gap-3">
+                    <Shield className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                     <div>
                       <p className="font-medium text-foreground">Devis gratuit</p>
-                      <p className="text-sm text-muted-foreground">Sans engagement de votre part</p>
                     </div>
-                  ) : (
-                    <div>
-                      <p className="font-medium text-foreground">Devis personnalisé</p>
-                      <p className="text-sm text-muted-foreground">Adapté à votre besoin</p>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
                 <div className="flex items-start gap-3">
                   <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                   <div>

@@ -15,7 +15,7 @@ interface FeaturedServicesProps {
 
 export function FeaturedServices({ services, tenant, settings }: FeaturedServicesProps) {
   const previewTenant = usePreviewTenantSearch();
-  const { buttonLabel } = resolveEditorialTexts(settings?.cta_text ?? null);
+  const { buttonLabel } = resolveEditorialTexts(settings?.cta_text ?? null, settings?.quote_is_free ?? null);
   const featured = services.filter((s) => s.is_featured);
   const regular = services.filter((s) => !s.is_featured);
   const items = [...featured, ...regular].slice(0, 5);

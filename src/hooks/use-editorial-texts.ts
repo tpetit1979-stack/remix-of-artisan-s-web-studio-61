@@ -4,5 +4,5 @@ import { resolveEditorialTexts, type ResolvedEditorialTexts } from "@/lib/editor
 /** Button label + banner heading for the current tenant. See editorial-texts.ts for why this is not part of useCommercialPromises(). */
 export function useEditorialTexts(): ResolvedEditorialTexts {
   const { settings } = useTenant();
-  return resolveEditorialTexts(settings?.cta_text ?? null);
+  return resolveEditorialTexts(settings?.cta_text ?? null, settings?.quote_is_free ?? null);
 }

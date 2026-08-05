@@ -496,3 +496,95 @@ Catalogue de services-types et bibliothèque de médias métier : deux chantiers
 **B** séparés, chacun avec sa propre gouvernance (taxonomie et intention SEO
 pour l'un, provenance et licence pour l'autre). Ne pas les débuter comme
 sous-produit d'un correctif EASYDEP.
+
+## Lot — Sécurisation de la gratuité et du délai de réponse dans les contenus publics
+
+**Statut : fait.**
+
+Nom précis à conserver partout où ce lot est référencé — ce n'est **pas** "toutes
+les promesses commerciales sécurisées" (voir périmètre non couvert ci-dessous).
+
+`resolveCommercialPromises()` (`src/lib/commercial-promises.ts`) devient la seule
+source des affirmations de gratuité et de délai de réponse sur le site public — 15
+emplacements qui affirmaient localement "devis gratuit" ou un délai, sans tenir
+compte de `quote_is_free`/`quote_response_delay_hours`, lisent désormais ce
+resolver. Séparé volontairement de `resolveEditorialTexts()`
+(`src/lib/editorial-texts.ts`) : le texte de bouton/bannière est une voix de
+marque, pas un fait commercial — mais un `cta_text` libre qui affirme la
+gratuité sans confirmation (`quote_is_free !== true`) est neutralisé vers le
+libellé neutre par défaut plutôt que publié tel quel.
+
+### Ce que ce lot simplifie
+
+- 15 emplacements qui décidaient chacun localement d'une promesse → 1 seul
+  resolver de vérité, réutilisé partout (Hero, CTABanner ×6 pages, Header, FAQ,
+  contact, meta descriptions service×ville, FloatingCTA, HowItWorks, SeoLongText).
+- FAQ : question stable ("Quelles sont les conditions du devis ?") dans les 3
+  états de `quote_is_free`, seule la réponse varie — au lieu d'une question qui
+  devenait maladroite une fois la gratuité confirmée.
+- Contact : 1 titre de badge délai (`responseTimeHeading`) factuel au lieu d'un
+  titre statique "Réponse rapide" affirmé dans tous les cas.
+
+### Ce que ce lot supprime
+
+- Le badge "Devis personnalisé" / "Adapté à votre besoin" sur la page Contact —
+  formulation creuse, valable pour pratiquement tout devis, supprimée plutôt que
+  remplacée. Le badge devis n'existe plus du tout quand `quote_is_free !== true`.
+- "et sans engagement" dans la FAQ et "Sans engagement de votre part" sur la page
+  Contact — `quote_is_free = true` confirme la gratuité, pas l'absence
+  d'engagement ultérieur ; aucune donnée ne confirme cette seconde affirmation.
+- Le fallback qualitatif "Nous vous répondons rapidement." quand le délai n'est
+  pas confirmé — remplacé par une formulation factuelle ("Nous étudions votre
+  demande et revenons vers vous.").
+
+### Ce qui reste à migrer
+
+**Périmètre non couvert, à nommer explicitement partout où ce lot est cité** :
+seules la gratuité et le délai de réponse sont protégés. `cta_text` reste un
+champ libre pour toute autre promesse — vérifié directement sur le validateur
+réel, aucun des quatre cas suivants n'est aujourd'hui détecté ni neutralisé :
+
+| Texte libre | Risque | Donnée tenant disponible |
+|---|---|---|
+| "Intervention sous 24h" | délai d'intervention inventé | aucune |
+| "Dépannage en urgence" | urgence non confirmée | `emergency_service_available`, mais non relié au CTA |
+| "Disponible 24/7" | disponibilité absolue | aucune donnée suffisamment précise |
+| "Réponse garantie" | garantie contractuelle | aucune |
+
+Voir le lot séparé ci-dessous.
+
+### Risques connus
+
+- Build, typecheck et 32 tests unitaires vérifiés ; pas de test en navigateur
+  connecté (identifiants non disponibles dans cet environnement) — vérifié à la
+  place par exécution directe des resolvers réels (pas une simulation) sur les
+  trois états `true`/`false`/`null`, y compris le cas `cta_text` contradictoire.
+- Le titre statique "Réponse rapide" a été retiré de Contact, mais un texte
+  équivalent ("sans engagement", délais chiffrés non confirmés) peut encore
+  exister ailleurs dans du contenu non audité par ce lot précis (portée du grep :
+  "gratuit", "urgence", "24h/48h", "garanti" uniquement).
+
+## Lot (différé) — Promesses libres dans `cta_text`
+
+**Statut : à faire — backlog P0/P1, aucun code avant validation.**
+
+Le lot précédent ne neutralise que la gratuité (`mentionsFreeQuote` ne teste que
+`/gratuit/i`). Les quatre cas du tableau ci-dessus restent publiables sans
+aucune vérification. Compromis retenu : un filtre lexical conservateur sur
+`cta_text`, pas un moteur linguistique généraliste.
+
+**Definition of Done proposée :**
+
+- détecter chacune des formulations ci-dessus et leurs variantes proches
+  (urgent, dépannage immédiat, 24h/24, 7j/7, garantie de réponse, formes "sous
+  Xh"/"en X heures"/"dans la journée") ;
+- si une donnée tenant exacte la confirme (`emergency_service_available` pour
+  l'urgence), l'autoriser ; sinon neutraliser le rendu public, comme la
+  gratuité aujourd'hui ;
+- créer une anomalie Pilotage à chaque neutralisation, jamais une tolérance
+  silencieuse ;
+- ne jamais déduire qu'une promesse est vraie à partir d'une donnée seulement
+  approximative (`opening_hours` ne prouve pas "24/7", par exemple).
+
+**Tests minimum attendus** : les 4 cas du tableau ci-dessus, avec et sans la
+donnée tenant correspondante quand elle existe.

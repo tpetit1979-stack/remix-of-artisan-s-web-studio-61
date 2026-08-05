@@ -21,6 +21,8 @@ export type ResolvedCommercialPromises = {
   quoteFaqAnswer: string;
   /** How fast we reply — CTABanner's subtitle and the contact page's response-time line read this; same question, same answer. Not editorial copy: driven entirely by quoteResponseDelayHours. */
   responseTimeNote: string;
+  /** Heading to pair with responseTimeNote (e.g. contact page trust badge) — varies with whether a delay is actually confirmed, not just decorative wording. */
+  responseTimeHeading: string;
   seoCtaSuffix: string | null;
 };
 
@@ -46,10 +48,13 @@ export function resolveCommercialPromises(
   if (quoteResponseDelayHours != null) badges.push(`Réponse sous ${formatDelay(quoteResponseDelayHours)}`);
   const shortBadge = badges.length > 0 ? badges.join(" · ") : null;
 
-  const quoteFaqQuestion = "Le devis est-il payant ?";
+  // Stable regardless of quoteIsFree — a question that changes wording
+  // whenever the answer confirms gratuity reads as awkward ("Le devis
+  // est-il payant ? / Non, il est gratuit."). Only the answer varies.
+  const quoteFaqQuestion = "Quelles sont les conditions du devis ?";
   let quoteFaqAnswer: string;
   if (quoteIsFree === true) {
-    quoteFaqAnswer = "Le devis est gratuit et sans engagement.";
+    quoteFaqAnswer = "Le devis est gratuit.";
   } else if (quoteIsFree === false) {
     quoteFaqAnswer =
       "Une étude ou un devis peut être facturé selon la nature de l'intervention. Contactez-nous pour connaître les conditions.";
@@ -57,14 +62,19 @@ export function resolveCommercialPromises(
     quoteFaqAnswer = "Contactez-nous pour connaître les conditions du devis.";
   }
 
+  // Unconfirmed delay gets a factual, non-committal fallback — even a
+  // qualitative "rapidement" is a promise the tenant hasn't confirmed.
   const responseTimeNote =
     quoteResponseDelayHours != null
       ? `Réponse sous ${formatDelay(quoteResponseDelayHours)} en moyenne.`
-      : "Nous vous répondons rapidement.";
+      : "Nous étudions votre demande et revenons vers vous.";
+
+  const responseTimeHeading =
+    quoteResponseDelayHours != null ? "Délai de réponse habituel" : "Traitement de votre demande";
 
   const seoCtaSuffix = quoteIsFree === true ? "Devis gratuit." : null;
 
-  return { shortBadge, quoteFaqQuestion, quoteFaqAnswer, responseTimeNote, seoCtaSuffix };
+  return { shortBadge, quoteFaqQuestion, quoteFaqAnswer, responseTimeNote, responseTimeHeading, seoCtaSuffix };
 }
 
 /**

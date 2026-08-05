@@ -47,10 +47,38 @@ describe("resolveCommercialPromises", () => {
 
   it("responseTimeNote mirrors the confirmed response delay, same as the contact page needs", () => {
     const unconfirmed = resolveCommercialPromises(base);
-    expect(unconfirmed.responseTimeNote).toBe("Nous vous répondons rapidement.");
+    expect(unconfirmed.responseTimeNote).toBe("Nous étudions votre demande et revenons vers vous.");
 
     const confirmed = resolveCommercialPromises({ ...base, quoteResponseDelayHours: 24 });
     expect(confirmed.responseTimeNote).toBe("Réponse sous 1 jour en moyenne.");
+  });
+
+  it("responseTimeNote never asserts a qualitative speed claim ('rapidement') when unconfirmed", () => {
+    const unconfirmed = resolveCommercialPromises(base);
+    expect(unconfirmed.responseTimeNote.toLowerCase()).not.toContain("rapide");
+  });
+
+  it("quoteFaqAnswer confirms only gratuity, not an unconfirmed absence of commitment", () => {
+    const r = resolveCommercialPromises({ ...base, quoteIsFree: true });
+    expect(r.quoteFaqAnswer).toBe("Le devis est gratuit.");
+    expect(r.quoteFaqAnswer.toLowerCase()).not.toContain("engagement");
+  });
+
+  it("responseTimeHeading matches whether the delay is actually confirmed, not just decorative", () => {
+    const unconfirmed = resolveCommercialPromises(base);
+    expect(unconfirmed.responseTimeHeading).toBe("Traitement de votre demande");
+
+    const confirmed = resolveCommercialPromises({ ...base, quoteResponseDelayHours: 24 });
+    expect(confirmed.responseTimeHeading).toBe("Délai de réponse habituel");
+  });
+
+  it("quoteFaqQuestion is stable across all three quoteIsFree states — only the answer varies", () => {
+    const trueCase = resolveCommercialPromises({ ...base, quoteIsFree: true });
+    const falseCase = resolveCommercialPromises({ ...base, quoteIsFree: false });
+    const nullCase = resolveCommercialPromises({ ...base, quoteIsFree: null });
+    expect(trueCase.quoteFaqQuestion).toBe(falseCase.quoteFaqQuestion);
+    expect(falseCase.quoteFaqQuestion).toBe(nullCase.quoteFaqQuestion);
+    expect(trueCase.quoteFaqQuestion).toBe("Quelles sont les conditions du devis ?");
   });
 
   it("emergencyServiceAvailable only ever appears in the badge when explicitly true", () => {
