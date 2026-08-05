@@ -248,14 +248,27 @@ exactement le risque signalé avant de planifier quoi que ce soit.
 
 ### Lot 2 — Solo vs équipe (catégorie A)
 
+**Statut : fait.**
+
 - **Fichiers concernés** : `src/components/public/TeamSection.tsx`.
 - **Données modifiées** : aucune — lecture seule de `members.length`, déjà
   chargé par le composant.
-- **Definition of Done** : 0 membre → section masquée (déjà le cas, vérifié) ;
-  1 membre → "Votre interlocuteur" (jamais "À propos de moi") ; 2+ → "Notre
-  équipe" (comportement actuel, inchangé).
-- **Tests** : Public — les 3 cas rendus et vérifiés visuellement. Admin/Super
-  Admin non concernés (`TeamManager` ne change pas).
+- **Definition of Done** : 0 membre → section masquée (déjà le cas, inchangé) ;
+  1 membre → titre "Votre interlocuteur", texte "{Prénom} vous accompagne
+  personnellement de l'étude de votre projet jusqu'au suivi de vos équipements"
+  (prénom extrait de `full_name`, jamais "À propos de moi") ; 2+ → "Notre
+  équipe" / "Des professionnels qualifiés à votre service" (comportement
+  actuel, strictement inchangé). Aucune nouvelle colonne, aucune option de
+  configuration.
+- **Ce que ce lot simplifie** : le texte public s'accorde enfin au nombre réel
+  de personnes affichées pour tout tenant à un seul membre — pas seulement
+  EASYDEP. 1 rendu générique et faux (pluriel systématique) → 2 rendus exacts
+  selon le nombre de membres, calculés automatiquement.
+- **Tests** : build et typecheck vérifiés (propres). Rendu public non testé en
+  navigateur connecté dans cet environnement — à vérifier visuellement avec un
+  tenant à 1 membre (EASYDEP) et un tenant à 2+ membres avant de considérer le
+  lot visuellement validé. Admin/Super Admin non concernés (`TeamManager` ne
+  change pas).
 - **Dépendances** : aucune.
 
 ### Lot 3 — Illustrations : badge, blocage, conversion, filtre renforcé (catégorie A)
