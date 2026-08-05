@@ -246,30 +246,77 @@ exactement le risque signalé avant de planifier quoi que ce soit.
 - **Dépendances** : aucune. Nécessite une confirmation explicite avant d'agir —
   c'est une donnée de production, pas un brouillon.
 
-### Lot 2 — Solo vs équipe (catégorie A)
+### Lot 2 — Solo vs équipe (catégorie A) — révisé
 
-**Statut : fait.**
+**Statut : remplace la version initialement livrée.** La v1 déduisait le mode
+de présentation du nombre de membres actifs — un objet métier confondu avec
+un choix éditorial (voir la Constitution, principe 2). Corrigé avant toute
+généralisation.
 
-- **Fichiers concernés** : `src/components/public/TeamSection.tsx`.
-- **Données modifiées** : aucune — lecture seule de `members.length`, déjà
-  chargé par le composant.
-- **Definition of Done** : 0 membre → section masquée (déjà le cas, inchangé) ;
-  1 membre → titre "Votre interlocuteur", texte "{Prénom} vous accompagne
-  personnellement de l'étude de votre projet jusqu'au suivi de vos équipements"
-  (prénom extrait de `full_name`, jamais "À propos de moi") ; 2+ → "Notre
-  équipe" / "Des professionnels qualifiés à votre service" (comportement
-  actuel, strictement inchangé). Aucune nouvelle colonne, aucune option de
-  configuration.
-- **Ce que ce lot simplifie** : le texte public s'accorde enfin au nombre réel
-  de personnes affichées pour tout tenant à un seul membre — pas seulement
-  EASYDEP. 1 rendu générique et faux (pluriel systématique) → 2 rendus exacts
-  selon le nombre de membres, calculés automatiquement.
-- **Tests** : build et typecheck vérifiés (propres). Rendu public non testé en
-  navigateur connecté dans cet environnement — à vérifier visuellement avec un
-  tenant à 1 membre (EASYDEP) et un tenant à 2+ membres avant de considérer le
-  lot visuellement validé. Admin/Super Admin non concernés (`TeamManager` ne
-  change pas).
-- **Dépendances** : aucune.
+**Décisions retenues**
+
+- Un réglage explicite, jamais déduit : `site_settings.team_presentation_mode`,
+  valeurs `null | 'artisan' | 'company' | 'hidden'`. `site_settings` plutôt que
+  `tenants` — c'est une décision de présentation du site (même famille que
+  `hero_title`, `cta_text`), pas un fait d'identité légale.
+- Pas de défaut imposé. `null` = "non arbitré", rendu public **masqué** — sans
+  coût de régression mesuré : sur 17 tenants, 15 sont déjà à 0 membre actif
+  (déjà masqués) et 2 à 1 membre (actuellement au rendu fautif, donc
+  strictement améliorés en étant masqués plutôt que de mentir). Aucun tenant
+  n'a 2 membres actifs ou plus aujourd'hui.
+- Verrou en base sur **`INSERT` et `UPDATE`**, pas seulement `UPDATE` — un
+  trigger étroit propre à cette seule colonne, jamais une extension du verrou
+  `tenants` ni un verrou global de `site_settings`. `tenant_admin` peut lire,
+  ne peut jamais écrire par aucun chemin ; seuls `super_admin` et
+  `service_role` le peuvent.
+- Wording neutre, transversal à tous les métiers :
+  - `artisan` → eyebrow "À propos", titre "Votre artisan", sous-titre
+    "Découvrez la personne qui met son savoir-faire au service de vos
+    projets." Nom et fonction réelle uniquement sur la carte, jamais dans le
+    sous-titre.
+  - `company` → eyebrow "Qui sommes-nous ?", titre "L'entreprise", sous-titre
+    "Un savoir-faire au service de vos projets."
+- `artisan` + plusieurs membres actifs : seul le premier par `sort_order` est
+  affiché publiquement — jamais de suppression ou désactivation automatique.
+  Compensé côté Super Admin par une microcopie permanente ("En mode Artisan,
+  seule la première personne de la liste est affichée publiquement") et une
+  alerte visible dès que 2+ membres actifs existent en mode `artisan`.
+- Réconciliation opérationnelle : alerte dans la fiche Super Admin quand
+  `team_presentation_mode IS NULL` **et** qu'au moins un membre actif existe —
+  pas un nouveau tableau de bord, juste un signal sur les tenants qui
+  attendent un arbitrage (2 aujourd'hui).
+- EASYDEP ne passe à `artisan` que par une action Super Admin séparée et
+  explicite, après le déploiement — jamais par la migration elle-même.
+
+**Fichiers concernés** : nouvelle migration (colonne + trigger) ; types
+Supabase régénérés ; `src/lib/team.ts` (fonction pure `resolveTeamPresentation`
++ mutation de mode) ; `src/components/admin/TeamManager.tsx` (contrôle Super
+Admin, microcopie, alertes — lecture seule côté Admin) ; `admin.settings.tsx`
+(affichage verrouillé du mode côté client, si pertinent) ;
+`src/components/public/TeamSection.tsx` (consomme la fonction pure).
+
+**Definition of Done** : les 7 lignes de la matrice de rendu vérifiées,
+y compris `null` → masqué même avec des membres actifs en base ; test unitaire
+de `resolveTeamPresentation` couvrant chaque combinaison ; build et typecheck
+propres ; aucune donnée d'EASYDEP modifiée automatiquement.
+
+**Tests** : Admin (lecture seule, cadenas) ; Super Admin (les 4 états
+sélectionnables, microcopie et les deux alertes visibles) ; Public (matrice
+complète). Test unitaire pour la fonction de résolution. Pas de test en
+navigateur connecté dans cet environnement — à faire séparément.
+
+**Dépendances** : aucune.
+
+### Lot 11 — `tenant_stage` (catégorie A, différé)
+
+**Statut : backlog, non planifié dans ce chantier.** Distinguer les fixtures
+techniques des vrais prospects/clients dans le Pilotage agence et les
+statistiques. Valeurs envisagées : `test | prospect | onboarding | active |
+paused | archived`. EASYDEP y sera `prospect` ou `onboarding`, jamais `test`.
+Aucune suppression de tenant de test prévue — ils servent de cas de
+régression (tenant vide, artisan solo, équipe, site complet, cas
+incohérent). À scoper séparément (fichiers, données, DoD) avant exécution ;
+ne pas le mélanger avec le correctif de présentation solo/entreprise.
 
 ### Lot 3 — Illustrations : badge, blocage, conversion, filtre renforcé (catégorie A)
 
