@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, type FormEvent, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { resolveLoginRedirect } from "@/lib/access-guard";
+import { AccessDenied } from "@/components/AccessDenied";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,26 +24,47 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const { signIn, isAuthenticated, role, isLoading } = useAuth();
+  const { signIn, isAuthenticated, role, tenantId, isLoading } = useAuth();
   const navigate = useNavigate();
   const search = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect once authenticated and role is known. `search.redirect` is the
-  // full href (pathname + search) captured by the auth guards, so it must be
-  // split back into `to`/`search` -- passing "?tab=rdv" embedded in `to`
-  // would not be parsed as query params by the router.
+  const decision = isLoading
+    ? ({ kind: "wait" } as const)
+    : resolveLoginRedirect({ isAuthenticated, role, tenantId, requestedRedirect: search.redirect });
+
+  // Redirect once authenticated and role is known. `target` is a
+  // pathname+search string, so it must be split back into `to`/`search` --
+  // passing "?tab=rdv" embedded in `to` would not be parsed as query params
+  // by the router. A role with no valid destination (denied-*) never
+  // navigates -- see the AccessDenied render below instead.
   useEffect(() => {
-    if (isLoading || !isAuthenticated) return;
-    const target = search.redirect || (role === "super_admin" ? "/super-admin" : "/admin");
-    const [path, queryString] = target.split("?");
+    if (decision.kind !== "navigate") return;
+    const [path, queryString] = decision.target.split("?");
     navigate({
       to: path,
       search: queryString ? Object.fromEntries(new URLSearchParams(queryString)) : undefined,
     });
-  }, [isAuthenticated, role, isLoading, search.redirect, navigate]);
+  }, [decision, navigate]);
+
+  if (decision.kind === "denied-no-tenant") {
+    return (
+      <AccessDenied
+        title="Compte non rattaché"
+        description="Ce compte n'est rattaché à aucune entreprise. Contactez votre agence."
+      />
+    );
+  }
+  if (decision.kind === "denied-role") {
+    return (
+      <AccessDenied
+        title="Accès non autorisé"
+        description="Votre compte ne dispose d'aucun rôle valide. Contactez votre agence."
+      />
+    );
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

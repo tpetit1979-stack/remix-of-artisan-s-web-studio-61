@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { SuperAdminBanner } from "@/components/admin/RoleBanner";
+import { AccessDenied } from "@/components/AccessDenied";
+import { resolveSuperAdminAccess } from "@/lib/access-guard";
+import { safeRedirect } from "@/lib/safe-redirect";
 
 export const Route = createFileRoute("/super-admin")({
   component: SuperAdminLayout,
@@ -15,18 +18,32 @@ function SuperAdminLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, role, isLoading, signOut, user } = useAuth();
 
+  const access = isLoading ? ({ kind: "ok" } as const) : resolveSuperAdminAccess({ isAuthenticated, role });
+
   useEffect(() => {
     if (isLoading) return;
-    if (!isAuthenticated || role !== "super_admin") {
-      navigate({ to: "/login", search: { redirect: location.href } });
+    if (access.kind === "redirect-login") {
+      const current = location.pathname + location.search;
+      navigate({ to: "/login", search: { redirect: safeRedirect(current) ?? location.pathname } });
     }
-  }, [isAuthenticated, role, isLoading, navigate, location.href]);
+    // denied-role: no navigation, AccessDenied renders below — this is the
+    // branch that used to bounce back to /login and feed the redirect loop.
+  }, [isLoading, access.kind, navigate, location.pathname, location.search]);
 
-  if (isLoading || !isAuthenticated || role !== "super_admin") {
+  if (isLoading || !isAuthenticated || access.kind === "redirect-login") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
       </div>
+    );
+  }
+
+  if (access.kind === "denied-role") {
+    return (
+      <AccessDenied
+        title="Accès non autorisé"
+        description="Votre compte n'a pas les droits Super Admin."
+      />
     );
   }
 

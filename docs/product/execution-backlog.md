@@ -738,4 +738,30 @@ Rien.
   cependant mot pour mot celui déjà en production pour les réalisations
   (`admin.portfolio.tsx`), pas un nouveau mécanisme non éprouvé.
 
+## Lot (P0) — Boucle de redirection `/login` pour un utilisateur authentifié sans rôle
+
+**Statut : à faire — backlog P0, aucun code avant validation.**
+
+Découvert en conditions réelles (compte `tpetit1979@gmail.com` sans ligne
+`user_roles`, corrigé par écriture directe le 5 août 2026) : un utilisateur
+authentifié dont le rôle ne correspond à aucune garde (`/admin` : ni
+`tenant_admin` ni `super_admin` en impersonation ; `/super-admin` : pas
+`super_admin`) est renvoyé vers `/login?redirect=<route protégée>`.
+`login.tsx` fait alors confiance à `search.redirect` dès que
+`isAuthenticated` est vrai, sans revérifier que le rôle donne accès à cette
+cible — d'où l'aller-retour `/login?redirect=X` → `X` → `/login?redirect=X`
+à l'infini, jusqu'au crash React ("Maximum update depth exceeded").
+
+**Definition of Done proposée :**
+
+- un utilisateur authentifié sans rôle valide pour la route demandée voit un
+  écran "Accès refusé" (avec lien de déconnexion), jamais une boucle vers
+  `/login` ;
+- `login.tsx` ne redirige vers `search.redirect` qu'après avoir vérifié que
+  le rôle résolu autorise effectivement cette cible ;
+- test couvrant explicitement le cas "authentifié + rôle `null`".
+
+Lot séparé, à ne pas mélanger avec la sécurisation des URLs sociales
+(Lot en cours) ni avec aucun autre chantier de ce backlog.
+
 **Portée** : catégorie A — améliore tous les tenants, pas seulement EASYDEP.
