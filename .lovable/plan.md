@@ -1,92 +1,57 @@
-# Vérification factuelle : synchronisation GitHub ↔ preview
+# Accès de tpetit1979@gmail.com + boucle /login
 
-## 1. SHA réellement déployé dans la preview
+## Le mot de passe ne peut pas être récupéré
 
-```text
-HEAD (branche de travail de la preview) : 22e86b6c4befa6023714f282db49bbd104ca31b7
-  edit/edt-54f61f7c-7ddf-4aad-9462-3c129b38d5f0
-main (local)                            : 22e86b6c4befa6023714f282db49bbd104ca31b7
-origin/main (après git fetch)            : 22e86b6c4befa6023714f282db49bbd104ca31b7
-git diff HEAD origin/main               : (vide)
-git status --porcelain                  : (vide)
-```
+Supabase ne stocke que des hachages : aucun outil, ni le dashboard, ne permet de lire
+un mot de passe existant. Deux chemins possibles, tous les deux à ta main :
 
-Derniers commits :
+1. **Lien de réinitialisation** — ouvrir `/forgot-password`, saisir
+   `tpetit1979@gmail.com`, cliquer le lien reçu, définir le nouveau mot de passe sur
+   `/update-password`. Ces deux écrans existent déjà et fonctionnent.
+2. **Définition manuelle** — Supabase Dashboard > Authentication > Users >
+   `tpetit1979@gmail.com` > menu `...` > *Reset password* (envoi d'un mail) ou
+   *Update user* pour saisir directement un mot de passe. Réservé au dashboard, car
+   cela exige la clé `service_role`, qui ne doit jamais passer par l'app.
 
-```text
-22e86b6 feat(admin): sync tenant detail tabs with ?tab= search param
-5488c8b fix(google-places): remove invalid postal code lookup
-01e5660 Syncé avec main (SHA 912c561)
-```
+Aucun code n'est nécessaire pour cette partie.
 
-## 2. Est-ce bien `22e86b6` ?
+## Mais la connexion est actuellement cassée
 
-Oui. C'est le HEAD de `origin/main`, le HEAD local et l'arbre de travail servi par la preview, avec zéro différence et zéro fichier modifié. Aucune resynchronisation n'est nécessaire.
+L'URL de la preview boucle : `/login?redirect=/login?redirect=/login?…` (plus de 50
+niveaux), avec l'erreur runtime « Maximum update depth exceeded ». Tant que ce n'est
+pas corrigé, se reconnecter avec un nouveau mot de passe échouera.
 
-## 3. Construction automatique ou cache ?
+Cause, vérifiée dans le code :
 
-La preview sert directement l'arbre de travail du dépôt via le serveur de dev (Vite, HMR) — il n'y a pas d'étape de build figée côté serveur à invalider. Vérifié : `node_modules/.vite/deps` daté du 3 août 12:52, soit régénéré à l'ouverture de la session. Le seul cache réellement en jeu est celui de **l'onglet du navigateur** (bundle JS déjà chargé), pas un cache de déploiement.
+- `src/routes/admin.tsx` (l. 28 et 36) redirige vers `/login` en passant
+  `redirect: location.href`, **y compris quand l'URL courante est déjà `/login?redirect=…`**.
+- `src/routes/login.tsx` (l. 36-44) navigue aveuglément vers `search.redirect`, donc
+  vers `/login` à nouveau — chaque aller-retour ajoute un niveau d'encodage.
 
-## 4. Le code `?tab=` est bien présent
-
-Contenu vérifié dans `src/routes/super-admin.tenants.$tenantId.tsx` :
-
-- ligne 80 : liste `VALID_TABS` (tenant, settings, services, zones, certifications, team, partners, booking, ai)
-- lignes 88-93 : `validateSearch` qui parse `?tab=`
-- lignes 218-219 : `Route.useSearch()` → `activeTab`
-- lignes 226-228 : `setTab` qui écrit dans la search param
-- ligne 372 : `<Tabs value={activeTab} onValueChange={setTab}>`
-
-Le code est donc bel et bien déployé. Ce qui a été observé en preview n'est pas un décalage de commit.
-
-### Ce que montre l'inspection de la preview ouverte
-
-L'onglet de preview actuellement ouvert est sur :
+Le déclencheur : un utilisateur authentifié dont `role`/`tenantId` ne donnent pas accès
+à `/admin` (par exemple `tenant_admin` sans ligne `tenant_members`, ou `role` null).
 
 ```text
-/login?redirect=%2Flogin      (aucun élément [role="tab"] dans le DOM)
+/admin  →  /login?redirect=/admin  →  (session OK, role KO)  →  /admin
+   ↑                                                             │
+   └──────── /login?redirect=%2Flogin%3Fredirect%3D… ←───────────┘
 ```
 
-Une requête directe sur `/super-admin/tenants/<id>?tab=rdv` renvoie **307** (redirection). La page est protégée : `src/routes/super-admin.tsx` (lignes 19-24) redirige toute session non `super_admin` vers `/login`. Tant que la session n'est pas authentifiée en super-admin, la page ne s'affiche pas du tout — donc `?tab=` ne peut pas être observé.
+## Correction proposée
 
-### Anomalie réelle identifiée (à confirmer avec toi avant correction)
+1. **`src/routes/login.tsx`** — assainir `redirect` : n'accepter qu'un chemin interne
+   commençant par `/`, sans `//`, et **jamais** une cible `/login`, `/forgot-password`
+   ou `/update-password`. Sinon retomber sur la destination par défaut selon le rôle.
+2. **`src/routes/admin.tsx`** — ne plus renvoyer vers `/login` quand la session est
+   valide mais l'accès refusé. Afficher un écran explicite « Ce compte n'est rattaché à
+   aucune entreprise » avec bouton *Se déconnecter*. Le renvoi vers `/login` reste
+   uniquement pour l'absence réelle de session, et sans réinjecter une URL `/login`.
+3. **`src/routes/super-admin.tsx`** (l. 21) — même assainissement du `redirect` capturé.
+4. Vérifier ensuite en preview : `/admin` sans session → `/login?redirect=%2Fadmin`
+   (un seul niveau) ; session sans rattachement → écran explicatif, pas de boucle.
 
-Le garde de `/super-admin` fait :
+## Détails techniques
 
-```ts
-navigate({ to: "/login", search: { redirect: location.pathname } })
-```
-
-`location.pathname` **exclut la query string**. Conséquence : un lien `/super-admin/tenants/<id>?tab=rdv` ouvert sans session valide perd le `?tab=rdv` au passage par `/login`, et après connexion l'utilisateur retombe sur l'onglet par défaut (`tenant`). C'est cohérent avec le symptôme décrit, et c'est un défaut de code, pas de synchronisation.
-
-Le même schéma existe dans `src/routes/admin.tsx` (lignes 28 et 35).
-
-## 5. Procédure de resynchronisation
-
-Sans objet ici : le commit attendu est déjà celui servi. Si un doute revient, le contrôle est celui exécuté ci-dessus (`git fetch` + comparaison des trois SHA + `git diff`). Pour lever un cache de navigateur, un rechargement forcé de l'onglet de preview suffit.
-
-## Erreur de typage présente dans le commit lui-même
-
-Le typecheck échoue sur le code de synchronisation d'onglets, sur `22e86b6`, arbre de travail propre (`git diff --stat` vide — l'erreur n'est donc pas due à une modification de ma part) :
-
-```text
-src/routes/super-admin.tenants.$tenantId.tsx(227,53)
-error TS7006: Parameter 'prev' implicitly has an 'any' type.
-```
-
-Ligne concernée :
-
-```ts
-if (isTabValue(value)) routeNavigate({ search: (prev) => ({ ...prev, tab: value }) });
-```
-
-Le paramètre `prev` du updater de `search` n'est pas inféré ici. Le commit `22e86b6` est donc déployé mais non sain au typecheck.
-
-## Correction proposée (si tu la valides)
-
-1. Typer explicitement l'updater de search dans `src/routes/super-admin.tenants.$tenantId.tsx` (ligne 227) : `(prev: { tab?: TabValue })` — correction purement de typage, aucun changement de comportement.
-2. Se connecter en super-admin dans la preview et ouvrir `/super-admin/tenants/<id>?tab=rdv` pour confirmer que la synchronisation d'onglets fonctionne bien une fois la page accessible.
-3. Corriger la perte de query string dans les redirections d'authentification : utiliser le chemin complet (pathname + search) comme valeur de `redirect` dans `src/routes/super-admin.tsx` et `src/routes/admin.tsx`, et restaurer cette valeur telle quelle après connexion dans `src/routes/login.tsx`.
-
-Aucun fichier source n'a été modifié pendant cette vérification.
-
+Un helper partagé `safeRedirect(href: string): string` (dans `src/lib/`) fait la
+validation, utilisé par les deux gardes et par `login.tsx`. Aucun changement de
+schéma Supabase, de route ou de RLS. Aucun mot de passe manipulé par le code.
