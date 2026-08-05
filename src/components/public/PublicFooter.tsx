@@ -2,9 +2,39 @@ import { Link } from "@tanstack/react-router";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
+import { InstagramIcon, FacebookIcon, LinkedinIcon } from "@/components/public/SocialIcons";
+
+/** Only platforms with a non-empty, agency-set URL — never a dead icon. */
+function SocialLinks({ socialLinks }: { socialLinks: unknown }) {
+  const links = (socialLinks ?? {}) as Record<string, string | undefined>;
+  const items = [
+    { key: "instagram", href: links.instagram, label: "Instagram", Icon: InstagramIcon },
+    { key: "facebook", href: links.facebook, label: "Facebook", Icon: FacebookIcon },
+    { key: "linkedin", href: links.linkedin, label: "LinkedIn", Icon: LinkedinIcon },
+  ].filter((item) => !!item.href?.trim());
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="flex items-center justify-center gap-3">
+      {items.map(({ key, href, label, Icon }) => (
+        <a
+          key={key}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <Icon className="h-4 w-4" />
+        </a>
+      ))}
+    </div>
+  );
+}
 
 export function PublicFooter() {
-  const { tenant } = useTenant();
+  const { tenant, settings } = useTenant();
   const previewTenant = usePreviewTenantSearch();
 
   const { data: services = [] } = useQuery({
@@ -119,7 +149,8 @@ export function PublicFooter() {
       </div>
 
       <div className="mx-auto mt-8 max-w-7xl border-t border-border px-4 pt-6">
-        <p className="text-center text-xs text-muted-foreground">
+        <SocialLinks socialLinks={settings?.social_links} />
+        <p className="mt-4 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} {tenant.company_name}. Tous droits réservés.
         </p>
       </div>

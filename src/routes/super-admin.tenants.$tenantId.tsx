@@ -19,6 +19,7 @@ import {
   MapPin, Building2, ExternalLink, Wand2, Loader2, Shield, Check, Palette,
   Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon, Calendar, Users, Handshake,
 } from "lucide-react";
+import { InstagramIcon, FacebookIcon, LinkedinIcon } from "@/components/public/SocialIcons";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
@@ -579,6 +580,7 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
         whatsapp_enabled: designForm.whatsapp_enabled ?? false,
         whatsapp_number: designForm.whatsapp_number,
         whatsapp_message_template: designForm.whatsapp_message_template,
+        social_links: designForm.social_links,
       }).eq("tenant_id", tenantId);
       if (error) throw error;
     },
@@ -649,6 +651,55 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
               </Field>
             </>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Réseaux sociaux */}
+      <Card>
+        <CardContent className="pt-4 space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Réseaux sociaux</p>
+          <p className="text-xs text-muted-foreground">
+            Laisser vide un réseau que le client n'utilise pas — aucune icône morte n'est affichée publiquement.
+          </p>
+          <Field label="Instagram">
+            <div className="flex items-center gap-2">
+              <InstagramIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <Input
+                className="h-8 text-xs"
+                placeholder="https://instagram.com/..."
+                value={designForm.social_links?.instagram ?? ""}
+                onChange={(e) =>
+                  setDesignField("social_links", { ...(designForm.social_links ?? {}), instagram: e.target.value })
+                }
+              />
+            </div>
+          </Field>
+          <Field label="Facebook">
+            <div className="flex items-center gap-2">
+              <FacebookIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <Input
+                className="h-8 text-xs"
+                placeholder="https://facebook.com/..."
+                value={designForm.social_links?.facebook ?? ""}
+                onChange={(e) =>
+                  setDesignField("social_links", { ...(designForm.social_links ?? {}), facebook: e.target.value })
+                }
+              />
+            </div>
+          </Field>
+          <Field label="LinkedIn">
+            <div className="flex items-center gap-2">
+              <LinkedinIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <Input
+                className="h-8 text-xs"
+                placeholder="https://linkedin.com/company/..."
+                value={designForm.social_links?.linkedin ?? ""}
+                onChange={(e) =>
+                  setDesignField("social_links", { ...(designForm.social_links ?? {}), linkedin: e.target.value })
+                }
+              />
+            </div>
+          </Field>
         </CardContent>
       </Card>
 
