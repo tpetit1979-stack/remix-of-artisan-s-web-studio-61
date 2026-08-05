@@ -679,32 +679,63 @@ que le tenant (ou l'agence en son nom) fournisse ses propres photos —
   service×ville) non vérifié en navigateur connecté — même limite que tous
   les lots précédents dans cet environnement.
 
-## Lot (différé) — Image par service : sélection ou upload depuis l'Admin
+## Lot — Photo par service : upload et retrait depuis l'Admin
 
-**Statut : backlog, non planifié — documentation seule, aucun code.**
+**Statut : fait, dans `/admin/services` uniquement.**
 
-Le niveau 1.5 du resolver (lot ci-dessus) ne comble le trou visuel d'un
+Le niveau 1.5 du resolver (lot précédent) ne comble le trou visuel d'un
 tenant que si une illustration exploitable existe déjà et peut être
-rattachée à la main en Super Admin, ligne par ligne, en base. Ce n'est pas
-un chemin utilisable par un futur client ou par l'agence au quotidien —
-c'est ce qui a permis de traiter EASYDEP aujourd'hui, pas ce qui doit rester
-la norme.
+rattachée à la main en Super Admin, ligne par ligne, en base — ce qui a
+permis de traiter EASYDEP, mais n'est pas un chemin utilisable par un futur
+client ou par l'agence au quotidien. Corrigé : chaque ligne de
+`/admin/services` propose désormais une vignette (le même composant partagé
+`ServiceMedia` que le rendu public — jamais de logique dupliquée), un bouton
+appareil photo pour déposer/remplacer une image, et un bouton retirer quand
+une photo propre au service existe déjà.
 
-**Objectif** : dans `/admin/services` (et son équivalent Super Admin, même
-composant), chaque service propose de choisir ou déposer sa propre image,
-sans intervention de Claude Code ni écriture SQL directe.
+Écrit dans `tenant_media` (catégorie `service`, `target_id` = le service) —
+le niveau 1, le plus prioritaire, du resolver déjà en place. Retirer la
+photo ne supprime rien d'autre : le resolver retombe sur l'illustration
+liée si elle existe, puis la bibliothèque métier, puis le fallback neutre,
+exactement comme avant qu'une photo propre existe.
 
-**Definition of Done proposée** :
-- le client ou l'agence choisit une image pour chaque service — upload
-  direct ou sélection parmi les illustrations déjà existantes du tenant ;
-- aperçu immédiat avant validation ;
-- origine et statut visibles (photo propre / illustration / bibliothèque
-  métier), pas une boîte noire ;
-- un bouton "restaurer le comportement par défaut" qui revient au niveau
-  1.5/2/3 du resolver, sans supprimer l'image déposée ;
-- aucune dépendance à ce chantier-ci pour qu'un futur tenant obtienne des
-  photos correctes — le correctif global (niveau 1.5) reste la base, cet
-  écran est ce qui permet de l'alimenter sans passer par une session Claude
-  Code.
+**Vérifié** : RLS de `tenant_media` relue avant d'écrire le code — la
+politique `tenant_media_owner` (`ALL`, sur `tenant_id` du membre connecté)
+autorise déjà l'écriture pour un vrai `tenant_admin`, sans changement de
+policy nécessaire. Build, typecheck, 32 tests (suite existante) verts.
+
+### Ce que ce lot simplifie
+
+- 0 moyen d'attacher une photo à un service depuis l'Admin → 1, cohérent
+  avec ce qui existe déjà pour les réalisations (même geste : vignette +
+  ajouter + retirer).
+- Toujours 1 seul composant de rendu (`ServiceMedia`) pour la vignette Admin
+  et le rendu public — la vignette montre exactement ce que le visiteur
+  verra, jamais une prévisualisation différente du résultat réel.
+
+### Ce que ce lot supprime
+
+Rien.
+
+### Ce qui reste à migrer
+
+- **Super Admin** : la fiche `super-admin.tenants.$tenantId.tsx` a son propre
+  écran Services, codé séparément de `/admin/services` (constat déjà
+  documenté, Lot B) — ce correctif ne s'y applique pas encore. Tant que
+  Lot B n'est pas fait, l'agence intervenant pour un client doit encore
+  passer par "Gérer ce site" (impersonation) pour attacher une photo de
+  service à sa place.
+- Pas de sélection parmi les illustrations existantes du tenant depuis cet
+  écran (seulement upload direct) — l'association reste manuelle en base
+  pour ce cas, comme pour EASYDEP.
+- Pas de bouton "restaurer le défaut" séparé — retirer la photo *est* déjà
+  la restauration, aucune étape supplémentaire nécessaire.
+
+### Risques connus
+
+- Rendu visuel non vérifié en navigateur connecté — même limite que tous
+  les lots précédents dans cet environnement. Le chemin d'upload réutilise
+  cependant mot pour mot celui déjà en production pour les réalisations
+  (`admin.portfolio.tsx`), pas un nouveau mécanisme non éprouvé.
 
 **Portée** : catégorie A — améliore tous les tenants, pas seulement EASYDEP.

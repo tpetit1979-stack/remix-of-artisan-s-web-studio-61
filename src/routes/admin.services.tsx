@@ -18,9 +18,12 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
-import { useState } from "react";
+import { Plus, Pencil, Trash2, GripVertical, Camera, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { ServiceMedia } from "@/components/public/ServiceMedia";
+import { validateImageFile, buildMediaPath, uploadImage, removeStorageFile } from "@/lib/media-upload";
+import { invalidateResolvedMedia } from "@/lib/media-resolver";
 
 export const Route = createFileRoute("/admin/services")({
   component: AdminServices,
@@ -36,6 +39,79 @@ function AdminServices() {
     queryKey: ["admin-services", tenant?.id],
     queryFn: () => fetchAllServices(tenant!.id),
     enabled: !!tenant?.id,
+  });
+
+  // Which services already have their own uploaded photo (tenant_media,
+  // category="service") — level 1 of the resolver. Drives whether each row
+  // shows "Remplacer/Retirer" or just "Ajouter une photo".
+  const { data: servicePhotos = {} } = useQuery({
+    queryKey: ["admin-service-photos", tenant?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("tenant_media")
+        .select("id, target_id, storage_path")
+        .eq("tenant_id", tenant!.id)
+        .eq("category", "service")
+        .eq("is_active", true);
+      if (error) throw error;
+      const map: Record<string, { id: string; storage_path: string }> = {};
+      for (const row of data ?? []) {
+        if (row.target_id) map[row.target_id] = { id: row.id, storage_path: row.storage_path };
+      }
+      return map;
+    },
+    enabled: !!tenant?.id,
+  });
+
+  const uploadPhotoMutation = useMutation({
+    mutationFn: async ({ service, file }: { service: any; file: File }) => {
+      const validationErr = validateImageFile(file);
+      if (validationErr) throw new Error(validationErr);
+      const path = buildMediaPath({ scope: tenant!.id, kind: "service", file, subFolder: "services" });
+      await uploadImage({ bucket: "media", path, file });
+      const { data: pub } = supabase.storage.from("media").getPublicUrl(path);
+      const existing = servicePhotos[service.id];
+      if (existing) {
+        const { error } = await supabase
+          .from("tenant_media")
+          .update({ storage_path: path, public_url: pub.publicUrl, alt_text: service.name })
+          .eq("id", existing.id);
+        if (error) throw error;
+        await removeStorageFile("media", existing.storage_path);
+      } else {
+        const { error } = await supabase.from("tenant_media").insert({
+          tenant_id: tenant!.id,
+          category: "service",
+          target_id: service.id,
+          storage_path: path,
+          public_url: pub.publicUrl,
+          alt_text: service.name,
+        });
+        if (error) throw error;
+      }
+    },
+    onSuccess: (_data, { service }) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-service-photos", tenant?.id] });
+      invalidateResolvedMedia(queryClient, tenant!.id);
+      toast.success(`Photo mise à jour pour "${service.name}"`);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const removePhotoMutation = useMutation({
+    mutationFn: async (service: any) => {
+      const existing = servicePhotos[service.id];
+      if (!existing) return;
+      const { error } = await supabase.from("tenant_media").delete().eq("id", existing.id);
+      if (error) throw error;
+      await removeStorageFile("media", existing.storage_path);
+    },
+    onSuccess: (_data, service) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-service-photos", tenant?.id] });
+      invalidateResolvedMedia(queryClient, tenant!.id);
+      toast.success(`Photo retirée pour "${service.name}"`);
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const saveMutation = useMutation({
@@ -139,6 +215,13 @@ function AdminServices() {
             <Card key={s.id}>
               <CardContent className="flex items-center gap-4 py-4">
                 <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
+                <ServicePhotoCell
+                  service={s}
+                  hasOwnPhoto={!!servicePhotos[s.id]}
+                  uploading={uploadPhotoMutation.isPending && uploadPhotoMutation.variables?.service.id === s.id}
+                  onUpload={(file) => uploadPhotoMutation.mutate({ service: s, file })}
+                  onRemove={() => removePhotoMutation.mutate(s)}
+                />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-foreground">{s.name}</span>
@@ -337,6 +420,67 @@ function ServiceBrandsSection({ tenantId, serviceId }: { tenantId: string; servi
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Thumbnail + upload/remove control for one service row. Shows exactly what
+ * the public site currently resolves (ServiceMedia — the same shared
+ * component used everywhere, see media-resolver.ts), so "what I see here"
+ * is never out of sync with "what the visitor sees". Upload writes to
+ * tenant_media (level 1 of the resolver, the highest priority); removing it
+ * doesn't touch anything else — the resolver falls back to a linked
+ * illustration, then the trade template, then the neutral placeholder.
+ */
+function ServicePhotoCell({
+  service,
+  hasOwnPhoto,
+  uploading,
+  onUpload,
+  onRemove,
+}: {
+  service: any;
+  hasOwnPhoto: boolean;
+  uploading: boolean;
+  onUpload: (file: File) => void;
+  onRemove: () => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
+      <ServiceMedia service={service} />
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+        title={hasOwnPhoto ? "Remplacer la photo" : "Ajouter une photo"}
+        className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-background/90 py-1 text-foreground backdrop-blur-sm transition-colors hover:bg-background disabled:opacity-60"
+      >
+        <Camera className="h-3.5 w-3.5" />
+      </button>
+      {hasOwnPhoto && (
+        <button
+          type="button"
+          onClick={onRemove}
+          title="Retirer la photo"
+          className="absolute right-1 top-1 rounded-full bg-background/90 p-0.5 text-destructive hover:bg-background"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/avif"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onUpload(file);
+          e.target.value = "";
+        }}
+      />
     </div>
   );
 }
