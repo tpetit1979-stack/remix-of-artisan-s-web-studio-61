@@ -8,8 +8,8 @@ considéré terminé.
 
 ```
 0 → A → D → F → E → C → B
-    ↑
-  fait
+    ↑   ↑
+   fait fait
 ```
 
 Risque décroissant : on commence par ce qui ne peut rien casser (documentation),
@@ -82,17 +82,57 @@ suivants (D, F, E, C, B).
 
 ## Lot D — Tableau de bord client + prochaine meilleure action
 
-**Effort : 1 à 2 jours pour la v1. Principes : 1, 6, 10.**
+**Statut : fait.** Principes : 1, 6, 10.
 
-Réutilise le calcul de complétude déjà présent côté agence, reformulé en actions
-plutôt qu'en cases cochées. V1 limitée aux actions déjà mûres : réalisation
-manquante, zone manquante, marque manquante, SEO manquant. L'assignation
-marque↔service (`tenant_service_brands`, existe depuis `0bffb3e`) rejoindra la
-liste une fois son propre workflow stabilisé — le modèle de données n'est pas un
-obstacle, la maturité du workflow l'est.
+`/admin` répond en un écran à trois questions : que dois-je faire maintenant,
+ai-je reçu une nouvelle demande, comment accéder aux actions les plus courantes.
+Volontairement limité — une seule action mise en avant à la fois, deux raccourcis
+secondaires, aucune métrique décorative, aucun score.
 
-Devient la page d'accueil de `/admin`. Supprime la redirection actuelle vers
-`/admin/services`.
+**Ordre de priorité de la "prochaine meilleure action" — hypothèse produit, pas
+une règle mesurée** : service manquant → zone manquante → réalisation manquante →
+marque manquante → SEO manquant. Documenté en commentaire directement dans
+`admin.index.tsx` pour qu'il ne se dilue pas au premier refactor. Exclut
+délibérément le logo et le RGE : tous deux verrouillés à l'agence (voir
+`docs/product/objects/apparence.md` et `rge.md`) — un copilote ne pointe jamais
+vers une action que l'utilisateur ne peut pas faire.
+
+Le SEO pointe encore vers `/admin/settings` (pas d'écran dédié tant que le lot F
+n'est pas livré) — à corriger quand ce lot passera.
+
+**Découverte en vérifiant les usages avant de toucher au comportement de `/admin`
+(règle CLAUDE.md)** : `login.tsx` redirigeait les tenant_admin directement vers
+`/admin/settings` après connexion, en court-circuitant l'index. Sans corriger ce
+point, le nouveau tableau de bord n'aurait jamais été vu à la première connexion —
+corrigé dans le même lot.
+
+### Ce que ce lot simplifie
+
+- 0 écran d'accueil → 1, avec une action mise en avant au lieu d'un choix à faire
+  soi-même parmi 8 entrées de menu identiques visuellement.
+- Après connexion, le chemin vers "quoi faire maintenant" passe de : deviner un
+  menu de 8 items sans hiérarchie → 0 clic, la réponse est affichée directement.
+- Nav client : 8 items → 9 (Tableau de bord ajouté en tête).
+
+### Ce que ce lot supprime
+
+- La redirection automatique et silencieuse de `/admin/` vers `/admin/services` —
+  remplacée par un écran réel.
+- Le renvoi direct de la page de connexion vers `/admin/settings`, qui rendait
+  la page d'accueil inatteignable au premier login.
+
+### Ce qui reste à migrer
+
+- Le lien SEO de la prochaine meilleure action, vers `/admin/settings` en
+  attendant l'écran dédié du lot F.
+
+### Risques connus
+
+- L'ordre de priorité des actions est une hypothèse non testée en usage réel (voir
+  ci-dessus) — à revoir si les artisans ignorent systématiquement l'action mise en
+  avant.
+- Build et typecheck vérifiés ; pas de test en navigateur connecté (identifiants
+  tenant_admin non disponibles dans cet environnement).
 
 ## Lot F — Séparer Entreprise / Apparence / SEO / Contact
 

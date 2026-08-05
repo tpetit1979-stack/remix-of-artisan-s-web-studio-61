@@ -35,7 +35,7 @@ function LoginPage() {
   // would not be parsed as query params by the router.
   useEffect(() => {
     if (isLoading || !isAuthenticated) return;
-    const target = search.redirect || (role === "super_admin" ? "/super-admin" : "/admin/settings");
+    const target = search.redirect || (role === "super_admin" ? "/super-admin" : "/admin");
     const [path, queryString] = target.split("?");
     navigate({
       to: path,

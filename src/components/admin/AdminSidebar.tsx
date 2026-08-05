@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
+  LayoutDashboard,
   Wrench,
   MapPin,
   Image,
@@ -19,6 +20,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { buildPublicSiteUrl, type Tenant } from "@/lib/tenant";
 
 const navItems = [
+  { label: "Tableau de bord", to: "/admin", icon: LayoutDashboard },
   { label: "Mes services", to: "/admin/services", icon: Wrench },
   { label: "Zones d'intervention", to: "/admin/service-areas", icon: MapPin },
   { label: "Mes réalisations", to: "/admin/portfolio", icon: Image },
@@ -67,7 +69,10 @@ export function AdminSidebar({ tenant }: { tenant: Tenant | null }) {
 
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map((item) => {
-            const isActive = location.pathname.startsWith(item.to);
+            const isActive =
+              item.to === "/admin"
+                ? location.pathname === "/admin" || location.pathname === "/admin/"
+                : location.pathname.startsWith(item.to);
             return (
               <Link
                 key={item.to}
