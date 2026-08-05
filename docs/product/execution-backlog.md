@@ -599,21 +599,34 @@ composant partagé, déjà unique sur les cartes services) appelle
 `portfolio` — elle ne consultait que `tenant_media` (vide pour la plupart des
 tenants tant qu'aucun écran d'upload dédié n'existe) puis
 `trade_template_id` (souvent `null` — EASYDEP notamment). Un tenant peut donc
-avoir de vraies illustrations en base, explicitement rattachées à un service,
-sans qu'aucune ne s'affiche jamais nulle part. Ce n'est pas un trou EASYDEP,
-c'est un trou du moteur — corrigé une fois pour tous les tenants présents et
-futurs, catégorie **A**.
+avoir des illustrations de service en base, explicitement rattachées à un
+service, sans qu'aucune ne s'affiche jamais nulle part. Ce n'est pas un trou
+EASYDEP, c'est un trou du moteur — corrigé une fois pour tous les tenants
+présents et futurs, catégorie **A**.
+
+**Vocabulaire à respecter partout où ce lot est cité** : `content_kind =
+'illustration'` produit une **illustration de service** — une image
+représentative, jamais une preuve terrain. Seul `content_kind =
+'real_project'`, fourni ou confirmé par le tenant, constitue une **photo de
+réalisation réelle**. Ne jamais écrire "vraie photo" ou "image réelle" pour
+un média `illustration`, même quand son rendu à l'écran est identique à une
+vraie photo — la distinction est sur ce que le média affirme, pas sur son
+rendu visuel.
 
 **Nouveau niveau 1.5** dans `resolveMedia()` (`src/lib/media-resolver.ts`),
 entre le niveau 1 (`tenant_media`) et le niveau 2 (bibliothèque métier) :
 `portfolio` où `service_id` correspond exactement au service ET
-`content_kind = 'illustration'` — jamais `real_project`, pour qu'une vraie
-photo de chantier ne se retrouve jamais réutilisée comme simple illustration
+`content_kind = 'illustration'` — jamais `real_project`, pour qu'une photo de
+réalisation réelle ne se retrouve jamais réutilisée comme simple illustration
 ailleurs. Aucune condition sur `is_published` : cette colonne gouverne la
 grille "Réalisations" (une affirmation de travail réellement effectué), pas
-l'éligibilité d'une photo à illustrer le service lui-même. L'`alt` ne lit
+l'éligibilité d'une image à illustrer le service lui-même. L'`alt` ne lit
 jamais `portfolio.title` (qui peut nommer une ville) — toujours le nom du
-service, pour ne jamais inventer un chantier ou une localisation.
+service, pour ne jamais inventer un chantier ou une localisation. Le rendu
+public peut légitimement utiliser ces illustrations sur les pages Services ;
+ce que l'interface, la documentation et les textes ne doivent jamais laisser
+entendre, c'est qu'un chantier a été réalisé par le tenant à l'endroit ou
+dans les conditions que le média suggère.
 
 **Deux surfaces qui n'affichaient tout simplement aucune image, pas un
 problème de résolveur** : `/services/$serviceSlug` et `/$slug` (page
@@ -630,7 +643,7 @@ nécessaire.
   propre logique d'image, seules 2 sur 4 n'appelaient simplement pas le
   composant.
 - 0 dépendance obligatoire à `trade_template_id` pour qu'un tenant obtienne
-  une vraie photo sur ses cartes de service — le niveau 1.5 fonctionne sans.
+  une illustration de service sur ses cartes — le niveau 1.5 fonctionne sans.
 
 ### Ce que ce lot supprime
 
@@ -638,18 +651,22 @@ Rien — correctif additif, aucun comportement existant retiré.
 
 ### Ce qui reste à migrer
 
-**Pour EASYDEP précisément** — vérifié en base, pas supposé : sur 16
-services, **1 seul** obtient une vraie photo après ce correctif
-("Installation poêle à bois", via une illustration déjà correctement
-rattachée). `tenants.trade_template_id` est `null` pour EASYDEP, donc le
-niveau 2 (bibliothèque métier) ne peut jamais se déclencher pour les 15
-autres — ils restent sur le dégradé + icône. 4 des 5 illustrations d'EASYDEP
-n'ont **aucun** `service_id` renseigné : leurs titres suggèrent un service
-plausible (ramonage, climatisation, insert cheminée, dépannage poêle à
-granulés) mais un rattachement déjà existant s'est révélé incohérent avec
-son propre titre — je ne devine donc pas les 4 autres. À sélectionner
-manuellement dans `Super Admin → EASYDEP → Réalisations`, un par un, si tu
-veux combler le reste avant la démonstration.
+**Pour EASYDEP précisément** — vérifié en base, pas supposé, état final après
+les associations manuelles faites en Super Admin : sur 16 services, **5**
+affichent une illustration de service (Unsplash, `content_kind =
+'illustration'`, jamais un chantier réel d'EASYDEP), **11** restent sur le
+dégradé + icône. `tenants.trade_template_id` est `null` pour EASYDEP, donc le
+niveau 2 (bibliothèque métier) ne peut jamais se déclencher pour les 11
+restants. Les 5 associations ont été faites une par une, uniquement quand le
+titre et la description du média désignaient un service sans ambiguïté —
+aucune image dupliquée sur plusieurs services pour combler l'espace. Aucune
+de ces 5 images n'est, ni ne doit jamais être présentée comme, une
+réalisation réelle d'EASYDEP.
+
+Pour de vraies photos de réalisations EASYDEP, la seule voie légitime reste
+que le tenant (ou l'agence en son nom) fournisse ses propres photos —
+`content_kind` par défaut est déjà `'real_project'` sur toute nouvelle ligne
+`portfolio`, aucun changement de code nécessaire pour ce cas.
 
 ### Risques connus
 
@@ -661,3 +678,33 @@ veux combler le reste avant la démonstration.
 - Rendu visuel des deux nouvelles colonnes image (hero service et
   service×ville) non vérifié en navigateur connecté — même limite que tous
   les lots précédents dans cet environnement.
+
+## Lot (différé) — Image par service : sélection ou upload depuis l'Admin
+
+**Statut : backlog, non planifié — documentation seule, aucun code.**
+
+Le niveau 1.5 du resolver (lot ci-dessus) ne comble le trou visuel d'un
+tenant que si une illustration exploitable existe déjà et peut être
+rattachée à la main en Super Admin, ligne par ligne, en base. Ce n'est pas
+un chemin utilisable par un futur client ou par l'agence au quotidien —
+c'est ce qui a permis de traiter EASYDEP aujourd'hui, pas ce qui doit rester
+la norme.
+
+**Objectif** : dans `/admin/services` (et son équivalent Super Admin, même
+composant), chaque service propose de choisir ou déposer sa propre image,
+sans intervention de Claude Code ni écriture SQL directe.
+
+**Definition of Done proposée** :
+- le client ou l'agence choisit une image pour chaque service — upload
+  direct ou sélection parmi les illustrations déjà existantes du tenant ;
+- aperçu immédiat avant validation ;
+- origine et statut visibles (photo propre / illustration / bibliothèque
+  métier), pas une boîte noire ;
+- un bouton "restaurer le comportement par défaut" qui revient au niveau
+  1.5/2/3 du resolver, sans supprimer l'image déposée ;
+- aucune dépendance à ce chantier-ci pour qu'un futur tenant obtienne des
+  photos correctes — le correctif global (niveau 1.5) reste la base, cet
+  écran est ce qui permet de l'alimenter sans passer par une session Claude
+  Code.
+
+**Portée** : catégorie A — améliore tous les tenants, pas seulement EASYDEP.
