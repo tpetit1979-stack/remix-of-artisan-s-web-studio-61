@@ -28,24 +28,57 @@ les six prochains mois de refactoring, relue automatiquement via `CLAUDE.md`.
 
 ## Lot A — Pilotage agence
 
-**Statut : fait.** Principes : 5, 9, 10.
+**Statut : fait.** Principes : 5, 9, 10. Commit `13ad2b5`.
 
-`super-admin.dashboard.tsx` a été supprimé et fusionné dans
-`super-admin.tenants.index.tsx`, renommé "Pilotage" à l'écran. `/super-admin/` et
-la sidebar ne pointent plus que vers cet unique écran.
+Le Super Admin n'a plus qu'un seul écran d'entrée — "Pilotage", à
+`/super-admin/tenants` — qui sert à la fois de vue d'ensemble et de recherche de
+client. `/super-admin/` y redirige directement ; la sidebar n'a plus qu'un lien là
+où elle en avait deux.
 
-Ajoutés : bandeau de 4 indicateurs (tenants actifs, demandes 30j, services total,
-certifiés RGE) ; filtre "Sans marque" (`tenant_brands`) ; filtre "Prêt à publier"
-(services + zones + logo) ; badge "Marques" dans la liste.
+Le filtre "Demande non lue" (`contacts.is_read = false`) remplace ce qui était
+prévu comme "sans réponse récente" — `contacts` ne trace pas si le tenant a
+répondu au client, seulement si l'agence a ouvert la demande. **Hypothèse non
+vérifiable dans le code, à surveiller en usage réel** : `is_read` a été conçu comme
+un indicateur de lecture, pas de suivi commercial — si un futur usage le fait
+basculer sans action réelle de l'agence, le filtre perd sa valeur.
 
-Le filtre "sans réponse récente" a été renommé **"Demande non lue"** et redéfini
-sur `contacts.is_read = false` — `contacts` ne trace pas si le tenant a répondu au
-client, seulement si l'agence a ouvert la demande. C'est le seul signal honnête
-disponible aujourd'hui ; le libellé le dit explicitement plutôt que de suggérer une
-mesure qui n'existe pas.
+**Prêt à publier** est défini comme services + zones + logo présents. C'est un
+jugement produit, pas une règle qui existait déjà dans le code — à réévaluer si
+l'usage montre qu'un autre signal (RGE, marques) devrait aussi compter.
 
-Reste une liste de clients qui sert à retrouver quelqu'un et à savoir qui a besoin
-d'une action — pas un tableau de bord surchargé.
+### Ce que ce lot simplifie
+
+- 2 écrans qui recalculaient les mêmes chiffres séparément → 1 seul.
+- 2 liens de navigation Super Admin → 1 seul.
+- 6 filtres disponibles → 9 (Sans marque, Demande non lue, Prêt à publier en plus).
+- 4 badges de complétude par client dans la liste → 5 (Marques en plus).
+- Passer d'une vue d'ensemble à la recherche d'un client précis ne demande plus de
+  changer d'écran — 1 clic de transition en moins.
+- Net **-152 lignes** de code produit (117 insertions, 269 suppressions, hors
+  fichier de route auto-généré).
+
+### Ce que ce lot supprime
+
+- `super-admin.dashboard.tsx` (213 lignes) et son lien de navigation "Dashboard".
+- La liste "Tenants incomplets" à 2 signaux (Services, Zones) — remplacée par les
+  badges et le filtre "Incomplets" de l'écran fusionné, qui portent sur 5 signaux.
+
+Vérifié avant suppression, pas après : les 4 cartes KPI, la liste des tenants
+incomplets et les deux liens rapides (Onboarding, Tenants) du dashboard supprimé
+ont chacun un équivalent direct dans l'écran fusionné ou restent accessibles
+depuis la sidebar elle-même.
+
+### Ce qui reste à migrer
+
+Rien pour cet objet — le lot est autonome. Aucune dépendance créée pour les lots
+suivants (D, F, E, C, B).
+
+### Risques connus
+
+- "Demande non lue" repose sur un champ qui n'a pas été pensé à l'origine comme un
+  indicateur de suivi commercial (voir hypothèse ci-dessus).
+- Build et typecheck vérifiés ; pas de test en navigateur connecté (identifiants
+  Super Admin non disponibles dans cet environnement).
 
 ## Lot D — Tableau de bord client + prochaine meilleure action
 
