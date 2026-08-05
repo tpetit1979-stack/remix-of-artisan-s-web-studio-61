@@ -6,8 +6,11 @@ import {
   insertTeamMember,
   updateTeamMember,
   deleteTeamMember,
+  updateTeamPresentationMode,
   type TeamMember,
+  type TeamPresentationMode,
 } from "@/lib/team";
+import { fetchSiteSettings } from "@/lib/tenant";
 import {
   validateImageFile,
   buildMediaPath,
@@ -17,24 +20,38 @@ import {
   extractMediaPathFromPublicUrl,
 } from "@/lib/media-upload";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, User } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Lock, AlertTriangle } from "lucide-react";
 
 type Draft = Partial<TeamMember> & { full_name: string; role_title: string };
 
 interface Props {
   tenantId: string;
+  /** Only the Super Admin call site sets this — Admin is always read-only. */
+  canEditPresentationMode?: boolean;
+}
+
+const PRESENTATION_OPTIONS: { value: TeamPresentationMode; label: string }[] = [
+  { value: null, label: "Non défini" },
+  { value: "artisan", label: "Artisan indépendant" },
+  { value: "company", label: "Entreprise" },
+  { value: "hidden", label: "Section masquée" },
+];
+
+function presentationLabel(mode: TeamPresentationMode): string {
+  return PRESENTATION_OPTIONS.find((o) => o.value === mode)?.label ?? "Non défini";
 }
 
 /**
  * Shared CRUD UI for `tenant_team_members`. Used by `/admin/team` and the
  * super-admin tenant "Équipe" tab.
  */
-export function TeamManager({ tenantId }: Props) {
+export function TeamManager({ tenantId, canEditPresentationMode = false }: Props) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<Draft | null>(null);
   const [open, setOpen] = useState(false);
@@ -45,6 +62,26 @@ export function TeamManager({ tenantId }: Props) {
     queryKey: ["team-members", tenantId],
     queryFn: () => fetchTeamMembers(tenantId),
     enabled: !!tenantId,
+  });
+
+  const { data: settings } = useQuery({
+    queryKey: ["site-settings-team-mode", tenantId],
+    queryFn: () => fetchSiteSettings(tenantId),
+    enabled: !!tenantId,
+  });
+
+  // See TeamSection.tsx for why this cast is safe: the DB CHECK constraint
+  // guarantees only these four values, the generated type is just `string | null`.
+  const presentationMode = (settings?.team_presentation_mode ?? null) as TeamPresentationMode;
+  const activeMembers = members.filter((m) => m.is_active);
+
+  const presentationMutation = useMutation({
+    mutationFn: (mode: TeamPresentationMode) => updateTeamPresentationMode(tenantId, mode),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["site-settings-team-mode", tenantId] });
+      toast.success("Présentation mise à jour");
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const saveMutation = useMutation({
@@ -141,6 +178,65 @@ export function TeamManager({ tenantId }: Props) {
 
   return (
     <div className="space-y-4">
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">Présentation publique</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {canEditPresentationMode ? (
+            <RadioGroup
+              value={presentationMode ?? "unset"}
+              onValueChange={(v) =>
+                presentationMutation.mutate(v === "unset" ? null : (v as TeamPresentationMode))
+              }
+            >
+              {PRESENTATION_OPTIONS.map((opt) => (
+                <div key={opt.label} className="flex items-center gap-2">
+                  <RadioGroupItem value={opt.value ?? "unset"} id={`pm-${opt.label}`} />
+                  <Label htmlFor={`pm-${opt.label}`} className="font-normal">
+                    {opt.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          ) : (
+            <div className="flex items-start gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
+              <span>
+                {presentationLabel(presentationMode)} — géré par votre agence.
+              </span>
+            </div>
+          )}
+
+          {presentationMode === "artisan" && (
+            <p className="text-xs text-muted-foreground">
+              En mode Artisan, seule la première personne de la liste (par ordre) est affichée
+              publiquement.
+            </p>
+          )}
+          {presentationMode === "artisan" && activeMembers.length > 1 && (
+            <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" aria-hidden="true" />
+              <span>
+                {activeMembers.length} membres actifs, mais un seul apparaîtra publiquement en
+                mode Artisan.
+              </span>
+            </div>
+          )}
+          {presentationMode === null && activeMembers.length > 0 && (
+            <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" aria-hidden="true" />
+              <span>
+                Présentation de l'équipe non définie, alors que {activeMembers.length} membre
+                {activeMembers.length > 1 ? "s" : ""} actif{activeMembers.length > 1 ? "s" : ""}{" "}
+                existe{activeMembers.length > 1 ? "nt" : ""} — la section publique reste masquée
+                en attendant un arbitrage.
+              </span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-foreground">Membres de l'équipe</h3>

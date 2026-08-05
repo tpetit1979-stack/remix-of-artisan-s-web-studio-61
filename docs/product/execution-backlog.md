@@ -248,10 +248,9 @@ exactement le risque signalé avant de planifier quoi que ce soit.
 
 ### Lot 2 — Solo vs équipe (catégorie A) — révisé
 
-**Statut : remplace la version initialement livrée.** La v1 déduisait le mode
-de présentation du nombre de membres actifs — un objet métier confondu avec
-un choix éditorial (voir la Constitution, principe 2). Corrigé avant toute
-généralisation.
+**Statut : fait.** Remplace la version initialement livrée, qui déduisait le
+mode de présentation du nombre de membres actifs — un objet métier confondu
+avec un choix éditorial (voir la Constitution, principe 2).
 
 **Décisions retenues**
 
@@ -288,22 +287,42 @@ généralisation.
 - EASYDEP ne passe à `artisan` que par une action Super Admin séparée et
   explicite, après le déploiement — jamais par la migration elle-même.
 
-**Fichiers concernés** : nouvelle migration (colonne + trigger) ; types
-Supabase régénérés ; `src/lib/team.ts` (fonction pure `resolveTeamPresentation`
-+ mutation de mode) ; `src/components/admin/TeamManager.tsx` (contrôle Super
-Admin, microcopie, alertes — lecture seule côté Admin) ; `admin.settings.tsx`
-(affichage verrouillé du mode côté client, si pertinent) ;
-`src/components/public/TeamSection.tsx` (consomme la fonction pure).
+**Fichiers livrés** : migration `20260805090000_team_presentation_mode.sql`
+(colonne + contrainte + trigger `INSERT`/`UPDATE`) ; types Supabase régénérés ;
+`src/lib/team.ts` (`resolveTeamPresentation`, `updateTeamPresentationMode`,
+type `TeamPresentationMode`) ; `src/components/admin/TeamManager.tsx`
+(contrôle à 4 états côté Super Admin, lecture seule verrouillée côté Admin,
+microcopie, les deux alertes) ; `super-admin.tenants.$tenantId.tsx`
+(`canEditPresentationMode` passé uniquement à cet appel) ;
+`src/components/public/TeamSection.tsx` (consomme la fonction pure, layout
+`solo` dédié — plus la grille réutilisée telle quelle) ; `src/lib/team.test.ts`
+(8 tests unitaires, la matrice complète).
 
-**Definition of Done** : les 7 lignes de la matrice de rendu vérifiées,
-y compris `null` → masqué même avec des membres actifs en base ; test unitaire
-de `resolveTeamPresentation` couvrant chaque combinaison ; build et typecheck
-propres ; aucune donnée d'EASYDEP modifiée automatiquement.
+**Ce que ce lot simplifie** : 1 logique de déduction implicite (comptage) → 1
+réglage explicite avec 4 états nommés, dont un état "non arbitré" qui
+n'existait pas avant. La solidité du verrou franchit un cran : le premier
+essai ne protégeait rien en base (c'était un simple champ dérivé, pas une
+donnée écrite) ; celui-ci est verrouillé par un trigger dédié couvrant
+`INSERT` et `UPDATE`, pas seulement `UPDATE`.
 
-**Tests** : Admin (lecture seule, cadenas) ; Super Admin (les 4 états
-sélectionnables, microcopie et les deux alertes visibles) ; Public (matrice
-complète). Test unitaire pour la fonction de résolution. Pas de test en
-navigateur connecté dans cet environnement — à faire séparément.
+**Vérifié en base après migration** : les 16 lignes `site_settings`
+existantes sont toutes à `team_presentation_mode = null` — aucun
+préremplissage, EASYDEP inclus. `mcp__Supabase__get_advisors` ne signale
+aucun avertissement nouveau propre à ce trigger, seulement le même
+avertissement générique déjà porté par tous les triggers existants du
+projet.
+
+**Definition of Done** : les 7 lignes de la matrice de rendu couvertes par
+les tests unitaires (8/8 verts) ; build et typecheck propres ; aucune donnée
+d'EASYDEP modifiée automatiquement — confirmé en base, pas seulement
+supposé.
+
+**Tests** : unitaires sur `resolveTeamPresentation`, verts (build + typecheck
++ vitest exécutés). Admin/Super Admin/Public — logique vérifiée par lecture de
+code et par les tests unitaires, pas par un test en navigateur connecté
+(identifiants non disponibles dans cet environnement) : à faire séparément
+avant de considérer le rendu visuel validé, notamment le layout `solo` à une
+seule carte.
 
 **Dépendances** : aucune.
 

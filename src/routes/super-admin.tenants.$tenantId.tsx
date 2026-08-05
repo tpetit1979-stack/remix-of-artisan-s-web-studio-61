@@ -399,7 +399,7 @@ function TenantDetail() {
           <CertificationsTab tenantId={tenantId} tenant={tenant} certifications={certifications} />
         </TabsContent>
         <TabsContent value="team" className="mt-3">
-          <TeamManager tenantId={tenantId} />
+          <TeamManager tenantId={tenantId} canEditPresentationMode />
         </TabsContent>
         <TabsContent value="partners" className="mt-3">
           <PartnersManager tenantId={tenantId} />

@@ -365,6 +365,7 @@ export type Database = {
           seo_meta_description: string | null
           seo_meta_title: string | null
           social_links: Json | null
+          team_presentation_mode: string | null
           tenant_id: string
           updated_at: string | null
           whatsapp_enabled: boolean
@@ -396,6 +397,7 @@ export type Database = {
           seo_meta_description?: string | null
           seo_meta_title?: string | null
           social_links?: Json | null
+          team_presentation_mode?: string | null
           tenant_id: string
           updated_at?: string | null
           whatsapp_enabled?: boolean
@@ -427,6 +429,7 @@ export type Database = {
           seo_meta_description?: string | null
           seo_meta_title?: string | null
           social_links?: Json | null
+          team_presentation_mode?: string | null
           tenant_id?: string
           updated_at?: string | null
           whatsapp_enabled?: boolean
@@ -1262,6 +1265,7 @@ export type Database = {
           seo_meta_description: string | null
           seo_meta_title: string | null
           social_links: Json | null
+          team_presentation_mode: string | null
           tenant_id: string
           updated_at: string | null
           whatsapp_enabled: boolean
