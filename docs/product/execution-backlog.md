@@ -202,18 +202,23 @@ ponctuel pour ce tenant — chaque item est classé par le principe 11 de la
 constitution avant d'être planifié, pour ne jamais confondre un chantier
 plateforme (A/B) avec une donnée d'un seul client (C).
 
-| # | Sujet | Catégorie | Concerne |
-|---|---|---|---|
-| 1 | Élément "test" publié par erreur | **C** | EASYDEP uniquement |
-| 2 | Solo vs équipe | **A** | Tous les tenants, dès qu'ils ont 0 ou 1 membre actif |
-| 3 | Illustrations : badge, blocage publication, filtre public | **A** | Tous les tenants ; le nettoyage des 5 illustrations d'EASYDEP reste C mais n'a rien à faire — elles sont déjà correctement non publiées |
-| 4 | Peupler le catalogue de marques | **B** | Contenu partagé — bénéficie à tout tenant du même métier, pas seulement EASYDEP |
-| 5 | Construire l'affichage public des marques | **A** | Le mécanisme, pour tous les tenants |
-| 6 | Migrer Lorflex / De Dietrich / Klover | **C** | EASYDEP uniquement |
-| 7 | Affectation en masse Villes × Services | **A** | Tous les tenants |
-| 8 | Simplifier le formulaire Service | **A** | Tous les tenants |
-| 9 | Catalogue de services-types (`trade_service_templates`) | **B** | Différé — gouvernance séparée (taxonomie, SEO, rattachement métier) |
-| 10 | Bibliothèque de médias métier (`trade_media_library`) | **B** | Différé — gouvernance séparée (provenance, licence, classification) |
+| # | Sujet | Catégorie | Autorisation requise | Concerne |
+|---|---|---|---|---|
+| 1 | Élément "test" dépublié (jamais supprimé) | **C** | Confirmation explicite, tenant par tenant | EASYDEP uniquement |
+| 2 | Solo vs équipe | **A** | Validation du lot | Tous les tenants, dès qu'ils ont 0 ou 1 membre actif |
+| 3 | Illustrations : badge, blocage publication, filtre public | **A** | Validation du lot | Tous les tenants ; le nettoyage des 5 illustrations d'EASYDEP reste C mais n'a rien à faire — elles sont déjà correctement non publiées |
+| 4 | Peupler le catalogue de marques | **B** | Validation de la liste et des contenus | Contenu partagé — bénéficie à tout tenant du même métier, pas seulement EASYDEP |
+| 5 | Construire l'affichage public des marques | **A** | Validation du lot | Le mécanisme, pour tous les tenants |
+| 6 | Migrer Lorflex / De Dietrich / Klover | **C** | Confirmation explicite, après validation visuelle | EASYDEP uniquement |
+| 7 | Affectation en masse Villes × Services | **A** | Validation du lot | Tous les tenants |
+| 8 | Simplifier le formulaire Service | **A** | Validation du lot | Tous les tenants |
+| 9 | Catalogue de services-types (`trade_service_templates`) | **B** | Différé — gouvernance séparée (taxonomie, SEO, rattachement métier) | — |
+| 10 | Bibliothèque de médias métier (`trade_media_library`) | **B** | Différé — gouvernance séparée (provenance, licence, classification) | — |
+
+**Ordre d'exécution retenu** : `2 → 3 → 1 (après confirmation) → 4 (après
+validation de la liste) → 5 → 6 (après validation visuelle) → 7 → 8`. On
+commence par les deux corrections génériques les plus sûres (A), pas par une
+écriture en production sur les données d'un client — même réversible.
 
 ### Découverte en vérifiant avant d'écrire le plan
 
@@ -230,10 +235,10 @@ exactement le risque signalé avant de planifier quoi que ce soit.
 ### Lot 1 — Nettoyer l'élément "test" (catégorie C)
 
 - **Fichiers concernés** : aucun — correction de données uniquement, via
-  `/admin/portfolio` (dépublier) ou une commande directe si nécessaire.
+  `/admin/portfolio`.
 - **Données modifiées** : `portfolio` id `1d07292d-a5c6-406d-bc62-c10cdc3e4357`
-  (tenant EASYDEP) — `is_published: true → false`, ou suppression si confirmé
-  qu'il s'agit d'un test sans valeur.
+  (tenant EASYDEP) — `is_published: true → false` **uniquement**. Jamais de
+  suppression définitive : dépublier est réversible, supprimer ne l'est pas.
 - **Definition of Done** : l'entrée ne remonte plus sur `/realisations`
   d'EASYDEP, vérifié après correction.
 - **Tests** : Public uniquement. Aucun changement de code, donc rien à tester
@@ -296,10 +301,23 @@ exactement le risque signalé avant de planifier quoi que ce soit.
   vérifier si `lib/brands.ts` a besoin d'une fonction de lecture publique dédiée
   respectant `is_featured` et `sort_order`, ou si l'existante suffit.
 - **Données modifiées** : aucune — lecture seule.
+- **Décision de positionnement, prise avant le code** : trois sections
+  publiques distinctes, jamais fusionnées visuellement.
+
+  | Objet | Message public |
+  |---|---|
+  | Marques (`BrandsSection`) | "Marques installées et entretenues" (ou formulation équivalente) |
+  | Partenaires (`PartnersSection`, existant) | "Nos partenaires" — réseaux, organismes de confiance |
+  | Certifications (`CertificationBadges`, existant) | Qualifications réellement détenues |
+
 - **Definition of Done** : les marques sélectionnées par un tenant s'affichent
-  publiquement, dans l'ordre, avec la mise en avant respectée.
+  publiquement, dans l'ordre, avec la mise en avant respectée ; **uniquement**
+  les marques explicitement rattachées au tenant — jamais le catalogue global ;
+  section **masquée entièrement** si aucune marque n'est sélectionnée, même
+  règle que `TeamSection` et `PartnersSection`.
 - **Tests** : Public (nouveau composant, testé avec un tenant ayant au moins
-  une marque sélectionnée). Admin/Super Admin non concernés.
+  une marque sélectionnée, et avec un tenant sans aucune — section absente).
+  Admin/Super Admin non concernés.
 - **Dépendances** : lot 4 (avoir au moins une marque à afficher pour tester
   réellement, pas seulement en théorie).
 

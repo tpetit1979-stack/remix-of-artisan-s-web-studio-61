@@ -47,6 +47,17 @@ démontrée — voir "Statut" en bas de page.
     B. Non, ça ne concerne qu'un seul client → C, et ça ne doit jamais se
     déguiser en chantier A ou B pour paraître plus important que ce que c'est.
 
+    Chaque catégorie a son propre niveau d'autorisation avant d'écrire quoi que
+    ce soit :
+
+    - **A** : développement direct une fois le lot validé — pas de confirmation
+      supplémentaire tenant par tenant.
+    - **B** : aucune donnée créée sans validation explicite de la liste et des
+      contenus (quelles marques, quels logos, quelles catégories, quelle
+      provenance).
+    - **C** : aucune écriture ni suppression en production sans confirmation
+      explicite, pour le tenant concerné, séparément du reste du lot.
+
 ## Avant de créer
 
 - **Un composant** → chercher s'il existe déjà (voir `docs/product/objects/`).
