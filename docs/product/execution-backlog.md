@@ -588,3 +588,76 @@ aucune vérification. Compromis retenu : un filtre lexical conservateur sur
 
 **Tests minimum attendus** : les 4 cas du tableau ci-dessus, avec et sans la
 donnée tenant correspondante quand elle existe.
+
+## Lot — Photo de service : combler le trou invisible du resolver
+
+**Statut : fait.**
+
+Cause racine identifiée en base réelle, pas supposée : `ServiceMedia` (le
+composant partagé, déjà unique sur les cartes services) appelle
+`resolveMedia(category: "service")`, dont la hiérarchie ignorait totalement
+`portfolio` — elle ne consultait que `tenant_media` (vide pour la plupart des
+tenants tant qu'aucun écran d'upload dédié n'existe) puis
+`trade_template_id` (souvent `null` — EASYDEP notamment). Un tenant peut donc
+avoir de vraies illustrations en base, explicitement rattachées à un service,
+sans qu'aucune ne s'affiche jamais nulle part. Ce n'est pas un trou EASYDEP,
+c'est un trou du moteur — corrigé une fois pour tous les tenants présents et
+futurs, catégorie **A**.
+
+**Nouveau niveau 1.5** dans `resolveMedia()` (`src/lib/media-resolver.ts`),
+entre le niveau 1 (`tenant_media`) et le niveau 2 (bibliothèque métier) :
+`portfolio` où `service_id` correspond exactement au service ET
+`content_kind = 'illustration'` — jamais `real_project`, pour qu'une vraie
+photo de chantier ne se retrouve jamais réutilisée comme simple illustration
+ailleurs. Aucune condition sur `is_published` : cette colonne gouverne la
+grille "Réalisations" (une affirmation de travail réellement effectué), pas
+l'éligibilité d'une photo à illustrer le service lui-même. L'`alt` ne lit
+jamais `portfolio.title` (qui peut nommer une ville) — toujours le nom du
+service, pour ne jamais inventer un chantier ou une localisation.
+
+**Deux surfaces qui n'affichaient tout simplement aucune image, pas un
+problème de résolveur** : `/services/$serviceSlug` et `/$slug` (page
+service×ville) n'avaient aucun `<ServiceMedia>` dans leur hero — corrigé en
+leur ajoutant la même colonne image que les cartes, sur le modèle déjà en
+place. `/` (cartes vedettes) et `/services` utilisaient déjà `ServiceMedia` —
+ils bénéficient du niveau 1.5 automatiquement, aucun changement de composant
+nécessaire.
+
+### Ce que ce lot simplifie
+
+- 1 seul point de résolution d'image pour les 4 surfaces publiques
+  (`ServiceMedia`, déjà partagé) — confirmé qu'aucune des 4 ne dupliquait sa
+  propre logique d'image, seules 2 sur 4 n'appelaient simplement pas le
+  composant.
+- 0 dépendance obligatoire à `trade_template_id` pour qu'un tenant obtienne
+  une vraie photo sur ses cartes de service — le niveau 1.5 fonctionne sans.
+
+### Ce que ce lot supprime
+
+Rien — correctif additif, aucun comportement existant retiré.
+
+### Ce qui reste à migrer
+
+**Pour EASYDEP précisément** — vérifié en base, pas supposé : sur 16
+services, **1 seul** obtient une vraie photo après ce correctif
+("Installation poêle à bois", via une illustration déjà correctement
+rattachée). `tenants.trade_template_id` est `null` pour EASYDEP, donc le
+niveau 2 (bibliothèque métier) ne peut jamais se déclencher pour les 15
+autres — ils restent sur le dégradé + icône. 4 des 5 illustrations d'EASYDEP
+n'ont **aucun** `service_id` renseigné : leurs titres suggèrent un service
+plausible (ramonage, climatisation, insert cheminée, dépannage poêle à
+granulés) mais un rattachement déjà existant s'est révélé incohérent avec
+son propre titre — je ne devine donc pas les 4 autres. À sélectionner
+manuellement dans `Super Admin → EASYDEP → Réalisations`, un par un, si tu
+veux combler le reste avant la démonstration.
+
+### Risques connus
+
+- Build, typecheck et 32 tests (suite existante, inchangée) vérifiés ;
+  vérification du niveau 1.5 faite par requête directe en base réelle
+  (lecture seule) sur les 16 services d'EASYDEP, pas par un test unitaire
+  dédié — `resolveMedia()` dépend du client Supabase, aucune infrastructure
+  de mock n'existe dans ce projet et n'a pas été construite pour ce seul lot.
+- Rendu visuel des deux nouvelles colonnes image (hero service et
+  service×ville) non vérifié en navigateur connecté — même limite que tous
+  les lots précédents dans cet environnement.

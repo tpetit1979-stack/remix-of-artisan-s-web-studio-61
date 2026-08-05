@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
+import { ServiceMedia } from "@/components/public/ServiceMedia";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, MapPin, ArrowRight } from "lucide-react";
@@ -122,7 +123,7 @@ function ServiceCityPage() {
 
       <main className="flex-1">
         <section className="bg-primary/5 py-16 lg:py-24">
-          <div className="mx-auto max-w-7xl px-4">
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 lg:grid-cols-2 lg:items-center">
             <div className="max-w-3xl">
               <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                 {h1}
@@ -143,6 +144,9 @@ function ServiceCityPage() {
                   </a>
                 )}
               </div>
+            </div>
+            <div className="overflow-hidden rounded-2xl shadow-elegant">
+              <ServiceMedia service={service} />
             </div>
           </div>
         </section>

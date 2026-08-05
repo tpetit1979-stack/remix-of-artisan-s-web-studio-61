@@ -101,24 +101,29 @@ function ServiceDetailPage() {
       <main className="flex-1">
         {/* Hero */}
         <section className="bg-primary/5 py-14 lg:py-20">
-          <div className="mx-auto max-w-7xl px-4">
-            <h1 className="text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-              {service.name}
-            </h1>
-            {service.description && (
-              <p className="mt-6 max-w-3xl text-lg text-muted-foreground">{service.description}</p>
-            )}
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/contact" search={{ service: service.id, ...previewTenant }}>
-                <Button size="lg">{buttonLabel}</Button>
-              </Link>
-              {tenant.phone && (
+          <div className="mx-auto grid max-w-7xl gap-8 px-4 lg:grid-cols-2 lg:items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
+                {service.name}
+              </h1>
+              {service.description && (
+                <p className="mt-6 max-w-3xl text-lg text-muted-foreground">{service.description}</p>
+              )}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link to="/contact" search={{ service: service.id, ...previewTenant }}>
+                  <Button size="lg">{buttonLabel}</Button>
+                </Link>
+                {tenant.phone && (
                 <a href={`tel:${tenant.phone.replace(/\s/g, "")}`}>
                   <Button variant="outline" size="lg">
                     <Phone className="mr-2 h-4 w-4" />{tenant.phone}
                   </Button>
                 </a>
               )}
+              </div>
+            </div>
+            <div className="overflow-hidden rounded-2xl shadow-elegant">
+              <ServiceMedia service={service} />
             </div>
           </div>
         </section>

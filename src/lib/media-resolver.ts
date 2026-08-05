@@ -1,8 +1,10 @@
 /**
  * Media resolver — UNIQUE source of truth for every image rendered in the app.
  *
- * Strict 3-level fallback hierarchy:
+ * Fallback hierarchy (service cards get an extra level, see below):
  *   1. tenant_media   → photo uploaded/assigned by the client (or super-admin for them)
+ *   1.5 (category "service" only) → the tenant's own portfolio illustration
+ *       explicitly linked to that exact service (content_kind='illustration')
  *   2. trade_media_library (via public_trade_media view) → trade template default
  *   3. placeholder neutral SVG → last resort, never breaks layout
  *
@@ -141,6 +143,35 @@ export async function resolveMedia(input: ResolveMediaInput): Promise<ResolvedMe
       return {
         url: data.public_url as string,
         alt: ((data.alt_text as string | null) ?? altFallback ?? "").trim(),
+        source: "tenant",
+      };
+    }
+  }
+
+  // Level 1.5 — tenant's own portfolio illustration for this exact service.
+  // "illustration" content is safe, representative content for a service
+  // card — content_kind='real_project' is deliberately excluded here, so a
+  // genuine completed-job photo never gets silently reused as generic
+  // service artwork on a different page. No `is_published` requirement:
+  // publication gates the Réalisations grid (a claim of finished work),
+  // not eligibility to illustrate what the service itself looks like.
+  // alt text never reads portfolio.title (may name a city/job) — always
+  // altFallback (the service name) so a service card never invents a
+  // location or a project that didn't happen there.
+  if (tenantId && category === "service" && targetId) {
+    const { data, error } = await supabase
+      .from("portfolio")
+      .select("image_url")
+      .eq("tenant_id", tenantId)
+      .eq("service_id", targetId)
+      .eq("content_kind", "illustration")
+      .order("sort_order", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    if (!error && data?.image_url) {
+      return {
+        url: data.image_url,
+        alt: (altFallback ?? "").trim(),
         source: "tenant",
       };
     }
