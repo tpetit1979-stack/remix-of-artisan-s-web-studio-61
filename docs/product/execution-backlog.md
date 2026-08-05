@@ -8,6 +8,8 @@ considéré terminé.
 
 ```
 0 → A → D → F → E → C → B
+    ↑
+  fait
 ```
 
 Risque décroissant : on commence par ce qui ne peut rien casser (documentation),
@@ -26,21 +28,24 @@ les six prochains mois de refactoring, relue automatiquement via `CLAUDE.md`.
 
 ## Lot A — Pilotage agence
 
-**Effort : 1 à 3 jours. Principes : 5, 9, 10.**
+**Statut : fait.** Principes : 5, 9, 10.
 
-Fusionne `super-admin.dashboard.tsx` (compteurs) et `super-admin.tenants.index.tsx`
-(recherche, filtres, badges de complétude, détecteur d'anomalies commerciales déjà
-fonctionnel) en un seul écran. Les deux existent aujourd'hui séparément et
-recalculent les mêmes chiffres.
+`super-admin.dashboard.tsx` a été supprimé et fusionné dans
+`super-admin.tenants.index.tsx`, renommé "Pilotage" à l'écran. `/super-admin/` et
+la sidebar ne pointent plus que vers cet unique écran.
 
-À ajouter : filtre "sans réponse récente" (donnée déjà chargée, jamais exposée
-comme filtre), filtre "aucune marque" (même schéma que les compteurs existants),
-filtre "prêt à publier" (combinaison de signaux déjà calculés).
+Ajoutés : bandeau de 4 indicateurs (tenants actifs, demandes 30j, services total,
+certifiés RGE) ; filtre "Sans marque" (`tenant_brands`) ; filtre "Prêt à publier"
+(services + zones + logo) ; badge "Marques" dans la liste.
+
+Le filtre "sans réponse récente" a été renommé **"Demande non lue"** et redéfini
+sur `contacts.is_read = false` — `contacts` ne trace pas si le tenant a répondu au
+client, seulement si l'agence a ouvert la demande. C'est le seul signal honnête
+disponible aujourd'hui ; le libellé le dit explicitement plutôt que de suggérer une
+mesure qui n'existe pas.
 
 Reste une liste de clients qui sert à retrouver quelqu'un et à savoir qui a besoin
 d'une action — pas un tableau de bord surchargé.
-
-Supprime : `super-admin.dashboard.tsx` comme écran séparé.
 
 ## Lot D — Tableau de bord client + prochaine meilleure action
 

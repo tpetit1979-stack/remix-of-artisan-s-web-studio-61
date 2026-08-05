@@ -29,7 +29,6 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SuperAdminTenantsRouteImport } from './routes/super-admin.tenants'
 import { Route as SuperAdminOnboardingRouteImport } from './routes/super-admin.onboarding'
 import { Route as SuperAdminMediaLibraryRouteImport } from './routes/super-admin.media-library'
-import { Route as SuperAdminDashboardRouteImport } from './routes/super-admin.dashboard'
 import { Route as SuperAdminBrandsRouteImport } from './routes/super-admin.brands'
 import { Route as ServicesServiceSlugRouteImport } from './routes/services.$serviceSlug'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
@@ -144,11 +143,6 @@ const SuperAdminMediaLibraryRoute = SuperAdminMediaLibraryRouteImport.update({
   path: '/media-library',
   getParentRoute: () => SuperAdminRoute,
 } as any)
-const SuperAdminDashboardRoute = SuperAdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => SuperAdminRoute,
-} as any)
 const SuperAdminBrandsRoute = SuperAdminBrandsRouteImport.update({
   id: '/brands',
   path: '/brands',
@@ -242,7 +236,6 @@ export interface FileRoutesByFullPath {
   '/admin/team': typeof AdminTeamRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
-  '/super-admin/dashboard': typeof SuperAdminDashboardRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
@@ -275,7 +268,6 @@ export interface FileRoutesByTo {
   '/admin/team': typeof AdminTeamRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
-  '/super-admin/dashboard': typeof SuperAdminDashboardRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/admin': typeof AdminIndexRoute
@@ -311,7 +303,6 @@ export interface FileRoutesById {
   '/admin/team': typeof AdminTeamRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
-  '/super-admin/dashboard': typeof SuperAdminDashboardRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
@@ -349,7 +340,6 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
-    | '/super-admin/dashboard'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/super-admin/tenants'
@@ -382,7 +372,6 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
-    | '/super-admin/dashboard'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/admin'
@@ -417,7 +406,6 @@ export interface FileRouteTypes {
     | '/admin/team'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
-    | '/super-admin/dashboard'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/super-admin/tenants'
@@ -588,13 +576,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperAdminMediaLibraryRouteImport
       parentRoute: typeof SuperAdminRoute
     }
-    '/super-admin/dashboard': {
-      id: '/super-admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/super-admin/dashboard'
-      preLoaderRoute: typeof SuperAdminDashboardRouteImport
-      parentRoute: typeof SuperAdminRoute
-    }
     '/super-admin/brands': {
       id: '/super-admin/brands'
       path: '/brands'
@@ -758,7 +739,6 @@ const SuperAdminTenantsRouteWithChildren =
 
 interface SuperAdminRouteChildren {
   SuperAdminBrandsRoute: typeof SuperAdminBrandsRoute
-  SuperAdminDashboardRoute: typeof SuperAdminDashboardRoute
   SuperAdminMediaLibraryRoute: typeof SuperAdminMediaLibraryRoute
   SuperAdminOnboardingRoute: typeof SuperAdminOnboardingRoute
   SuperAdminTenantsRoute: typeof SuperAdminTenantsRouteWithChildren
@@ -767,7 +747,6 @@ interface SuperAdminRouteChildren {
 
 const SuperAdminRouteChildren: SuperAdminRouteChildren = {
   SuperAdminBrandsRoute: SuperAdminBrandsRoute,
-  SuperAdminDashboardRoute: SuperAdminDashboardRoute,
   SuperAdminMediaLibraryRoute: SuperAdminMediaLibraryRoute,
   SuperAdminOnboardingRoute: SuperAdminOnboardingRoute,
   SuperAdminTenantsRoute: SuperAdminTenantsRouteWithChildren,

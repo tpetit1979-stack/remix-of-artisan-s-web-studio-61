@@ -5,15 +5,15 @@ import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import {
-  Plus, Globe, Phone, Mail, Zap, ExternalLink, Search,
-  Wrench, MapPin, Shield, Image, Check, X as XIcon, ArrowRight, Trash2, AlertTriangle,
+  Plus, Globe, Phone, Mail, Zap, ExternalLink, Search, Building2,
+  Wrench, MapPin, Shield, Image, Tag, MessageCircle, Rocket,
+  Check, X as XIcon, ArrowRight, Trash2, AlertTriangle, Users,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
@@ -97,6 +97,24 @@ export const Route = createFileRoute("/super-admin/tenants/")({
   component: TenantsIndex,
 });
 
+function StatCard({ icon: Icon, value, label }: { icon: any; value: number; label: string }) {
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+            <Icon className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <p className="text-2xl font-bold">{value}</p>
+            <p className="text-xs text-muted-foreground">{label}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function TenantsIndex() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -115,7 +133,7 @@ function TenantsIndex() {
     },
   });
 
-  // Fetch completion data for badges
+  // Fetch completion data for badges and filters
   const { data: servicesByTenant = {} } = useQuery({
     queryKey: ["sa-services-count"],
     queryFn: async () => {
@@ -160,6 +178,43 @@ function TenantsIndex() {
     },
   });
 
+  const { data: brandsByTenant = {} } = useQuery({
+    queryKey: ["sa-brands-count"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("tenant_brands").select("tenant_id");
+      if (error) throw error;
+      const map: Record<string, number> = {};
+      data.forEach((b) => { map[b.tenant_id] = (map[b.tenant_id] || 0) + 1; });
+      return map;
+    },
+  });
+
+  // "Demande non lue" is the only honest signal contacts.is_read gives us — there is
+  // no field tracking whether the tenant replied to the lead, so the filter can't
+  // mean "sans réponse" (unmeasurable today). See docs/product/execution-backlog.md.
+  const { data: unreadContactTenants = new Set<string>() } = useQuery({
+    queryKey: ["sa-unread-contacts"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("contacts").select("tenant_id").eq("is_read", false);
+      if (error) throw error;
+      return new Set(data.map((c) => c.tenant_id));
+    },
+  });
+
+  const { data: recentContactsCount = 0 } = useQuery({
+    queryKey: ["sa-recent-contacts-count"],
+    queryFn: async () => {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const { count, error } = await supabase
+        .from("contacts")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", thirtyDaysAgo.toISOString());
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
   const { data: promiseDataByTenant = {} } = useQuery({
     queryKey: ["sa-promise-data"],
     queryFn: async () => {
@@ -190,6 +245,9 @@ function TenantsIndex() {
 
   const [reconcileTarget, setReconcileTarget] = useState<ReconcileTarget | null>(null);
 
+  const isReadyToPublish = (tenantId: string) =>
+    !!servicesByTenant[tenantId] && !!areasByTenant[tenantId] && !!settingsByTenant[tenantId];
+
   // Filter tenants
   const filteredTenants = useMemo(() => {
     let result = tenants;
@@ -209,11 +267,14 @@ function TenantsIndex() {
     if (statusFilter === "incomplete") {
       result = result.filter((t) => !servicesByTenant[t.id] || !areasByTenant[t.id]);
     }
+    if (statusFilter === "no_brands") result = result.filter((t) => !brandsByTenant[t.id]);
+    if (statusFilter === "unread_contact") result = result.filter((t) => unreadContactTenants.has(t.id));
+    if (statusFilter === "ready_to_publish") result = result.filter((t) => isReadyToPublish(t.id));
     if (statusFilter === "promise_issue") {
       result = result.filter((t) => (promiseIssuesByTenant[t.id]?.length ?? 0) > 0);
     }
     return result;
-  }, [tenants, searchQuery, statusFilter, servicesByTenant, areasByTenant, promiseIssuesByTenant]);
+  }, [tenants, searchQuery, statusFilter, servicesByTenant, areasByTenant, brandsByTenant, unreadContactTenants, promiseIssuesByTenant]);
 
   const deleteMutation = useMutation({
     mutationFn: async (tenantId: string) => {
@@ -234,6 +295,7 @@ function TenantsIndex() {
       queryClient.invalidateQueries({ queryKey: ["sa-areas-count"] });
       queryClient.invalidateQueries({ queryKey: ["sa-certs-count"] });
       queryClient.invalidateQueries({ queryKey: ["sa-settings-logos"] });
+      queryClient.invalidateQueries({ queryKey: ["sa-brands-count"] });
       toast.success("Tenant supprimé");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -255,11 +317,15 @@ function TenantsIndex() {
     );
   }
 
+  const activeCount = tenants.filter((t) => t.is_active).length;
+  const totalServices = Object.values(servicesByTenant).reduce((a, b) => a + b, 0);
+  const certifiedCount = Object.keys(certsByTenant).length;
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
-        title="Tenants"
-        description={`${filteredTenants.length} sur ${tenants.length} client(s)`}
+        title="Pilotage"
+        description={`${filteredTenants.length} sur ${tenants.length} client(s) — retrouvez en un coup d'œil qui a besoin d'une action`}
         actions={
           <Button variant="outline" onClick={() => navigate({ to: "/super-admin/onboarding" })}>
             <Plus className="h-4 w-4 mr-1" />
@@ -267,6 +333,14 @@ function TenantsIndex() {
           </Button>
         }
       />
+
+      {/* KPI strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard icon={Building2} value={activeCount} label="Tenants actifs" />
+        <StatCard icon={Users} value={recentContactsCount} label="Demandes (30j)" />
+        <StatCard icon={Wrench} value={totalServices} label="Services total" />
+        <StatCard icon={Shield} value={certifiedCount} label="Certifiés RGE" />
+      </div>
 
       {/* Search & Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -280,7 +354,7 @@ function TenantsIndex() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-[220px]">
             <SelectValue placeholder="Filtrer..." />
           </SelectTrigger>
           <SelectContent>
@@ -289,6 +363,9 @@ function TenantsIndex() {
             <SelectItem value="inactive">Inactifs</SelectItem>
             <SelectItem value="lignia">LIGNIA</SelectItem>
             <SelectItem value="incomplete">Incomplets</SelectItem>
+            <SelectItem value="no_brands">Sans marque</SelectItem>
+            <SelectItem value="unread_contact">Demande non lue</SelectItem>
+            <SelectItem value="ready_to_publish">Prêt à publier</SelectItem>
             <SelectItem value="promise_issue">Promesse à vérifier</SelectItem>
           </SelectContent>
         </Select>
@@ -322,6 +399,18 @@ function TenantsIndex() {
                         <Badge variant="outline" className="text-xs border-primary text-primary">
                           <Zap className="h-3 w-3 mr-1" />
                           LIGNIA
+                        </Badge>
+                      )}
+                      {isReadyToPublish(t.id) && (
+                        <Badge variant="outline" className="text-xs border-green-600 text-green-700">
+                          <Rocket className="h-3 w-3 mr-1" />
+                          Prêt à publier
+                        </Badge>
+                      )}
+                      {unreadContactTenants.has(t.id) && (
+                        <Badge variant="outline" className="text-xs border-blue-500 text-blue-600">
+                          <MessageCircle className="h-3 w-3 mr-1" />
+                          Demande non lue
                         </Badge>
                       )}
                       {(promiseIssuesByTenant[t.id]?.length ?? 0) > 0 && (
@@ -368,6 +457,7 @@ function TenantsIndex() {
                       <CompletionBadge has={!!servicesByTenant[t.id]} icon={Wrench} label="Services" />
                       <CompletionBadge has={!!areasByTenant[t.id]} icon={MapPin} label="Zones" />
                       <CompletionBadge has={!!settingsByTenant[t.id]} icon={Image} label="Logo" />
+                      <CompletionBadge has={!!brandsByTenant[t.id]} icon={Tag} label="Marques" />
                       <CompletionBadge has={!!certsByTenant[t.id]} icon={Shield} label="Certifications" />
                     </div>
                   </div>

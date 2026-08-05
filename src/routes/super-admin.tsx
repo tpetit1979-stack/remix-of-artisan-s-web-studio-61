@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Building2, ArrowLeft, Menu, X, LayoutDashboard, Wand2, LogOut, Loader2, Image as ImageIcon, Tag } from "lucide-react";
+import { Building2, ArrowLeft, Menu, X, Wand2, LogOut, Loader2, Image as ImageIcon, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
@@ -63,30 +63,17 @@ function SuperAdminLayout() {
 
         <nav className="flex-1 space-y-1 p-3">
           <Link
-            to="/super-admin/dashboard"
-            onClick={() => setMobileOpen(false)}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-              path === "/super-admin/dashboard" || path === "/super-admin"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            )}
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            Dashboard
-          </Link>
-          <Link
             to="/super-admin/tenants"
             onClick={() => setMobileOpen(false)}
             className={cn(
               "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-              path.startsWith("/super-admin/tenants")
+              path.startsWith("/super-admin/tenants") || path === "/super-admin"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             )}
           >
             <Building2 className="h-4 w-4" />
-            Tenants
+            Pilotage
           </Link>
           <Link
             to="/super-admin/onboarding"
