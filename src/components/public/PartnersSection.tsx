@@ -44,14 +44,20 @@ export function PartnersSection() {
 }
 
 function PartnerItem({ partner }: { partner: Partner }) {
+  // Neutral plate behind every logo, not just the CSS filter fix — a source
+  // file that's genuinely white/transparent (drawn for a dark background)
+  // would still vanish against the section's own background otherwise. The
+  // border gives the logo's footprint a visible edge even in that case.
   const content = partner.logo_url ? (
-    <img
-      src={partner.logo_url}
-      alt={partner.name}
-      loading="lazy"
-      decoding="async"
-      className="h-12 w-auto max-w-[160px] object-contain grayscale opacity-70 transition duration-300 hover:grayscale-0 hover:opacity-100 sm:h-14"
-    />
+    <div className="flex h-16 w-36 items-center justify-center rounded-lg border border-border bg-card px-4 py-2.5 shadow-sm transition duration-300 hover:shadow-md sm:h-[4.5rem] sm:w-40">
+      <img
+        src={partner.logo_url}
+        alt={partner.name}
+        loading="lazy"
+        decoding="async"
+        className="max-h-full max-w-full object-contain"
+      />
+    </div>
   ) : (
     <span className="font-semibold text-muted-foreground">{partner.name}</span>
   );

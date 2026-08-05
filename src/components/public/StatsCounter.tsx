@@ -71,7 +71,7 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
             {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col items-center text-center text-white">
                 <stat.icon className="mb-1 h-5 w-5 text-white/80" />
-                <span className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+                <span className="text-3xl font-extrabold tracking-tight sm:text-4xl">
                   {stat.value}
                 </span>
                 <span className="mt-0.5 text-xs font-medium uppercase tracking-wider text-white/75 sm:text-sm">
@@ -95,7 +95,7 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                   <stat.icon className="h-6 w-6 text-primary" />
                 </div>
-                <span className="text-3xl font-extrabold tracking-tight text-foreground">
+                <span className="text-4xl font-extrabold tracking-tight text-foreground">
                   {stat.value}
                 </span>
                 <span className="mt-1 text-sm font-medium text-muted-foreground">{stat.label}</span>

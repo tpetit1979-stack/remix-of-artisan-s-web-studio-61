@@ -42,7 +42,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
               search={previewTenant}
               className={getGridClass(items.length, idx)}
             >
-              <Card className="group h-full overflow-hidden border-border transition-all duration-200 hover:border-primary/30 hover:shadow-elegant lg:hover:shadow-md lg:hover:scale-[1.01]">
+              <Card className="group flex h-full flex-col overflow-hidden border-border transition-all duration-200 hover:border-primary/30 hover:shadow-elegant lg:hover:shadow-md lg:hover:scale-[1.01]">
                 <div className="relative overflow-hidden">
                   <ServiceMedia service={s} />
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
@@ -53,7 +53,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
                     </span>
                   )}
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="flex flex-1 flex-col p-6">
                   <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                     {s.name}
                   </h3>
@@ -62,7 +62,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
                       {s.description}
                     </p>
                   )}
-                  <span className="mt-4 inline-flex items-center text-sm font-semibold text-primary">
+                  <span className="mt-auto inline-flex items-center pt-4 text-sm font-semibold text-primary">
                     En savoir plus <ArrowRight className="ml-1.5 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                   </span>
                 </CardContent>

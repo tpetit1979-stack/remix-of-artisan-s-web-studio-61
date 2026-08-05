@@ -76,16 +76,16 @@ function ServicesPage() {
                 <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {services.map((s) => (
                     <Link key={s.id} to="/services/$serviceSlug" params={{ serviceSlug: s.slug }} search={previewTenant}>
-                      <Card className="group h-full overflow-hidden transition-all hover:border-primary hover:shadow-md">
+                      <Card className="group flex h-full flex-col overflow-hidden transition-all hover:border-primary hover:shadow-md">
                         <ServiceMedia service={s} />
-                        <CardContent className="flex h-full flex-col p-6">
+                        <CardContent className="flex flex-1 flex-col p-6">
                           <h2 className="text-lg font-semibold text-foreground group-hover:text-primary">
                             {s.name}
                           </h2>
                           {s.description && (
-                            <p className="mt-2 flex-1 text-sm text-muted-foreground line-clamp-3">{s.description}</p>
+                            <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{s.description}</p>
                           )}
-                          <span className="mt-4 inline-flex items-center text-sm font-medium text-primary">
+                          <span className="mt-auto inline-flex items-center pt-4 text-sm font-medium text-primary">
                             En savoir plus <ArrowRight className="ml-1 h-3 w-3" />
                           </span>
                         </CardContent>

@@ -43,8 +43,14 @@ export function ServiceMedia({ service }: { service: Service }) {
 
   if (resolved.source === "placeholder") {
     return (
-      <div className="aspect-[16/10] w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-        <Icon className="h-14 w-14 text-primary/70 transition-transform duration-500 group-hover:scale-110" />
+      <div className="relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
+        <div
+          className="absolute inset-0 text-primary opacity-[0.06] [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:18px_18px]"
+          aria-hidden="true"
+        />
+        <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 ring-1 ring-inset ring-primary/15 transition-transform duration-500 group-hover:scale-110">
+          <Icon className="h-7 w-7 text-primary/70" />
+        </div>
       </div>
     );
   }

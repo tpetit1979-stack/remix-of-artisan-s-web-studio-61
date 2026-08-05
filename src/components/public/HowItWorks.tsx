@@ -68,7 +68,7 @@ export function HowItWorks() {
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                 <step.icon className="h-6 w-6 text-primary" aria-hidden="true" />
               </div>
-              <h3 className="text-base font-semibold text-foreground">{step.title}</h3>
+              <h3 className="text-base font-bold text-foreground">{step.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {step.description}
               </p>

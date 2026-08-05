@@ -228,7 +228,7 @@ function HomePage() {
                       to="/$slug"
                       params={{ slug: `${service.slug}-${area.city_slug}` }}
                       search={previewTenant}
-                      className="group inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-medium transition-all hover:border-primary hover:text-primary hover:shadow-sm"
+                      className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-all hover:border-primary hover:text-primary hover:shadow-sm"
                     >
                       <MapPin className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                       {city}

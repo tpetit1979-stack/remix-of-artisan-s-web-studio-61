@@ -60,7 +60,7 @@ export function PublicFooter() {
                   to="/services/$serviceSlug"
                   params={{ serviceSlug: s.slug }}
                   search={previewTenant}
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className="text-sm leading-relaxed text-muted-foreground hover:text-foreground"
                 >
                   {s.name}
                 </Link>
@@ -72,7 +72,7 @@ export function PublicFooter() {
         {uniqueCities.length > 0 && (
           <div>
             <h3 className="mb-3 text-sm font-semibold text-foreground">Zones d'intervention</h3>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {uniqueCities.slice(0, 10).map((city) => {
                 const area = areas.find((a) => a.city === city);
                 const service = area ? services.find((s) => s.id === area.service_id) : null;
@@ -83,7 +83,7 @@ export function PublicFooter() {
                       to="/$slug"
                       params={{ slug: `${service.slug}-${area.city_slug}` }}
                       search={previewTenant}
-                      className="text-sm text-muted-foreground hover:text-foreground"
+                      className="text-sm leading-relaxed text-muted-foreground hover:text-foreground"
                     >
                       {city}
                     </Link>
@@ -98,21 +98,21 @@ export function PublicFooter() {
           <h3 className="mb-3 text-sm font-semibold text-foreground">Navigation</h3>
           <ul className="space-y-1.5">
             <li>
-              <Link to="/" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Accueil</Link>
+              <Link to="/" search={previewTenant} className="text-sm leading-relaxed text-muted-foreground hover:text-foreground">Accueil</Link>
             </li>
             <li>
-              <Link to="/services" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Services</Link>
+              <Link to="/services" search={previewTenant} className="text-sm leading-relaxed text-muted-foreground hover:text-foreground">Services</Link>
             </li>
             {hasPortfolio && (
               <li>
-                <Link to="/realisations" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Réalisations</Link>
+                <Link to="/realisations" search={previewTenant} className="text-sm leading-relaxed text-muted-foreground hover:text-foreground">Réalisations</Link>
               </li>
             )}
             <li>
-              <Link to="/contact" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Contact</Link>
+              <Link to="/contact" search={previewTenant} className="text-sm leading-relaxed text-muted-foreground hover:text-foreground">Contact</Link>
             </li>
             <li>
-              <Link to="/mentions-legales" search={previewTenant} className="text-sm text-muted-foreground hover:text-foreground">Mentions légales</Link>
+              <Link to="/mentions-legales" search={previewTenant} className="text-sm leading-relaxed text-muted-foreground hover:text-foreground">Mentions légales</Link>
             </li>
           </ul>
         </div>
