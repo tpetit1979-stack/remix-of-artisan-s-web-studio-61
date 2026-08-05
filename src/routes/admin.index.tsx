@@ -30,22 +30,65 @@ export const Route = createFileRoute("/admin/")({
  *
  * SEO links to /admin/settings, not a dedicated /admin/seo screen -- that
  * split is Lot F, not yet shipped. Update this link when it ships.
+ *
+ * Each action carries a one-line "reason" -- the consequence of leaving it
+ * undone, not just the instruction. These are still static copy per branch,
+ * not a generated explanation: honest about what this is today (see
+ * docs/product/execution-backlog.md, Lot D). A real rules engine producing
+ * {priority, title, reason, confidence, ...} is a fine idea once there are
+ * more than five branches to keep straight -- premature with five.
  */
 function useNextAction(input: {
-  hasServices: boolean;
+  serviceCount: number;
   hasAreas: boolean;
   hasPortfolio: boolean;
   hasBrands: boolean;
   hasSeo: boolean;
 }) {
   return useMemo(() => {
-    if (!input.hasServices) return { label: "Ajoutez votre premier service", to: "/admin/services" as const, icon: Wrench };
-    if (!input.hasAreas) return { label: "Renseignez vos zones d'intervention", to: "/admin/service-areas" as const, icon: MapPin };
-    if (!input.hasPortfolio) return { label: "Ajoutez une réalisation récente", to: "/admin/portfolio" as const, icon: Image };
-    if (!input.hasBrands) return { label: "Indiquez les marques avec lesquelles vous travaillez", to: "/admin/brands" as const, icon: Tag };
-    if (!input.hasSeo) return { label: "Complétez votre référencement (titre et description)", to: "/admin/settings" as const, icon: Search };
+    if (input.serviceCount === 0) {
+      return {
+        label: "Ajoutez votre premier service",
+        reason: "Sans service renseigné, les visiteurs ne voient aucune prestation sur votre site.",
+        to: "/admin/services" as const,
+        icon: Wrench,
+      };
+    }
+    if (!input.hasAreas) {
+      const plural = input.serviceCount > 1 ? "s" : "";
+      return {
+        label: "Renseignez vos zones d'intervention",
+        reason: `Vous avez déjà ${input.serviceCount} service${plural} configuré${plural}, mais aucun n'est associé à une zone d'intervention — les visiteurs ne verront aucune ville apparaître sur Google.`,
+        to: "/admin/service-areas" as const,
+        icon: MapPin,
+      };
+    }
+    if (!input.hasPortfolio) {
+      return {
+        label: "Ajoutez une réalisation récente",
+        reason: "Aucune réalisation publiée pour l'instant — c'est souvent ce qui décide un visiteur à vous contacter.",
+        to: "/admin/portfolio" as const,
+        icon: Image,
+      };
+    }
+    if (!input.hasBrands) {
+      return {
+        label: "Indiquez les marques avec lesquelles vous travaillez",
+        reason: "Aucune marque renseignée — c'est un repère de confiance que vos visiteurs recherchent.",
+        to: "/admin/brands" as const,
+        icon: Tag,
+      };
+    }
+    if (!input.hasSeo) {
+      return {
+        label: "Complétez votre référencement (titre et description)",
+        reason: "Le titre et la description qui apparaissent dans les résultats Google ne sont pas renseignés.",
+        to: "/admin/settings" as const,
+        icon: Search,
+      };
+    }
     return null;
-  }, [input.hasServices, input.hasAreas, input.hasPortfolio, input.hasBrands, input.hasSeo]);
+  }, [input.serviceCount, input.hasAreas, input.hasPortfolio, input.hasBrands, input.hasSeo]);
 }
 
 function AdminDashboard() {
@@ -79,7 +122,7 @@ function AdminDashboard() {
 
   const hasSeo = !!settings?.seo_meta_title && !!settings?.seo_meta_description;
   const nextAction = useNextAction({
-    hasServices: services.length > 0,
+    serviceCount: services.length,
     hasAreas: areas.length > 0,
     hasPortfolio,
     hasBrands: brands.length > 0,
@@ -106,6 +149,7 @@ function AdminDashboard() {
               <div>
                 <p className="text-xs font-medium text-primary uppercase tracking-wide">À faire ensuite</p>
                 <p className="font-medium text-foreground">{nextAction.label}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{nextAction.reason}</p>
               </div>
             </div>
             <Link to={nextAction.to}>

@@ -15,6 +15,14 @@ du modèle de données :
 Le client pilote son entreprise, pas un CMS.
 Le Super Admin ajoute des capacités, jamais une application parallèle.
 
+## Un écran, une question
+
+Chaque écran doit répondre à une seule question principale. Si deux questions
+principales apparaissent en le concevant, ce sont probablement deux écrans — pas
+un écran avec deux sections. C'est cette règle, appliquée dès le départ, qui
+aurait évité `admin.settings.tsx` (identité, logo, hero, couleurs, CTA, WhatsApp,
+réservation et SEO empilés dans un seul formulaire — voir le lot F du backlog).
+
 ## Avant chaque commit
 
 1. Build.

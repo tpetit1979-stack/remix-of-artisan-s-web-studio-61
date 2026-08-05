@@ -100,6 +100,22 @@ vers une action que l'utilisateur ne peut pas faire.
 Le SEO pointe encore vers `/admin/settings` (pas d'écran dédié tant que le lot F
 n'est pas livré) — à corriger quand ce lot passera.
 
+**Addendum — chaque action porte désormais une raison.** Pas juste "ajoutez une
+zone" mais "vous avez déjà {n} services configurés, mais aucun n'est associé à une
+zone — les visiteurs ne verront aucune ville sur Google". 0 raison affichée → 1,
+pour les 5 branches. Reste du texte statique par branche, pas une explication
+générée — honnête sur ce que c'est aujourd'hui. Un vrai moteur de règles
+(`priority`, `title`, `reason`, `confidence`...) devient pertinent quand il y aura
+plus de cinq branches à tenir cohérentes entre elles ; prématuré pour cinq,
+documenté ici pour qu'on n'oublie pas d'y revenir le jour où ça ne l'est plus.
+
+**Pause volontaire avant le lot F.** Les hypothèses de priorité ci-dessus n'ont
+pas encore été confrontées à un usage réel — le lot F touche `admin.settings.tsx`,
+le cœur de l'expérience client. Avant de l'enchaîner : observer 1 ou 2 vrais
+tenants sur ce tableau de bord pour vérifier que l'ordre proposé correspond à ce
+qu'ils font réellement, plutôt que de construire le lot suivant sur une
+supposition non vérifiée.
+
 **Découverte en vérifiant les usages avant de toucher au comportement de `/admin`
 (règle CLAUDE.md)** : `login.tsx` redirigeait les tenant_admin directement vers
 `/admin/settings` après connexion, en court-circuitant l'index. Sans corriger ce
