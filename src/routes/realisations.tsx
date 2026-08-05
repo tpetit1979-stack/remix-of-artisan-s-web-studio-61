@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchPortfolio, fetchServices, hasPublishedPortfolioItem } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -41,6 +42,7 @@ export const Route = createFileRoute("/realisations")({
 function RealisationsPage() {
   const { tenant } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { responseTimeNote } = useCommercialPromises();
 
   const { data: portfolio = [] } = useQuery({
     queryKey: ["portfolio", tenant?.id],
@@ -110,7 +112,7 @@ function RealisationsPage() {
           </div>
         </div>
 
-        <CTABanner title="Un projet similaire ?" subtitle="Contactez-nous pour un devis gratuit et personnalisé." />
+        <CTABanner title="Un projet similaire ?" subtitle={`Contactez-nous pour un devis personnalisé. ${responseTimeNote}`} />
       </main>
       <PublicFooter />
     </div>

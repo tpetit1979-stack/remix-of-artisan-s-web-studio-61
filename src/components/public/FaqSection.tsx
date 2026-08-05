@@ -1,4 +1,5 @@
 import { useTenant } from "@/hooks/use-tenant";
+import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import {
   Accordion,
   AccordionContent,
@@ -15,9 +16,10 @@ import { buildFaqItems } from "@/lib/faq";
  */
 export function FaqSection() {
   const { tenant } = useTenant();
+  const promises = useCommercialPromises();
   if (!tenant) return null;
 
-  const items = buildFaqItems(tenant);
+  const items = buildFaqItems(tenant, promises);
 
   return (
     <section className="py-16 lg:py-24">

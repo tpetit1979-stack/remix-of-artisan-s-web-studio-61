@@ -1,18 +1,20 @@
 import { Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import { BookingButton } from "./BookingButton";
 import { WhatsAppButton } from "./WhatsAppButton";
 
 /**
  * Sticky bottom CTA bar on mobile (md:hidden).
  * - Left: tel:{phone} "Appeler" — hidden if phone is null.
- * - Right: /contact "Devis gratuit" — always visible.
+ * - Right: /contact, resolved CTA label (see useEditorialTexts) — always visible.
  * BookingButton (floating variant) remains above when enabled.
  */
 export function FloatingCTA() {
   const { tenant } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { buttonLabel } = useEditorialTexts();
   const phone = tenant?.phone?.trim();
 
   return (
@@ -33,9 +35,9 @@ export function FloatingCTA() {
         <Link
           to="/contact"
           search={previewTenant}
-          className="flex flex-1 items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground active:scale-95"
+          className="flex flex-1 items-center justify-center truncate rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground active:scale-95"
         >
-          Devis gratuit
+          {buttonLabel}
         </Link>
       </div>
     </>

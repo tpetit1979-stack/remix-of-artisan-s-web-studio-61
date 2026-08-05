@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useSearch, notFound } from "@tanstack/react-router";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
+import { resolveCommercialPromises } from "@/lib/commercial-promises";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { Button } from "@/components/ui/button";
@@ -34,8 +36,14 @@ export const Route = createFileRoute("/contact")({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { tenant, settings } = loaderData;
-    const title = buildPageTitle(settings, tenant, "Contact – Demandez votre devis gratuit");
-    const description = `Contactez ${tenant.company_name} pour un devis gratuit et personnalisé. Réponse rapide garantie.`;
+    const title = buildPageTitle(settings, tenant, "Contact");
+    const { responseTimeNote } = resolveCommercialPromises({
+      quoteIsFree: settings?.quote_is_free ?? null,
+      quoteResponseDelayHours: settings?.quote_response_delay_hours ?? null,
+      emergencyServiceAvailable: settings?.emergency_service_available ?? null,
+      ctaText: settings?.cta_text ?? null,
+    });
+    const description = `Contactez ${tenant.company_name} pour un devis personnalisé. ${responseTimeNote}`;
     const baseUrl = tenant.domain ? `https://${tenant.domain}` : "";
     return {
       meta: [
@@ -53,6 +61,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { tenant, settings } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { responseTimeNote } = useCommercialPromises();
   const { service: prefilledService } = Route.useSearch();
 
   const { data: services = [] } = useQuery({
@@ -194,15 +203,22 @@ function ContactPage() {
                   <Clock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                   <div>
                     <p className="font-medium text-foreground">Réponse rapide</p>
-                    <p className="text-sm text-muted-foreground">Nous vous rappelons sous 24h</p>
+                    <p className="text-sm text-muted-foreground">{responseTimeNote}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Shield className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground">Devis gratuit</p>
-                    <p className="text-sm text-muted-foreground">Sans engagement de votre part</p>
-                  </div>
+                  {settings?.quote_is_free === true ? (
+                    <div>
+                      <p className="font-medium text-foreground">Devis gratuit</p>
+                      <p className="text-sm text-muted-foreground">Sans engagement de votre part</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="font-medium text-foreground">Devis personnalisé</p>
+                      <p className="text-sm text-muted-foreground">Adapté à votre besoin</p>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-start gap-3">
                   <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />

@@ -1,9 +1,11 @@
-import type { Tenant, Service } from "@/lib/tenant";
+import type { Tenant, Service, SiteSettings } from "@/lib/tenant";
+import { resolveCommercialPromises } from "@/lib/commercial-promises";
 
 interface SeoLongTextProps {
   tenant: Tenant;
   services: Service[];
   cities: string[];
+  settings?: SiteSettings | null;
 }
 
 function toSentence(items: string[]): string {
@@ -12,7 +14,12 @@ function toSentence(items: string[]): string {
   return `${items.slice(0, -1).join(", ")} et ${items[items.length - 1]}`;
 }
 
-function generateEditorial(tenant: Tenant, services: Service[], cities: string[]): string {
+function generateEditorial(
+  tenant: Tenant,
+  services: Service[],
+  cities: string[],
+  settings: SiteSettings | null | undefined,
+): string {
   const company = tenant.company_name ?? "Notre entreprise";
   const city = tenant.city ?? "votre région";
   const years = tenant.years_experience;
@@ -53,18 +60,24 @@ function generateEditorial(tenant: Tenant, services: Service[], cities: string[]
     );
   }
 
+  const { seoCtaSuffix } = resolveCommercialPromises({
+    quoteIsFree: settings?.quote_is_free ?? null,
+    quoteResponseDelayHours: settings?.quote_response_delay_hours ?? null,
+    emergencyServiceAvailable: settings?.emergency_service_available ?? null,
+    ctaText: settings?.cta_text ?? null,
+  });
   p2Parts.push(
-    "Demandez un devis personnalisé : il est gratuit et sans engagement."
+    `Demandez un devis personnalisé.${seoCtaSuffix ? ` ${seoCtaSuffix}` : ""}`
   );
   paragraphs.push(p2Parts.join(" "));
 
   return paragraphs.join("\n\n");
 }
 
-export function SeoLongText({ tenant, services, cities }: SeoLongTextProps) {
+export function SeoLongText({ tenant, services, cities, settings }: SeoLongTextProps) {
   const rawText = tenant.seo_boost_text;
   const hasCustomText = typeof rawText === "string" && rawText.trim().length > 0;
-  const text = hasCustomText ? rawText.trim() : generateEditorial(tenant, services, cities);
+  const text = hasCustomText ? rawText.trim() : generateEditorial(tenant, services, cities, settings);
 
   const paragraphs = text
     .split(/\n\s*\n/)

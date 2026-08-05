@@ -1,4 +1,5 @@
 import type { Tenant, Service, ServiceArea, SiteSettings } from "./tenant";
+import { resolveCommercialPromises } from "./commercial-promises";
 
 /**
  * Generate dynamic SEO title for a service+city page.
@@ -23,11 +24,14 @@ export function generateSeoTitle(
 /**
  * Generate dynamic SEO description for a service+city page.
  * Uses the service's custom template, then enriches with seo_boost_text.
+ * The closing CTA line only asserts "devis gratuit" when the tenant has
+ * confirmed it (settings.quote_is_free === true) — see commercial-promises.ts.
  */
 export function generateSeoDescription(
   service: Service,
   city: string,
   tenant: Tenant,
+  settings: SiteSettings | null,
 ): string {
   if (service.seo_description_template) {
     return service.seo_description_template
@@ -39,7 +43,13 @@ export function generateSeoDescription(
   }
   const base = `${tenant.company_name}, votre expert en ${service.name.toLowerCase()} à ${city}.`;
   const boost = tenant.seo_boost_text ? ` ${tenant.seo_boost_text}` : "";
-  const cta = " Demandez votre devis gratuit.";
+  const { seoCtaSuffix } = resolveCommercialPromises({
+    quoteIsFree: settings?.quote_is_free ?? null,
+    quoteResponseDelayHours: settings?.quote_response_delay_hours ?? null,
+    emergencyServiceAvailable: settings?.emergency_service_available ?? null,
+    ctaText: settings?.cta_text ?? null,
+  });
+  const cta = seoCtaSuffix ? ` ${seoCtaSuffix}` : "";
   return `${base}${boost}${cta}`.slice(0, 160);
 }
 

@@ -27,9 +27,8 @@ describe("mentionsFreeQuote", () => {
 });
 
 describe("resolveCommercialPromises", () => {
-  it("falls back to a neutral CTA when nothing is set", () => {
+  it("asserts nothing when no fact is confirmed", () => {
     const r = resolveCommercialPromises(base);
-    expect(r.primaryCta).toBe("Demander un devis");
     expect(r.shortBadge).toBeNull();
     expect(r.seoCtaSuffix).toBeNull();
   });
@@ -46,9 +45,18 @@ describe("resolveCommercialPromises", () => {
     expect(r.seoCtaSuffix).toBe("Devis gratuit.");
   });
 
-  it("uses the tenant's own cta_text when set", () => {
-    const r = resolveCommercialPromises({ ...base, ctaText: "Demander un diagnostic" });
-    expect(r.primaryCta).toBe("Demander un diagnostic");
+  it("responseTimeNote mirrors the confirmed response delay, same as the contact page needs", () => {
+    const unconfirmed = resolveCommercialPromises(base);
+    expect(unconfirmed.responseTimeNote).toBe("Nous vous répondons rapidement.");
+
+    const confirmed = resolveCommercialPromises({ ...base, quoteResponseDelayHours: 24 });
+    expect(confirmed.responseTimeNote).toBe("Réponse sous 1 jour en moyenne.");
+  });
+
+  it("emergencyServiceAvailable only ever appears in the badge when explicitly true", () => {
+    expect(resolveCommercialPromises({ ...base, emergencyServiceAvailable: null }).shortBadge).toBeNull();
+    expect(resolveCommercialPromises({ ...base, emergencyServiceAvailable: false }).shortBadge).toBeNull();
+    expect(resolveCommercialPromises({ ...base, emergencyServiceAvailable: true }).shortBadge).toContain("Urgence");
   });
 
   it("formats delay under 24h in hours, over 24h in days", () => {

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Star } from "lucide-react";
 import { usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { ServiceMedia } from "@/components/public/ServiceMedia";
+import { resolveEditorialTexts } from "@/lib/editorial-texts";
 import type { Service, Tenant, SiteSettings } from "@/lib/tenant";
 
 interface FeaturedServicesProps {
@@ -14,6 +15,7 @@ interface FeaturedServicesProps {
 
 export function FeaturedServices({ services, tenant, settings }: FeaturedServicesProps) {
   const previewTenant = usePreviewTenantSearch();
+  const { buttonLabel } = resolveEditorialTexts(settings?.cta_text ?? null);
   const featured = services.filter((s) => s.is_featured);
   const regular = services.filter((s) => !s.is_featured);
   const items = [...featured, ...regular].slice(0, 5);
@@ -72,7 +74,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
         <div className="mt-10 text-center">
           <Link to="/contact" search={previewTenant}>
             <Button size="lg" className="h-12 px-8">
-              {settings?.cta_text ?? "Demander un devis"}
+              {buttonLabel}
             </Button>
           </Link>
         </div>

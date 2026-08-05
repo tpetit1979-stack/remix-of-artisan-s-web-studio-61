@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useCommercialPromises } from "@/hooks/use-commercial-promises";
+import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import { Button } from "@/components/ui/button";
 import { Phone } from "lucide-react";
 
@@ -10,8 +12,10 @@ interface CTABannerProps {
 }
 
 export function CTABanner({ title, subtitle, serviceId }: CTABannerProps) {
-  const { tenant, settings } = useTenant();
+  const { tenant } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { responseTimeNote } = useCommercialPromises();
+  const { buttonLabel, bannerHeading } = useEditorialTexts();
 
   if (!tenant) return null;
 
@@ -23,15 +27,15 @@ export function CTABanner({ title, subtitle, serviceId }: CTABannerProps) {
 
       <div className="relative mx-auto max-w-7xl px-4 text-center">
         <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
-          {title ?? settings?.cta_text ?? "Demandez votre devis gratuit"}
+          {title ?? bannerHeading}
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-lg text-primary-foreground/80">
-          {subtitle ?? `Contactez ${tenant.company_name} dès maintenant. Intervention rapide et devis gratuit.`}
+          {subtitle ?? responseTimeNote}
         </p>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link to="/contact" search={{ ...(serviceId ? { service: serviceId } : {}), ...previewTenant }}>
             <Button size="lg" variant="secondary" className="h-14 px-10 text-base shadow-elegant">
-              {settings?.cta_text ?? "Demander un devis"}
+              {buttonLabel}
             </Button>
           </Link>
           {tenant.phone && (

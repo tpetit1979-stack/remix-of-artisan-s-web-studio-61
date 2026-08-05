@@ -12,11 +12,11 @@ const STEPS = [
     icon: PhoneCall,
     title: "Prenez contact",
     description:
-      "Appelez-nous ou remplissez le formulaire. Nous vous répondons sous 24h ouvrées.",
+      "Appelez-nous ou remplissez le formulaire. Nous étudions votre demande.",
   },
   {
     icon: FileText,
-    title: "Devis gratuit",
+    title: "Étude & devis",
     description:
       "Nous étudions votre besoin et vous transmettons un devis détaillé, sans engagement.",
   },

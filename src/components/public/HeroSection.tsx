@@ -7,6 +7,7 @@ import { Phone, Shield, ArrowRight } from "lucide-react";
 import { StatsCounter } from "./StatsCounter";
 import { getTradeTagline } from "@/lib/trade-wording";
 import { useResolvedImageUrl } from "./ResolvedImage";
+import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import type { Tenant } from "@/lib/tenant";
 
 function getGoogleMapsUrl(placeId: string) {
@@ -22,6 +23,7 @@ type TenantWithGoogle = Tenant & {
 export function HeroSection() {
   const { tenant, settings } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { buttonLabel } = useEditorialTexts();
 
   // Resolve trade slug ONLY for tagline copy (image is now handled by the resolver).
   const { data: tradeSlug } = useQuery({
@@ -108,7 +110,7 @@ export function HeroSection() {
           <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link to="/contact" search={previewTenant}>
               <Button size="lg" className="h-14 text-base px-10 shadow-elegant">
-                {settings?.cta_text ?? "Demander un devis gratuit"}
+                {buttonLabel}
               </Button>
             </Link>
             {tenant.phone && (

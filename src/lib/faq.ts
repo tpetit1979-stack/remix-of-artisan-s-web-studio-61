@@ -1,4 +1,5 @@
 import type { Tenant } from "@/lib/tenant";
+import type { ResolvedCommercialPromises } from "@/lib/commercial-promises";
 
 export type FaqItem = { question: string; answer: string };
 
@@ -7,16 +8,19 @@ export type FaqItem = { question: string; answer: string };
  * Source unique consommée par le composant UI (Accordion) ET par le
  * JSON-LD FAQPage injecté dans le <head> — garantit que Google voit
  * exactement les mêmes questions/réponses que l'utilisateur.
+ *
+ * La question gratuité/délai vient de `resolveCommercialPromises()` —
+ * jamais affirmée localement ici (voir CLAUDE.md, audit promesses commerciales).
  */
-export function buildFaqItems(tenant: Tenant): FaqItem[] {
+export function buildFaqItems(tenant: Tenant, promises: ResolvedCommercialPromises): FaqItem[] {
   const name = tenant.company_name;
   const city = tenant.city ?? "votre secteur";
   const phone = tenant.phone;
 
   return [
     {
-      question: "Le devis est-il gratuit et sans engagement ?",
-      answer: `Oui, tous nos devis sont entièrement gratuits et sans engagement. ${name} se déplace pour évaluer votre projet et vous transmet une proposition détaillée sous 24 à 48h ouvrées.`,
+      question: promises.quoteFaqQuestion,
+      answer: promises.quoteFaqAnswer,
     },
     {
       question: "Sous quel délai intervenez-vous ?",

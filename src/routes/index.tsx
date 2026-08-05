@@ -4,6 +4,9 @@ import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio, resolveTenantInputForRoute, resolveTenantForSsr } from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
+import { resolveCommercialPromises } from "@/lib/commercial-promises";
+import { useCommercialPromises } from "@/hooks/use-commercial-promises";
+import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -45,6 +48,12 @@ export const Route = createFileRoute("/")({
     const title = buildPageTitle(settings, tenant);
     const description = buildPageDescription(settings, tenant);
     const baseUrl = tenant.domain ? `https://${tenant.domain}` : "";
+    const promises = resolveCommercialPromises({
+      quoteIsFree: settings?.quote_is_free ?? null,
+      quoteResponseDelayHours: settings?.quote_response_delay_hours ?? null,
+      emergencyServiceAvailable: settings?.emergency_service_available ?? null,
+      ctaText: settings?.cta_text ?? null,
+    });
     return {
       meta: [
         { title },
@@ -59,7 +68,7 @@ export const Route = createFileRoute("/")({
         },
         {
           type: "application/ld+json",
-          children: JSON.stringify(buildFaqJsonLd(buildFaqItems(tenant))),
+          children: JSON.stringify(buildFaqJsonLd(buildFaqItems(tenant, promises))),
         },
       ],
     };
@@ -70,6 +79,8 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const { tenant, settings, isLoading, error } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { responseTimeNote } = useCommercialPromises();
+  const { buttonLabel } = useEditorialTexts();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -228,7 +239,7 @@ function HomePage() {
               <div className="mt-10 text-center">
                 <Link to="/contact" search={previewTenant}>
                   <Button size="lg" className="h-12 px-8">
-                    {settings?.cta_text ?? "Demander un devis"}
+                    {buttonLabel}
                   </Button>
                 </Link>
               </div>
@@ -238,11 +249,11 @@ function HomePage() {
 
         <FaqSection />
 
-        <SeoLongText tenant={tenant} services={services} cities={uniqueCities} />
+        <SeoLongText tenant={tenant} services={services} cities={uniqueCities} settings={settings} />
 
         <CTABanner
           title={`Besoin d'un professionnel à ${tenant.city ?? "proximité"} ?`}
-          subtitle="Appelez-nous maintenant ou remplissez le formulaire pour recevoir votre devis gratuit en moins de 24h."
+          subtitle={`Appelez-nous maintenant ou remplissez le formulaire. ${responseTimeNote}`}
         />
       </main>
 

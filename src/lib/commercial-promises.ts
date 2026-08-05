@@ -16,15 +16,13 @@ export type CommercialPromisesConfig = {
 };
 
 export type ResolvedCommercialPromises = {
-  primaryCta: string;
   shortBadge: string | null;
   quoteFaqQuestion: string;
   quoteFaqAnswer: string;
-  contactSubtitle: string;
+  /** How fast we reply — CTABanner's subtitle and the contact page's response-time line read this; same question, same answer. Not editorial copy: driven entirely by quoteResponseDelayHours. */
+  responseTimeNote: string;
   seoCtaSuffix: string | null;
 };
-
-const DEFAULT_CTA = "Demander un devis";
 
 /** Simple, intentionally conservative heuristic — mirrors the DB function of the same name. */
 export function mentionsFreeQuote(ctaText: string | null | undefined): boolean {
@@ -40,9 +38,7 @@ function formatDelay(hours: number): string {
 export function resolveCommercialPromises(
   config: CommercialPromisesConfig,
 ): ResolvedCommercialPromises {
-  const { quoteIsFree, quoteResponseDelayHours, emergencyServiceAvailable, ctaText } = config;
-
-  const primaryCta = ctaText?.trim() || DEFAULT_CTA;
+  const { quoteIsFree, quoteResponseDelayHours, emergencyServiceAvailable } = config;
 
   const badges: string[] = [];
   if (quoteIsFree === true) badges.push("Devis gratuit");
@@ -61,14 +57,14 @@ export function resolveCommercialPromises(
     quoteFaqAnswer = "Contactez-nous pour connaître les conditions du devis.";
   }
 
-  const contactSubtitle =
+  const responseTimeNote =
     quoteResponseDelayHours != null
       ? `Réponse sous ${formatDelay(quoteResponseDelayHours)} en moyenne.`
       : "Nous vous répondons rapidement.";
 
   const seoCtaSuffix = quoteIsFree === true ? "Devis gratuit." : null;
 
-  return { primaryCta, shortBadge, quoteFaqQuestion, quoteFaqAnswer, contactSubtitle, seoCtaSuffix };
+  return { shortBadge, quoteFaqQuestion, quoteFaqAnswer, responseTimeNote, seoCtaSuffix };
 }
 
 /**

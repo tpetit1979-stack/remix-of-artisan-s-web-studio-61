@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import { fetchPortfolio } from "@/lib/tenant";
 import { Phone, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { useState } from "react";
 export function PublicHeader() {
   const { tenant, settings } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { buttonLabel } = useEditorialTexts();
   const [menuOpen, setMenuOpen] = useState(false);
 
 
@@ -119,7 +121,7 @@ export function PublicHeader() {
             <BookingButton variant="mobile-menu" onNavigate={() => setMenuOpen(false)} />
 
             <Link to="/contact" search={previewTenant} onClick={() => setMenuOpen(false)}>
-              <Button className="w-full">{settings?.cta_text ?? "Demander un devis"}</Button>
+              <Button className="w-full">{buttonLabel}</Button>
             </Link>
           </div>
         </div>

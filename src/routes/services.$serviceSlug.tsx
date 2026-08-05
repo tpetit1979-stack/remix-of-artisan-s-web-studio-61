@@ -1,8 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useCommercialPromises } from "@/hooks/use-commercial-promises";
+import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import { fetchSiteSettings, fetchServiceAreas, fetchPortfolio, fetchServices, resolveTenantInputForRoute, resolveTenantForSsr } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
+import { resolveCommercialPromises } from "@/lib/commercial-promises";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
@@ -28,8 +31,15 @@ export const Route = createFileRoute("/services/$serviceSlug")({
     if (!loaderData) return {};
     const { tenant, settings, service } = loaderData;
     const title = buildPageTitle(settings, tenant, service.name);
+    const { seoCtaSuffix } = resolveCommercialPromises({
+      quoteIsFree: settings?.quote_is_free ?? null,
+      quoteResponseDelayHours: settings?.quote_response_delay_hours ?? null,
+      emergencyServiceAvailable: settings?.emergency_service_available ?? null,
+      ctaText: settings?.cta_text ?? null,
+    });
     const description =
-      service.description || `${service.name} par ${tenant.company_name}. Devis gratuit et intervention rapide.`;
+      service.description ||
+      `${service.name} par ${tenant.company_name}. Intervention rapide.${seoCtaSuffix ? ` ${seoCtaSuffix}` : ""}`;
     return {
       meta: [
         { title },
@@ -44,8 +54,10 @@ export const Route = createFileRoute("/services/$serviceSlug")({
 
 function ServiceDetailPage() {
   const { serviceSlug } = Route.useParams();
-  const { tenant, settings } = useTenant();
+  const { tenant } = useTenant();
   const previewTenant = usePreviewTenantSearch();
+  const { responseTimeNote } = useCommercialPromises();
+  const { buttonLabel } = useEditorialTexts();
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -98,7 +110,7 @@ function ServiceDetailPage() {
             )}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link to="/contact" search={{ service: service.id, ...previewTenant }}>
-                <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
+                <Button size="lg">{buttonLabel}</Button>
               </Link>
               {tenant.phone && (
                 <a href={`tel:${tenant.phone.replace(/\s/g, "")}`}>
@@ -189,7 +201,7 @@ function ServiceDetailPage() {
         {/* CTA */}
         <CTABanner
           title={`Besoin de ${service.name.toLowerCase()} ?`}
-          subtitle={`Contactez ${tenant.company_name} pour un devis gratuit et personnalisé.`}
+          subtitle={`Contactez ${tenant.company_name} pour un devis personnalisé. ${responseTimeNote}`}
           serviceId={service.id}
         />
       </main>

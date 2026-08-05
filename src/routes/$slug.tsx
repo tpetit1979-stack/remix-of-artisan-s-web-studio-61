@@ -4,6 +4,8 @@ import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText
 import type { Service, ServiceArea, PortfolioItem } from "@/lib/tenant";
 import { resolveTenantInputForRoute, resolveTenantForSsr } from "@/lib/tenant";
 import { usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useCommercialPromises } from "@/hooks/use-commercial-promises";
+import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -42,7 +44,7 @@ export const Route = createFileRoute("/$slug")({
     if (!loaderData) return {};
     const { service, city, citySlug, tenant, settings, allAreas } = loaderData;
     const title = generateSeoTitle(service, city, tenant);
-    const description = generateSeoDescription(service, city, tenant);
+    const description = generateSeoDescription(service, city, tenant, settings);
     const pageUrl = tenant.domain ? `https://${tenant.domain}/${service.slug}-${citySlug}` : "";
     return {
       meta: [
@@ -102,6 +104,8 @@ function ServiceCityPage() {
   const introText = generateIntroText(service, city, tenant);
 
   const previewTenant = usePreviewTenantSearch();
+  const { responseTimeNote } = useCommercialPromises();
+  const { buttonLabel } = useEditorialTexts();
   const otherServices = allServices.filter((s: Service) => s.id !== service.id);
 
   const crossLinks = allAreas
@@ -128,7 +132,7 @@ function ServiceCityPage() {
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link to="/contact" search={{ service: service.id, ...previewTenant }}>
-                  <Button size="lg">{settings?.cta_text ?? "Demander un devis"}</Button>
+                  <Button size="lg">{buttonLabel}</Button>
                 </Link>
                 {tenant.phone && (
                   <a href={`tel:${tenant.phone}`}>
@@ -284,7 +288,7 @@ function ServiceCityPage() {
 
         <CTABanner
           title={`Besoin d'un devis pour ${service.name.toLowerCase()} à ${city} ?`}
-          subtitle={`Contactez ${tenant.company_name} dès maintenant. Intervention rapide et devis gratuit.`}
+          subtitle={`Contactez ${tenant.company_name} dès maintenant. ${responseTimeNote}`}
           serviceId={service.id}
         />
       </main>
