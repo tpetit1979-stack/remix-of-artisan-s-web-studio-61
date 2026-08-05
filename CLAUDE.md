@@ -38,6 +38,34 @@ réservation et SEO empilés dans un seul formulaire — voir le lot F du backlo
    Nommer précisément ce qui a été vérifié et ce qui ne l'a pas été (ex. : test
    visuel en navigateur connecté).
 
+## Vérifier un mécanisme de sécurité (trigger, RLS, droit d'écriture)
+
+Jamais directement sur un tenant réel. Toujours l'un des deux :
+
+- une transaction réellement isolée — un seul bloc `DO $$ … $$` atomique par
+  vérification, jamais un script à plusieurs instructions avec
+  `SAVEPOINT`/`ROLLBACK TO SAVEPOINT` (la connexion passe par un pooler qui ne
+  garantit pas qu'un tel script tienne sur une seule session — voir l'incident
+  du 5 août 2026, `docs/product/execution-backlog.md`, deux tenants réels
+  touchés par erreur avant que ce ne soit corrigé) ;
+- un tenant jetable dédié aux tests, jamais un tenant de démonstration ou un
+  client réel.
+
+Aucune écriture sur un vrai tenant sans validation explicite, même réversible,
+même dans un but de test.
+
+## Rester Tech Lead produit, pas spécialiste triggers
+
+Un correctif de sécurité ciblé se justifie quand il est trouvé en travaillant
+sur autre chose (comme le verrou de `team_presentation_mode`). Construire une
+infrastructure de test SQL généraliste (savepoints, rôles simulés, tables
+temporaires) n'est pas un chantier produit — à éviter sauf demande explicite.
+
+Toute proposition de chantier indique : valeur produit, nombre de futurs
+tenants concernés, coût, priorité. Ne pas passer plusieurs jours sur un seul
+champ pendant que le catalogue métier, l'onboarding, les médias ou le tableau
+de bord agence attendent.
+
 ## Après chaque lot
 
 Documenter dans `docs/product/execution-backlog.md`, sous quatre titres fixes :
