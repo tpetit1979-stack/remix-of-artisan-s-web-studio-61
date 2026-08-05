@@ -26,6 +26,26 @@ démontrée — voir "Statut" en bas de page.
 9. **Chaque fonctionnalité doit faire gagner du temps** — au client, à l'agence,
    idéalement aux deux.
 10. **Le test ultime : est-ce que ça évite un appel ou un mail à l'agence ?**
+11. **Trois moteurs, jamais confondus : le moteur, le carburant, le véhicule du
+    client.** Toute évolution proposée appartient à l'une de ces trois catégories,
+    et à une seule :
+
+    - **A — Produit Lignia (le moteur).** Améliore automatiquement tous les
+      tenants, présents et futurs. Dashboard, workflows, mécanique catalogue/
+      sélection, logique solo/équipe, navigation, droits, impersonation.
+    - **B — Contenu plateforme (le carburant).** Enrichit les catalogues
+      communs — marques, templates de service, bibliothèque de médias métier.
+      C'est du contenu à gouverner (taxonomie, provenance, licence), pas du
+      code produit.
+    - **C — Données d'un tenant (le véhicule du client).** Concerne exclusivement
+      les données propres à un client précis — son logo, ses réalisations, sa
+      sélection de marques. Ne s'applique jamais à un autre tenant et ne doit
+      jamais être confondu avec A ou B.
+
+    Le test : *"est-ce que cette évolution améliore automatiquement les 500
+    prochains tenants ?"* Oui → A. Non, mais ça enrichit un catalogue partagé →
+    B. Non, ça ne concerne qu'un seul client → C, et ça ne doit jamais se
+    déguiser en chantier A ou B pour paraître plus important que ce que c'est.
 
 ## Avant de créer
 

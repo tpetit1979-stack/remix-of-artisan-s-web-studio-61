@@ -194,3 +194,167 @@ onglet migré individuellement derrière le mécanisme d'impersonation déjà ex
 — les onglets non encore migrés continuent de fonctionner pendant la transition.
 
 Supprime, à terme, les 7 composants Super-Admin-only listés ci-dessus.
+
+## EASYDEP — révélateur, pas un chantier client
+
+EASYDEP a servi de test grandeur nature. Rien ci-dessous n'est un correctif
+ponctuel pour ce tenant — chaque item est classé par le principe 11 de la
+constitution avant d'être planifié, pour ne jamais confondre un chantier
+plateforme (A/B) avec une donnée d'un seul client (C).
+
+| # | Sujet | Catégorie | Concerne |
+|---|---|---|---|
+| 1 | Élément "test" publié par erreur | **C** | EASYDEP uniquement |
+| 2 | Solo vs équipe | **A** | Tous les tenants, dès qu'ils ont 0 ou 1 membre actif |
+| 3 | Illustrations : badge, blocage publication, filtre public | **A** | Tous les tenants ; le nettoyage des 5 illustrations d'EASYDEP reste C mais n'a rien à faire — elles sont déjà correctement non publiées |
+| 4 | Peupler le catalogue de marques | **B** | Contenu partagé — bénéficie à tout tenant du même métier, pas seulement EASYDEP |
+| 5 | Construire l'affichage public des marques | **A** | Le mécanisme, pour tous les tenants |
+| 6 | Migrer Lorflex / De Dietrich / Klover | **C** | EASYDEP uniquement |
+| 7 | Affectation en masse Villes × Services | **A** | Tous les tenants |
+| 8 | Simplifier le formulaire Service | **A** | Tous les tenants |
+| 9 | Catalogue de services-types (`trade_service_templates`) | **B** | Différé — gouvernance séparée (taxonomie, SEO, rattachement métier) |
+| 10 | Bibliothèque de médias métier (`trade_media_library`) | **B** | Différé — gouvernance séparée (provenance, licence, classification) |
+
+### Découverte en vérifiant avant d'écrire le plan
+
+`tenant_brands` n'a **aucun consommateur public** — recherché dans tout `src/`,
+seuls `admin.index.tsx`, `admin.brands.tsx`, `admin.services.tsx`,
+`super-admin.tenants.index.tsx` et `lib/brands.ts` y font référence. Il n'existe
+pas de `BrandsSection.tsx` : contrairement à `tenant_partners` (lu par
+`PartnersSection.tsx`, monté sur `index.tsx`), sélectionner une marque en admin
+aujourd'hui n'a **aucun effet visible sur le site public**. Le lot 5 n'est donc
+pas une vérification — c'est un composant à construire. Sans lui, migrer
+Lorflex/De Dietrich/Klover ferait disparaître ces trois logos du site vivant,
+exactement le risque signalé avant de planifier quoi que ce soit.
+
+### Lot 1 — Nettoyer l'élément "test" (catégorie C)
+
+- **Fichiers concernés** : aucun — correction de données uniquement, via
+  `/admin/portfolio` (dépublier) ou une commande directe si nécessaire.
+- **Données modifiées** : `portfolio` id `1d07292d-a5c6-406d-bc62-c10cdc3e4357`
+  (tenant EASYDEP) — `is_published: true → false`, ou suppression si confirmé
+  qu'il s'agit d'un test sans valeur.
+- **Definition of Done** : l'entrée ne remonte plus sur `/realisations`
+  d'EASYDEP, vérifié après correction.
+- **Tests** : Public uniquement. Aucun changement de code, donc rien à tester
+  côté Admin/Super Admin.
+- **Dépendances** : aucune. Nécessite une confirmation explicite avant d'agir —
+  c'est une donnée de production, pas un brouillon.
+
+### Lot 2 — Solo vs équipe (catégorie A)
+
+- **Fichiers concernés** : `src/components/public/TeamSection.tsx`.
+- **Données modifiées** : aucune — lecture seule de `members.length`, déjà
+  chargé par le composant.
+- **Definition of Done** : 0 membre → section masquée (déjà le cas, vérifié) ;
+  1 membre → "Votre interlocuteur" (jamais "À propos de moi") ; 2+ → "Notre
+  équipe" (comportement actuel, inchangé).
+- **Tests** : Public — les 3 cas rendus et vérifiés visuellement. Admin/Super
+  Admin non concernés (`TeamManager` ne change pas).
+- **Dépendances** : aucune.
+
+### Lot 3 — Illustrations : badge, blocage, conversion, filtre renforcé (catégorie A)
+
+- **Fichiers concernés** : `src/routes/admin.portfolio.tsx` (badge "Exemple — à
+  remplacer" sur `content_kind=illustration`, désactivation du toggle "Publier"
+  tant que `content_kind=illustration`, action "Remplacer par mon chantier" qui
+  bascule `content_kind: illustration → real_project` et
+  `media_origin: template → tenant` à la confirmation) ; `src/routes/realisations.tsx`
+  (filtre : `is_published = true AND content_kind = 'real_project'`, plus
+  seulement `is_published`). À vérifier avant de coder : si une page Services
+  affiche aussi des éléments `portfolio` par `service_id`, appliquer le même
+  filtre renforcé là-bas.
+- **Données modifiées** : aucune migration de masse. Les 5 illustrations
+  d'EASYDEP n'ont pas besoin d'être touchées — déjà correctement non publiées.
+- **Definition of Done** : impossible de publier un `illustration` sans passer
+  par "Remplacer par mon chantier" ; le filtre public exige les deux conditions ;
+  badge visible dans l'admin.
+- **Tests** : Admin (toggle bloqué, conversion fonctionnelle) ; Public (filtre
+  vérifié avec un cas `illustration` + `is_published=true` en base de test —
+  ne doit jamais apparaître) ; Super Admin (même écran via "Gérer les
+  réalisations", pas de changement propre à cet espace).
+- **Dépendances** : aucune.
+
+### Lot 4 — Peupler le catalogue de marques (catégorie B)
+
+- **Fichiers concernés** : aucun — contenu, pas code. Passe par
+  `super-admin.brands.tsx`, déjà fonctionnel.
+- **Données modifiées** : table `brands` — Lorflex, De Dietrich, Klover et
+  toute autre marque confirmée pour le métier d'EASYDEP. Rien d'autre : pas de
+  templates de service, pas de médias (voir lots 9 et 10, différés).
+- **Definition of Done** : marques actives dans le catalogue global, visibles
+  dans `/admin/brands` pour sélection.
+- **Tests** : Super Admin (écran catalogue) ; Admin ("Mes marques" affiche les
+  nouvelles entrées) ; Public non concerné avant le lot 5.
+- **Dépendances** : aucune technique — nécessite une confirmation humaine sur
+  la liste exacte des marques à créer.
+
+### Lot 5 — Construire l'affichage public des marques (catégorie A)
+
+- **Fichiers concernés** : nouveau `src/components/public/BrandsSection.tsx`
+  (sur le modèle de `PartnersSection.tsx`) ; montage dans `src/routes/index.tsx` ;
+  vérifier si `lib/brands.ts` a besoin d'une fonction de lecture publique dédiée
+  respectant `is_featured` et `sort_order`, ou si l'existante suffit.
+- **Données modifiées** : aucune — lecture seule.
+- **Definition of Done** : les marques sélectionnées par un tenant s'affichent
+  publiquement, dans l'ordre, avec la mise en avant respectée.
+- **Tests** : Public (nouveau composant, testé avec un tenant ayant au moins
+  une marque sélectionnée). Admin/Super Admin non concernés.
+- **Dépendances** : lot 4 (avoir au moins une marque à afficher pour tester
+  réellement, pas seulement en théorie).
+
+### Lot 6 — Migrer Lorflex / De Dietrich / Klover pour EASYDEP (catégorie C)
+
+- **Fichiers concernés** : aucun — donnée uniquement.
+- **Données modifiées**, en deux phases explicites, jamais atomique :
+  1. Créer `tenant_brands` pour EASYDEP vers les 3 entrées `brands` du lot 4,
+     même `logo_url`. Vérifier visuellement le rendu public (lot 5 déjà livré).
+  2. Seulement après validation visuelle explicite : désactiver ou supprimer
+     les 3 lignes `tenant_partners` correspondantes.
+- **Definition of Done** : les 3 logos visibles publiquement sous "marques"
+  **avant** toute suppression côté partenaires ; aucune perte d'URL de logo.
+- **Tests** : Public (les 3 logos apparaissent, avant toute suppression) ;
+  Admin ("Mes marques" les montre cochées) ; Super Admin (visible depuis la
+  fiche EASYDEP une fois le lot C du backlog principal livré).
+- **Dépendances** : lots 4 et 5, dans cet ordre, sans exception.
+
+### Lot 7 — Affectation en masse Villes × Services (catégorie A)
+
+- **Fichiers concernés** : `src/routes/admin.service-areas.tsx`.
+- **Données modifiées** : insertions dans `service_areas` via upsert sur la
+  contrainte unique `(service_id, city_slug)` déjà existante — jamais de
+  suppression d'une association existante.
+- **Definition of Done** : sélection explicite des villes (proposées depuis les
+  `city`/`city_slug` déjà utilisés par ce tenant, aucune table nouvelle) ;
+  sélection explicite des services ; aucune case précochée ; aperçu du nombre
+  d'associations à créer et de celles déjà existantes qui seront ignorées ;
+  confirmation explicite requise avant écriture.
+- **Tests** : Admin (workflow complet, y compris 0 sélection) ; Super Admin
+  (même écran à droits élevés, après le lot B) ; Public (nouvelles pages
+  service×ville accessibles pour les combinaisons créées).
+- **Dépendances** : aucune technique.
+
+### Lot 8 — Simplifier le formulaire Service (catégorie A)
+
+- **Fichiers concernés** : `src/routes/admin.services.tsx`.
+- **Données modifiées** : aucune migration — génération automatique du slug
+  à la création uniquement, les 103 services existants gardent leur slug actuel.
+- **Definition of Done** : vue client limitée à nom, description, actif, mise
+  en avant, marques associées ; slug généré automatiquement à la création,
+  non modifiable côté client après création (une modification de slug change
+  les URL déjà publiées) ; `sort_order` non exposé en saisie numérique brute
+  côté client ; templates SEO cachés côté client, valeurs conservées en base
+  (jamais réinitialisées) ; section avancée réservée au Super Admin, avec
+  avertissement explicite si le slug est modifié après publication.
+- **Tests** : Admin (formulaire simplifié, création + édition) ; Super Admin
+  (accès complet conservé, avertissement affiché) ; Public (URLs des services
+  existants inchangées — vérifier qu'aucun slug n'a bougé après le lot).
+- **Dépendances** : aucune. Ne construit pas la sélection depuis
+  `trade_service_templates` — catalogue de prestations, lot 9, différé.
+
+### Lots 9 et 10 — différés, hors de ce backlog
+
+Catalogue de services-types et bibliothèque de médias métier : deux chantiers
+**B** séparés, chacun avec sa propre gouvernance (taxonomie et intention SEO
+pour l'un, provenance et licence pour l'autre). Ne pas les débuter comme
+sous-produit d'un correctif EASYDEP.
