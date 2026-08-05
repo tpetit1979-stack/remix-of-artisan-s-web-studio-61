@@ -55,3 +55,13 @@ Le déclencheur : un utilisateur authentifié dont `role`/`tenantId` ne donnent 
 Un helper partagé `safeRedirect(href: string): string` (dans `src/lib/`) fait la
 validation, utilisé par les deux gardes et par `login.tsx`. Aucun changement de
 schéma Supabase, de route ou de RLS. Aucun mot de passe manipulé par le code.
+
+## Deux erreurs de typage préexistantes à corriger dans la même passe
+
+- `src/routes/login.tsx` (l. 42) : l'objet passé à `search` n'est pas accepté par le
+  typage du router — le remplacement par `safeRedirect` + `search: () => ({...})` règle
+  aussi ce point.
+- `src/routes/super-admin.tenants.$tenantId.tsx` (l. 229) : paramètre `prev` implicitement
+  `any` dans `navigate({ search: (prev) => … })` — à typer explicitement.
+
+Ces deux erreurs bloquent le build actuel, indépendamment de la boucle de connexion.
