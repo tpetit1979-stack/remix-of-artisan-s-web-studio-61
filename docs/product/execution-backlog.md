@@ -324,6 +324,47 @@ code et par les tests unitaires, pas par un test en navigateur connecté
 avant de considérer le rendu visuel validé, notamment le layout `solo` à une
 seule carte.
 
+**Addendum sécurité — `20260805100000_lock_team_presentation_mode_trigger_execute.sql`**
+Le linter Supabase signalait `enforce_team_presentation_mode_locked()` comme
+fonction `SECURITY DEFINER` exécutable par `anon`/`authenticated`. Corrigé par
+un `REVOKE` ciblé sur cette seule fonction. Vérifié en direct, en isolant
+chaque vérification dans un seul appel atomique (voir incident ci-dessous) :
+un `UPDATE` sur un champ autorisé par un `tenant_admin` réussit toujours après
+la révocation, et l'écriture de `team_presentation_mode` reste refusée. Les
+autres fonctions trigger du projet portant le même avertissement générique ne
+sont pas touchées ici — backlog sécurité séparé, non scopé.
+
+**Incident survenu pendant la vérification, corrigé** : une tentative de test
+transactionnel combiné (plusieurs `SAVEPOINT`/`ROLLBACK TO SAVEPOINT` dans un
+seul script) a mal tourné — la connexion utilisée passe par un pooler qui ne
+garantit pas qu'un script multi-instructions s'exécute sur une seule session,
+ce qui a rendu les `SAVEPOINT` invisibles. Deux écritures qui devaient être
+annulées sont restées commitées : `team_presentation_mode` d'EASYDEP passé à
+`artisan`, et celui d'un tenant sans rapport ("SAVENER INSTALLATION") passé à
+`company`. Repéré immédiatement en revérifiant l'état après le script, corrigé
+dans la minute (les deux remis à `null`, vérifié). Aucun des deux n'était
+visible publiquement le temps de l'incident — le rendu `null` était déjà
+masqué. Depuis : plus aucun test en plusieurs instructions avec
+`SAVEPOINT`/`ROLLBACK` sur cette connexion — chaque vérification tournée en
+un seul bloc `DO $$ … $$` atomique, avec relecture de l'état après coup.
+
+**Tenant sans `site_settings`** : 17 tenants, 16 lignes — le tenant manquant
+est **"ROBERT ERIC"** (`50d1bec4-5757-4c40-bec5-225e734ed1f1`), `is_active`
+mais 0 service, 0 contact, 0 membre d'équipe : un tenant vide, probablement un
+artefact d'onboarding jamais terminé plutôt qu'un client réel. Conséquence
+directe : `fetchSiteSettings()` utilise `.single()`, qui lève une erreur sur 0
+ligne — `TeamManager` (et tout écran s'appuyant sur les paramètres du site)
+plante si jamais ouvert pour ce tenant précis. Bug latent préexistant, pas
+introduit par ce lot, mais désormais une dépendance réelle de ce lot. Aucune
+correction de données appliquée — confirmation requise avant d'agir.
+
+**Suite des tests transactionnels du trigger** : le cas le plus important
+(`tenant_admin` + `UPDATE` du mode → refus) est vérifié en direct, isolé, sans
+effet de bord. Les cinq autres cas de la matrice demandée
+(`tenant_admin` + champ autorisé, `tenant_admin` + `INSERT` mode `null`,
+`tenant_admin` + `INSERT` mode non nul, `super_admin`, `service_role`)
+restent à tester un par un, en blocs atomiques isolés — pas en script combiné.
+
 **Dépendances** : aucune.
 
 ### Lot 11 — `tenant_stage` (catégorie A, différé)
