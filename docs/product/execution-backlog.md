@@ -765,3 +765,278 @@ Lot séparé, à ne pas mélanger avec la sécurisation des URLs sociales
 (Lot en cours) ni avec aucun autre chantier de ce backlog.
 
 **Portée** : catégorie A — améliore tous les tenants, pas seulement EASYDEP.
+
+## Lot — Adaptateur IA multi-provider pour `generate-tenant` + sécurisation
+
+**Statut : implémenté sur la branche `claude/generate-tenant-gemini-adapter`,
+non déployé, non fusionné. En attente de l'accord final du produit après
+revue du diff/tests/rollback présentés séparément.**
+
+### Ce que ce lot simplifie
+
+- `generate-tenant` n'est plus câblé en dur sur la passerelle Lovable : un
+  contrat `AiProvider` sépare l'appel IA (prompt + schéma → JSON structuré)
+  de la logique métier (règles, validation). `GeminiProvider` (API directe)
+  et `LovableProvider` (conservé pour rollback via `AI_PROVIDER=lovable`)
+  implémentent ce même contrat — changer de fournisseur ne touche plus au
+  reste du fichier.
+- Le flux services repart des `trade_service_templates` : le métier choisi
+  précharge ses templates, le code présélectionne déterministement les
+  services Pareto, puis l'IA n'enrichit plus que la description/le SEO des
+  services déjà choisis (jamais leur id/slug/nom). Toute prestation hors
+  catalogue arrive séparément dans `suggested_services`, jamais fusionnée
+  automatiquement — l'onboarding affiche "Suggestion IA — à valider" avec un
+  bouton explicite "Ajouter à mes services" (renommé depuis "Ajouter au
+  catalogue" : le mot "catalogue" prêtait à confusion avec la bibliothèque
+  partagée `trade_service_templates` que d'autres tenants utilisent aussi —
+  la fonction elle-même n'a jamais écrit dedans, `trade_service_template_id`
+  reste `null` et l'insertion se fait uniquement dans `services` sous le
+  `tenant_id` du nouveau client ; seul le mot était trompeur, pas le code).
+- L'IA ne reçoit plus et ne peut plus renvoyer téléphone/email/ville/zones/
+  marques/certifications/gratuité/urgence/délais/garanties — ces champs ont
+  disparu du schéma. `primary_color` devient une suggestion affichée à côté
+  du sélecteur de couleur, jamais appliquée sans clic explicite.
+- `generate-tenant` vérifie désormais explicitement l'appelant
+  (`verify_jwt = true` + `is_super_admin()`, même schéma que
+  `google-places`) — auparavant ouvert à tout appelant authentifié ou non.
+- Les 36 tests Deno (auth, sélecteur de provider, retry, validation de
+  sortie) sont réellement exécutés (`deno test`, binaire npm installé dans
+  le sandbox après que `deno.land`/`jsr.io` se soient révélés bloqués par le
+  proxy — les assertions utilisées viennent d'un petit module local sans
+  dépendance externe) : 36/36 passent. Cette exécution a d'ailleurs trouvé
+  un vrai bug de typage dans `auth.ts` (le retour de `supabase.rpc()` est
+  thenable, pas une vraie `Promise`) — corrigé avant que le lot ne soit
+  proposé pour relecture.
+
+### Ce que ce lot supprime
+
+- L'écrasement silencieux de `phone`/`email`/`city`/`cities` (et
+  `company_name`, exclusion ajoutée au-delà de la demande initiale — signalé
+  séparément pour confirmation) par la sortie IA dans
+  `super-admin.onboarding.tsx`.
+- L'appel IA sans timeout explicite, sans retry borné, et sans validation de
+  sortie : une réponse partielle ou une promesse commerciale non confirmée
+  (garantie, certification, intervention rapide, SIRET) pouvait auparavant
+  atteindre l'écran de confirmation sans filtre.
+
+### Ce qui reste à migrer
+
+- `analyze-logo` a la même faille (`verify_jwt = false`, aucune vérification
+  `is_super_admin`) — délibérément non touché dans ce lot, à traiter comme
+  P0 séparé juste après celui-ci.
+- Le modèle Gemini exact (`GEMINI_MODEL`) n'est pas encore validé contre un
+  vrai compte — aucun identifiant n'a été deviné en dur dans le code.
+- Pas de test réel post-déploiement sur un tenant jetable (brief avec fausse
+  promesse délibérée, appel sans JWT, appel en `tenant_admin`, appel en
+  `super_admin`) — prévu après l'accord de déploiement, pas avant.
+- Le validateur de promesses (`validators/tenant-output.ts`) reste une liste
+  de formulations exactes (regex), pas une analyse sémantique — il ne
+  faut pas rejeter une phrase neutre/négative (vérifié par test : "Nous ne
+  proposons pas d'intervention d'urgence", "Aucune garantie supplémentaire
+  n'est annoncée" passent bien), mais une promesse formulée autrement que
+  les patterns déjà listés ne sera pas détectée. Étendre la liste au fil des
+  cas observés, comme pour le lot public-copy précédent.
+- **Rollback à préciser en deux niveaux, pas un seul** : `AI_PROVIDER=lovable`
+  ne restaure que le choix du fournisseur IA. `verify_jwt = true`, le
+  contrôle `is_super_admin`, la validation stricte de sortie et le nouveau
+  flux client (présélection Pareto, suggestions séparées, couleur en
+  suggestion) restent en place quel que soit le fournisseur — un retour
+  complet à l'ancien comportement demanderait de revenir sur ces commits,
+  pas seulement de changer la variable d'environnement.
+
+### `seo_boost_text` n'écrase plus le texte ADEME — sans étendre l'affichage RGE
+
+Constat qui a motivé ce correctif : `fetchRgeData()` (onboarding, étape 0)
+écrivait directement une phrase générée depuis l'ADEME
+("Entreprise certifiée X (RGE). Domaines : Y.") dans `seo_boost_text` —
+avant même que l'IA n'existe dans ce flux. Si l'étape "Génération IA" était
+ensuite lancée, Gemini pouvait réécrire entièrement cette phrase, avec le
+risque réel qu'une reformulation atténue, déforme ou supprime une
+qualification exacte.
+
+**Aller-retour de conception, tranché en faveur du périmètre le plus
+étroit.** Une version intermédiaire de ce lot avait ajouté une fonction
+`buildVerifiedRgeText()` assemblant une phrase RGE déterministe (jamais vue
+par Gemini) sur les pages service × ville et le bloc long-texte de
+l'accueil, en plus de `CertificationBadges`. **Retirée avant commit** :
+`buildVerifiedRgeText` vérifiait uniquement `is_active`, or ce statut est
+calculé une seule fois à l'import ADEME et n'est jamais recalculé en continu
+— une qualification peut donc rester affichée "active" après son expiration
+réelle. Étendre cette affirmation ("Entreprise titulaire de la certification
+RGE X.") à davantage de pages avant d'avoir réglé ce point, et avant que le
+contrôle humain déjà documenté (`docs/product/objects/rge.md`) n'existe
+réellement dans le code, aurait multiplié une affirmation potentiellement
+périmée — pas acceptable pour une mention à portée réglementaire, même si le
+même défaut existe déjà dans `CertificationBadges` (ce n'est pas une raison
+pour l'étendre).
+
+**Ce qui reste dans ce lot (portée strictement Gemini)** :
+- `seo_boost_text` (colonne sur `tenants`) redevient un champ purement
+  éditorial (IA ou manuel) — plus jamais auto-rempli par `fetchRgeData()`.
+- Le validateur (`SEO_BOOST_TEXT_BANNED_PATTERNS`) rejette toute mention
+  RGE/famille de qualification que Gemini tenterait d'y écrire — **en
+  échec local uniquement** (voir section suivante), jamais en rejetant
+  tout le dossier.
+- Aucune fonction déterministe d'assemblage RGE n'est ajoutée par ce lot.
+  `CertificationBadges` (accueil, existant, non modifié) reste la seule
+  surface publique montrant les certifications.
+
+**Ce qui est repoussé vers le lot séparé "Import et publication RGE"**
+(ci-dessous, hors périmètre Gemini) : toute extension de l'affichage RGE au
+delà de `CertificationBadges` — y compris la fonction déterministe
+elle-même — est conditionnée à un contrôle de validité au moment du rendu
+(pas seulement `is_active` figé à l'import) et à l'existence réelle du
+contrôle humain avant publication. Pas de nouvelle surface tant que ces
+deux points ne sont pas réglés.
+
+### Une erreur `seo_boost_text` ne fait plus tomber tout le dossier IA
+
+Avant ce correctif, le validateur traitait `seo_boost_text` exactement
+comme `hero_title`/`seo_meta_title` : un champ absent, trop long, ou
+contenant une formulation interdite (y compris une mention RGE) faisait
+rejeter **toute** la réponse IA — hero, métadonnées SEO, enrichissements de
+services et suggestions compris. Trop brutal pour une seule phrase.
+
+Corrigé : `seo_boost_text` a désormais son propre traitement, en échec
+local plutôt qu'en rejet global (même logique que les entrées individuelles
+de `services_enrichment`/`suggested_services`) :
+
+- absent, vide, trop long (> 600 caractères), ou contenant une formulation
+  interdite (y compris une mention RGE) → le champ devient une chaîne vide
+  et un avertissement est ajouté à `warnings[]` ;
+- tout le reste de la réponse (hero, SEO, enrichissements valides,
+  suggestions valides, couleur suggérée) reste utilisable normalement ;
+- côté client, `super-admin.onboarding.tsx` fait déjà
+  `aiData.seo_boost_text || prev.seo_boost_text` — une chaîne vide retombe
+  donc automatiquement sur la valeur précédente, sans code supplémentaire :
+  "champ ignoré" et "valeur précédente conservée" sont la même chose ici.
+- 4 tests Deno dédiés vérifient ce comportement (RGE, famille de
+  qualification, texte trop long, champ absent — dans les quatre cas :
+  `ok: true`, `seo_boost_text` vide, reste du dossier intact).
+
+## Lot (à planifier) — Import RGE : validation humaine avant publication
+
+**Statut : constat, pas encore un lot engagé. Ne pas mélanger avec le lot
+Gemini ci-dessus — signalé plutôt que corrigé en silence, conformément à la
+règle du projet sur les contradictions avec la constitution.**
+
+`docs/product/objects/rge.md` documente déjà que les certifications RGE
+sont censées passer par un "contrôle humain avant publication" (propriétaire
+`Plateforme`, justifié par les enjeux légaux d'une fausse déclaration).
+`fetchRgeData()` (onboarding, étape 0) importe pourtant déjà les
+certifications actives directement dans `tenant_certifications` à la
+sauvegarde du tenant, sans étape de relecture agence distincte — le contrôle
+humain documenté n'existe pas encore dans le code.
+
+**Definition of Done proposée** (à affiner avant de démarrer, pas figée) :
+
+- une certification importée par l'onboarding n'est pas publiée
+  automatiquement — un état "à confirmer" existe avant "publiée" ;
+- la relecture vérifie au minimum : date de validité, organisme,
+  correspondance exacte avec l'entreprise (nom/SIRET) ;
+- l'écran de relecture est `CertificationsTab` (déjà l'écran référent pour
+  cet objet, agence uniquement) — pas un nouvel écran ;
+- la validité est vérifiée **au moment du rendu** (date de fin réelle
+  comparée à aujourd'hui), pas seulement via `is_active` figé au moment de
+  l'import — `CertificationBadges` (aujourd'hui) et toute future extension
+  doivent lire cette validité recalculée, pas un booléen qui peut rester
+  vrai après expiration réelle ;
+- tant qu'une certification n'est pas confirmée, elle n'apparaît sur
+  aucune surface publique.
+
+**Cartographie des surfaces déjà vérifiée** (lecture seule, pas de code —
+utile pour prioriser ce futur lot) : `CertificationBadges` (cartes) +
+`WhyChooseUs` (compteur) + JSON-LD `hasCredential` + `llms.txt` sont
+aujourd'hui les 4 surfaces RGE, toutes homepage-only. Aucune mention sur la
+liste des services, la fiche service, les pages service × ville, les
+réalisations, le contact, le footer, ou le JSON-LD des pages non-accueil.
+Ce lot est l'endroit où décider si une extension de cette couverture a une
+vraie valeur SEO/commerciale sur ces pages — pas avant que la validité au
+rendu et le contrôle humain existent.
+
+**Portée** : catégorie A si le constat se généralise (améliore tous les
+tenants important des certifications), à confirmer par un comptage réel
+avant de prioriser.
+
+### Qualit'EnR — téléphone/adresse extraits mais non utilisés
+
+Le scraper (`qualitenr-scraper.functions.ts`) extrait un `phone` et une
+`address` qui ne sont jamais écrits dans `data` — seuls `description` et
+`competences` alimentent le brief. Volontairement non branché dans ce lot :
+
+- **Pourquoi non utilisés aujourd'hui** : ce sont des champs secondaires du
+  scraper (son but premier est la description/les compétences pour enrichir
+  le brief), jamais reliés au formulaire depuis l'origine de ce composant —
+  pas une régression de ce lot.
+- **Fiabilité** : extraction par regex sur une page HTML publique tierce
+  (qualit-enr.org), sans schéma garanti ni contrat d'API — moins fiable que
+  Recherche Entreprise (API officielle structurée) ou l'ADEME (jeu de
+  données officiel). Non vérifié empiriquement sur un échantillon.
+- **Règle de priorité si jamais branché** : Recherche Entreprise / saisie
+  manuelle (1) > ADEME (2, fallback si vide) > Qualit'EnR (3, fallback si
+  toujours vide) — jamais au-dessus d'une source déjà posée, même logique
+  que les autres champs de contact. À ne câbler que sur demande explicite,
+  avec la même discipline "fallback si vide, jamais un écrasement".
+
+### Un seul appel IA (V1) — comportement explicite
+
+La V1 fait un seul appel structuré (`generateStructured`) qui renvoie dans
+la même réponse : éditorial (hero/CTA/SEO), enrichissement des services déjà
+sélectionnés, et suggestions hors catalogue. Pas de deuxième appel — la
+piste "plusieurs appels indépendants" reste un chantier futur non engagé.
+
+Comportement vérifié dans le code (`validators/tenant-output.ts` et
+`super-admin.onboarding.tsx`) :
+
+- **Éditorial valide + un enrichissement de service invalide** : l'entrée
+  fautive est retirée individuellement (`warnings[]`), le reste de la
+  réponse — éditorial compris — est appliqué normalement. Une erreur
+  locale sur un service ne fait perdre ni l'éditorial ni les autres
+  services.
+- **Une suggestion invalide** : même mécanique, retirée seule des
+  `suggested_services`, n'affecte rien d'autre.
+- **Échec total (champ obligatoire manquant, formulation interdite en
+  top-level)** : toute la réponse est rejetée, rien n'est appliqué au
+  dossier en cours — l'onboarding garde son état précédent intact.
+- **Relance de la génération avec des textes déjà présents** (générés par
+  l'IA ou modifiés à la main — les deux sont indistinguables dans le modèle
+  de données actuel) : **corrigé dans ce tour**. Avant ce correctif, une
+  relance écrasait silencieusement hero/SEO/`seo_boost_text` et la
+  description/SEO de chaque service déjà enrichi, sans avertissement — un
+  vrai risque si l'utilisateur avait retouché un texte entre deux
+  générations. Ajout d'une confirmation explicite (`AlertDialog`, pattern
+  déjà utilisé ailleurs dans le Super Admin) : dès qu'un champ éditorial ou
+  la description d'un service contient déjà du texte, cliquer sur
+  "Générer via IA" ouvre une confirmation avant d'écraser quoi que ce soit.
+  Aucune relance silencieuse n'est plus possible.
+
+### Vérification : l'installation de `deno` n'a pas touché le dépôt
+
+`deno@2.9.5` (paquet npm officiel) a été installé avec
+`npm install --prefix <dossier scratchpad hors dépôt>`, jamais dans le
+répertoire du projet. Confirmé :
+
+```
+git status --short         # aucun fichier lié à deno/node_modules
+git diff -- package.json package-lock.json bun.lock bun.lockb   # vide
+```
+
+Aucune dépendance ajoutée au projet. Les tests Deno de ce lot s'exécutent
+avec un binaire externe au dépôt — reste à décider en CI (pas fait dans ce
+lot) : soit une étape CI installe `deno` (action officielle ou paquet npm
+en `devDependency` explicite), soit ces tests restent un geste manuel avant
+merge. Pas de dette de dépendance ajoutée au produit par ce lot.
+
+### Risques connus
+
+- La présélection Pareto au moment de `goToAiStep()` dépend du chargement
+  React Query des `trade_service_templates` ; en cas de clic très rapide
+  juste après la sélection du métier, la requête peut ne pas être encore
+  résolue. Un filet de rattrapage existe (`generateFromBrief` retente la
+  présélection juste avant l'appel IA, et le bouton manuel "Pré-sélectionner
+  Pareto" reste disponible à l'étape Services) — mais le cas n'a pas été
+  observé en navigateur connecté, seulement raisonné dans le code.
+- `verify_jwt = true` sur `generate-tenant` change le comportement en
+  production dès le déploiement (401 immédiat sans JWT, avant même d'entrer
+  dans le code) — à vérifier explicitement dans les tests réels post-
+  déploiement, pas seulement supposé équivalent à `google-places`.

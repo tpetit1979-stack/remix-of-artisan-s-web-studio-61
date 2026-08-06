@@ -1,191 +1,255 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// Generates editorial/SEO content for a tenant from a brief + a
+// deterministically-preselected list of services. Same governance as
+// google-places/index.ts:
+//  - Auth is checked explicitly here (auth.ts), never assumed from
+//    verify_jwt alone. verify_jwt=true (supabase/config.toml) only rejects
+//    requests with no JWT at all — the super_admin role check below is what
+//    actually gates access.
+//  - Response envelope: { success: true, request_id, data } on success,
+//    { success: false, request_id, error: { code, message } } on failure.
+//    Every path goes through respondOk/respondError so structured logging
+//    (request_id, action-less here since there's only one operation,
+//    duration_ms, success, provider, model, usage) can never be skipped.
+//  - Logs never contain the brief text, the prompts, the raw AI response, or
+//    any secret — only provider/model/latency/status/token usage.
+//
+// Business rules enforced here (see prompts/tenant-generation.ts and
+// validators/tenant-output.ts for the detail):
+//  - Factual data (phone, email, city, zones, brands, certifications,
+//    gratuité, urgence, délais, garanties) is never requested from the AI —
+//    it is not in the schema at all.
+//  - selectedServices (chosen by the caller via deterministic Pareto
+//    preselection from trade_service_templates, BEFORE this function is
+//    ever called) keep their id/slug/name untouched. The AI only enriches
+//    description/SEO text for those exact ids.
+//  - Anything the AI thinks is missing from the catalogue is returned
+//    separately in suggested_services — never merged automatically.
+
+import { verifySuperAdmin } from "./auth.ts";
+import type { AiProvider, AiGenerationInput, AiGenerationResult } from "./providers/types.ts";
+import { AiProviderError, TRANSIENT_AI_ERROR_CODES } from "./providers/types.ts";
+import { LovableProvider } from "./providers/lovable.ts";
+import { GeminiProvider } from "./providers/gemini.ts";
+import { buildSystemPrompt, buildUserPrompt, TENANT_GENERATION_SCHEMA, AI_FETCH_TIMEOUT_MS } from "./prompts/tenant-generation.ts";
+import type { SelectedServiceContext } from "./prompts/tenant-generation.ts";
+import { validateTenantOutput } from "./validators/tenant-output.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
-  if (req.method === "OPTIONS")
-    return new Response(null, { headers: corsHeaders });
+const MAX_BRIEF_LENGTH = 20000;
+const MAX_SELECTED_SERVICES = 30;
+// One real attempt + at most one retry, transient errors only.
+const MAX_AI_ATTEMPTS = 2;
 
-  try {
-    const { brief } = await req.json();
-    if (!brief || typeof brief !== "string" || brief.length > 20000) {
-      return new Response(
-        JSON.stringify({ error: "Brief requis (max 20000 caractères)" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+export type GenerateWithRetryResult =
+  | { ok: true; result: AiGenerationResult; attempts: number }
+  | { ok: false; error: AiProviderError; attempts: number };
+
+/** Extracted as a pure function (no fetch/env access of its own — those
+ * live in the provider) so retry/transient-error-gating logic can be unit
+ * tested with a fake AiProvider, without a network call or a real timer. */
+export async function generateWithRetry(
+  provider: AiProvider,
+  input: AiGenerationInput,
+  timeoutMs: number,
+  maxAttempts: number,
+): Promise<GenerateWithRetryResult> {
+  let attempt = 0;
+  while (true) {
+    attempt++;
+    try {
+      const result = await provider.generateStructured(input, timeoutMs);
+      return { ok: true, result, attempts: attempt };
+    } catch (e) {
+      const err = e instanceof AiProviderError ? e : new AiProviderError("AI_API_ERROR", "Erreur IA inconnue");
+      const canRetry = attempt < maxAttempts && TRANSIENT_AI_ERROR_CODES.includes(err.code);
+      if (!canRetry) return { ok: false, error: err, attempts: attempt };
+      // transient error, attempts left — loop continues
     }
-
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
-
-    const systemPrompt = `Tu es un assistant spécialisé dans la création de sites web pour artisans du bâtiment en France.
-À partir du brief fourni, génère une configuration complète pour un site d'artisan.
-
-Tu DOIS répondre UNIQUEMENT avec l'appel de fonction suggest_tenant_config. Pas de texte en dehors.`;
-
-    const userPrompt = `Brief client :\n${brief}\n\nGénère la configuration complète du tenant.`;
-
-    const response = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "suggest_tenant_config",
-                description:
-                  "Génère la configuration complète d'un tenant artisan à partir d'un brief.",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    company_name: {
-                      type: "string",
-                      description: "Nom de l'entreprise",
-                    },
-                    city: {
-                      type: "string",
-                      description: "Ville principale",
-                    },
-                    phone: {
-                      type: "string",
-                      description: "Numéro de téléphone si mentionné",
-                    },
-                    email: {
-                      type: "string",
-                      description: "Email si mentionné",
-                    },
-                    hero_title: {
-                      type: "string",
-                      description:
-                        "Titre hero accrocheur (max 60 caractères), orienté conversion",
-                    },
-                    hero_subtitle: {
-                      type: "string",
-                      description:
-                        "Sous-titre hero descriptif (max 160 caractères) avec mots-clés SEO",
-                    },
-                    cta_text: {
-                      type: "string",
-                      description: "Texte du bouton CTA (ex: Demander un devis)",
-                    },
-                    primary_color: {
-                      type: "string",
-                      description:
-                        "Couleur primaire hex adaptée au métier (ex: #D2691E pour chauffage)",
-                    },
-                    seo_meta_title: {
-                      type: "string",
-                      description: "Meta title SEO (max 60 caractères)",
-                    },
-                    seo_meta_description: {
-                      type: "string",
-                      description: "Meta description SEO (max 160 caractères)",
-                    },
-                    seo_boost_text: {
-                      type: "string",
-                      description:
-                        "Texte SEO différenciant mentionnant marques, spécialités, certifications",
-                    },
-                    services: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          name: { type: "string" },
-                          description: {
-                            type: "string",
-                            description: "Description courte du service (1-2 phrases)",
-                          },
-                          is_featured: { type: "boolean" },
-                        },
-                        required: ["name", "description", "is_featured"],
-                      },
-                      description: "Liste des services proposés (3-8 services)",
-                    },
-                    cities: {
-                      type: "array",
-                      items: { type: "string" },
-                      description:
-                        "Liste des villes d'intervention (5-15 villes proches)",
-                    },
-                  },
-                  required: [
-                    "company_name",
-                    "city",
-                    "hero_title",
-                    "hero_subtitle",
-                    "cta_text",
-                    "primary_color",
-                    "seo_meta_title",
-                    "seo_meta_description",
-                    "services",
-                    "cities",
-                  ],
-                },
-              },
-            },
-          ],
-          tool_choice: {
-            type: "function",
-            function: { name: "suggest_tenant_config" },
-          },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const status = response.status;
-      if (status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Trop de requêtes, réessayez dans quelques secondes." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Crédits IA épuisés. Ajoutez des crédits dans Settings > Workspace > Usage." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const t = await response.text();
-      console.error("AI error:", status, t);
-      throw new Error(`AI gateway error: ${status}`);
-    }
-
-    const data = await response.json();
-    const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall) throw new Error("No tool call in AI response");
-
-    const config = JSON.parse(toolCall.function.arguments);
-
-    return new Response(JSON.stringify(config), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (e) {
-    console.error("generate-tenant error:", e);
-    return new Response(
-      JSON.stringify({
-        error: e instanceof Error ? e.message : "Erreur inconnue",
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
   }
-});
+}
+
+function statusForCode(code: string): number {
+  switch (code) {
+    case "UNAUTHORIZED":
+      return 401;
+    case "FORBIDDEN":
+      return 403;
+    case "INVALID_JSON":
+    case "INVALID_BODY":
+      return 400;
+    case "AI_RATE_LIMITED":
+      return 429;
+    case "AI_QUOTA_EXCEEDED":
+      return 402;
+    case "AI_TIMEOUT":
+    case "AI_API_ERROR":
+    case "AI_INVALID_RESPONSE":
+    case "AI_OUTPUT_REJECTED":
+      return 502;
+    default:
+      // DATABASE_ERROR, CONFIG_ERROR and any unmapped code are our own faults.
+      return 500;
+  }
+}
+
+function respondOk(requestId: string, startedAt: number, data: unknown, extra: Record<string, unknown> = {}): Response {
+  console.log(
+    JSON.stringify({
+      event: "generate_tenant",
+      request_id: requestId,
+      duration_ms: Date.now() - startedAt,
+      success: true,
+      ...extra,
+    }),
+  );
+  return new Response(JSON.stringify({ success: true, request_id: requestId, data }), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function respondError(
+  requestId: string,
+  startedAt: number,
+  code: string,
+  message: string,
+  extra: Record<string, unknown> = {},
+): Response {
+  console.log(
+    JSON.stringify({
+      event: "generate_tenant",
+      request_id: requestId,
+      duration_ms: Date.now() - startedAt,
+      success: false,
+      error_code: code,
+      ...extra,
+    }),
+  );
+  return new Response(JSON.stringify({ success: false, request_id: requestId, error: { code, message } }), {
+    status: statusForCode(code),
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+export function buildProvider(env: { get(key: string): string | undefined } = Deno.env): { provider: AiProvider; providerName: string; model: string } | { error: string } {
+  // Default stays "lovable" — the current, already-live behavior — so that
+  // simply deploying this rewrite (before AI_PROVIDER is ever set) changes
+  // nothing about which gateway is used. Switching to Gemini is an explicit
+  // opt-in via the AI_PROVIDER secret, not a side effect of this deploy.
+  const providerName = (env.get("AI_PROVIDER") || "lovable").trim().toLowerCase();
+
+  if (providerName === "gemini") {
+    const apiKey = env.get("GEMINI_API_KEY");
+    const model = env.get("GEMINI_MODEL");
+    if (!apiKey || !model) {
+      return { error: "GEMINI_API_KEY ou GEMINI_MODEL non configuré" };
+    }
+    return { provider: new GeminiProvider(apiKey, model), providerName, model };
+  }
+
+  if (providerName === "lovable") {
+    const apiKey = env.get("LOVABLE_API_KEY");
+    if (!apiKey) return { error: "LOVABLE_API_KEY non configuré" };
+    return { provider: new LovableProvider(apiKey, "google/gemini-3-flash-preview"), providerName, model: "google/gemini-3-flash-preview" };
+  }
+
+  return { error: `AI_PROVIDER inconnu: "${providerName}"` };
+}
+
+/** The actual request handler, exported so tests can call it directly
+ * without importing this module as a side-effecting Deno.serve entrypoint
+ * (see the import.meta.main guard below). */
+export async function handleRequest(req: Request): Promise<Response> {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  const requestId = crypto.randomUUID();
+  const startedAt = Date.now();
+
+  // --- Auth first: nothing below runs for a non-super_admin caller. ---
+  const auth = await verifySuperAdmin(req);
+  if (!auth.ok) {
+    return respondError(requestId, startedAt, auth.code, auth.message);
+  }
+
+  // deno-lint-ignore no-explicit-any
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return respondError(requestId, startedAt, "INVALID_JSON", "Corps de requête invalide");
+  }
+
+  const brief = typeof body?.brief === "string" ? body.brief : "";
+  if (!brief || brief.length > MAX_BRIEF_LENGTH) {
+    return respondError(requestId, startedAt, "INVALID_BODY", `Brief requis (max ${MAX_BRIEF_LENGTH} caractères)`);
+  }
+
+  const rawSelectedServices = Array.isArray(body?.selectedServices) ? body.selectedServices : [];
+  if (rawSelectedServices.length > MAX_SELECTED_SERVICES) {
+    return respondError(requestId, startedAt, "INVALID_BODY", `Trop de services sélectionnés (max ${MAX_SELECTED_SERVICES})`);
+  }
+  const selectedServices: SelectedServiceContext[] = [];
+  for (const entry of rawSelectedServices) {
+    if (typeof entry?.id === "string" && typeof entry?.name === "string" && entry.id && entry.name) {
+      selectedServices.push({ id: entry.id, name: entry.name });
+    }
+  }
+  if (selectedServices.length !== rawSelectedServices.length) {
+    return respondError(requestId, startedAt, "INVALID_BODY", "selectedServices: entrée invalide (id/name requis)");
+  }
+
+  const providerSetup = buildProvider();
+  if ("error" in providerSetup) {
+    return respondError(requestId, startedAt, "CONFIG_ERROR", providerSetup.error);
+  }
+  const { provider, providerName, model } = providerSetup;
+
+  const input = {
+    systemPrompt: buildSystemPrompt(),
+    userPrompt: buildUserPrompt(brief, selectedServices),
+    schema: TENANT_GENERATION_SCHEMA,
+  };
+
+  const attemptResult: GenerateWithRetryResult = await generateWithRetry(provider, input, AI_FETCH_TIMEOUT_MS, MAX_AI_ATTEMPTS);
+  if (!attemptResult.ok) {
+    return respondError(requestId, startedAt, attemptResult.error.code, attemptResult.error.message, {
+      provider: providerName,
+      model,
+      attempt: attemptResult.attempts,
+    });
+  }
+  const generation = attemptResult.result;
+  const attempt = attemptResult.attempts;
+
+  const knownIds = selectedServices.map((s) => s.id);
+  const validation = validateTenantOutput(generation.raw, knownIds);
+  if (!validation.ok) {
+    // Invalid AI output never reaches the caller, partially or otherwise.
+    // Onboarding state is untouched — the client sees a clean error and can
+    // retry the whole step.
+    return respondError(requestId, startedAt, "AI_OUTPUT_REJECTED", validation.reason, {
+      provider: providerName,
+      model,
+      attempt,
+    });
+  }
+
+  return respondOk(requestId, startedAt, validation.data, {
+    provider: providerName,
+    model: generation.model,
+    attempt,
+    warnings_count: validation.warnings.length,
+    ...(generation.usage?.inputTokens != null ? { input_tokens: generation.usage.inputTokens } : {}),
+    ...(generation.usage?.outputTokens != null ? { output_tokens: generation.usage.outputTokens } : {}),
+  });
+}
+
+// Only start the server when this file is the actual entrypoint (the
+// Supabase runtime, or `deno run` directly) — not when it's imported by a
+// test file, which would otherwise open a real listener as a side effect.
+if (import.meta.main) {
+  Deno.serve(handleRequest);
+}

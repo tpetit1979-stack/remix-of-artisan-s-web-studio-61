@@ -1,8 +1,11 @@
 project_id = "bygdvkpjreuilqghtnka"
 
 [functions.generate-tenant]
-verify_jwt = false
+verify_jwt = true
 
+# analyze-logo still has verify_jwt = false — same class of gap as
+# generate-tenant had. Deliberately NOT fixed in this lot (explicit scope
+# decision): tracked as a separate P0 in docs/product/execution-backlog.md.
 [functions.analyze-logo]
 verify_jwt = false
 

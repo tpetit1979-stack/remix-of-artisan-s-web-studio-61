@@ -20,6 +20,16 @@ import { fetchServiceTemplatesForTrades, activateTenantTrades, PARETO_MIN_SCORE 
 import { getTradeShortName } from "@/lib/trade-wording";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TenantCreatedRecap } from "@/components/admin/TenantCreatedRecap";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const tradeIcons: Record<string, React.ReactNode> = {
   Flame: <Flame className="h-6 w-6" />,
@@ -44,6 +54,12 @@ type ServiceDraft = {
   seo_description_template: string | null;
 };
 
+type SuggestedService = {
+  name: string;
+  description: string;
+  reason: string | null;
+};
+
 type OnboardingData = {
   company_name: string;
   siret: string;
@@ -60,6 +76,14 @@ type OnboardingData = {
   seo_boost_text: string;
   services: ServiceDraft[];
   cities: string[];
+  /** AI suggestions outside the template catalogue — never inserted on save,
+   * only "Ajouter à mes services" moves one into `services` — as a
+   * tenant-scoped custom service, never into `trade_service_templates`
+   * (the shared template library other tenants also draw from). */
+  suggestedServices: SuggestedService[];
+  /** AI's proposed primary_color — a suggestion only, never applied unless
+   * the user explicitly clicks "Appliquer" in the Branding step. */
+  suggestedPrimaryColor: string | null;
 };
 
 const defaultData: OnboardingData = {
@@ -78,6 +102,8 @@ const defaultData: OnboardingData = {
   seo_boost_text: "",
   services: [],
   cities: [],
+  suggestedServices: [],
+  suggestedPrimaryColor: null,
 };
 
 function generateCitySlug(city: string) {
@@ -117,6 +143,7 @@ function OnboardingWizard() {
   const [data, setData] = useState<OnboardingData>(defaultData);
   const [brief, setBrief] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showRegenerateConfirm, setShowRegenerateConfirm] = useState(false);
   const [newService, setNewService] = useState("");
   const [newCity, setNewCity] = useState("");
   const [rgeCerts, setRgeCerts] = useState<RgeCertification[]>([]);
@@ -210,16 +237,26 @@ function OnboardingWizard() {
     };
   }
 
-  // Pre-select the Pareto services of the PRIMARY trade only (top 5).
-  // Called when the user enters the Services step.
-  function autoPreselectParetoServices() {
-    if (!selectedTradeId || serviceTemplates.length === 0 || data.services.length > 0) return;
+  // Deterministic Pareto preselection of the PRIMARY trade's services — the
+  // source of truth the AI generation step relies on. Pure, no state write,
+  // so it can be called both eagerly (goToAiStep, generateFromBrief) and
+  // from the manual fallback button in the Services step.
+  function computeParetoPreselection(): ServiceDraft[] {
+    if (!selectedTradeId || serviceTemplates.length === 0) return [];
     const paretoOfPrimary = serviceTemplates.filter(
       (t) => t.trade_template_id === selectedTradeId && (t.priority_score ?? 0) >= PARETO_MIN_SCORE
     );
-    if (paretoOfPrimary.length === 0) return;
-    setData((p) => ({ ...p, services: paretoOfPrimary.map(templateToDraft) }));
-    toast.success(`${paretoOfPrimary.length} services Pareto du métier principal pré-sélectionnés`);
+    return paretoOfPrimary.map(templateToDraft);
+  }
+
+  // Manual fallback button in the Services step, for the case where the
+  // template query hadn't resolved yet when the AI step ran.
+  function autoPreselectParetoServices() {
+    if (data.services.length > 0) return;
+    const preselected = computeParetoPreselection();
+    if (preselected.length === 0) return;
+    setData((p) => ({ ...p, services: preselected }));
+    toast.success(`${preselected.length} services Pareto du métier principal pré-sélectionnés`);
   }
 
   function toggleServiceFromTemplate(template: typeof serviceTemplates[number]) {
@@ -241,46 +278,89 @@ function OnboardingWizard() {
     "Confirmation",
   ];
 
-  async function generateFromBrief() {
+  // True once any field a regeneration would touch already has content —
+  // whether that content came from a previous AI run or was typed by hand.
+  // The two cases are indistinguishable in the current data model, so this
+  // errs toward always asking rather than silently overwriting a manual
+  // edit.
+  function hasExistingEditorialContent(): boolean {
+    if (data.hero_title.trim() || data.hero_subtitle.trim() || data.seo_meta_title.trim() || data.seo_meta_description.trim() || data.seo_boost_text.trim()) {
+      return true;
+    }
+    return data.services.some((s) => s.description.trim().length > 0);
+  }
+
+  function generateFromBrief() {
     if (!brief.trim()) {
       toast.error("Collez un brief ou des infos sur le client");
       return;
     }
+    if (hasExistingEditorialContent()) {
+      setShowRegenerateConfirm(true);
+      return;
+    }
+    runGeneration();
+  }
+
+  async function runGeneration() {
+    setShowRegenerateConfirm(false);
     setIsGenerating(true);
     try {
+      // Templates are the source of truth: make sure the Pareto services are
+      // preselected before we ever call the AI, even if goToAiStep ran
+      // before the template query had resolved.
+      let currentServices = data.services;
+      if (currentServices.length === 0) {
+        const preselected = computeParetoPreselection();
+        if (preselected.length > 0) {
+          currentServices = preselected;
+          setData((p) => ({ ...p, services: preselected }));
+        }
+      }
+      const selectedServices = currentServices
+        .filter((s) => s.trade_service_template_id)
+        .map((s) => ({ id: s.trade_service_template_id as string, name: s.name }));
+
       const { data: result, error } = await supabase.functions.invoke(
         "generate-tenant",
-        { body: { brief } }
+        { body: { brief, selectedServices } }
       );
       if (error) throw error;
-      if (result.error) throw new Error(result.error);
+      if (!result?.success) throw new Error(result?.error?.message || "Erreur de génération IA");
+      const aiData = result.data;
 
-      setData((prev) => ({
-        ...prev,
-        company_name: result.company_name || prev.company_name,
-        city: result.city || prev.city,
-        phone: result.phone || prev.phone,
-        email: result.email || prev.email,
-        hero_title: result.hero_title || prev.hero_title,
-        hero_subtitle: result.hero_subtitle || prev.hero_subtitle,
-        cta_text: result.cta_text || prev.cta_text,
-        primary_color: result.primary_color || prev.primary_color,
-        seo_meta_title: result.seo_meta_title || prev.seo_meta_title,
-        seo_meta_description: result.seo_meta_description || prev.seo_meta_description,
-        seo_boost_text: result.seo_boost_text || prev.seo_boost_text,
-        services: (result.services || []).map((s: any) => ({
-          name: s.name,
-          slug: generateSlug(s.name),
-          description: s.description || "",
-          is_featured: s.is_featured ?? false,
-          trade_template_id: selectedTradeId,
-          trade_service_template_id: null,
-          priority_score: 0,
-          seo_title_template: null,
-          seo_description_template: null,
-        })),
-        cities: result.cities || prev.cities,
-      }));
+      setData((prev) => {
+        const enrichmentById = new Map<string, any>(
+          (aiData.services_enrichment || []).map((e: any) => [e.id, e])
+        );
+        // Only description/SEO text of already-selected services is ever
+        // patched here — id/slug/name/trade_service_template_id are never
+        // touched, matching what the prompt/validator both enforce.
+        const services = prev.services.map((s) => {
+          const enrichment = s.trade_service_template_id ? enrichmentById.get(s.trade_service_template_id) : undefined;
+          if (!enrichment) return s;
+          return {
+            ...s,
+            description: enrichment.description || s.description,
+            seo_title_template: enrichment.seo_title_template ?? s.seo_title_template,
+            seo_description_template: enrichment.seo_description_template ?? s.seo_description_template,
+          };
+        });
+        return {
+          ...prev,
+          hero_title: aiData.hero_title || prev.hero_title,
+          hero_subtitle: aiData.hero_subtitle || prev.hero_subtitle,
+          cta_text: aiData.cta_text || prev.cta_text,
+          seo_meta_title: aiData.seo_meta_title || prev.seo_meta_title,
+          seo_meta_description: aiData.seo_meta_description || prev.seo_meta_description,
+          seo_boost_text: aiData.seo_boost_text || prev.seo_boost_text,
+          services,
+          // Out-of-catalogue suggestions and the color suggestion are never
+          // applied automatically — see the Services and Branding steps.
+          suggestedServices: aiData.suggested_services || [],
+          suggestedPrimaryColor: aiData.primary_color ?? null,
+        };
+      });
       toast.success("Configuration générée par l'IA !");
       setStep(2);
     } catch (e: any) {
@@ -288,6 +368,42 @@ function OnboardingWizard() {
     } finally {
       setIsGenerating(false);
     }
+  }
+
+  // Manual, explicit conversion of one AI suggestion into a tenant-scoped
+  // custom service — never automatic, and never written to the shared
+  // `trade_service_templates` library (trade_service_template_id stays
+  // null, exactly like addService()'s free-text entries). This only ever
+  // touches this tenant's own `services` draft, saved under its tenant_id.
+  function addSuggestedServiceToTenant(idx: number) {
+    setData((p) => {
+      const suggestion = p.suggestedServices[idx];
+      if (!suggestion) return p;
+      const newDraft: ServiceDraft = {
+        name: suggestion.name,
+        slug: generateSlug(suggestion.name),
+        description: suggestion.description,
+        is_featured: false,
+        trade_template_id: selectedTradeId,
+        trade_service_template_id: null,
+        priority_score: 0,
+        seo_title_template: null,
+        seo_description_template: null,
+      };
+      return {
+        ...p,
+        services: [...p.services, newDraft],
+        suggestedServices: p.suggestedServices.filter((_, i) => i !== idx),
+      };
+    });
+  }
+
+  function dismissSuggestedService(idx: number) {
+    setData((p) => ({ ...p, suggestedServices: p.suggestedServices.filter((_, i) => i !== idx) }));
+  }
+
+  function applySuggestedPrimaryColor() {
+    setData((p) => (p.suggestedPrimaryColor ? { ...p, primary_color: p.suggestedPrimaryColor, suggestedPrimaryColor: null } : p));
   }
 
   const saveMutation = useMutation({
@@ -489,13 +605,12 @@ function OnboardingWizard() {
           : prev.address,
       }));
 
-      // Generate SEO boost text from certifications
-      const activeCerts = result.certifications.filter((c: RgeCertification) => c.is_active);
-      const certNames = [...new Set(activeCerts.map((c: RgeCertification) => c.certification_name))];
-      const domains = [...new Set(activeCerts.map((c: RgeCertification) => c.domaine).filter(Boolean))];
-      const boostText = `Entreprise certifiée ${certNames.join(", ")} (RGE). Domaines : ${domains.join(", ")}.`;
-      update("seo_boost_text", boostText);
-
+      // Certifications are shown publicly via their own dedicated,
+      // always-live surface (CertificationBadges, reading tenant_certifications
+      // directly) — never echoed into seo_boost_text as a cached sentence.
+      // seo_boost_text stays purely editorial (Gemini or manual), so a later
+      // certification change never leaves a stale claim behind, and no
+      // regeneration can drift a qualification's exact wording.
       toast.success(`${result.certifications.length} certification(s) RGE trouvée(s) !`);
 
       // Auto-scrape Qualit'EnR if organisme is qualitenr
@@ -543,11 +658,19 @@ function OnboardingWizard() {
     }
   }
 
-  // Auto-update brief when company data changes
+  // Auto-update brief when company data changes, and preselect the primary
+  // trade's Pareto services BEFORE the AI step — templates are the source
+  // of truth, the AI only ever enriches text for services chosen here.
   function goToAiStep() {
     const autoBrief = buildBriefFromData(data, rgeCerts, scrapedData);
     if (!brief.trim() || brief === buildBriefFromData(defaultData, [], null)) {
       setBrief(autoBrief);
+    }
+    if (data.services.length === 0) {
+      const preselected = computeParetoPreselection();
+      if (preselected.length > 0) {
+        setData((p) => ({ ...p, services: preselected }));
+      }
     }
     setStep(1);
   }
@@ -906,6 +1029,33 @@ Tel: 04 67 00 00 00, certifié RGE.`}
         </Card>
       )}
 
+      <AlertDialog open={showRegenerateConfirm} onOpenChange={setShowRegenerateConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Relancer la génération IA ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action remplace, sans distinction entre ce qui vient d'une génération précédente et ce
+              qui a été corrigé à la main :
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            <li>le titre et le sous-titre Hero, le texte du bouton CTA ;</li>
+            <li>le meta title et la meta description SEO ;</li>
+            <li>le texte éditorial libre (SEO boost) ;</li>
+            <li>la description et les textes SEO de chaque service déjà enrichi par l'IA.</li>
+          </ul>
+          <p className="text-sm text-muted-foreground">
+            Ne sont jamais touchés : téléphone, email, ville, zones, SIRET, certifications, ni le nom/slug
+            des services (déjà verrouillés côté validateur). Les services ajoutés manuellement ne sont pas
+            supprimés. "Annuler" ne modifie rien.
+          </p>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={runGeneration}>Relancer quand même</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Step 2: Branding & SEO */}
       {step === 2 && (
         <Card>
@@ -937,6 +1087,15 @@ Tel: 04 67 00 00 00, certifié RGE.`}
                   />
                   <Input value={data.primary_color} onChange={(e) => update("primary_color", e.target.value)} className="flex-1" />
                 </div>
+                {data.suggestedPrimaryColor && data.suggestedPrimaryColor !== data.primary_color && (
+                  <div className="flex items-center gap-2 rounded-md border border-dashed border-primary/40 bg-primary/5 p-2 text-xs">
+                    <span className="inline-block w-3.5 h-3.5 rounded" style={{ backgroundColor: data.suggestedPrimaryColor }} />
+                    <span className="flex-1">Suggestion IA — à valider : {data.suggestedPrimaryColor}</span>
+                    <Button type="button" size="sm" variant="outline" className="h-6 px-2 text-xs" onClick={applySuggestedPrimaryColor}>
+                      Appliquer
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
             <div className="space-y-2">
@@ -949,7 +1108,11 @@ Tel: 04 67 00 00 00, certifié RGE.`}
             </div>
             <div className="space-y-2">
               <Label>Texte SEO boost</Label>
-              <Textarea value={data.seo_boost_text} onChange={(e) => update("seo_boost_text", e.target.value)} rows={3} placeholder="Marques, certifications, spécialités..." />
+              <p className="text-xs text-muted-foreground">
+                Texte éditorial libre (marques, spécialités, ton). Les certifications RGE s'affichent
+                automatiquement dans leur propre section sur le site — inutile de les répéter ici.
+              </p>
+              <Textarea value={data.seo_boost_text} onChange={(e) => update("seo_boost_text", e.target.value)} rows={3} placeholder="Ex : spécialiste poêles à granulés et cheminées design..." />
             </div>
           </CardContent>
         </Card>
@@ -1025,6 +1188,34 @@ Tel: 04 67 00 00 00, certifié RGE.`}
               <p className="text-sm text-muted-foreground text-center py-4">
                 Aucun service. Ajoutez-en au moins un.
               </p>
+            )}
+
+            {data.suggestedServices.length > 0 && (
+              <div className="space-y-2 border-t border-border pt-4">
+                <Label className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Suggestions IA — à valider
+                </Label>
+                {data.suggestedServices.map((s, i) => (
+                  <div key={i} className="flex items-start gap-2 p-3 rounded border border-dashed border-primary/40 bg-primary/5">
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm">{s.name}</span>
+                        <Badge variant="outline" className="text-xs">Suggestion IA</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{s.description}</p>
+                      {s.reason && <p className="text-xs text-muted-foreground italic">{s.reason}</p>}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <Button size="sm" variant="outline" onClick={() => addSuggestedServiceToTenant(i)}>
+                        Ajouter à mes services
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => dismissSuggestedService(i)}>
+                        Ignorer
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
