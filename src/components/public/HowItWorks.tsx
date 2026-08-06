@@ -30,7 +30,7 @@ const STEPS = [
     icon: ShieldCheck,
     title: "Garantie & suivi",
     description:
-      "Vos travaux sont garantis. Nous restons disponibles pour toute question après la livraison.",
+      "Nous restons disponibles pour toute question après la fin des travaux.",
   },
 ];
 

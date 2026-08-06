@@ -74,7 +74,7 @@ export function generateIntroText(
 ): string {
   const lines: string[] = [];
   lines.push(
-    `Vous recherchez un professionnel en ${service.name.toLowerCase()} à ${city} ? ${tenant.company_name} intervient rapidement dans votre secteur.`,
+    `Vous recherchez un professionnel pour ${service.name.toLowerCase()} à ${city} ? ${tenant.company_name} intervient dans votre secteur.`,
   );
   if (service.description) {
     lines.push(service.description);

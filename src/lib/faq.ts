@@ -32,7 +32,7 @@ export function buildFaqItems(tenant: PublicTenant, promises: ResolvedCommercial
     },
     {
       question: "Vos travaux sont-ils garantis ?",
-      answer: `Oui. Toutes nos prestations sont couvertes par les garanties légales en vigueur (garantie de parfait achèvement, garantie biennale et décennale selon la nature des travaux). Vous recevez systématiquement une facture détaillée.`,
+      answer: `Les garanties applicables dépendent de la nature de l'intervention — nous vous en informons précisément lors du devis. Vous recevez systématiquement une facture détaillée.`,
     },
     {
       question: "Comment se passe le règlement ?",

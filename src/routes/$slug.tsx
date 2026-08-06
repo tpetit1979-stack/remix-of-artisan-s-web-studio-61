@@ -183,7 +183,7 @@ function ServiceCityPage() {
               Zone d'intervention — {service.name}
             </h2>
             <p className="mt-2 text-muted-foreground">
-              {tenant.company_name} intervient à {city} et dans les communes voisines pour vos besoins en {service.name.toLowerCase()}.
+              {tenant.company_name} intervient à {city} et dans les communes voisines pour ce service.
             </p>
             {sameServiceAreas.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">

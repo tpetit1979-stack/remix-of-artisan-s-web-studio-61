@@ -219,13 +219,14 @@ function ContactPage() {
                     </div>
                   </div>
                 )}
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground">Intervention rapide</p>
-                    <p className="text-sm text-muted-foreground">Technicien qualifié et certifié</p>
+                {settings?.emergency_service_available === true && (
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                    <div>
+                      <p className="font-medium text-foreground">Intervention d'urgence disponible</p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Direct contact */}
