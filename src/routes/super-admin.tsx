@@ -23,7 +23,7 @@ function SuperAdminLayout() {
   useEffect(() => {
     if (isLoading) return;
     if (access.kind === "redirect-login") {
-      const current = location.pathname + location.search;
+      const current = location.href;
       navigate({ to: "/login", search: { redirect: safeRedirect(current) ?? location.pathname } });
     }
     // denied-role: no navigation, AccessDenied renders below — this is the
