@@ -1,6 +1,6 @@
 import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
-import { fetchServices, fetchServiceAreas, fetchPortfolio } from "@/lib/tenant";
+import { fetchServices, fetchPublicServiceAreas, fetchPortfolio } from "@/lib/tenant";
 import { Briefcase, MapPin, Image, Calendar } from "lucide-react";
 
 interface StatsCounterProps {
@@ -18,7 +18,7 @@ export function StatsCounter({ variant = "card" }: StatsCounterProps) {
 
   const { data: areas = [] } = useQuery({
     queryKey: ["service-areas", tenant?.id],
-    queryFn: () => fetchServiceAreas(tenant!.id),
+    queryFn: () => fetchPublicServiceAreas(tenant!.id),
     enabled: !!tenant?.id,
   });
 

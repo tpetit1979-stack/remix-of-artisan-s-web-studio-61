@@ -11,6 +11,60 @@ export type PortfolioItem = Tables<"portfolio">;
 export type Contact = Tables<"contacts">;
 
 /**
+ * Lot 1 sécurité (public data views) — shapes of the public_* views used by
+ * every public-facing fetcher below. Hand-written, not `Tables<"public_*">`,
+ * because the views aren't in the generated Supabase types yet (Lot 2
+ * regenerates them). Deliberately explicit rather than `any`: this is what
+ * keeps the `as any` cast in publicView() below from leaking into any
+ * component or route — every function that reads a public_* view returns
+ * one of these named types, never the raw query result.
+ */
+export type PublicTenant = Pick<
+  Tenant,
+  | "id" | "company_name" | "slug" | "domain" | "siret" | "phone" | "email"
+  | "address" | "city" | "seo_boost_text" | "tagline" | "years_experience"
+  | "trade_template_id" | "google_place_id" | "google_rating" | "google_review_count"
+>;
+
+export type PublicSiteSettings = Pick<
+  SiteSettings,
+  | "tenant_id" | "logo_url" | "favicon_url" | "primary_color" | "hero_title"
+  | "hero_subtitle" | "cta_text" | "social_links" | "seo_meta_title"
+  | "seo_meta_description" | "hero_image_url" | "border_radius" | "gradient_style"
+  | "header_style" | "font_family" | "booking_enabled" | "booking_provider"
+  | "booking_url" | "booking_button_label" | "opening_hours" | "quote_is_free"
+  | "quote_response_delay_hours" | "emergency_service_available" | "whatsapp_number"
+  | "whatsapp_enabled" | "whatsapp_message_template" | "team_presentation_mode"
+>;
+
+export type PublicService = Pick<
+  Service,
+  | "id" | "tenant_id" | "name" | "slug" | "description" | "is_featured" | "sort_order"
+  | "trade_service_template_id" | "seo_title_template" | "seo_description_template"
+>;
+
+export type PublicServiceArea = Pick<
+  ServiceArea,
+  "id" | "service_id" | "tenant_id" | "city" | "city_slug" | "is_primary"
+>;
+
+/**
+ * Lot 1 sécurité (dette temporaire, à supprimer intégralement au Lot 2) —
+ * the public_* views don't exist in the generated Database type yet, so the
+ * typed Supabase client rejects `.from("public_tenants")` etc. at compile
+ * time. This is the ONLY `any` in this lot, confined to this one helper and
+ * this one file — never reused as a precedent to leave the cast in place
+ * once types.ts is regenerated. Every caller still gets a fully-typed
+ * result because each function below declares an explicit return type.
+ */
+export function publicView(
+  name: "public_tenants" | "public_site_settings" | "public_services" | "public_service_areas",
+) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (supabase as any).from(name);
+}
+
+/**
  * The URL to open to view a tenant's public site — single source of truth
  * so every "view site" link/button builds the same address. A real domain
  * is used as-is; otherwise falls back to the dev/preview `?tenant=`
@@ -25,26 +79,25 @@ export function buildPublicSiteUrl(tenant: Pick<Tenant, "domain" | "slug">): str
   return `/?tenant=${encodeURIComponent(tenant.slug)}`;
 }
 
-export async function fetchTenantByDomain(domain: string) {
-  const { data, error } = await supabase
-    .from("tenants")
-    .select("*")
+export const PUBLIC_TENANT_COLUMNS =
+  "id,company_name,slug,domain,siret,phone,email,address,city,seo_boost_text,tagline,years_experience,trade_template_id,google_place_id,google_rating,google_review_count";
+
+export async function fetchTenantByDomain(domain: string): Promise<PublicTenant> {
+  const { data, error } = await publicView("public_tenants")
+    .select(PUBLIC_TENANT_COLUMNS)
     .eq("domain", domain)
-    .eq("is_active", true)
     .single();
   if (error) throw error;
-  return data;
+  return data as PublicTenant;
 }
 
-export async function fetchTenantBySlug(slug: string) {
-  const { data, error } = await supabase
-    .from("tenants")
-    .select("*")
+export async function fetchTenantBySlug(slug: string): Promise<PublicTenant> {
+  const { data, error } = await publicView("public_tenants")
+    .select(PUBLIC_TENANT_COLUMNS)
     .eq("slug", slug)
-    .eq("is_active", true)
     .single();
   if (error) throw error;
-  return data;
+  return data as PublicTenant;
 }
 
 /**
@@ -64,7 +117,7 @@ function getClientTenantResolutionInput(): { hostname: string; tenantSlugParam: 
   };
 }
 
-export async function fetchTenant(): Promise<Tenant> {
+export async function fetchTenant(): Promise<PublicTenant> {
   if (typeof window === "undefined") throw new Error("fetchTenant is client-only");
   const tenant = await resolveTenantForSsr(getClientTenantResolutionInput());
   if (!tenant) throw new Error("No tenant resolved for this host");
@@ -90,17 +143,15 @@ function isDevOrPreviewHost(host: string): boolean {
   );
 }
 
-export async function fetchTenantByHostname(host: string): Promise<Tenant | null> {
+export async function fetchTenantByHostname(host: string): Promise<PublicTenant | null> {
   const normalized = normalizeHostname(host);
   if (isDevOrPreviewHost(normalized)) return null;
-  const { data, error } = await supabase
-    .from("tenants")
-    .select("*")
+  const { data, error } = await publicView("public_tenants")
+    .select(PUBLIC_TENANT_COLUMNS)
     .or(`domain.eq.${normalized},domain.eq.www.${normalized}`)
-    .eq("is_active", true)
     .maybeSingle();
   if (error) throw error;
-  return data;
+  return data as PublicTenant | null;
 }
 
 /**
@@ -169,7 +220,7 @@ export async function resolveTenantInputForRoute(): Promise<{
 export async function resolveTenantForSsr(input: {
   hostname: string;
   tenantSlugParam: string | null;
-}): Promise<Tenant | null> {
+}): Promise<PublicTenant | null> {
   if (input.tenantSlugParam) {
     try {
       return await fetchTenantBySlug(input.tenantSlugParam);
@@ -186,6 +237,10 @@ export async function resolveTenantForSsr(input: {
   }
 }
 
+// fetchSiteSettings reads the base table directly and stays that way: it's
+// shared with useAdminTenant() and TeamManager (Admin/Super Admin), which
+// need the full row (e.g. ai_analysis) — not just what the public site
+// renders. Public callers must use fetchPublicSiteSettings below instead.
 export async function fetchSiteSettings(tenantId: string): Promise<SiteSettings> {
   const { data, error } = await supabase
     .from("site_settings")
@@ -196,15 +251,28 @@ export async function fetchSiteSettings(tenantId: string): Promise<SiteSettings>
   return data;
 }
 
-export async function fetchServices(tenantId: string): Promise<Service[]> {
-  const { data, error } = await supabase
-    .from("services")
-    .select("*")
+export const PUBLIC_SITE_SETTINGS_COLUMNS =
+  "tenant_id,logo_url,favicon_url,primary_color,hero_title,hero_subtitle,cta_text,social_links,seo_meta_title,seo_meta_description,hero_image_url,border_radius,gradient_style,header_style,font_family,booking_enabled,booking_provider,booking_url,booking_button_label,opening_hours,quote_is_free,quote_response_delay_hours,emergency_service_available,whatsapp_number,whatsapp_enabled,whatsapp_message_template,team_presentation_mode";
+
+export async function fetchPublicSiteSettings(tenantId: string): Promise<PublicSiteSettings> {
+  const { data, error } = await publicView("public_site_settings")
+    .select(PUBLIC_SITE_SETTINGS_COLUMNS)
     .eq("tenant_id", tenantId)
-    .eq("is_active", true)
+    .single();
+  if (error) throw error;
+  return data as PublicSiteSettings;
+}
+
+export const PUBLIC_SERVICE_COLUMNS =
+  "id,tenant_id,name,slug,description,is_featured,sort_order,trade_service_template_id,seo_title_template,seo_description_template";
+
+export async function fetchServices(tenantId: string): Promise<PublicService[]> {
+  const { data, error } = await publicView("public_services")
+    .select(PUBLIC_SERVICE_COLUMNS)
+    .eq("tenant_id", tenantId)
     .order("sort_order", { ascending: true });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as PublicService[];
 }
 
 export async function fetchAllServices(tenantId: string): Promise<Service[]> {
@@ -217,6 +285,10 @@ export async function fetchAllServices(tenantId: string): Promise<Service[]> {
   return data ?? [];
 }
 
+// fetchServiceAreas reads the base table directly and stays that way: it's
+// shared with the Admin dashboard and admin.service-areas.tsx, which need
+// every area regardless of whether the linked service is active. Public
+// callers must use fetchPublicServiceAreas below instead.
 export async function fetchServiceAreas(tenantId: string): Promise<ServiceArea[]> {
   const { data, error } = await supabase
     .from("service_areas")
@@ -225,6 +297,17 @@ export async function fetchServiceAreas(tenantId: string): Promise<ServiceArea[]
     .order("city", { ascending: true });
   if (error) throw error;
   return data ?? [];
+}
+
+export const PUBLIC_SERVICE_AREA_COLUMNS = "id,service_id,tenant_id,city,city_slug,is_primary";
+
+export async function fetchPublicServiceAreas(tenantId: string): Promise<PublicServiceArea[]> {
+  const { data, error } = await publicView("public_service_areas")
+    .select(PUBLIC_SERVICE_AREA_COLUMNS)
+    .eq("tenant_id", tenantId)
+    .order("city", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as PublicServiceArea[];
 }
 
 export async function fetchPortfolio(tenantId: string): Promise<PortfolioItem[]> {

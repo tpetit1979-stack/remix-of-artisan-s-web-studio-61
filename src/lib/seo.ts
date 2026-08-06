@@ -1,4 +1,4 @@
-import type { Tenant, Service, ServiceArea, SiteSettings } from "./tenant";
+import type { PublicTenant, PublicService, PublicServiceArea, PublicSiteSettings } from "./tenant";
 import { resolveCommercialPromises } from "./commercial-promises";
 
 /**
@@ -6,9 +6,9 @@ import { resolveCommercialPromises } from "./commercial-promises";
  * Uses the service's custom template if available, otherwise builds one.
  */
 export function generateSeoTitle(
-  service: Service,
+  service: PublicService,
   city: string,
-  tenant: Tenant,
+  tenant: PublicTenant,
 ): string {
   if (service.seo_title_template) {
     return service.seo_title_template
@@ -28,10 +28,10 @@ export function generateSeoTitle(
  * confirmed it (settings.quote_is_free === true) — see commercial-promises.ts.
  */
 export function generateSeoDescription(
-  service: Service,
+  service: PublicService,
   city: string,
-  tenant: Tenant,
-  settings: SiteSettings | null,
+  tenant: PublicTenant,
+  settings: PublicSiteSettings | null,
 ): string {
   if (service.seo_description_template) {
     return service.seo_description_template
@@ -57,9 +57,9 @@ export function generateSeoDescription(
  * Generate dynamic H1 for a service+city page.
  */
 export function generateH1(
-  service: Service,
+  service: PublicService,
   city: string,
-  tenant: Tenant,
+  tenant: PublicTenant,
 ): string {
   return `${service.name} à ${city}`;
 }
@@ -68,9 +68,9 @@ export function generateH1(
  * Generate introductory paragraph, differentiated per service+city+tenant.
  */
 export function generateIntroText(
-  service: Service,
+  service: PublicService,
   city: string,
-  tenant: Tenant,
+  tenant: PublicTenant,
 ): string {
   const lines: string[] = [];
   lines.push(
@@ -86,13 +86,13 @@ export function generateIntroText(
 }
 
 /**
- * Generate JSON-LD LocalBusiness + Service structured data.
+ * Generate JSON-LD LocalBusiness + PublicService structured data.
  */
 export function generateJsonLd(
-  service: Service,
+  service: PublicService,
   city: string,
-  tenant: Tenant,
-  settings: SiteSettings | null,
+  tenant: PublicTenant,
+  settings: PublicSiteSettings | null,
   url: string,
 ) {
   const localBusiness: Record<string, unknown> = {
@@ -116,7 +116,7 @@ export function generateJsonLd(
         {
           "@type": "Offer",
           itemOffered: {
-            "@type": "Service",
+            "@type": "PublicService",
             name: service.name,
             ...(service.description && { description: service.description }),
             areaServed: {
@@ -133,14 +133,14 @@ export function generateJsonLd(
 }
 
 /**
- * Generate a standalone Service JSON-LD (schema.org) for a service+city page,
- * distinct from the LocalBusiness+Offer blob above — a dedicated Service
+ * Generate a standalone PublicService JSON-LD (schema.org) for a service+city page,
+ * distinct from the LocalBusiness+Offer blob above — a dedicated PublicService
  * entity with its provider and every city it's offered in.
  */
 export function generateServiceJsonLd(
-  service: Service,
-  tenant: Tenant,
-  areas: ServiceArea[],
+  service: PublicService,
+  tenant: PublicTenant,
+  areas: PublicServiceArea[],
 ) {
   const areaServed = Array.from(
     new Set(areas.filter((a) => a.service_id === service.id).map((a) => a.city)),
@@ -148,7 +148,7 @@ export function generateServiceJsonLd(
 
   return {
     "@context": "https://schema.org",
-    "@type": "Service",
+    "@type": "PublicService",
     name: service.name,
     provider: {
       "@type": "LocalBusiness",
@@ -165,8 +165,8 @@ export function generateServiceJsonLd(
  * title (falling back to company name); other pages append a suffix.
  */
 export function buildPageTitle(
-  settings: SiteSettings | null,
-  tenant: Tenant,
+  settings: PublicSiteSettings | null,
+  tenant: PublicTenant,
   pageSuffix?: string,
 ): string {
   if (pageSuffix) return `${pageSuffix} | ${tenant.company_name}`;
@@ -181,8 +181,8 @@ export function buildPageTitle(
  * then a generic sentence built from tenant data.
  */
 export function buildPageDescription(
-  settings: SiteSettings | null,
-  tenant: Tenant,
+  settings: PublicSiteSettings | null,
+  tenant: PublicTenant,
 ): string {
   return (
     settings?.seo_meta_description ||
@@ -249,10 +249,10 @@ type CertificationLike = {
  * services and RGE-style credentials.
  */
 export function buildSiteJsonLd(
-  tenant: Tenant,
-  settings: SiteSettings | null,
-  services: Service[],
-  areas: ServiceArea[],
+  tenant: PublicTenant,
+  settings: PublicSiteSettings | null,
+  services: PublicService[],
+  areas: PublicServiceArea[],
   certifications: CertificationLike[],
   baseUrl: string,
 ) {
@@ -305,8 +305,8 @@ export function buildSiteJsonLd(
  * service, and every service+city page.
  */
 export function buildSitemapXml(
-  services: Service[],
-  areas: ServiceArea[],
+  services: PublicService[],
+  areas: PublicServiceArea[],
   hasPortfolio: boolean,
   baseUrl: string,
 ): string {
@@ -335,10 +335,10 @@ export function buildRobotsTxt(baseUrl: string): string {
  * covering services, coverage area, certifications and contact details.
  */
 export function buildLlmsTxt(
-  tenant: Tenant,
-  settings: SiteSettings | null,
-  services: Service[],
-  areas: ServiceArea[],
+  tenant: PublicTenant,
+  settings: PublicSiteSettings | null,
+  services: PublicService[],
+  areas: PublicServiceArea[],
   certifications: CertificationLike[],
 ): string {
   const lines: string[] = [`# ${tenant.company_name}`];

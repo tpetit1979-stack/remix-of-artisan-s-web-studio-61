@@ -1,7 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
-import { fetchSiteSettings, fetchServices, fetchServiceAreas, fetchPortfolio, resolveTenantInputForRoute, resolveTenantForSsr } from "@/lib/tenant";
+import {
+  fetchPublicSiteSettings,
+  fetchServices,
+  fetchPublicServiceAreas,
+  fetchPortfolio,
+  resolveTenantInputForRoute,
+  resolveTenantForSsr,
+} from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
@@ -31,9 +38,9 @@ export const Route = createFileRoute("/")({
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
     const [settings, services, areas, { data: certifications }] = await Promise.all([
-      fetchSiteSettings(tenant.id),
+      fetchPublicSiteSettings(tenant.id),
       fetchServices(tenant.id),
-      fetchServiceAreas(tenant.id),
+      fetchPublicServiceAreas(tenant.id),
       supabase
         .from("tenant_certifications")
         .select("certification_name, organisme")
@@ -90,7 +97,7 @@ function HomePage() {
 
   const { data: areas = [] } = useQuery({
     queryKey: ["service-areas", tenant?.id],
-    queryFn: () => fetchServiceAreas(tenant!.id),
+    queryFn: () => fetchPublicServiceAreas(tenant!.id),
     enabled: !!tenant?.id,
   });
 

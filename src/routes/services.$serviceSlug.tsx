@@ -3,7 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import { useEditorialTexts } from "@/hooks/use-editorial-texts";
-import { fetchSiteSettings, fetchServiceAreas, fetchPortfolio, fetchServices, resolveTenantInputForRoute, resolveTenantForSsr } from "@/lib/tenant";
+import {
+  fetchPublicSiteSettings,
+  fetchPublicServiceAreas,
+  fetchPortfolio,
+  fetchServices,
+  resolveTenantInputForRoute,
+  resolveTenantForSsr,
+} from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -20,7 +27,7 @@ export const Route = createFileRoute("/services/$serviceSlug")({
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
     const [settings, services] = await Promise.all([
-      fetchSiteSettings(tenant.id),
+      fetchPublicSiteSettings(tenant.id),
       fetchServices(tenant.id),
     ]);
     const service = services.find((s) => s.slug === params.serviceSlug);
@@ -69,7 +76,7 @@ function ServiceDetailPage() {
 
   const { data: areas = [] } = useQuery({
     queryKey: ["service-areas", tenant?.id],
-    queryFn: () => fetchServiceAreas(tenant!.id),
+    queryFn: () => fetchPublicServiceAreas(tenant!.id),
     enabled: !!tenant?.id,
   });
 

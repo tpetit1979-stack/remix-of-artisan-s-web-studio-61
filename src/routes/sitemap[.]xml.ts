@@ -1,5 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { resolveTenantForSsr, fetchServices, fetchServiceAreas, hasPublishedPortfolioItem } from "@/lib/tenant";
+import {
+  resolveTenantForSsr,
+  fetchServices,
+  fetchPublicServiceAreas,
+  hasPublishedPortfolioItem,
+} from "@/lib/tenant";
 import { buildSitemapXml } from "@/lib/seo";
 
 export const Route = createFileRoute("/sitemap.xml")({
@@ -21,7 +26,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         }
         const [services, areas, hasPortfolio] = await Promise.all([
           fetchServices(tenant.id),
-          fetchServiceAreas(tenant.id),
+          fetchPublicServiceAreas(tenant.id),
           hasPublishedPortfolioItem(tenant.id),
         ]);
         const baseUrl = tenant.domain ? `https://${tenant.domain}` : url.origin;

@@ -2,7 +2,12 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useEditorialTexts } from "@/hooks/use-editorial-texts";
-import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
+import {
+  resolveTenantInputForRoute,
+  resolveTenantForSsr,
+  fetchPublicSiteSettings,
+  fetchServices,
+} from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
@@ -18,7 +23,7 @@ export const Route = createFileRoute("/services/")({
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
     const [settings, services] = await Promise.all([
-      fetchSiteSettings(tenant.id),
+      fetchPublicSiteSettings(tenant.id),
       fetchServices(tenant.id),
     ]);
     return { tenant, settings, services };

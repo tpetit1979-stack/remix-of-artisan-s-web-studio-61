@@ -1,7 +1,16 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useSearch } from "@tanstack/react-router";
-import { fetchTenant, fetchSiteSettings, fetchTenantBySlug, type Tenant, type SiteSettings } from "@/lib/tenant";
+import {
+  fetchTenant,
+  fetchSiteSettings,
+  fetchPublicSiteSettings,
+  fetchTenantBySlug,
+  type Tenant,
+  type SiteSettings,
+  type PublicTenant,
+  type PublicSiteSettings,
+} from "@/lib/tenant";
 import { supabase } from "@/integrations/supabase/client";
 import { useImpersonation } from "@/stores/impersonation";
 import { useAuth } from "@/hooks/use-auth";
@@ -16,8 +25,8 @@ export function isAdminRoute(pathname: string): boolean {
 }
 
 interface TenantContextType {
-  tenant: Tenant | null;
-  settings: SiteSettings | null;
+  tenant: PublicTenant | null;
+  settings: PublicSiteSettings | null;
   isLoading: boolean;
   error: Error | null;
 }
@@ -36,9 +45,9 @@ export function TenantProvider({
 }: {
   children: ReactNode;
   /** Tenant resolved server-side (root beforeLoad) for the SSR HTML. */
-  initialTenant?: Tenant | null;
+  initialTenant?: PublicTenant | null;
   /** Settings resolved server-side alongside initialTenant. */
-  initialSettings?: SiteSettings | null;
+  initialSettings?: PublicSiteSettings | null;
 }) {
   const impersonatedId = useImpersonation((s) => s.tenantId);
   const stopImpersonation = useImpersonation((s) => s.stopImpersonation);
@@ -89,7 +98,7 @@ export function TenantProvider({
 
   const settingsQuery = useQuery({
     queryKey: ["site-settings", tenantQuery.data?.id],
-    queryFn: () => fetchSiteSettings(tenantQuery.data!.id),
+    queryFn: () => fetchPublicSiteSettings(tenantQuery.data!.id),
     enabled: !disabledOnAdminRoute && !!tenantQuery.data?.id,
     staleTime: 1000 * 60 * 5,
     ...(canSeedSettingsFromSsr ? { initialData: initialSettings } : {}),

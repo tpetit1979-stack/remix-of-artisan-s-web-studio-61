@@ -1,4 +1,4 @@
-import type { Tenant } from "@/lib/tenant";
+import type { PublicTenant } from "@/lib/tenant";
 import type { ResolvedCommercialPromises } from "@/lib/commercial-promises";
 
 export type FaqItem = { question: string; answer: string };
@@ -12,7 +12,7 @@ export type FaqItem = { question: string; answer: string };
  * La question gratuité/délai vient de `resolveCommercialPromises()` —
  * jamais affirmée localement ici (voir CLAUDE.md, audit promesses commerciales).
  */
-export function buildFaqItems(tenant: Tenant, promises: ResolvedCommercialPromises): FaqItem[] {
+export function buildFaqItems(tenant: PublicTenant, promises: ResolvedCommercialPromises): FaqItem[] {
   const name = tenant.company_name;
   const city = tenant.city ?? "votre secteur";
   const phone = tenant.phone;

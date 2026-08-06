@@ -5,12 +5,12 @@ import { ArrowRight, Star } from "lucide-react";
 import { usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { ServiceMedia } from "@/components/public/ServiceMedia";
 import { resolveEditorialTexts } from "@/lib/editorial-texts";
-import type { Service, Tenant, SiteSettings } from "@/lib/tenant";
+import type { PublicService, PublicTenant, PublicSiteSettings } from "@/lib/tenant";
 
 interface FeaturedServicesProps {
-  services: Service[];
-  tenant: Tenant;
-  settings?: SiteSettings | null;
+  services: PublicService[];
+  tenant: PublicTenant;
+  settings?: PublicSiteSettings | null;
 }
 
 export function FeaturedServices({ services, tenant, settings }: FeaturedServicesProps) {
@@ -49,7 +49,7 @@ export function FeaturedServices({ services, tenant, settings }: FeaturedService
                   {featuredIndex !== -1 && idx === featuredIndex && (
                     <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
                       <Star className="h-3 w-3 fill-current" />
-                      Service phare
+                      PublicService phare
                     </span>
                   )}
                 </div>

@@ -1,7 +1,7 @@
 import { Wrench, Flame, Droplets, Zap, Wind, Settings } from "lucide-react";
 import { useResolvedMedia } from "@/lib/media-resolver";
 import { useTenant } from "@/hooks/use-tenant";
-import type { Service } from "@/lib/tenant";
+import type { PublicService } from "@/lib/tenant";
 
 function normalize(input: string): string {
   return input
@@ -28,7 +28,7 @@ function getServiceIcon(name: string): React.ComponentType<{ className?: string 
  * (tenant override → trade template default → icon fallback), never a blank
  * box. Do not duplicate this logic elsewhere — extend this component instead.
  */
-export function ServiceMedia({ service }: { service: Service }) {
+export function ServiceMedia({ service }: { service: PublicService }) {
   const { tenant } = useTenant();
   const resolved = useResolvedMedia({
     tenantId: tenant?.id ?? null,

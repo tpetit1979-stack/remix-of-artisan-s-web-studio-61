@@ -8,16 +8,16 @@ import { TenantTheme } from "@/components/TenantTheme";
 import {
   resolveTenantInputForRoute,
   resolveTenantForSsr,
-  fetchSiteSettings,
-  type Tenant,
-  type SiteSettings,
+  fetchPublicSiteSettings,
+  type PublicTenant,
+  type PublicSiteSettings,
 } from "@/lib/tenant";
 import appCss from "../styles.css?url";
 
 interface RouterContext {
   queryClient: QueryClient;
-  tenant: Tenant | null;
-  settings: SiteSettings | null;
+  tenant: PublicTenant | null;
+  settings: PublicSiteSettings | null;
 }
 
 function NotFoundComponent() {
@@ -75,7 +75,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       const input = await resolveTenantInputForRoute();
       const tenant = await resolveTenantForSsr(input);
       if (!tenant) return { tenant: null, settings: null };
-      const settings = await fetchSiteSettings(tenant.id).catch(() => null);
+      const settings = await fetchPublicSiteSettings(tenant.id).catch(() => null);
       return { tenant, settings };
     } catch {
       return { tenant: null, settings: null };

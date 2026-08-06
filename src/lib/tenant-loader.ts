@@ -1,75 +1,84 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Tenant, SiteSettings, Service, ServiceArea, PortfolioItem } from "./tenant";
+import type { PortfolioItem } from "./tenant";
+import {
+  publicView,
+  PUBLIC_SITE_SETTINGS_COLUMNS,
+  PUBLIC_SERVICE_COLUMNS,
+  PUBLIC_SERVICE_AREA_COLUMNS,
+  type PublicTenant,
+  type PublicSiteSettings,
+  type PublicService,
+  type PublicServiceArea,
+} from "./tenant";
 
 /**
  * Full page data loader for SEO pages — fetches everything needed in one go.
  */
 export interface ServiceCityPageData {
-  tenant: Tenant;
-  settings: SiteSettings;
-  service: Service;
+  tenant: PublicTenant;
+  settings: PublicSiteSettings;
+  service: PublicService;
   city: string;
   citySlug: string;
-  area: ServiceArea;
-  allAreas: ServiceArea[];
+  area: PublicServiceArea;
+  allAreas: PublicServiceArea[];
   relatedPortfolio: PortfolioItem[];
-  allServices: Service[];
-  sameServiceAreas: ServiceArea[];
+  allServices: PublicService[];
+  sameServiceAreas: PublicServiceArea[];
 }
 
 export async function loadServiceCityPage(
-  tenant: Tenant,
+  tenant: PublicTenant,
   serviceSlug: string,
   citySlug: string,
 ): Promise<ServiceCityPageData | null> {
   // Fetch settings
-  const { data: settings } = await supabase
-    .from("site_settings")
-    .select("*")
+  const settingsResult = await publicView("public_site_settings")
+    .select(PUBLIC_SITE_SETTINGS_COLUMNS)
     .eq("tenant_id", tenant.id)
     .single();
+  const settings = settingsResult.data as PublicSiteSettings | null;
 
   // Fetch the service by slug
-  const { data: service } = await supabase
-    .from("services")
-    .select("*")
+  const serviceResult = await publicView("public_services")
+    .select(PUBLIC_SERVICE_COLUMNS)
     .eq("tenant_id", tenant.id)
     .eq("slug", serviceSlug)
-    .eq("is_active", true)
     .single();
+  const service = serviceResult.data as PublicService | null;
 
   if (!service) return null;
 
   // Fetch the specific area
-  const { data: area } = await supabase
-    .from("service_areas")
-    .select("*")
+  const areaResult = await publicView("public_service_areas")
+    .select(PUBLIC_SERVICE_AREA_COLUMNS)
     .eq("tenant_id", tenant.id)
     .eq("service_id", service.id)
     .eq("city_slug", citySlug)
     .single();
+  const area = areaResult.data as PublicServiceArea | null;
 
   if (!area) return null;
 
   // Fetch all areas for this tenant (for internal linking)
-  const { data: allAreas } = await supabase
-    .from("service_areas")
-    .select("*")
+  const allAreasResult = await publicView("public_service_areas")
+    .select(PUBLIC_SERVICE_AREA_COLUMNS)
     .eq("tenant_id", tenant.id)
     .order("city", { ascending: true });
+  const allAreas = (allAreasResult.data ?? []) as PublicServiceArea[];
 
   // Fetch areas for the same service (for city links)
-  const sameServiceAreas = (allAreas ?? []).filter(
+  const sameServiceAreas = allAreas.filter(
     (a) => a.service_id === service.id && a.city_slug !== citySlug,
   );
 
-  // Fetch all active services (for service links)
-  const { data: allServices } = await supabase
-    .from("services")
-    .select("*")
+  // Fetch all active services (for service links) — public_services already
+  // filters is_active=true, no extra .eq() needed.
+  const allServicesResult = await publicView("public_services")
+    .select(PUBLIC_SERVICE_COLUMNS)
     .eq("tenant_id", tenant.id)
-    .eq("is_active", true)
     .order("sort_order", { ascending: true });
+  const allServices = (allServicesResult.data ?? []) as PublicService[];
 
   // Fetch related portfolio items (same service or same city)
   const { data: portfolio } = await supabase

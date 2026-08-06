@@ -1,7 +1,7 @@
 import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchPortfolio, fetchServiceAreas } from "@/lib/tenant";
+import { fetchPortfolio, fetchPublicServiceAreas } from "@/lib/tenant";
 import { Hammer, Calendar, MapPin, ShieldCheck } from "lucide-react";
 
 /**
@@ -30,7 +30,7 @@ export function WhyChooseUs() {
 
   const { data: areas = [] } = useQuery({
     queryKey: ["service-areas", tenant?.id],
-    queryFn: () => fetchServiceAreas(tenant!.id),
+    queryFn: () => fetchPublicServiceAreas(tenant!.id),
     enabled: !!tenant?.id,
   });
 

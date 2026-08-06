@@ -1,5 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { resolveTenantForSsr, fetchSiteSettings, fetchServices, fetchServiceAreas } from "@/lib/tenant";
+import {
+  resolveTenantForSsr,
+  fetchPublicSiteSettings,
+  fetchServices,
+  fetchPublicServiceAreas,
+} from "@/lib/tenant";
 import { buildLlmsTxt } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,9 +24,9 @@ export const Route = createFileRoute("/llms.txt")({
           });
         }
         const [settings, services, areas, { data: certifications }] = await Promise.all([
-          fetchSiteSettings(tenant.id),
+          fetchPublicSiteSettings(tenant.id),
           fetchServices(tenant.id),
-          fetchServiceAreas(tenant.id),
+          fetchPublicServiceAreas(tenant.id),
           supabase
             .from("tenant_certifications")
             .select("certification_name, organisme")

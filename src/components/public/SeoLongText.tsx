@@ -1,11 +1,11 @@
-import type { Tenant, Service, SiteSettings } from "@/lib/tenant";
+import type { PublicTenant, PublicService, PublicSiteSettings } from "@/lib/tenant";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
 
 interface SeoLongTextProps {
-  tenant: Tenant;
-  services: Service[];
+  tenant: PublicTenant;
+  services: PublicService[];
   cities: string[];
-  settings?: SiteSettings | null;
+  settings?: PublicSiteSettings | null;
 }
 
 function toSentence(items: string[]): string {
@@ -15,10 +15,10 @@ function toSentence(items: string[]): string {
 }
 
 function generateEditorial(
-  tenant: Tenant,
-  services: Service[],
+  tenant: PublicTenant,
+  services: PublicService[],
   cities: string[],
-  settings: SiteSettings | null | undefined,
+  settings: PublicSiteSettings | null | undefined,
 ): string {
   const company = tenant.company_name ?? "Notre entreprise";
   const city = tenant.city ?? "votre région";

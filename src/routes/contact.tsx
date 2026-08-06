@@ -3,7 +3,12 @@ import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { resolveTenantInputForRoute, resolveTenantForSsr, fetchSiteSettings, fetchServices } from "@/lib/tenant";
+import {
+  resolveTenantInputForRoute,
+  resolveTenantForSsr,
+  fetchPublicSiteSettings,
+  fetchServices,
+} from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
 import { PublicHeader } from "@/components/public/PublicHeader";
@@ -30,7 +35,7 @@ export const Route = createFileRoute("/contact")({
     const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
-    const settings = await fetchSiteSettings(tenant.id);
+    const settings = await fetchPublicSiteSettings(tenant.id);
     return { tenant, settings };
   },
   head: ({ loaderData }) => {

@@ -1,12 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { loadServiceCityPage, type ServiceCityPageData } from "@/lib/tenant-loader";
 import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd, generateServiceJsonLd } from "@/lib/seo";
-import type { Service, ServiceArea, PortfolioItem } from "@/lib/tenant";
-import { resolveTenantInputForRoute, resolveTenantForSsr } from "@/lib/tenant";
+import type { PortfolioItem, PublicService, PublicServiceArea } from "@/lib/tenant";
+import {
+  resolveTenantInputForRoute,
+  resolveTenantForSsr,
+  publicView,
+  PUBLIC_SERVICE_COLUMNS,
+  PUBLIC_SERVICE_AREA_COLUMNS,
+} from "@/lib/tenant";
 import { usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import { useEditorialTexts } from "@/hooks/use-editorial-texts";
-import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
@@ -23,21 +28,28 @@ export const Route = createFileRoute("/$slug")({
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
 
-    const { data: areas } = await supabase
-      .from("service_areas")
-      .select("*, services!inner(slug, is_active)")
-      .eq("tenant_id", tenant.id);
+    // public_services already filters is_active=true, so an active-service
+    // match here doesn't need a separate check — the join the old raw query
+    // did (`services!inner(slug, is_active)`) is replaced by two view reads
+    // matched in JS, since PostgREST embedding through a view isn't reliable.
+    const [{ data: areas }, { data: services }] = await Promise.all([
+      publicView("public_service_areas").select(PUBLIC_SERVICE_AREA_COLUMNS).eq("tenant_id", tenant.id),
+      publicView("public_services").select(PUBLIC_SERVICE_COLUMNS).eq("tenant_id", tenant.id),
+    ]);
 
-    const match = (areas ?? []).find((a: any) => {
-      const serviceSlug = a.services?.slug;
-      const combined = `${serviceSlug}-${a.city_slug}`;
-      return combined === slug && a.services?.is_active;
+    const servicesById = new Map(
+      ((services ?? []) as PublicService[]).map((s) => [s.id, s] as const),
+    );
+
+    const match = ((areas ?? []) as PublicServiceArea[]).find((a) => {
+      const service = servicesById.get(a.service_id);
+      return !!service && `${service.slug}-${a.city_slug}` === slug;
     });
 
     if (!match) throw notFound();
 
-    const serviceSlug = (match as any).services.slug;
-    const data = await loadServiceCityPage(tenant, serviceSlug, match.city_slug);
+    const matchedService = servicesById.get(match.service_id)!;
+    const data = await loadServiceCityPage(tenant, matchedService.slug, match.city_slug);
     if (!data) throw notFound();
     return data;
   },
@@ -107,15 +119,15 @@ function ServiceCityPage() {
   const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();
   const { buttonLabel } = useEditorialTexts();
-  const otherServices = allServices.filter((s: Service) => s.id !== service.id);
+  const otherServices = allServices.filter((s: PublicService) => s.id !== service.id);
 
   const crossLinks = allAreas
-    .filter((a: ServiceArea) => a.city === city && a.service_id !== service.id)
-    .map((a: ServiceArea) => {
-      const s = allServices.find((sv: Service) => sv.id === a.service_id);
+    .filter((a: PublicServiceArea) => a.city === city && a.service_id !== service.id)
+    .map((a: PublicServiceArea) => {
+      const s = allServices.find((sv: PublicService) => sv.id === a.service_id);
       return s ? { service: s, area: a } : null;
     })
-    .filter(Boolean) as Array<{ service: Service; area: ServiceArea }>;
+    .filter(Boolean) as Array<{ service: PublicService; area: PublicServiceArea }>;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -175,7 +187,7 @@ function ServiceCityPage() {
             </p>
             {sameServiceAreas.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
-                {sameServiceAreas.map((a: ServiceArea) => (
+                {sameServiceAreas.map((a: PublicServiceArea) => (
                   <Link
                     key={a.id}
                     to="/$slug"
@@ -269,7 +281,7 @@ function ServiceCityPage() {
                 Découvrez nos autres services
               </h2>
               <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {otherServices.map((s: Service) => (
+                {otherServices.map((s: PublicService) => (
                   <Link
                     key={s.id}
                     to="/services/$serviceSlug"
