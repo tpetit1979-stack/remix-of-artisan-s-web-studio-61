@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Star, GripVertical, Settings, Wrench,
@@ -106,7 +107,10 @@ function Field({ label, children, className, hint }: { label: string; children: 
 }
 
 /* ── Full-Width Preview ── */
-function FullSitePreview({ designForm, tenant }: { designForm: any; tenant: any }) {
+function FullSitePreview({ designForm, tenant, services }: { designForm: any; tenant: any; services: any[] }) {
+  const publishedServices = (services ?? [])
+    .filter((s: any) => s.is_active)
+    .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
   const color = designForm?.primary_color ?? "#2563eb";
   const radius = designForm?.border_radius ?? 8;
   const headerStyle = designForm?.header_style ?? "solid";
@@ -184,15 +188,21 @@ function FullSitePreview({ designForm, tenant }: { designForm: any; tenant: any 
       {/* ── Services ── */}
       <section className="px-6 py-12 space-y-6">
         <h2 className="text-xl font-bold text-center text-foreground">Nos services</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {["Installation", "Entretien", "Dépannage"].map((s, i) => (
-            <div key={i} className="border p-5 space-y-2 hover:shadow-md transition-shadow" style={{ borderRadius: `${radius}px` }}>
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: color }}>{s[0]}</div>
-              <p className="font-semibold text-sm">{s}</p>
-              <p className="text-xs text-muted-foreground">Service professionnel à {city} et alentours.</p>
-            </div>
-          ))}
-        </div>
+        {publishedServices.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center max-w-md mx-auto">
+            Aucun service publié pour le moment — cette section n'apparaîtra pas sur le site tant qu'aucun service n'est actif.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            {publishedServices.map((s: any) => (
+              <div key={s.id} className="border p-5 space-y-2 hover:shadow-md transition-shadow" style={{ borderRadius: `${radius}px` }}>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: color }}>{s.name?.[0] ?? "?"}</div>
+                <p className="font-semibold text-sm">{s.name}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{s.description || `Service professionnel à ${city} et alentours.`}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ── CTA Banner ── */}
@@ -287,7 +297,7 @@ function TenantDetail() {
   }, []);
 
   const completionItems = [
-    { label: "Services", ok: services.length > 0 },
+    { label: "Services", ok: services.some((s: any) => s.is_active) },
     { label: "Zones", ok: areas.length > 0 },
     { label: "Logo", ok: !!settings?.logo_url },
     { label: "RGE", ok: certifications.length > 0 },
@@ -429,7 +439,7 @@ function TenantDetail() {
             )}
           </div>
           <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
-            <FullSitePreview designForm={designForm} tenant={tenant} />
+            <FullSitePreview designForm={designForm} tenant={tenant} services={services} />
           </div>
         </section>
       )}
@@ -905,6 +915,7 @@ function ServicesTab({ tenantId, services }: { tenantId: string; services: any[]
           sort_order: tpl.sort_order ?? services.length,
           seo_title_template: tpl.seo_title_template,
           seo_description_template: tpl.seo_description_template,
+          trade_service_template_id: tpl.id,
         });
         if (error) throw error;
       }
@@ -940,6 +951,7 @@ function ServicesTab({ tenantId, services }: { tenantId: string; services: any[]
             sort_order: services.length + i,
             seo_title_template: tpl.seo_title_template,
             seo_description_template: tpl.seo_description_template,
+            trade_service_template_id: tpl.id,
           }));
           const { error } = await supabase.from("services").insert(rows);
           if (error) throw error;
@@ -993,7 +1005,7 @@ function ServicesTab({ tenantId, services }: { tenantId: string; services: any[]
     <div className="space-y-4 max-w-2xl">
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-sm font-medium text-foreground">{services.length} activité(s) active(s)</p>
+          <p className="text-sm font-medium text-foreground">{services.filter((s: any) => s.is_active).length} service(s) publié(s)</p>
           <p className="text-xs text-muted-foreground">Cochez les activités par métier pour ce tenant</p>
         </div>
         <Button size="sm" className="h-7 text-xs" onClick={() => { setEditing({ name: "", slug: "", description: "", is_featured: false, is_active: true, sort_order: services.length, seo_title_template: "", seo_description_template: "" }); setIsOpen(true); }}>
@@ -1100,15 +1112,23 @@ function ServicesTab({ tenantId, services }: { tenantId: string; services: any[]
           {editing && (
             <form className="space-y-3" onSubmit={e => { e.preventDefault(); save.mutate(editing); }}>
               <Field label="Nom"><Input value={editing.name} onChange={e => { const name = e.target.value; setEditing((p: any) => ({ ...p, name, slug: p.id ? p.slug : generateSlug(name) })); }} required /></Field>
-              <Field label="Slug"><Input value={editing.slug} onChange={e => setEditing((p: any) => ({ ...p, slug: e.target.value }))} required /></Field>
               <Field label="Description"><Textarea value={editing.description ?? ""} onChange={e => setEditing((p: any) => ({ ...p, description: e.target.value }))} rows={3} /></Field>
-              <Field label="Ordre" className="max-w-[100px]"><Input type="number" value={editing.sort_order ?? 0} onChange={e => setEditing((p: any) => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} /></Field>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2"><Switch checked={editing.is_active ?? true} onCheckedChange={v => setEditing((p: any) => ({ ...p, is_active: v }))} /><Label className="text-sm">Actif</Label></div>
-                <div className="flex items-center gap-2"><Switch checked={editing.is_featured ?? false} onCheckedChange={v => setEditing((p: any) => ({ ...p, is_featured: v }))} /><Label className="text-sm">Vedette</Label></div>
+                <div className="flex items-center gap-2"><Switch checked={editing.is_active ?? true} onCheckedChange={v => setEditing((p: any) => ({ ...p, is_active: v }))} /><Label className="text-sm">Publié</Label></div>
+                <div className="flex items-center gap-2"><Switch checked={editing.is_featured ?? false} onCheckedChange={v => setEditing((p: any) => ({ ...p, is_featured: v }))} /><Label className="text-sm">Mis en avant</Label></div>
               </div>
-              <Field label="SEO titre"><Input value={editing.seo_title_template ?? ""} onChange={e => setEditing((p: any) => ({ ...p, seo_title_template: e.target.value }))} placeholder="{service} à {city}" /></Field>
-              <Field label="SEO description"><Textarea value={editing.seo_description_template ?? ""} onChange={e => setEditing((p: any) => ({ ...p, seo_description_template: e.target.value }))} rows={2} /></Field>
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button type="button" variant="ghost" size="sm" className="h-7 text-xs gap-1 -ml-2 text-muted-foreground">
+                    <ChevronDown className="h-3 w-3" /> Options avancées
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3 pt-2">
+                  <Field label="Slug"><Input value={editing.slug} onChange={e => setEditing((p: any) => ({ ...p, slug: e.target.value }))} required /></Field>
+                  <Field label="SEO titre"><Input value={editing.seo_title_template ?? ""} onChange={e => setEditing((p: any) => ({ ...p, seo_title_template: e.target.value }))} placeholder="{service} à {city}" /></Field>
+                  <Field label="SEO description"><Textarea value={editing.seo_description_template ?? ""} onChange={e => setEditing((p: any) => ({ ...p, seo_description_template: e.target.value }))} rows={2} /></Field>
+                </CollapsibleContent>
+              </Collapsible>
               <div className="flex justify-end gap-2 pt-2">
                 <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Annuler</Button>
                 <Button type="submit" disabled={save.isPending}>{save.isPending ? "..." : "Enregistrer"}</Button>
