@@ -765,3 +765,32 @@ Lot séparé, à ne pas mélanger avec la sécurisation des URLs sociales
 (Lot en cours) ni avec aucun autre chantier de ce backlog.
 
 **Portée** : catégorie A — améliore tous les tenants, pas seulement EASYDEP.
+
+## Lot (dette, différé) — `AiTab` peut relire un cache IA périmé après une écriture Services/Zones
+
+**Statut : dette documentée, non bloquante — aucun code avant que le chantier IA/onboarding ne soit repris.**
+
+Découvert en auditant le partage `ServicesManager`/`ZonesManager` entre Admin
+et Super Admin (`super-admin.tenants.$tenantId.tsx`). `AiTab` charge ses
+propres `sa-services-for-ai`/`sa-areas-for-ai`, distincts des clés
+`admin-services`/`admin-service-areas` que `ServicesManager`, `ZonesManager`
+et le badge de complétion partagent désormais. Une écriture faite dans
+l'onglet Services ou Zones n'invalide jamais `sa-services-for-ai`/
+`sa-areas-for-ai` ; le `QueryClient` global a un `staleTime` de 2 minutes
+(`src/router.tsx:43`), donc rouvrir l'onglet IA dans les 2 minutes suivant
+sa dernière lecture peut afficher une liste de services/zones périmée.
+
+Préexistant, pas introduit par l'unification Services/Zones : l'ancien
+`ServicesTab` n'invalidait déjà que `sa-services`, jamais `sa-services-for-ai`.
+
+**À ne pas faire** : ne pas faire dépendre `ServicesManager`/`ZonesManager`
+de clés spécifiques à l'IA pour corriger ça — recoupler le composant
+partagé à `AiTab` irait à l'encontre de la simplification faite.
+
+**Pistes pour le futur chantier IA/onboarding**, à trancher à ce moment-là,
+pas maintenant :
+- `AiTab` consomme directement `admin-services`/`admin-service-areas` ; ou
+- `AiTab` refetch explicitement à l'ouverture de l'onglet.
+
+**Portée** : catégorie A, mais rattachée au chantier IA/onboarding (branche
+`claude/generate-tenant-gemini-adapter`), pas à Lot B.
