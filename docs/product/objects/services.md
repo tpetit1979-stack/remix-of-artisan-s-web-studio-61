@@ -3,16 +3,21 @@
 | Champ | Valeur |
 |---|---|
 | Propriétaire | Tenant — créés librement à partir du catalogue plateforme (voir Bibliothèque métier) |
-| Écran référent | `admin.services.tsx` (client) — **cible et référence**, l'onglet Super Admin doit disparaître à son profit (lot B) |
-| Composant référent | `admin.services.tsx` — à réutiliser tel quel côté agence, à droits élevés |
-| Routes | `/admin/services` (client) · onglet "Services" de `super-admin.tenants.$tenantId.tsx` (agence, `ServicesTab`, dupliqué) → supprimé lot B |
+| Écran référent | `ServicesManager` (`src/components/admin/ServicesManager.tsx`) — interface unique, client et agence |
+| Composant référent | `ServicesManager` — même composant des deux côtés, `tenantId` seul varie |
+| Routes | `/admin/services` (client, wrapper fin) · onglet "Services" de `super-admin.tenants.$tenantId.tsx` (agence, même composant, à droits élevés) |
 | Permissions | `tenant_admin` : écriture complète sur son tenant · `super_admin` : écriture complète sur tout tenant |
 | IA | Aucune aujourd'hui — les services proposés viennent du catalogue de templates, sans suggestion automatique |
-| Roadmap | Rien de prévu au-delà du lot B — cet objet fonctionne déjà bien, il sert de modèle au reste du backlog |
+| Roadmap | Lot 7 (affectation en masse Villes × Services) et lot 8 (simplification du formulaire, verrou du slug) — voir `docs/product/execution-backlog.md` |
 
 **Lien avec Marques** : le dialogue d'édition de service permet d'assigner une
 marque à un service précis (`tenant_service_brands`, commit `0bffb3e`), scopée aux
 marques déjà retenues dans "Mes marques" — un service ne peut pas afficher une
-marque que le tenant n'a pas confirmé utiliser ailleurs.
+marque que le tenant n'a pas confirmé utiliser ailleurs. `ServicesManager` porte
+cette section telle quelle, désormais aussi disponible côté Super Admin.
 
-**Statut** : premier objet du lot B, le risque le plus faible du chantier.
+**Statut** : premier objet du lot B fait (interface unique Services + Zones).
+L'ancien onglet Super Admin dupliqué (`ServicesTab`/`ZonesTab`, catalogue par
+métier coché en masse, sans FK ni zones) a été supprimé — cette capacité de
+sélection depuis le catalogue global n'existe plus nulle part pour l'instant,
+volontairement : elle relève du lot 9 (différé), pas de ce lot.
