@@ -294,7 +294,14 @@ function TenantDetail() {
 
   const completionItems = [
     { label: "Services", ok: services.some((s: any) => s.is_active) },
-    { label: "Zones", ok: areas.length > 0 },
+    {
+      label: "Zones",
+      ok:
+        services.some((s: any) => s.is_active) &&
+        services
+          .filter((s: any) => s.is_active)
+          .every((s: any) => areas.some((a: any) => a.service_id === s.id)),
+    },
     { label: "Logo", ok: !!settings?.logo_url },
     { label: "RGE", ok: certifications.length > 0 },
     { label: "SEO", ok: !!(settings?.seo_meta_title && settings?.seo_meta_description) },
