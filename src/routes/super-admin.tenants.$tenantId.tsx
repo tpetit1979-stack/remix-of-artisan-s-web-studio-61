@@ -293,7 +293,7 @@ function TenantDetail() {
   }, []);
 
   const completionItems = [
-    { label: "Services", ok: services.length > 0 },
+    { label: "Services", ok: services.some((s: any) => s.is_active) },
     { label: "Zones", ok: areas.length > 0 },
     { label: "Logo", ok: !!settings?.logo_url },
     { label: "RGE", ok: certifications.length > 0 },
