@@ -787,6 +787,60 @@ Préexistant, pas introduit par l'unification Services/Zones : l'ancien
 de clés spécifiques à l'IA pour corriger ça — recoupler le composant
 partagé à `AiTab` irait à l'encontre de la simplification faite.
 
+## Lot (dette, différée) — `tenant_media` orpheline après suppression d'un service
+
+**Statut : dette documentée, non bloquante.**
+
+Découvert en spécifiant Lot 8A. `services → service_areas` et
+`services → tenant_service_brands` cascadent (`ON DELETE CASCADE`, vérifié
+sur le schéma réel), donc les zones et associations de marques d'un service
+supprimé disparaissent proprement. `tenant_media.target_id` n'a en revanche
+**aucune FK** vers `services` (cible polymorphe, déjà documenté ailleurs pour
+la même raison) : supprimer un service laisse sa ligne `tenant_media`
+(catégorie `service`, `target_id` = l'id supprimé) orpheline, jamais
+nettoyée automatiquement. Sans conséquence visible aujourd'hui (le
+`resolveMedia` ne la retrouve simplement plus, aucune fuite cross-tenant),
+mais du stockage inutilisé qui s'accumule à chaque suppression, à l'échelle
+de plusieurs dizaines de tenants.
+
+**À ne pas faire dans Lot 8A** : pas de trigger ni de nettoyage différé
+construit pour ce lot — champ hors périmètre, à traiter le jour où le volume
+réel le justifie (comptage `tenant_media` orphelins, pas une estimation).
+
+## Lot 8A (suite) — la vignette photo d'un service affichait le placeholder dans l'Admin et le Super Admin
+
+**Statut : implémenté — validation manuelle en attente.** Typecheck, tests
+unitaires et build verts ; aucune recette navigateur effectuée à ce stade.
+
+`ServicesManager`/`ServicePhotoField` affichaient la photo d'un service via
+`<ServiceMedia service={s} />`, le même composant que le site public.
+`ServiceMedia` résout l'image via `useTenant()` (`hooks/use-tenant.tsx`) —
+un hook **délibérément désactivé sur `/admin` et `/super-admin`**
+(`isAdminRoute()`, commentaire explicite dans le fichier : "Conflating the
+two was a real, shipped bug ... cross-tenant data exposure"). Conséquence
+vérifiée par lecture du resolver (`resolveMedia`, `media-resolver.ts`) :
+avec `tenantId` et `tradeTemplateId` tous les deux `null`, aucun des trois
+niveaux (photo tenant, illustration portfolio, template métier) ne pouvait
+jamais être atteint — seul le niveau 3 (placeholder + icône générique)
+répondait. Confirmé visuellement sur la capture EASYDEP fournie pendant la
+recette (icônes génériques sur toutes les lignes).
+
+**Correctif appliqué** : `ServicesManager` reçoit désormais `tradeTemplateId`
+en prop explicite (`admin.services.tsx` via `useAdminTenant()`,
+`super-admin.tenants.$tenantId.tsx` via sa query `["sa-tenant", tenantId]` —
+les deux appelants avaient déjà cette donnée chargée, aucune nouvelle query).
+Un nouveau composant local `ResolvedServiceImage` (dans `ServicesManager.tsx`)
+appelle `useResolvedMedia`/`resolveMedia` directement avec ce contexte
+explicite, au lieu de passer par `ServiceMedia`/`useTenant()` — même resolver,
+même priorité, `ServiceMedia.tsx` et `useTenant()` non modifiés (seule
+`getServiceIcon` y a été exportée, fonction pure, comportement des ~15
+appelants publics existants inchangé). La vignette-liste et le champ photo
+du dialogue affichent maintenant le libellé de source réel
+(`ResolvedMedia.source`) : "Photo personnalisée" / "Illustration proposée par
+Lignia" / "Aucune illustration" — "Photo personnalisée" plutôt que "Votre
+photo" car `source="tenant"` couvre à la fois `tenant_media` et une
+illustration portfolio liée, sans que le resolver distingue les deux.
+
 **Pistes pour le futur chantier IA/onboarding**, à trancher à ce moment-là,
 pas maintenant :
 - `AiTab` consomme directement `admin-services`/`admin-service-areas` ; ou

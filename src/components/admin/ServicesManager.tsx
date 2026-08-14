@@ -17,10 +17,20 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, GripVertical, Camera, X } from "lucide-react";
-import { ServiceMedia } from "@/components/public/ServiceMedia";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Plus, Pencil, Trash2, Camera } from "lucide-react";
+import { getServiceIcon } from "@/components/public/ServiceMedia";
 import { validateImageFile, buildMediaPath, uploadImage, removeStorageFile } from "@/lib/media-upload";
-import { invalidateResolvedMedia } from "@/lib/media-resolver";
+import { invalidateResolvedMedia, useResolvedMedia } from "@/lib/media-resolver";
 
 /**
  * Unique interface for managing a tenant's services — used by the client
@@ -29,11 +39,37 @@ import { invalidateResolvedMedia } from "@/lib/media-resolver";
  * same behavior, same queryKey (`admin-services`, `admin-service-photos`) —
  * only `tenantId` changes between call sites. See docs/product/constitution.md,
  * principe 3.
+ *
+ * `canEditAdvancedFields` (Super Admin only, Lot 8A) gates Slug / Ordre
+ * d'affichage / templates SEO — technical fields that can break a published
+ * URL or SEO structure if touched without understanding the consequence.
+ * The tenant still gets a working slug (auto-generated from the name) and a
+ * sensible sort_order (append at the end) — they just don't see or edit the
+ * raw values. See docs/product/execution-backlog.md, Lot 8.
+ *
+ * `tradeTemplateId` (the tenant's own trade, e.g. "chauffagiste" — distinct
+ * from a service's own `trade_service_template_id`) is required to resolve
+ * a service's real photo. This component deliberately does NOT use
+ * `ServiceMedia`/`useTenant()` for that — `useTenant()` is disabled on
+ * /admin and /super-admin by design (hooks/use-tenant.tsx), so it always
+ * resolves to the placeholder here. Both call sites already hold their
+ * tenant row (`useAdminTenant()` / the Super Admin's own `tenant` query),
+ * so this is passed explicitly — no new query, no implicit "current tenant"
+ * guess, same `useResolvedMedia`/`resolveMedia` as the public site.
  */
-export function ServicesManager({ tenantId }: { tenantId: string }) {
+export function ServicesManager({
+  tenantId,
+  tradeTemplateId,
+  canEditAdvancedFields = false,
+}: {
+  tenantId: string;
+  tradeTemplateId?: string | null;
+  canEditAdvancedFields?: boolean;
+}) {
   const queryClient = useQueryClient();
   const [editingService, setEditingService] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deletingService, setDeletingService] = useState<any>(null);
 
   const { data: services = [], isLoading } = useQuery({
     queryKey: ["admin-services", tenantId],
@@ -41,8 +77,8 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
   });
 
   // Which services already have their own uploaded photo (tenant_media,
-  // category="service") — level 1 of the resolver. Drives whether each row
-  // shows "Remplacer/Retirer" or just "Ajouter une photo".
+  // category="service") — level 1 of the resolver. Drives whether the photo
+  // field in the edit dialog shows "Remplacer/Retirer" or "Ajouter une photo".
   const { data: servicePhotos = {} } = useQuery({
     queryKey: ["admin-service-photos", tenantId],
     queryFn: async () => {
@@ -163,6 +199,7 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
       toast.success("Service supprimé");
     },
     onError: (e: Error) => toast.error(e.message),
+    onSettled: () => setDeletingService(null),
   });
 
   function openNew() {
@@ -209,14 +246,14 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
           {services.map((s) => (
             <Card key={s.id}>
               <CardContent className="flex items-center gap-4 py-4">
-                <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
-                <ServicePhotoCell
-                  service={s}
-                  hasOwnPhoto={!!servicePhotos[s.id]}
-                  uploading={uploadPhotoMutation.isPending && uploadPhotoMutation.variables?.service.id === s.id}
-                  onUpload={(file) => uploadPhotoMutation.mutate({ service: s, file })}
-                  onRemove={() => removePhotoMutation.mutate(s)}
-                />
+                <button
+                  type="button"
+                  onClick={() => openEdit(s)}
+                  title="Modifier le service"
+                  className="relative h-16 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-muted transition-opacity hover:opacity-80"
+                >
+                  <ResolvedServiceImage tenantId={tenantId} tradeTemplateId={tradeTemplateId} service={s} />
+                </button>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-foreground">{s.name}</span>
@@ -224,21 +261,20 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
                       <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">En vedette</span>
                     )}
                     {!s.is_active && (
-                      <span className="rounded bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">Inactif</span>
+                      <span className="rounded bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">Masqué</span>
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground truncate">{s.description || "Pas de description"}</p>
                 </div>
                 <div className="flex gap-1 shrink-0">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(s)}>
+                  <Button variant="ghost" size="icon" onClick={() => openEdit(s)} aria-label={`Modifier ${s.name}`}>
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => {
-                      if (confirm("Supprimer ce service ?")) deleteMutation.mutate(s.id);
-                    }}
+                    aria-label={`Supprimer ${s.name}`}
+                    onClick={() => setDeletingService(s)}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
@@ -248,6 +284,25 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
           ))}
         </div>
       )}
+
+      <AlertDialog open={!!deletingService} onOpenChange={(open) => !open && setDeletingService(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer « {deletingService?.name} » ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action retire aussi ses zones et ses marques associées, définitivement.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deletingService && deleteMutation.mutate(deletingService.id)}
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
@@ -262,6 +317,22 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
                 saveMutation.mutate(editingService);
               }}
             >
+              {editingService.id ? (
+                <ServicePhotoField
+                  tenantId={tenantId}
+                  tradeTemplateId={tradeTemplateId}
+                  service={editingService}
+                  hasOwnPhoto={!!servicePhotos[editingService.id]}
+                  uploading={uploadPhotoMutation.isPending && uploadPhotoMutation.variables?.service.id === editingService.id}
+                  onUpload={(file) => uploadPhotoMutation.mutate({ service: editingService, file })}
+                  onRemove={() => removePhotoMutation.mutate(editingService)}
+                />
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Enregistrez le service pour pouvoir y ajouter une photo.
+                </p>
+              )}
+
               <div className="space-y-2">
                 <Label>Nom</Label>
                 <Input
@@ -278,14 +349,6 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Slug (URL)</Label>
-                <Input
-                  value={editingService.slug}
-                  onChange={(e) => setEditingService((prev: any) => ({ ...prev, slug: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
                 <Label>Description</Label>
                 <Textarea
                   value={editingService.description ?? ""}
@@ -293,47 +356,75 @@ export function ServicesManager({ tenantId }: { tenantId: string }) {
                   rows={3}
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Ordre d'affichage</Label>
-                <Input
-                  type="number"
-                  value={editingService.sort_order ?? 0}
-                  onChange={(e) => setEditingService((prev: any) => ({ ...prev, sort_order: parseInt(e.target.value) || 0 }))}
-                />
-              </div>
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={editingService.is_active ?? true}
-                    onCheckedChange={(v) => setEditingService((prev: any) => ({ ...prev, is_active: v }))}
-                  />
-                  <Label>Actif</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={editingService.is_featured ?? false}
-                    onCheckedChange={(v) => setEditingService((prev: any) => ({ ...prev, is_featured: v }))}
-                  />
-                  <Label>En vedette</Label>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={editingService.is_active ?? true}
+                      onCheckedChange={(v) => setEditingService((prev: any) => ({ ...prev, is_active: v }))}
+                    />
+                    <Label>Publié sur le site</Label>
+                  </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>SEO - Titre template</Label>
-                <Input
-                  value={editingService.seo_title_template ?? ""}
-                  onChange={(e) => setEditingService((prev: any) => ({ ...prev, seo_title_template: e.target.value }))}
-                  placeholder="{service} à {city} - {company}"
+              <p className="text-xs text-muted-foreground -mt-2">
+                Visible par vos visiteurs et référencé dans le plan du site. Décochez pour le masquer sans le supprimer.
+              </p>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={editingService.is_featured ?? false}
+                  onCheckedChange={(v) => setEditingService((prev: any) => ({ ...prev, is_featured: v }))}
                 />
+                <Label>En vedette</Label>
               </div>
-              <div className="space-y-2">
-                <Label>SEO - Description template</Label>
-                <Textarea
-                  value={editingService.seo_description_template ?? ""}
-                  onChange={(e) => setEditingService((prev: any) => ({ ...prev, seo_description_template: e.target.value }))}
-                  placeholder="{company}, votre expert en {service} à {city}..."
-                  rows={2}
-                />
-              </div>
+              <p className="text-xs text-muted-foreground -mt-2">
+                Affiché en priorité parmi les services présentés sur votre page d'accueil.
+              </p>
+
+              {canEditAdvancedFields && (
+                <div className="space-y-4 border-t pt-4">
+                  <p className="text-xs font-medium text-muted-foreground">Options avancées (Super Admin)</p>
+                  <div className="space-y-2">
+                    <Label>Slug (URL)</Label>
+                    <Input
+                      value={editingService.slug}
+                      onChange={(e) => setEditingService((prev: any) => ({ ...prev, slug: e.target.value }))}
+                      required
+                    />
+                    {editingService.id && (
+                      <p className="text-xs text-destructive">
+                        Modifier le slug change l'URL déjà publiée de ce service.
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Ordre d'affichage</Label>
+                    <Input
+                      type="number"
+                      value={editingService.sort_order ?? 0}
+                      onChange={(e) => setEditingService((prev: any) => ({ ...prev, sort_order: parseInt(e.target.value) || 0 }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>SEO - Titre template</Label>
+                    <Input
+                      value={editingService.seo_title_template ?? ""}
+                      onChange={(e) => setEditingService((prev: any) => ({ ...prev, seo_title_template: e.target.value }))}
+                      placeholder="{service} à {city} - {company}"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>SEO - Description template</Label>
+                    <Textarea
+                      value={editingService.seo_description_template ?? ""}
+                      onChange={(e) => setEditingService((prev: any) => ({ ...prev, seo_description_template: e.target.value }))}
+                      placeholder="{company}, votre expert en {service} à {city}..."
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              )}
+
               {editingService.id ? (
                 <ServiceBrandsSection tenantId={tenantId} serviceId={editingService.id} />
               ) : (
@@ -420,21 +511,79 @@ function ServiceBrandsSection({ tenantId, serviceId }: { tenantId: string; servi
 }
 
 /**
- * Thumbnail + upload/remove control for one service row. Shows exactly what
- * the public site currently resolves (ServiceMedia — the same shared
- * component used everywhere, see media-resolver.ts), so "what I see here"
- * is never out of sync with "what the visitor sees". Upload writes to
- * tenant_media (level 1 of the resolver, the highest priority); removing it
- * doesn't touch anything else — the resolver falls back to a linked
- * illustration, then the trade template, then the neutral placeholder.
+ * Renders exactly what the public resolver would show for this service —
+ * same `useResolvedMedia`/`resolveMedia` as `ServiceMedia` (media-resolver.ts
+ * untouched), fed with explicit `tenantId`/`tradeTemplateId` props instead of
+ * `useTenant()` (disabled on /admin and /super-admin, see ServicesManager's
+ * own doc comment). The per-métier placeholder icon is the same
+ * `getServiceIcon` the public site uses (exported from ServiceMedia.tsx for
+ * this reason) — no separate icon logic to drift out of sync.
  */
-function ServicePhotoCell({
+function ResolvedServiceImage({
+  tenantId,
+  tradeTemplateId,
+  service,
+}: {
+  tenantId: string;
+  tradeTemplateId: string | null | undefined;
+  service: any;
+}) {
+  const resolved = useResolvedMedia({
+    tenantId,
+    tradeTemplateId: tradeTemplateId ?? null,
+    category: "service",
+    targetId: service.id,
+    altFallback: service.name,
+    tradeServiceTemplateId: service.trade_service_template_id ?? null,
+  });
+
+  if (resolved.source === "placeholder") {
+    const Icon = getServiceIcon(service.name);
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
+        <Icon className="h-6 w-6 text-primary/60" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={resolved.url}
+      alt={resolved.alt}
+      className="h-full w-full object-cover"
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
+const MEDIA_SOURCE_LABEL: Record<string, string> = {
+  tenant: "Photo personnalisée",
+  template: "Illustration proposée par Lignia",
+  placeholder: "Aucune illustration",
+};
+
+/**
+ * Photo control inside the edit dialog — the single place a service's photo
+ * is managed (Lot 8A: the standalone camera icon that used to live on the
+ * list row is gone, the list thumbnail is now just a link into this dialog).
+ *
+ * The label is deliberately generic ("Photo personnalisée", not "Votre
+ * photo") because `ResolvedMedia.source === "tenant"` covers both a direct
+ * `tenant_media` upload and a linked portfolio illustration — the resolver
+ * doesn't distinguish the two, so the label doesn't claim to either.
+ */
+function ServicePhotoField({
+  tenantId,
+  tradeTemplateId,
   service,
   hasOwnPhoto,
   uploading,
   onUpload,
   onRemove,
 }: {
+  tenantId: string;
+  tradeTemplateId: string | null | undefined;
   service: any;
   hasOwnPhoto: boolean;
   uploading: boolean;
@@ -442,29 +591,41 @@ function ServicePhotoCell({
   onRemove: () => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resolved = useResolvedMedia({
+    tenantId,
+    tradeTemplateId: tradeTemplateId ?? null,
+    category: "service",
+    targetId: service.id,
+    altFallback: service.name,
+    tradeServiceTemplateId: service.trade_service_template_id ?? null,
+  });
 
   return (
-    <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
-      <ServiceMedia service={service} />
-      <button
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
-        title={hasOwnPhoto ? "Remplacer la photo" : "Ajouter une photo"}
-        className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-background/90 py-1 text-foreground backdrop-blur-sm transition-colors hover:bg-background disabled:opacity-60"
-      >
-        <Camera className="h-3.5 w-3.5" />
-      </button>
-      {hasOwnPhoto && (
-        <button
-          type="button"
-          onClick={onRemove}
-          title="Retirer la photo"
-          className="absolute right-1 top-1 rounded-full bg-background/90 p-0.5 text-destructive hover:bg-background"
-        >
-          <X className="h-3 w-3" />
-        </button>
-      )}
+    <div className="space-y-2">
+      <Label>Photo</Label>
+      <div className="flex items-center gap-3">
+        <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
+          <ResolvedServiceImage tenantId={tenantId} tradeTemplateId={tradeTemplateId} service={service} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-muted-foreground">{MEDIA_SOURCE_LABEL[resolved.source]}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Camera className="h-3.5 w-3.5 mr-1.5" />
+            {hasOwnPhoto ? "Remplacer la photo" : "Ajouter une photo"}
+          </Button>
+          {hasOwnPhoto && (
+            <Button type="button" variant="ghost" size="sm" className="text-destructive" onClick={onRemove}>
+              Retirer la photo
+            </Button>
+          )}
+        </div>
+      </div>
       <input
         ref={fileInputRef}
         type="file"

@@ -404,7 +404,7 @@ function TenantDetail() {
           <SettingsTab tenantId={tenantId} designForm={designForm} setDesignField={setDesignField} setDesignForm={setDesignForm} settings={settings} />
         </TabsContent>
         <TabsContent value="services" className="mt-3">
-          <ServicesManager tenantId={tenantId} />
+          <ServicesManager tenantId={tenantId} tradeTemplateId={tenant?.trade_template_id ?? null} canEditAdvancedFields />
         </TabsContent>
         <TabsContent value="zones" className="mt-3">
           <ZonesManager tenantId={tenantId} />

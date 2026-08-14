@@ -15,7 +15,7 @@ function AdminServices() {
   return (
     <div className="space-y-6">
       <AdminPageHeader title="Mes services" description="Gérez les services proposés" />
-      <ServicesManager tenantId={tenant.id} />
+      <ServicesManager tenantId={tenant.id} tradeTemplateId={tenant.trade_template_id} />
     </div>
   );
 }
