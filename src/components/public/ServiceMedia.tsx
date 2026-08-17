@@ -10,7 +10,11 @@ function normalize(input: string): string {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-function getServiceIcon(name: string): React.ComponentType<{ className?: string }> {
+/** Exported so the Admin/Super Admin service thumbnail (ServicesManager,
+ *  which can't use this component directly — see its own doc comment) can
+ *  match the same per-métier icon on the placeholder state, without
+ *  duplicating the keyword logic. */
+export function getServiceIcon(name: string): React.ComponentType<{ className?: string }> {
   const n = normalize(name);
   // Order matters: more specific keywords first.
   if (/(ramon|poele|cheminee)/.test(n)) return Flame;

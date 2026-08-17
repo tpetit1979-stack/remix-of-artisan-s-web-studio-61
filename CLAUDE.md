@@ -81,3 +81,40 @@ Documenter dans `docs/product/execution-backlog.md`, sous quatre titres fixes :
 désormais — pas comme un journal de ce qui a été fait.
 
 Backlog d'exécution en cours : `docs/product/execution-backlog.md`.
+
+## Méthode de travail avec Claude
+
+Deux projets s'appellent Lignia. Ce repo est **Lignia Sites Artisans**
+(sites vitrines multi-tenant). Le CRM métier Lignia (devis/catalogue) est
+un projet distinct — n'en importer aucune décision, table ou workflow ici.
+
+### Doctrine de preuve
+Toute affirmation importante distingue explicitement :
+`[PROUVÉ REPO]` (fichier/fonction cité) · `[PROUVÉ DB]` (table/policy/
+fonction/trigger cité) · `[ACTÉ CONTEXTE]` (décision produit non
+vérifiable techniquement) · `(non vérifié)` · `(hypothèse)`.
+Avant de déclarer une conclusion importante prouvée, chercher activement
+ce qui pourrait la réfuter — ne pas s'arrêter à la première preuve
+favorable.
+
+### Protection UI ≠ sécurité serveur
+Un champ caché dans l'UI n'est pas protégé. Avant de conclure qu'un champ,
+une colonne ou une relation est protégée ou non, vérifier selon le cas :
+policies RLS (`USING`/`WITH CHECK`), triggers, grants de table/colonne,
+fonctions/RPC et `SECURITY DEFINER`, et FK/contraintes assurant la
+cohérence tenant lorsque des IDs reliés sont écrits. Ne jamais conclure
+à partir d'une seule couche de protection.
+
+### Où trouver la vérité produit
+`CLAUDE.md` explique comment travailler sur Lignia, pas ce qu'est Lignia.
+Architecture/principes : `docs/product/constitution.md` · état par lot :
+`docs/product/execution-backlog.md` · vérité par domaine :
+`docs/product/objects/*.md` · état Git/déploiement :
+`docs/runtime/STATE.md`.
+
+### Workflow en deux temps, STOP obligatoire entre les deux
+Lecture seule d'abord : EXPLORE → PROVE → REFUTE → CONCLUDE → RECOMMEND → STOP.
+Implémentation ensuite, uniquement après autorisation explicite :
+PLAN → APPROVE → EDIT → VERIFY → STOP → COMMIT/PUSH.
+Une implémentation vérifiée avec succès n'autorise pas le commit/push —
+autorisation distincte requise.

@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import {
-  ArrowLeft, Plus, Pencil, Trash2, Star, GripVertical, Settings, Wrench,
+  ArrowLeft, Plus, Pencil, Trash2, GripVertical, Settings, Wrench,
   MapPin, Building2, ExternalLink, Wand2, Loader2, Shield, Check, Palette,
   Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon, Calendar, Users, Handshake,
 } from "lucide-react";
@@ -24,10 +23,12 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
 import { detectCommercialPromiseIssues } from "@/lib/commercial-promises";
-import { buildPublicSiteUrl } from "@/lib/tenant";
+import { buildPublicSiteUrl, fetchAllServices, fetchServiceAreas } from "@/lib/tenant";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
 import { PartnersManager } from "@/components/admin/PartnersManager";
+import { ServicesManager } from "@/components/admin/ServicesManager";
+import { ZonesManager } from "@/components/admin/ZonesManager";
 import { TenantLogoManager } from "@/components/admin/TenantLogoManager";
 import { TenantGooglePlacesManager } from "@/components/admin/TenantGooglePlacesManager";
 
@@ -106,7 +107,10 @@ function Field({ label, children, className, hint }: { label: string; children: 
 }
 
 /* ── Full-Width Preview ── */
-function FullSitePreview({ designForm, tenant }: { designForm: any; tenant: any }) {
+function FullSitePreview({ designForm, tenant, services }: { designForm: any; tenant: any; services: any[] }) {
+  const publishedServices = (services ?? [])
+    .filter((s: any) => s.is_active)
+    .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
   const color = designForm?.primary_color ?? "#2563eb";
   const radius = designForm?.border_radius ?? 8;
   const headerStyle = designForm?.header_style ?? "solid";
@@ -184,15 +188,21 @@ function FullSitePreview({ designForm, tenant }: { designForm: any; tenant: any 
       {/* ── Services ── */}
       <section className="px-6 py-12 space-y-6">
         <h2 className="text-xl font-bold text-center text-foreground">Nos services</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {["Installation", "Entretien", "Dépannage"].map((s, i) => (
-            <div key={i} className="border p-5 space-y-2 hover:shadow-md transition-shadow" style={{ borderRadius: `${radius}px` }}>
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: color }}>{s[0]}</div>
-              <p className="font-semibold text-sm">{s}</p>
-              <p className="text-xs text-muted-foreground">Service professionnel à {city} et alentours.</p>
-            </div>
-          ))}
-        </div>
+        {publishedServices.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center max-w-md mx-auto">
+            Aucun service publié pour le moment — cette section n'apparaîtra pas sur le site tant qu'aucun service n'est actif.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            {publishedServices.map((s: any) => (
+              <div key={s.id} className="border p-5 space-y-2 hover:shadow-md transition-shadow" style={{ borderRadius: `${radius}px` }}>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: color }}>{s.name?.[0] ?? "?"}</div>
+                <p className="font-semibold text-sm">{s.name}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{s.description || `Service professionnel à ${city} et alentours.`}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ── CTA Banner ── */}
@@ -250,22 +260,18 @@ function TenantDetail() {
     },
   });
 
+  // Same queryKey as ServicesManager/ZonesManager (below) — one cache entry
+  // shared between this page's own completion badge/AiTab and whichever
+  // manager is mounted in the active tab, so a write in either place keeps
+  // both in sync without cross-invalidation plumbing.
   const { data: services = [] } = useQuery({
-    queryKey: ["sa-services", tenantId],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("services").select("*").eq("tenant_id", tenantId).order("sort_order", { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryKey: ["admin-services", tenantId],
+    queryFn: () => fetchAllServices(tenantId),
   });
 
   const { data: areas = [] } = useQuery({
-    queryKey: ["sa-areas", tenantId],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("service_areas").select("*").eq("tenant_id", tenantId).order("city", { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryKey: ["admin-service-areas", tenantId],
+    queryFn: () => fetchServiceAreas(tenantId),
   });
 
   const { data: certifications = [] } = useQuery({
@@ -287,8 +293,15 @@ function TenantDetail() {
   }, []);
 
   const completionItems = [
-    { label: "Services", ok: services.length > 0 },
-    { label: "Zones", ok: areas.length > 0 },
+    { label: "Services", ok: services.some((s: any) => s.is_active) },
+    {
+      label: "Zones",
+      ok:
+        services.some((s: any) => s.is_active) &&
+        services
+          .filter((s: any) => s.is_active)
+          .every((s: any) => areas.some((a: any) => a.service_id === s.id)),
+    },
     { label: "Logo", ok: !!settings?.logo_url },
     { label: "RGE", ok: certifications.length > 0 },
     { label: "SEO", ok: !!(settings?.seo_meta_title && settings?.seo_meta_description) },
@@ -391,10 +404,10 @@ function TenantDetail() {
           <SettingsTab tenantId={tenantId} designForm={designForm} setDesignField={setDesignField} setDesignForm={setDesignForm} settings={settings} />
         </TabsContent>
         <TabsContent value="services" className="mt-3">
-          <ServicesTab tenantId={tenantId} services={services} />
+          <ServicesManager tenantId={tenantId} tradeTemplateId={tenant?.trade_template_id ?? null} canEditAdvancedFields />
         </TabsContent>
         <TabsContent value="zones" className="mt-3">
-          <ZonesTab tenantId={tenantId} areas={areas} services={services} />
+          <ZonesManager tenantId={tenantId} />
         </TabsContent>
         <TabsContent value="certifications" className="mt-3">
           <CertificationsTab tenantId={tenantId} tenant={tenant} certifications={certifications} />
@@ -429,7 +442,7 @@ function TenantDetail() {
             )}
           </div>
           <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
-            <FullSitePreview designForm={designForm} tenant={tenant} />
+            <FullSitePreview designForm={designForm} tenant={tenant} services={services} />
           </div>
         </section>
       )}
@@ -858,387 +871,6 @@ function SettingsTab({ tenantId, designForm, setDesignField, setDesignForm, sett
 }
 
 // ═══════════════════════════════════════════════
-// SERVICES TAB — Catalogue par métier
-// ═══════════════════════════════════════════════
-function ServicesTab({ tenantId, services }: { tenantId: string; services: any[] }) {
-  const queryClient = useQueryClient();
-  const [editing, setEditing] = useState<any>(null);
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Fetch all trade templates + their service templates
-  const { data: trades = [] } = useQuery({
-    queryKey: ["trade-templates"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trade_templates")
-        .select("*, trade_service_templates(*)")
-        .order("sort_order", { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
-  function generateSlug(name: string) {
-    return name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  }
-
-  // Set of slugs already active for this tenant
-  const activeSlugs = useMemo(() => new Set(services.map((s: any) => s.slug)), [services]);
-
-  // Toggle a template service on/off
-  const toggleService = useMutation({
-    mutationFn: async (tpl: any) => {
-      const existing = services.find((s: any) => s.slug === tpl.slug);
-      if (existing) {
-        // Remove it
-        const { error } = await supabase.from("services").delete().eq("id", existing.id);
-        if (error) throw error;
-      } else {
-        // Add it
-        const { error } = await supabase.from("services").insert({
-          tenant_id: tenantId,
-          name: tpl.name,
-          slug: tpl.slug,
-          description: tpl.description ?? "",
-          is_featured: tpl.is_featured ?? false,
-          is_active: true,
-          sort_order: tpl.sort_order ?? services.length,
-          seo_title_template: tpl.seo_title_template,
-          seo_description_template: tpl.seo_description_template,
-        });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sa-services", tenantId] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  // Bulk toggle all services in a trade
-  const toggleTrade = useMutation({
-    mutationFn: async ({ templates, allActive }: { templates: any[]; allActive: boolean }) => {
-      if (allActive) {
-        // Remove all services matching these slugs
-        const slugsToRemove = templates.map((t: any) => t.slug);
-        const idsToRemove = services.filter((s: any) => slugsToRemove.includes(s.slug)).map((s: any) => s.id);
-        if (idsToRemove.length > 0) {
-          const { error } = await supabase.from("services").delete().in("id", idsToRemove);
-          if (error) throw error;
-        }
-      } else {
-        // Add missing services
-        const missing = templates.filter((t: any) => !activeSlugs.has(t.slug));
-        if (missing.length > 0) {
-          const rows = missing.map((tpl: any, i: number) => ({
-            tenant_id: tenantId,
-            name: tpl.name,
-            slug: tpl.slug,
-            description: tpl.description ?? "",
-            is_featured: tpl.is_featured ?? false,
-            is_active: true,
-            sort_order: services.length + i,
-            seo_title_template: tpl.seo_title_template,
-            seo_description_template: tpl.seo_description_template,
-          }));
-          const { error } = await supabase.from("services").insert(rows);
-          if (error) throw error;
-        }
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sa-services", tenantId] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const save = useMutation({
-    mutationFn: async (s: any) => {
-      if (s.id) {
-        const { error } = await supabase.from("services").update({
-          name: s.name, slug: s.slug, description: s.description,
-          is_featured: s.is_featured, is_active: s.is_active, sort_order: s.sort_order,
-          seo_title_template: s.seo_title_template, seo_description_template: s.seo_description_template,
-        }).eq("id", s.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("services").insert({
-          tenant_id: tenantId, name: s.name, slug: s.slug, description: s.description,
-          is_featured: s.is_featured ?? false, is_active: s.is_active ?? true,
-          sort_order: s.sort_order ?? services.length,
-          seo_title_template: s.seo_title_template, seo_description_template: s.seo_description_template,
-        });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-services", tenantId] }); setIsOpen(false); setEditing(null); toast.success("Service enregistré"); },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const del = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from("services").delete().eq("id", id); if (error) throw error; },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-services", tenantId] }); toast.success("Service supprimé"); },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  // Custom services not from any template
-  const templateSlugs = useMemo(() => {
-    const set = new Set<string>();
-    trades.forEach((t: any) => (t.trade_service_templates ?? []).forEach((tpl: any) => set.add(tpl.slug)));
-    return set;
-  }, [trades]);
-  const customServices = services.filter((s: any) => !templateSlugs.has(s.slug));
-
-  return (
-    <div className="space-y-4 max-w-2xl">
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="text-sm font-medium text-foreground">{services.length} activité(s) active(s)</p>
-          <p className="text-xs text-muted-foreground">Cochez les activités par métier pour ce tenant</p>
-        </div>
-        <Button size="sm" className="h-7 text-xs" onClick={() => { setEditing({ name: "", slug: "", description: "", is_featured: false, is_active: true, sort_order: services.length, seo_title_template: "", seo_description_template: "" }); setIsOpen(true); }}>
-          <Plus className="h-3 w-3 mr-1" /> Service personnalisé
-        </Button>
-      </div>
-
-      {/* Catalogue par métier */}
-      {trades.length > 0 && (
-        <Accordion type="multiple" defaultValue={trades.map((t: any) => t.id)} className="space-y-2">
-          {trades.map((trade: any) => {
-            const templates = (trade.trade_service_templates ?? []).sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-            const activeCount = templates.filter((t: any) => activeSlugs.has(t.slug)).length;
-            const allActive = activeCount === templates.length && templates.length > 0;
-            const someActive = activeCount > 0 && !allActive;
-
-            return (
-              <AccordionItem key={trade.id} value={trade.id} className="border rounded-lg overflow-hidden">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Checkbox
-                      checked={allActive ? true : someActive ? "indeterminate" : false}
-                      onCheckedChange={() => toggleTrade.mutate({ templates, allActive: allActive || someActive })}
-                      onClick={(e) => e.stopPropagation()}
-                      className="shrink-0"
-                    />
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-semibold text-sm">{trade.name}</span>
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 shrink-0">
-                        {activeCount}/{templates.length}
-                      </Badge>
-                    </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-3">
-                  <div className="space-y-1 ml-7">
-                    {templates.map((tpl: any) => {
-                      const isActive = activeSlugs.has(tpl.slug);
-                      const existingService = services.find((s: any) => s.slug === tpl.slug);
-                      return (
-                        <div key={tpl.id} className="flex items-center gap-3 py-1.5 group">
-                          <Checkbox
-                            checked={isActive}
-                            onCheckedChange={() => toggleService.mutate(tpl)}
-                            disabled={toggleService.isPending}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <span className={`text-sm ${isActive ? "font-medium text-foreground" : "text-muted-foreground"}`}>{tpl.name}</span>
-                            {tpl.description && (
-                              <p className="text-[11px] text-muted-foreground line-clamp-1">{tpl.description}</p>
-                            )}
-                          </div>
-                          {isActive && tpl.is_featured && (
-                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Vedette</Badge>
-                          )}
-                          {isActive && existingService && (
-                            <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => { setEditing({ ...existingService }); setIsOpen(true); }}>
-                              <Pencil className="h-3 w-3" />
-                            </Button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
-      )}
-
-      {/* Services personnalisés (hors template) */}
-      {customServices.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Services personnalisés</p>
-          <div className="space-y-1.5">
-            {customServices.map((s: any) => (
-              <Card key={s.id}>
-                <CardContent className="flex items-center gap-3 py-2.5">
-                  <GripVertical className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">{s.name}</span>
-                      {s.is_featured && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Vedette</Badge>}
-                      {!s.is_active && <Badge variant="destructive" className="text-[10px] px-1.5 py-0">Inactif</Badge>}
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">{s.slug}</p>
-                  </div>
-                  <div className="flex gap-0.5 shrink-0">
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setEditing({ ...s }); setIsOpen(true); }}><Pencil className="h-3 w-3" /></Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { if (confirm("Supprimer ?")) del.mutate(s.id); }}><Trash2 className="h-3 w-3 text-destructive" /></Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Dialog édition */}
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editing?.id ? "Modifier" : "Nouveau service"}</DialogTitle></DialogHeader>
-          {editing && (
-            <form className="space-y-3" onSubmit={e => { e.preventDefault(); save.mutate(editing); }}>
-              <Field label="Nom"><Input value={editing.name} onChange={e => { const name = e.target.value; setEditing((p: any) => ({ ...p, name, slug: p.id ? p.slug : generateSlug(name) })); }} required /></Field>
-              <Field label="Slug"><Input value={editing.slug} onChange={e => setEditing((p: any) => ({ ...p, slug: e.target.value }))} required /></Field>
-              <Field label="Description"><Textarea value={editing.description ?? ""} onChange={e => setEditing((p: any) => ({ ...p, description: e.target.value }))} rows={3} /></Field>
-              <Field label="Ordre" className="max-w-[100px]"><Input type="number" value={editing.sort_order ?? 0} onChange={e => setEditing((p: any) => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} /></Field>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2"><Switch checked={editing.is_active ?? true} onCheckedChange={v => setEditing((p: any) => ({ ...p, is_active: v }))} /><Label className="text-sm">Actif</Label></div>
-                <div className="flex items-center gap-2"><Switch checked={editing.is_featured ?? false} onCheckedChange={v => setEditing((p: any) => ({ ...p, is_featured: v }))} /><Label className="text-sm">Vedette</Label></div>
-              </div>
-              <Field label="SEO titre"><Input value={editing.seo_title_template ?? ""} onChange={e => setEditing((p: any) => ({ ...p, seo_title_template: e.target.value }))} placeholder="{service} à {city}" /></Field>
-              <Field label="SEO description"><Textarea value={editing.seo_description_template ?? ""} onChange={e => setEditing((p: any) => ({ ...p, seo_description_template: e.target.value }))} rows={2} /></Field>
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Annuler</Button>
-                <Button type="submit" disabled={save.isPending}>{save.isPending ? "..." : "Enregistrer"}</Button>
-              </div>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════
-// ZONES TAB
-// ═══════════════════════════════════════════════
-function ZonesTab({ tenantId, areas, services }: { tenantId: string; areas: any[]; services: any[] }) {
-  const queryClient = useQueryClient();
-  const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState({ city: "", city_slug: "", service_id: "", is_primary: false });
-
-  function generateSlug(name: string) {
-    return name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  }
-
-  const add = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("service_areas").insert({ tenant_id: tenantId, city: form.city, city_slug: form.city_slug, service_id: form.service_id, is_primary: form.is_primary });
-      if (error) throw error;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-areas", tenantId] }); setIsOpen(false); setForm({ city: "", city_slug: "", service_id: "", is_primary: false }); toast.success("Zone ajoutée"); },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const bulkAdd = useMutation({
-    mutationFn: async () => {
-      const rows = services.map(s => ({ tenant_id: tenantId, city: form.city, city_slug: form.city_slug, service_id: s.id, is_primary: form.is_primary }));
-      const { error } = await supabase.from("service_areas").insert(rows);
-      if (error) throw error;
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-areas", tenantId] }); setIsOpen(false); setForm({ city: "", city_slug: "", service_id: "", is_primary: false }); toast.success("Zone ajoutée à tous les services"); },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const del = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from("service_areas").delete().eq("id", id); if (error) throw error; },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-areas", tenantId] }); toast.success("Zone supprimée"); },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const togglePrimary = useMutation({
-    mutationFn: async ({ id, is_primary }: { id: string; is_primary: boolean }) => { const { error } = await supabase.from("service_areas").update({ is_primary }).eq("id", id); if (error) throw error; },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-areas", tenantId] }); },
-  });
-
-  const grouped = services.map(s => ({ service: s, areas: areas.filter(a => a.service_id === s.id) }));
-
-  return (
-    <div className="space-y-3 max-w-2xl">
-      <div className="flex justify-between items-center">
-        <p className="text-xs text-muted-foreground">{areas.length} zone(s) · {services.length} service(s)</p>
-        <Button size="sm" className="h-7 text-xs" onClick={() => setIsOpen(true)} disabled={services.length === 0}>
-          <Plus className="h-3 w-3 mr-1" /> Ajouter
-        </Button>
-      </div>
-
-      {services.length === 0 ? (
-        <Card><CardContent className="py-6 text-center text-sm text-muted-foreground">Créez d'abord des services.</CardContent></Card>
-      ) : (
-        <div className="space-y-2">
-          {grouped.map(({ service, areas: sAreas }) => (
-            <Card key={service.id}>
-              <CardContent className="py-2.5">
-                <h3 className="font-medium text-sm text-foreground mb-1.5">{service.name}</h3>
-                {sAreas.length === 0 ? (
-                  <p className="text-[11px] text-muted-foreground">Aucune zone</p>
-                ) : (
-                  <div className="flex flex-wrap gap-1">
-                    {sAreas.map(area => (
-                      <div key={area.id} className="flex items-center gap-0.5 rounded-full border bg-card px-2 py-0.5 text-[11px]">
-                        {area.is_primary && <Star className="h-2.5 w-2.5 text-primary fill-primary" />}
-                        <span>{area.city}</span>
-                        <button onClick={() => togglePrimary.mutate({ id: area.id, is_primary: !area.is_primary })} className="text-muted-foreground hover:text-primary"><Star className="h-2.5 w-2.5" /></button>
-                        <button onClick={() => { if (confirm("Supprimer ?")) del.mutate(area.id); }} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-2.5 w-2.5" /></button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Ajouter une zone</DialogTitle></DialogHeader>
-          <form className="space-y-3" onSubmit={e => e.preventDefault()}>
-            <Field label="Service">
-              <Select value={form.service_id} onValueChange={v => setForm(p => ({ ...p, service_id: v }))}>
-                <SelectTrigger><SelectValue placeholder="Choisir" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__all__">✦ Tous les services</SelectItem>
-                  {services.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Ville"><Input value={form.city} onChange={e => setForm(p => ({ ...p, city: e.target.value, city_slug: generateSlug(e.target.value) }))} required /></Field>
-              <Field label="Slug"><Input value={form.city_slug} onChange={e => setForm(p => ({ ...p, city_slug: e.target.value }))} required /></Field>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={form.is_primary} onCheckedChange={v => setForm(p => ({ ...p, is_primary: v }))} />
-              <Label className="text-sm">Ville principale</Label>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Annuler</Button>
-              {form.service_id === "__all__" ? (
-                <Button type="button" onClick={() => bulkAdd.mutate()} disabled={bulkAdd.isPending || !form.city}>{bulkAdd.isPending ? "..." : "Ajouter à tous"}</Button>
-              ) : (
-                <Button type="button" onClick={() => add.mutate()} disabled={add.isPending || !form.service_id || !form.city}>{add.isPending ? "..." : "Ajouter"}</Button>
-              )}
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════
 // CERTIFICATIONS TAB
 // ═══════════════════════════════════════════════
 function CertificationsTab({ tenantId, tenant, certifications }: { tenantId: string; tenant: any; certifications: any[] }) {
@@ -1471,7 +1103,7 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
           .select();
         if (error) throw error;
         createdServices = data ?? [];
-        queryClient.invalidateQueries({ queryKey: ["sa-services", tenantId] });
+        queryClient.invalidateQueries({ queryKey: ["admin-services", tenantId] });
         queryClient.invalidateQueries({ queryKey: ["sa-services-for-ai", tenantId] });
       }
 
@@ -1502,7 +1134,7 @@ function AiTab({ tenantId, tenant, settings }: { tenantId: string; tenant: any; 
               .select();
             if (error) throw error;
             insertedAreasCount = inserted?.length ?? fresh.length;
-            queryClient.invalidateQueries({ queryKey: ["sa-areas", tenantId] });
+            queryClient.invalidateQueries({ queryKey: ["admin-service-areas", tenantId] });
             queryClient.invalidateQueries({ queryKey: ["sa-areas-for-ai", tenantId] });
           }
         }
