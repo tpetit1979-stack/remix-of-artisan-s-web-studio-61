@@ -10,6 +10,7 @@ import {
   resolveTenantForSsr,
 } from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
 import { useCommercialPromises } from "@/hooks/use-commercial-promises";
@@ -130,7 +131,7 @@ function HomePage() {
   }
 
   const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));
-  const publishedPortfolio = portfolio.filter((p) => p.is_published);
+  const publishedPortfolio = portfolio.filter(isAuthenticPublicPortfolioItem);
 
   return (
     <div className="flex min-h-screen flex-col pb-20 md:pb-0">

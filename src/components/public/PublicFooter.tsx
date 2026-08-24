@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { fetchServices, fetchPublicServiceAreas, fetchPortfolio } from "@/lib/tenant";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { InstagramIcon, FacebookIcon, LinkedinIcon } from "@/components/public/SocialIcons";
 
 /** Only platforms with a non-empty, agency-set URL — never a dead icon. */
@@ -57,7 +58,7 @@ export function PublicFooter() {
 
   if (!tenant) return null;
 
-  const hasPortfolio = portfolio.some((p) => p.is_published);
+  const hasPortfolio = portfolio.some(isAuthenticPublicPortfolioItem);
 
   // Unique cities for footer links
   const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));

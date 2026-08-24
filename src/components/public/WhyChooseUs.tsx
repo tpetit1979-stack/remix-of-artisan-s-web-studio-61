@@ -2,6 +2,7 @@ import { useTenant } from "@/hooks/use-tenant";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchPortfolio, fetchPublicServiceAreas } from "@/lib/tenant";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { Hammer, Calendar, MapPin, ShieldCheck } from "lucide-react";
 
 /**
@@ -50,7 +51,7 @@ export function WhyChooseUs() {
 
   if (!tenant) return null;
 
-  const publishedCount = portfolio.filter((p) => p.is_published).length;
+  const publishedCount = portfolio.filter(isAuthenticPublicPortfolioItem).length;
   const cityCount = new Set(areas.map((a) => a.city)).size;
   const hasYears = typeof tenant.years_experience === "number" && tenant.years_experience > 0;
 

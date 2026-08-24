@@ -13,6 +13,7 @@ import {
 } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
@@ -99,7 +100,9 @@ function ServiceDetailPage() {
   }
 
   const serviceAreas = areas.filter((a) => a.service_id === service.id);
-  const relatedPortfolio = portfolio.filter((p) => p.service_id === service.id && p.is_published);
+  const relatedPortfolio = portfolio.filter(
+    (p) => p.service_id === service.id && isAuthenticPublicPortfolioItem(p),
+  );
   const otherServices = services.filter((s) => s.id !== service.id);
 
   return (

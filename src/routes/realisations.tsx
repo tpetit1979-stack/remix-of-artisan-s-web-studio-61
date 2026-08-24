@@ -11,6 +11,7 @@ import {
   hasPublishedPortfolioItem,
 } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
@@ -63,7 +64,7 @@ function RealisationsPage() {
     enabled: !!tenant?.id,
   });
 
-  const published = portfolio.filter((p) => p.is_published);
+  const published = portfolio.filter(isAuthenticPublicPortfolioItem);
 
   return (
     <div className="flex min-h-screen flex-col">

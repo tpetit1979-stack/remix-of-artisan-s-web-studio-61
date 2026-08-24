@@ -29,6 +29,7 @@ import { TeamManager } from "@/components/admin/TeamManager";
 import { PartnersManager } from "@/components/admin/PartnersManager";
 import { ServicesManager } from "@/components/admin/ServicesManager";
 import { ZonesManager } from "@/components/admin/ZonesManager";
+import { PortfolioManager } from "@/components/admin/PortfolioManager";
 import { TenantLogoManager } from "@/components/admin/TenantLogoManager";
 import { TenantGooglePlacesManager } from "@/components/admin/TenantGooglePlacesManager";
 
@@ -81,7 +82,7 @@ function hexToOklchPreview(hex: string) {
 // (the "Tabs" section of TenantDetail) — adding a tab there without adding
 // it here makes it unreachable via ?tab= but doesn't fail visibly.
 const VALID_TABS = [
-  "tenant", "settings", "services", "zones", "certifications", "team", "partners", "booking", "ai",
+  "tenant", "settings", "services", "zones", "portfolio", "certifications", "team", "partners", "booking", "ai",
 ] as const;
 type TabValue = (typeof VALID_TABS)[number];
 function isTabValue(value: string): value is TabValue {
@@ -346,20 +347,6 @@ function TenantDetail() {
           >
             <UserCog className="h-3.5 w-3.5" /> Gérer ce site
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 text-xs gap-1.5"
-            disabled={!tenant}
-            onClick={() => {
-              if (!tenant) return;
-              startImpersonation(tenant.id, tenant.company_name);
-              toast.success(`Impersonation : ${tenant.company_name}`);
-              navigate({ to: "/admin/portfolio" });
-            }}
-          >
-            <ImageIcon className="h-3.5 w-3.5" /> Gérer les réalisations
-          </Button>
           <div className="hidden md:flex items-center gap-1.5">
             {completionItems.map(item => (
               <Badge key={item.label} variant={item.ok ? "secondary" : "outline"} className="text-[10px] px-1.5 py-0">
@@ -390,6 +377,7 @@ function TenantDetail() {
           <TabsTrigger value="settings"><Palette className="h-3 w-3 mr-1" /> Design</TabsTrigger>
           <TabsTrigger value="services"><Wrench className="h-3 w-3 mr-1" /> Services</TabsTrigger>
           <TabsTrigger value="zones"><MapPin className="h-3 w-3 mr-1" /> Zones</TabsTrigger>
+          <TabsTrigger value="portfolio"><ImageIcon className="h-3 w-3 mr-1" /> Réalisations</TabsTrigger>
           <TabsTrigger value="certifications"><Shield className="h-3 w-3 mr-1" /> RGE</TabsTrigger>
           <TabsTrigger value="team"><Users className="h-3 w-3 mr-1" /> Équipe</TabsTrigger>
           <TabsTrigger value="partners"><Handshake className="h-3 w-3 mr-1" /> Partenaires</TabsTrigger>
@@ -408,6 +396,9 @@ function TenantDetail() {
         </TabsContent>
         <TabsContent value="zones" className="mt-3">
           <ZonesManager tenantId={tenantId} />
+        </TabsContent>
+        <TabsContent value="portfolio" className="mt-3">
+          <PortfolioManager key={tenantId} tenantId={tenantId} />
         </TabsContent>
         <TabsContent value="certifications" className="mt-3">
           <CertificationsTab tenantId={tenantId} tenant={tenant} certifications={certifications} />

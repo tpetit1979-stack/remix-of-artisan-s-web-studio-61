@@ -333,6 +333,7 @@ export async function hasPublishedPortfolioItem(tenantId: string): Promise<boole
     .select("id")
     .eq("tenant_id", tenantId)
     .eq("is_published", true)
+    .eq("content_kind", "real_project")
     .limit(1);
   if (error) throw error;
   return (data?.length ?? 0) > 0;
