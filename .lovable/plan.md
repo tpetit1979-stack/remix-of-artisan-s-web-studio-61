@@ -27,18 +27,27 @@ Lovable main local   ->  2249b0d  (0 écart)
 Preview              ->  2249b0d  (même commit)
 ```
 
-## Marche à suivre recommandée (aucune action effectuée)
+## Procédure de bascule (en cours)
 
-**Basculer la branche connectée dans l'éditeur Lovable** vers `claude/prod-repo-seo-setup-8qm5ai` (sélecteur de branche), laisser la preview se reconstruire, puis je vérifie factuellement que le HEAD local est `05ece15` et que les routes SEO concernées répondent. Après la recette, rebasculer sur `main`.
+### Préconditions vérifiées le 24/08 à 20:55 UTC
+- Arbre de travail **propre** (`git status --porcelain` vide).
+- HEAD = `main` = `origin/main` : 0 commit d'avance, 0 de retard — rien à perdre.
 
-Précautions pendant la recette :
-- Aucune modification dans l'éditeur tant que la branche claude est connectée (la sync bidirectionnelle committerait dessus).
-- Refuser toute proposition de résolution de conflit ou d'écrasement.
-- Le site publié (`craft-site-generator.lovable.app`) n'est pas affecté : seule la preview change.
+### Étape 1 — action utilisateur (je ne peux pas la faire : aucun outil ne change la branche connectée)
+Dans l'éditeur Lovable, sélecteur de branche → `claude/prod-repo-seo-setup-8qm5ai`.
+Si Lovable propose merge / écrasement / résolution de conflit : **tout refuser** et rapporter le message exact → STOP.
 
-Variante isolation maximale : créer sur GitHub une branche jetable `preview/seo-05ece15` pointant sur `05ece15` et connecter Lovable à celle-ci, puis la supprimer après la recette.
+### Étape 2 — vérification agent (après confirmation de la bascule)
+1. Lire la branche active et le SHA du HEAD.
+2. Comparer au SHA attendu `05ece1542575c061cb5ce9c401ac8cedcd73c860`.
+3. SHA différent → signalement explicite + STOP (la bonne version n'est pas chargée).
+4. SHA identique → confirmer que la preview peut servir à la recette. STOP (pas de recette, pas de retour sur `main`).
+
+### Interdits pendant toute l'opération
+- Aucune modification de fichier, aucun commit, aucun merge, aucun push volontaire, aucune donnée modifiée, aucune résolution de conflit.
 
 ## Risques connus
 
 - Si la branche claude a été supprimée de GitHub, la bascule est impossible — vérifier l'onglet Branches du dépôt GitHub au préalable.
 - Le diagnostic repose sur l'état du stockage git interne Lovable ; un écart éventuel avec GitHub (sync en attente) n'est pas détectable depuis ici.
+- La sync bidirectionnelle committerait toute modification d'éditeur sur la branche claude tant qu'elle est connectée — ne rien éditer pendant la recette.
