@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -334,10 +333,10 @@ export function PortfolioManager({ tenantId }: { tenantId: string }) {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <Card key={item.id} className="overflow-hidden">
+            <Card key={item.id} className="flex h-full flex-col overflow-hidden">
               <button
                 type="button"
-                className="block aspect-video w-full bg-muted relative"
+                className="relative block aspect-video w-full bg-muted"
                 onClick={() => openEdit(item)}
               >
                 {item.image_url ? (
@@ -347,38 +346,44 @@ export function PortfolioManager({ tenantId }: { tenantId: string }) {
                     <ImageIcon className="h-8 w-8 text-muted-foreground" />
                   </div>
                 )}
+                {item.content_kind === "illustration" && (
+                  <span className="absolute left-2 top-2 rounded-md bg-background/90 px-2 py-1 text-[10px] font-medium text-foreground shadow-sm backdrop-blur-sm">
+                    Photo d'exemple
+                  </span>
+                )}
               </button>
-              <CardContent className="py-3">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-medium text-foreground text-sm flex-1 truncate">{item.title}</h3>
-                  {item.content_kind === "illustration" ? (
-                    <Badge variant="outline" className="shrink-0 text-[10px]">Exemple — à remplacer</Badge>
-                  ) : (
-                    !item.is_published && (
-                      <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground shrink-0">
+              <CardContent className="flex flex-1 flex-col justify-between gap-3 py-3">
+                <div className="space-y-1">
+                  <div className="flex items-start gap-2">
+                    <h3 className="line-clamp-2 flex-1 text-sm font-medium text-foreground">{item.title}</h3>
+                    {item.content_kind !== "illustration" && !item.is_published && (
+                      <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                         Masqué
                       </span>
-                    )
-                  )}
-                </div>
-                {item.city && <p className="text-xs text-muted-foreground">{item.city}</p>}
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center gap-1.5">
-                    <Switch
-                      checked={item.content_kind === "illustration" ? false : (item.is_published ?? true)}
-                      disabled={item.content_kind === "illustration"}
-                      onCheckedChange={(v) => publishMutation.mutate({ id: item.id, is_published: v })}
-                    />
-                    <Label className="text-xs text-muted-foreground">
-                      {item.content_kind === "illustration" ? "Remplacez la photo pour publier" : "Visible sur mon site"}
-                    </Label>
+                    )}
                   </div>
-                  <div className="flex gap-1">
-                    <Button variant="ghost" size="sm" onClick={() => openEdit(item)}>
-                      <Pencil className="h-3 w-3" />
+                  {item.city && <p className="text-xs text-muted-foreground">{item.city}</p>}
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  {item.content_kind === "illustration" ? (
+                    <Button variant="secondary" size="sm" onClick={() => openEdit(item)}>
+                      Remplacer la photo
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setDeletingItem(item)}>
-                      <Trash2 className="h-3 w-3 text-destructive" />
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <Switch
+                        checked={item.is_published ?? true}
+                        onCheckedChange={(v) => publishMutation.mutate({ id: item.id, is_published: v })}
+                      />
+                      <Label className="text-xs text-muted-foreground">Visible sur mon site</Label>
+                    </div>
+                  )}
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(item)} aria-label="Modifier">
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => setDeletingItem(item)} aria-label="Supprimer">
+                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
                     </Button>
                   </div>
                 </div>
@@ -416,19 +421,20 @@ export function PortfolioManager({ tenantId }: { tenantId: string }) {
             <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(editingItem); }}>
               <div className="space-y-2">
                 <Label>Image</Label>
-                {editingItem.content_kind === "illustration" && !imageReplaced && (
-                  <div className="space-y-1 rounded-md border border-dashed p-3">
-                    <Badge variant="outline" className="text-[10px]">Exemple — à remplacer</Badge>
-                    <p className="text-xs text-muted-foreground">
-                      Cette photo vient de notre bibliothèque et illustre ce type de chantier — ce
-                      n'est pas encore une vraie réalisation. Remplacez-la par une vraie photo de
-                      votre chantier (upload ou lien vers votre propre photo) pour pouvoir publier
-                      cette carte.
-                    </p>
+                {editingItem.image_url && (
+                  <div className="relative">
+                    <img src={editingItem.image_url} alt="" loading="lazy" decoding="async" className="aspect-video w-full rounded-md object-cover" />
+                    {editingItem.content_kind === "illustration" && !imageReplaced && (
+                      <span className="absolute left-2 top-2 rounded-md bg-background/90 px-2 py-1 text-[10px] font-medium text-foreground shadow-sm backdrop-blur-sm">
+                        Photo d'exemple
+                      </span>
+                    )}
                   </div>
                 )}
-                {editingItem.image_url && (
-                  <img src={editingItem.image_url} alt="" loading="lazy" decoding="async" className="h-32 w-full object-cover rounded-md" />
+                {editingItem.content_kind === "illustration" && !imageReplaced && (
+                  <p className="text-xs text-muted-foreground">
+                    Remplacez cette photo catalogue par une vraie photo de votre chantier pour pouvoir publier cette carte.
+                  </p>
                 )}
                 <Tabs defaultValue="upload" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
@@ -474,7 +480,7 @@ export function PortfolioManager({ tenantId }: { tenantId: string }) {
                   rows={3}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Ville du chantier</Label>
                   {otherCityMode ? (
@@ -569,30 +575,32 @@ export function PortfolioManager({ tenantId }: { tenantId: string }) {
                   </Select>
                 </div>
               </div>
-              <div className="flex items-center justify-between rounded-md border p-3">
-                <div>
-                  <Label className="text-sm">Visible sur mon site</Label>
-                  <p className="text-xs text-muted-foreground">
-                    {editingItem.content_kind === "illustration" && !imageReplaced
-                      ? "Remplacez d'abord la photo par un vrai chantier pour pouvoir publier."
-                      : "Décochez pour la masquer sans la supprimer."}
-                  </p>
+              {editingItem.content_kind === "illustration" && !imageReplaced ? (
+                <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
+                  Non publiable tant que la photo n'a pas été remplacée par un vrai chantier.
                 </div>
-                <Switch
-                  checked={
-                    editingItem.content_kind === "illustration" && !imageReplaced
-                      ? false
-                      : (editingItem.is_published ?? true)
-                  }
-                  disabled={editingItem.content_kind === "illustration" && !imageReplaced}
-                  onCheckedChange={(v) => setEditingItem((p: any) => ({ ...p, is_published: v }))}
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Annuler</Button>
-                <Button type="submit" disabled={saveMutation.isPending || !editingItem.image_url}>
-                  {saveMutation.isPending ? "Enregistrement..." : "Enregistrer"}
-                </Button>
+              ) : (
+                <div className="flex items-center justify-between rounded-md border p-3">
+                  <div>
+                    <Label className="text-sm">Visible sur mon site</Label>
+                    <p className="text-xs text-muted-foreground">Décochez pour la masquer sans la supprimer.</p>
+                  </div>
+                  <Switch
+                    checked={editingItem.is_published ?? true}
+                    onCheckedChange={(v) => setEditingItem((p: any) => ({ ...p, is_published: v }))}
+                  />
+                </div>
+              )}
+              <div className="space-y-1 pt-2">
+                {!editingItem.image_url && (
+                  <p className="text-right text-xs text-muted-foreground">Ajoutez une image avant d'enregistrer.</p>
+                )}
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Annuler</Button>
+                  <Button type="submit" disabled={saveMutation.isPending || !editingItem.image_url}>
+                    {saveMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+                  </Button>
+                </div>
               </div>
             </form>
           )}
