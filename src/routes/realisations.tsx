@@ -1,6 +1,7 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
+import { useState } from "react";
+import { useTenant } from "@/hooks/use-tenant";
 import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import {
   resolveTenantInputForRoute,
@@ -15,8 +16,8 @@ import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
-import { Card, CardContent } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
+import { PortfolioCard } from "@/components/public/PortfolioCard";
+import { PortfolioViewer, type PortfolioViewerItem } from "@/components/public/PortfolioViewer";
 
 export const Route = createFileRoute("/realisations")({
   loader: async () => {
@@ -49,8 +50,8 @@ export const Route = createFileRoute("/realisations")({
 
 function RealisationsPage() {
   const { tenant } = useTenant();
-  const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const { data: portfolio = [] } = useQuery({
     queryKey: ["portfolio", tenant?.id],
@@ -65,6 +66,17 @@ function RealisationsPage() {
   });
 
   const published = portfolio.filter(isAuthenticPublicPortfolioItem);
+  const viewerItems: PortfolioViewerItem[] = published.map((p) => {
+    const service = services.find((s) => s.id === p.service_id);
+    return {
+      id: p.id,
+      title: p.title,
+      description: p.description,
+      city: p.city,
+      imageUrl: p.image_url,
+      service: service ? { name: service.name, slug: service.slug } : null,
+    };
+  });
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -79,43 +91,16 @@ function RealisationsPage() {
             {/* The loader already guarantees at least one published item exists
                 (PD-001 / US-01) — no empty state to handle here. */}
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {published.map((p) => {
-                const service = services.find((s) => s.id === p.service_id);
-                return (
-                  <Card key={p.id} className="overflow-hidden">
-                    <img
-                      src={p.image_url}
-                      alt={p.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="aspect-video w-full object-cover"
-                    />
-                    <CardContent className="p-4">
-                      <h2 className="font-semibold text-foreground">{p.title}</h2>
-                      {p.description && (
-                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{p.description}</p>
-                      )}
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {p.city && (
-                          <span className="text-xs text-muted-foreground">
-                            <MapPin className="mr-1 inline h-3 w-3" />{p.city}
-                          </span>
-                        )}
-                        {service && (
-                          <Link
-                            to="/services/$serviceSlug"
-                            params={{ serviceSlug: service.slug }}
-                            search={previewTenant}
-                            className="text-xs text-primary hover:underline"
-                          >
-                            {service.name}
-                          </Link>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {viewerItems.map((item, i) => (
+                <PortfolioCard
+                  key={item.id}
+                  title={item.title}
+                  imageUrl={item.imageUrl}
+                  city={item.city}
+                  serviceName={item.service?.name}
+                  onOpen={() => setOpenIndex(i)}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -123,6 +108,7 @@ function RealisationsPage() {
         <CTABanner title="Un projet similaire ?" subtitle={`Contactez-nous pour un devis personnalisé. ${responseTimeNote}`} />
       </main>
       <PublicFooter />
+      <PortfolioViewer items={viewerItems} index={openIndex} onIndexChange={setOpenIndex} />
     </div>
   );
 }
