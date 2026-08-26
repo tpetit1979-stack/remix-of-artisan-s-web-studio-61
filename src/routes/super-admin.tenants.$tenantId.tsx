@@ -17,6 +17,7 @@ import {
   ArrowLeft, Plus, Pencil, Trash2, GripVertical, Settings, Wrench,
   MapPin, Building2, ExternalLink, Wand2, Loader2, Shield, Check, Palette,
   Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon, Calendar, Users, Handshake,
+  Mail,
 } from "lucide-react";
 import { InstagramIcon, FacebookIcon, LinkedinIcon } from "@/components/public/SocialIcons";
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -24,6 +25,7 @@ import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
 import { detectCommercialPromiseIssues } from "@/lib/commercial-promises";
 import { buildPublicSiteUrl, fetchAllServices, fetchServiceAreas } from "@/lib/tenant";
+import { checkTenantProvisioningStatus, inviteTenantAdmin } from "@/lib/tenant-provisioning";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
 import { PartnersManager } from "@/components/admin/PartnersManager";
@@ -284,6 +286,27 @@ function TenantDetail() {
     },
   });
 
+  const { data: provisioning, refetch: refetchProvisioning } = useQuery({
+    queryKey: ["sa-provisioning", tenantId],
+    queryFn: () => checkTenantProvisioningStatus(tenantId),
+  });
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const inviteMutation = useMutation({
+    mutationFn: () => inviteTenantAdmin(tenantId, inviteEmail.trim()),
+    onSuccess: (result) => {
+      toast.success(
+        result.status === "invited"
+          ? "Invitation envoyée à l'artisan."
+          : "Compte existant relié à ce tenant.",
+      );
+      setInviteOpen(false);
+      setInviteEmail("");
+      refetchProvisioning();
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Échec de l'invitation"),
+  });
+
   // Init design form from settings
   useEffect(() => {
     if (settings && !designForm) setDesignForm({ ...settings });
@@ -370,6 +393,29 @@ function TenantDetail() {
         </Button>
       </div>
 
+      {/* Provisioning — recomputed on demand, never stored, see
+          checkTenantProvisioningStatus(). Compte/Domaine deliberately
+          separate from the completion badges above: "le site est prêt"
+          and "l'artisan peut se connecter" are different questions. */}
+      <div className="flex flex-wrap items-center gap-1.5 text-xs">
+        <Badge variant={provisioning?.compte === "prêt" ? "secondary" : "outline"} className="gap-1 px-1.5 py-0 text-[10px]">
+          {provisioning?.compte === "prêt" && <Check className="h-2.5 w-2.5" />}
+          Compte : {provisioning?.compte ?? "…"}
+        </Badge>
+        <Badge variant={provisioning?.domaine === "configuré" ? "secondary" : "outline"} className="gap-1 px-1.5 py-0 text-[10px]">
+          {provisioning?.domaine === "configuré" && <Check className="h-2.5 w-2.5" />}
+          Domaine : {provisioning?.domaine ?? "…"}
+        </Badge>
+        <Badge variant="outline" className="px-1.5 py-0 text-[10px] text-muted-foreground">
+          Recette : à faire manuellement
+        </Badge>
+        {provisioning && provisioning.compte !== "prêt" && (
+          <Button size="sm" variant="outline" className="h-6 gap-1 px-2 text-[10px]" onClick={() => setInviteOpen(true)}>
+            <Mail className="h-3 w-3" /> Inviter l'artisan
+          </Button>
+        )}
+      </div>
+
       {/* Tabs — value= list must stay in sync with VALID_TABS above */}
       <Tabs value={activeTab} onValueChange={setTab}>
         <TabsList className="w-full justify-start overflow-x-auto">
@@ -437,6 +483,42 @@ function TenantDetail() {
           </div>
         </section>
       )}
+
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Inviter l'artisan</DialogTitle>
+          </DialogHeader>
+          <form
+            className="space-y-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              inviteMutation.mutate();
+            }}
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-email">Email de l'artisan</Label>
+              <Input
+                id="invite-email"
+                type="email"
+                required
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="artisan@exemple.fr"
+              />
+              <p className="text-xs text-muted-foreground">
+                Un email d'invitation natif Supabase est envoyé — l'artisan choisit lui-même son mot de passe, jamais transmis en clair.
+              </p>
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button type="button" variant="outline" onClick={() => setInviteOpen(false)}>Annuler</Button>
+              <Button type="submit" disabled={inviteMutation.isPending}>
+                {inviteMutation.isPending ? "Envoi..." : "Envoyer l'invitation"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

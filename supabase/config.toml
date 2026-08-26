@@ -11,3 +11,6 @@ verify_jwt = true
 
 [functions.google-places]
 verify_jwt = true
+
+[functions.invite-tenant-admin]
+verify_jwt = true
