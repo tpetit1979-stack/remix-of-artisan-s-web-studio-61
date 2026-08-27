@@ -102,9 +102,42 @@ Deno.serve(async (req: Request) => {
   }
   const tenantId = body.tenant_id?.trim();
   const email = body.email?.trim();
-  const redirectTo = body.redirect_to?.trim() || undefined;
+  const redirectToRaw = body.redirect_to?.trim();
   if (!tenantId || !email) {
     return json(400, { error: "tenant_id and email are required" });
+  }
+
+  // redirect_to is mandatory and validated here too — client-side fail-closed
+  // (getPlatformOrigin() in tenant-provisioning.ts) isn't a guarantee once a
+  // request reaches this function directly (stale client, manual call, bug).
+  // Left deliberately unchecked: that the origin matches the platform's own
+  // URL exactly — would need a new server-side secret duplicating
+  // VITE_PLATFORM_URL, a bigger change than this fail-closed pass calls for.
+  // The syntactic + pathname checks below still block the concrete risk:
+  // an invite silently falling back to Supabase's default Site URL because
+  // redirect_to was missing, malformed, or pointed somewhere unexpected.
+  if (!redirectToRaw) {
+    return json(400, { error: "redirect_to is required" });
+  }
+  let redirectTo: string;
+  try {
+    const url = new URL(redirectToRaw);
+    const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+    if (url.protocol !== "https:" && !isLocalhost) {
+      return json(400, {
+        error: "invalid_redirect_to",
+        detail: "redirect_to must use https (localhost excepted).",
+      });
+    }
+    if (url.pathname !== "/accept-invite") {
+      return json(400, {
+        error: "invalid_redirect_to",
+        detail: "redirect_to must target /accept-invite.",
+      });
+    }
+    redirectTo = redirectToRaw;
+  } catch {
+    return json(400, { error: "invalid_redirect_to", detail: "redirect_to is not a valid URL." });
   }
 
   // Privileged client — created only now, after the super_admin check above.
@@ -149,11 +182,17 @@ Deno.serve(async (req: Request) => {
 
   // Refuse to silently overwrite a different existing role — user_roles has
   // a UNIQUE(user_id) constraint, so an upsert would otherwise clobber it.
-  const { data: existingRole } = await adminClient
+  // Fail closed on a lookup error: this read is what the role-conflict
+  // refusal is based on, so a transient DB error must never be silently
+  // read as "no existing role" and allowed to proceed.
+  const { data: existingRole, error: existingRoleErr } = await adminClient
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
     .maybeSingle();
+  if (existingRoleErr) {
+    return json(500, { error: "role_lookup_failed", detail: existingRoleErr.message });
+  }
   if (existingRole && existingRole.role !== "tenant_admin") {
     return json(409, {
       error: "role_conflict",
@@ -162,11 +201,17 @@ Deno.serve(async (req: Request) => {
   }
 
   // Refuse to attach an existing tenant_admin to a SECOND tenant — see the
-  // header comment. No write happens below this point in that case.
-  const { data: existingMemberships } = await adminClient
+  // header comment. No write happens below this point in that case. Same
+  // fail-closed reasoning as above: this read decides the cross-tenant
+  // refusal, so a lookup error must never be silently read as "no other
+  // membership".
+  const { data: existingMemberships, error: existingMembershipsErr } = await adminClient
     .from("tenant_members")
     .select("tenant_id")
     .eq("user_id", userId);
+  if (existingMembershipsErr) {
+    return json(500, { error: "membership_lookup_failed", detail: existingMembershipsErr.message });
+  }
   const otherMembership = (existingMemberships ?? []).find((m) => m.tenant_id !== tenantId);
   if (otherMembership) {
     const { data: otherTenant } = await adminClient
