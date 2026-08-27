@@ -1,4 +1,4 @@
-const AUTH_ONLY_PATHS = ["/login", "/forgot-password", "/update-password"];
+const AUTH_ONLY_PATHS = ["/login", "/forgot-password", "/update-password", "/accept-invite"];
 
 function isAuthOnlyPath(path: string): boolean {
   return AUTH_ONLY_PATHS.some((p) => path === p || path.startsWith(`${p}?`) || path.startsWith(`${p}/`));

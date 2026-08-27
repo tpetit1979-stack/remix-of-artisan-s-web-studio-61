@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { getPlatformOrigin } from "@/lib/platform-url";
 
 export type AccountStatus = "prêt" | "invitation envoyée" | "aucun compte";
 export type DomainStatus = "configuré" | "à vérifier";
@@ -92,10 +93,22 @@ export interface InviteTenantAdminResult {
  * function does (tenant_members, user_roles) is already permitted for a
  * super_admin by RLS; it's bundled there for a single atomic call from
  * this one explicit action, not because it requires elevated privilege.
+ *
+ * redirect_to targets /accept-invite (not /update-password — that route is
+ * reserved for resetPasswordForEmail(); see update-password.tsx), built via
+ * getPlatformOrigin() (src/lib/platform-url.ts) — the single source of
+ * truth shared with forgot-password.tsx, so the invite link and the reset
+ * link are always built the same way and never from a tenant's own domain.
+ * Must be allow-listed in Supabase Dashboard → Authentication → URL
+ * Configuration → Redirect URLs. Never a tenant's own domain by design —
+ * /super-admin/* never resolves a tenant by hostname either (see
+ * docs/product/objects/domaine.md).
  */
 export async function inviteTenantAdmin(tenantId: string, email: string): Promise<InviteTenantAdminResult> {
+  const origin = getPlatformOrigin();
+  const redirectTo = origin ? `${origin}/accept-invite` : undefined;
   const { data, error } = await supabase.functions.invoke("invite-tenant-admin", {
-    body: { tenant_id: tenantId, email },
+    body: { tenant_id: tenantId, email, redirect_to: redirectTo },
   });
   if (error) {
     // FunctionsHttpError (non-2xx response) carries the real Response as

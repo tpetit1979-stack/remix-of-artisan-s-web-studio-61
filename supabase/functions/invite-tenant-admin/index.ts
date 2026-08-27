@@ -94,7 +94,7 @@ Deno.serve(async (req: Request) => {
     return json(403, { error: "forbidden", detail: "super_admin role required" });
   }
 
-  let body: { tenant_id?: string; email?: string };
+  let body: { tenant_id?: string; email?: string; redirect_to?: string };
   try {
     body = await req.json();
   } catch {
@@ -102,6 +102,7 @@ Deno.serve(async (req: Request) => {
   }
   const tenantId = body.tenant_id?.trim();
   const email = body.email?.trim();
+  const redirectTo = body.redirect_to?.trim() || undefined;
   if (!tenantId || !email) {
     return json(400, { error: "tenant_id and email are required" });
   }
@@ -120,7 +121,9 @@ Deno.serve(async (req: Request) => {
   let userId: string;
   let status: "invited" | "existing_account";
 
-  const { data: inviteData, error: inviteErr } = await adminClient.auth.admin.inviteUserByEmail(email);
+  const { data: inviteData, error: inviteErr } = await adminClient.auth.admin.inviteUserByEmail(email, {
+    redirectTo,
+  });
   if (inviteErr) {
     const alreadyExists =
       inviteErr.status === 422 || /already registered|already exists/i.test(inviteErr.message);

@@ -59,6 +59,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     // Skipping this entirely for those paths guarantees no other tenant's
     // data is ever present in their SSR HTML.
     //
+    // /login, /forgot-password, /update-password and /accept-invite get the
+    // same exemption: all four are platform Auth surfaces — none of them
+    // may ever resolve a client tenant by Host, even though none currently
+    // reads the loader's tenant/settings. Authentication belongs to the
+    // Lignia platform, never to an artisan's public site: redirect_to for
+    // both the invite and the reset email is built from getPlatformOrigin()
+    // (src/lib/platform-url.ts), the single shared source of truth — never
+    // from a tenant's own domain.
+    //
     // IMPORTANT: this check uses the router's own `location.pathname`, not
     // a pathname read inside getTenantResolutionInput() via getRequestUrl().
     // A createServerFn is invoked over its own dedicated /_serverFn/<hash>
@@ -68,7 +77,14 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     // page being navigated to, so pathname read that way is unreliable.
     // location.pathname comes from the router itself and is correct in
     // both the SSR and client-navigation case.
-    if (location.pathname.startsWith("/admin") || location.pathname.startsWith("/super-admin")) {
+    if (
+      location.pathname.startsWith("/admin") ||
+      location.pathname.startsWith("/super-admin") ||
+      location.pathname === "/login" ||
+      location.pathname === "/forgot-password" ||
+      location.pathname === "/update-password" ||
+      location.pathname === "/accept-invite"
+    ) {
       return { tenant: null, settings: null };
     }
     try {
