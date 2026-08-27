@@ -6,8 +6,9 @@
 // service role: creating/inviting an Auth user. Writing tenant_members and
 // user_roles is already permitted for a super_admin by existing RLS
 // policies (super_admin_manage_members / super_admin_manage_roles) — this
-// function does those writes too, for a single atomic call from the UI,
-// but doesn't need elevated privilege to do so.
+// function does those writes too, as a single provisioning operation from
+// the UI, but doesn't need elevated privilege to do so. Not atomic in the
+// transactional sense: see the invite/membership/role sequence below.
 //
 // Order of operations matters: the Auth step runs first. If it fails,
 // nothing else has been written. If Auth succeeds but a later step fails,
@@ -24,6 +25,15 @@
 // decision function in src/lib/tenant-provisioning.ts (kept in sync by
 // hand, not imported — this runs on Deno, that file pulls in the browser
 // Supabase client).
+//
+// Known debt, not fixed here: the cross-tenant refusal above is a
+// read-then-write check, not a transactional guarantee — two concurrent
+// invitations for the same email could both read "no other tenant" before
+// either writes. UNIQUE(user_id, tenant_id) on tenant_members prevents the
+// same pair being inserted twice, but not this race across two different
+// tenants. Acceptable today: this is a manual, super_admin-only, low-
+// concurrency action. Would need a DB constraint or a transactional SQL
+// function to close properly before real scale.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -41,6 +51,13 @@ function json(status: number, body: unknown) {
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+// Server-side source of truth for the platform's own origin — a custom
+// secret (not auto-injected like the SUPABASE_* ones above), set via
+// `supabase secrets set PLATFORM_URL=...` or the Dashboard. Deliberately
+// not the same trust boundary as VITE_PLATFORM_URL: that's a build-time
+// value baked into a browser bundle: a value the browser sends is never
+// sufficient on its own to authorize a sensitive Auth callback here.
+const PLATFORM_URL = Deno.env.get("PLATFORM_URL");
 
 /**
  * Finds an existing Auth user by email. The Admin API in the version this
@@ -107,26 +124,33 @@ Deno.serve(async (req: Request) => {
     return json(400, { error: "tenant_id and email are required" });
   }
 
-  // redirect_to is mandatory and validated here too — client-side fail-closed
-  // (getPlatformOrigin() in tenant-provisioning.ts) isn't a guarantee once a
-  // request reaches this function directly (stale client, manual call, bug).
-  // Left deliberately unchecked: that the origin matches the platform's own
-  // URL exactly — would need a new server-side secret duplicating
-  // VITE_PLATFORM_URL, a bigger change than this fail-closed pass calls for.
-  // The syntactic + pathname checks below still block the concrete risk:
-  // an invite silently falling back to Supabase's default Site URL because
-  // redirect_to was missing, malformed, or pointed somewhere unexpected.
+  // redirect_to is mandatory and its origin is checked against PLATFORM_URL
+  // — a server-side secret, never a value the browser can influence. This
+  // is what actually closes the trust question for a sensitive Auth
+  // callback: HTTPS-and-a-plausible-path alone would still accept
+  // https://any-other-domain.com/accept-invite. Relying only on Supabase's
+  // Redirect URL allow-list isn't enough either — that list will likely
+  // also carry Lovable preview origins, so this function must not depend
+  // on the Dashboard being configured narrowly to stay safe.
   if (!redirectToRaw) {
     return json(400, { error: "redirect_to is required" });
+  }
+  if (!PLATFORM_URL) {
+    return json(500, { error: "platform_url_not_configured", detail: "PLATFORM_URL secret is not set." });
+  }
+  let expectedOrigin: string;
+  try {
+    expectedOrigin = new URL(PLATFORM_URL).origin;
+  } catch {
+    return json(500, { error: "platform_url_invalid", detail: "PLATFORM_URL is not a valid URL." });
   }
   let redirectTo: string;
   try {
     const url = new URL(redirectToRaw);
-    const isLocalhost = url.hostname === "localhost" || url.hostname === "127.0.0.1";
-    if (url.protocol !== "https:" && !isLocalhost) {
+    if (url.origin !== expectedOrigin) {
       return json(400, {
         error: "invalid_redirect_to",
-        detail: "redirect_to must use https (localhost excepted).",
+        detail: "redirect_to origin does not match the platform origin.",
       });
     }
     if (url.pathname !== "/accept-invite") {

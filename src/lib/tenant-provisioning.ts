@@ -91,8 +91,11 @@ export interface InviteTenantAdminResult {
  * Calls the invite-tenant-admin Edge Function — the only step that needs
  * the service role (Auth user creation/invite). Everything else that
  * function does (tenant_members, user_roles) is already permitted for a
- * super_admin by RLS; it's bundled there for a single atomic call from
- * this one explicit action, not because it requires elevated privilege.
+ * super_admin by RLS; it's bundled there as a single provisioning operation
+ * from this one explicit action, not because it requires elevated privilege.
+ * Not atomic in the transactional sense — see the Edge Function's own
+ * header comment for the invite/membership/role sequence and its partial-
+ * failure behavior.
  *
  * redirect_to targets /accept-invite (not /update-password — that route is
  * reserved for resetPasswordForEmail(); see update-password.tsx), built via
