@@ -2,7 +2,13 @@
 
 > Document de contexte destiné à Claude.
 >
-> Ce document ne constitue PAS une demande d'implémentation.
+> **Audience principale** : agents IA et développeurs intervenant sur SUPORDO Sites.
+> **Audience secondaire** : fondateur/Product Owner et futurs responsables
+> produit ou technique reprenant le projet.
+>
+> Ce document fournit le contexte durable nécessaire à la prise de décision. Il
+> ne décrit pas exhaustivement le runtime actuel (voir `docs/audit/etat-reel.md`)
+> et ne constitue ni une roadmap contractuelle ni une demande d'implémentation.
 > Il sert à comprendre le produit, sa trajectoire, son architecture conceptuelle,
 > son positionnement et le changement de marque en cours.
 >
@@ -17,6 +23,14 @@
 ---
 
 # 1. Résumé exécutif
+
+`[DÉCIDÉ]` France first / Europe by design : la France est le marché initial et
+le premier terrain de profondeur métier. `[CIBLE]` L'Allemagne, le Royaume-Uni /
+marché anglophone, l'Espagne et l'Italie font partie des marchés européens
+prioritaires envisagés ensuite. `[EXPLORATOIRE]` L'ordre exact de déploiement
+après la France n'est pas décidé à ce stade. Cela ne signifie pas qu'il faille
+construire aujourd'hui cinq localisations complètes — voir section 15 pour la
+conséquence sur la connaissance métier, et section 22 pour la facturation.
 
 Le projet évolue vers une plateforme européenne destinée aux :
 
@@ -309,7 +323,11 @@ Le produit ne doit pas devenir un WordPress simplifié ou un CMS généraliste.
 
 Doctrine :
 
-# SUPORDO n'est pas un CMS.
+# SUPORDO Sites n'est pas un CMS généraliste.
+
+Le produit possède bien des fonctions de gestion de contenu. Mais l'artisan doit
+gérer les faits et contenus réels de son entreprise, pas construire lui-même
+l'architecture technique de son site.
 
 L'artisan doit pouvoir gérer les informations qui relèvent réellement de son entreprise :
 
@@ -386,6 +404,14 @@ Interdiction produit / marketing :
 Le système peut aider à démarrer.
 
 Il ne doit jamais fabriquer de fausse confiance.
+
+`[CIBLE]` Au-delà du site, la photo est une des modalités de capture du principe
+« capturer une fois → structurer → réutiliser partout » (voir section 39) : elle
+peut devenir une donnée opérationnelle exploitable dans le dossier client, le
+chantier, l'équipement, le SAV et la maintenance, avant éventuellement de
+devenir une réalisation publique autorisée. La doctrine d'authenticité ci-dessus
+s'applique dans tous les cas — rien de ce qui suit n'autorise une image générique
+à être présentée comme réelle.
 
 ---
 
@@ -541,6 +567,24 @@ produit (projet CRM distinct — voir section 11) :
 
 Mais SUPORDO ne doit pas être enfermé commercialement dans la fumisterie.
 
+`[CIBLE]` Le concept recherché est un cœur opérationnel commun, complété par des
+briques de connaissance métier — jamais un logiciel différent par profession.
+Selon le métier, une brique peut agréger : terminologie, familles de produits,
+catalogues fabricants/fournisseurs, règles de composition d'un devis, contraintes
+techniques, référentiels normatifs, réglementation, données de visite technique,
+maintenance et équipements propres au métier. La fumisterie/chauffage reste le
+premier laboratoire de profondeur métier. Ceci est un concept produit, pas une
+décision d'architecture — ne pas en déduire de schéma DB, de table ou de moteur
+de règles maintenant.
+
+`[DÉCIDÉ]` La connaissance métier ne doit pas être supposée universelle entre
+pays. Une brique de connaissance peut dépendre à la fois du métier et du
+marché/pays (voir section 1) : référentiels normatifs, réglementation, fiscalité,
+terminologies, pratiques commerciales et fournisseurs peuvent varier selon le
+pays. En particulier, un DTU français ne doit jamais être implicitement
+considéré comme une règle européenne universelle. Ceci reste un principe
+produit — aucune architecture DB, schéma ou moteur de règles n'en découle ici.
+
 ---
 
 # 16. Devis
@@ -563,6 +607,12 @@ Le système doit pouvoir conserver une logique de snapshot :
 
 les informations commerciales utilisées dans un devis doivent rester historiquement cohérentes,
 même si le catalogue évolue ensuite.
+
+`[CIBLE]` À moyen/long terme, SUPORDO doit rechercher une efficience radicale
+dans la production du devis, en combinant contexte client + voix + photos/
+documents + catalogue + prix fournisseur + règles métier + historique +
+contraintes techniques pour préparer un devis structuré. Ce n'est ni une
+déclaration d'état actuel, ni une demande de construire ce système maintenant.
 
 ---
 
@@ -851,6 +901,19 @@ Cette boucle peut devenir un avantage structurel de la plateforme.
 Elle ne doit cependant jamais conduire à publier automatiquement une donnée privée ou une
 photo client sans règles explicites.
 
+`[CIBLE]` Version plus détaillée de cette boucle, conceptuelle : chantier
+terminé → photos rattachées au projet/client → sélection/qualification →
+enrichissement par des données réelles pertinentes (type de réalisation,
+produit, marque/modèle, localisation lorsque publiable) → proposition de
+réalisation → contrôle/consentement → publication éventuelle sur SUPORDO
+Sites → contenu local structuré → éventuellement diffusion adaptée vers
+Google Business Profile → sollicitation d'un avis client (par exemple par
+SMS) → réputation locale → nouvelles demandes → CRM. Ne pas présenter comme
+acquis que les API concernées permettent exactement cette automatisation —
+c'est une trajectoire, pas un état. Les deux garde-fous du paragraphe
+précédent (consentement, jamais de publication automatique d'une donnée
+privée) s'appliquent intégralement à cette version détaillée.
+
 ---
 
 # 26. Intelligence artificielle
@@ -882,6 +945,15 @@ Usages potentiels :
 Toute fonctionnalité IA doit être évaluée sur un critère :
 
 > combien de minutes, de saisies ou d'erreurs évite-t-elle réellement ?
+
+`[CIBLE]` La voix est une interface métier cible, pas un chatbot gadget : un
+artisan doit pouvoir exprimer naturellement une action ou une situation métier
+(ajouter une intervention, retrouver ce qui a été installé chez un client,
+dicter les éléments d'un chantier, préparer un devis à partir de notes). La
+cible dépasse la simple transcription voix → texte : voix → compréhension du
+contexte métier → données structurées → mobilisation des connaissances/
+catalogues/règles pertinentes → proposition d'action → validation humaine
+lorsque nécessaire. Aucune architecture technique n'est conçue pour cela ici.
 
 ---
 
@@ -934,6 +1006,13 @@ La stratégie doit privilégier :
 - pertinence locale ;
 - qualité ;
 - absence de doorway pages.
+
+`[EXPLORATOIRE]` Les sites SUPORDO devraient rester exploitables et
+compréhensibles par les moteurs de recherche et, lorsque techniquement
+pertinent, par les systèmes de recherche modernes et les assistants/LLM — via
+du contenu réel, structuré, identifiable et sémantiquement clair. Ceci n'est
+pas une doctrine « SEO pour IA » démontrée, ni une promesse de référencement
+dans les LLM.
 
 Le document :
 
@@ -1269,6 +1348,17 @@ avec le moins possible :
 - de logiciels ;
 - d'informations perdues.
 
+`[CIBLE]` Principe architectural supérieur qui relie IA, voix, photo, CRM,
+catalogues métier et site : **capturer une fois → structurer → réutiliser
+partout.** Une information déjà connue, dictée, photographiée, extraite d'un
+document, issue d'un catalogue, présente dans l'historique ou déduite de
+manière suffisamment fiable ne devrait pas être redemandée inutilement.
+Plusieurs modalités de capture peuvent y contribuer — voix, photo, documents,
+formulaires/saisie classique, données déjà présentes dans SUPORDO — chacune
+documentée à l'endroit qui la concerne (voix : section 26 ; photo : section 10 ;
+devis : section 16 ; connaissance métier : section 15). C'est une North Star
+d'interaction, pas une promesse actuelle ni une obligation absolue.
+
 ---
 
 # 40. Doctrine de développement
@@ -1341,6 +1431,36 @@ Ne jamais transformer :
 en :
 
 `[RÉEL]`.
+
+## Hiérarchie des sources de vérité
+
+En cas de désaccord entre plusieurs sources, l'ordre d'autorité technique est :
+
+runtime observé → base/configuration réelle → code → migrations →
+`docs/audit/etat-reel.md` → ce contexte maître → anciennes specs ou
+conversations.
+
+Une source plus basse dans cette liste ne peut jamais l'emporter sur une source
+plus haute, y compris ce document lui-même face au runtime.
+
+## Qui peut écrire `[DÉCIDÉ]`
+
+Une idée n'est pas une décision produit simplement parce qu'elle est écrite
+dans ce document, dans une conversation, ou proposée par une IA. Le statut
+`[DÉCIDÉ]` exige une validation explicite du fondateur/Product Owner, ou la
+présence d'un artefact explicitement reconnu comme décision. Le mécanisme à
+éviter : une IA propose → un document reprend la proposition → une IA suivante
+la lit comme si elle avait déjà été décidée.
+
+## Maintenance du contexte maître
+
+Ce document n'est pas un journal de conversation. Une fois consolidé, il doit
+rester relativement stable. Il n'est modifié que lorsqu'une décision
+stratégique durable, une frontière produit, une doctrine ou une trajectoire
+structurante change réellement — jamais parce qu'une nouvelle idée, une
+discussion, un test, une hypothèse ou une proposition d'IA est apparue. Les
+détails opérationnels, audits, tâches et états temporaires vivent dans leurs
+artefacts appropriés (`docs/audit/etat-reel.md`, backlog, missions ponctuelles).
 
 ## Format de livrable d'audit obligatoire
 
