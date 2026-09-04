@@ -241,12 +241,18 @@ export async function resolveTenantForSsr(input: {
 // shared with useAdminTenant() and TeamManager (Admin/Super Admin), which
 // need the full row (e.g. ai_analysis) — not just what the public site
 // renders. Public callers must use fetchPublicSiteSettings below instead.
-export async function fetchSiteSettings(tenantId: string): Promise<SiteSettings> {
+//
+// A tenant can legitimately have zero `site_settings` rows (onboarding never
+// finished — confirmed in production for at least one real tenant). That is
+// not an error: maybeSingle() returns { data: null, error: null } for it,
+// and this function returns null rather than throwing. Every other Supabase
+// error (network, RLS denial, ...) still throws — never silently absorbed.
+export async function fetchSiteSettings(tenantId: string): Promise<SiteSettings | null> {
   const { data, error } = await supabase
     .from("site_settings")
     .select("*")
     .eq("tenant_id", tenantId)
-    .single();
+    .maybeSingle();
   if (error) throw error;
   return data;
 }

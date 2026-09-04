@@ -740,7 +740,12 @@ Rien.
 
 ## Lot (P0) — Boucle de redirection `/login` pour un utilisateur authentifié sans rôle
 
-**Statut : à faire — backlog P0, aucun code avant validation.**
+**Statut : fait.** `src/lib/safe-redirect.ts` (cible interne uniquement, jamais
+`/login`/`/forgot-password`/`/update-password`, jamais une redirection déjà
+imbriquée) et `src/lib/access-guard.ts` (décision pure : rôle sans accès →
+écran `AccessDenied`, jamais une nouvelle redirection vers `/login`), tous
+deux consommés par `login.tsx`. Commit `1b5bec1`. Testé :
+`safe-redirect.test.ts` et `access-guard.test.ts`, verts.
 
 Découvert en conditions réelles (compte `tpetit1979@gmail.com` sans ligne
 `user_roles`, corrigé par écriture directe le 5 août 2026) : un utilisateur
@@ -765,6 +770,31 @@ Lot séparé, à ne pas mélanger avec la sécurisation des URLs sociales
 (Lot en cours) ni avec aucun autre chantier de ce backlog.
 
 **Portée** : catégorie A — améliore tous les tenants, pas seulement EASYDEP.
+
+## Lot (P0) — `fetchSiteSettings()` plantait sur un tenant sans `site_settings`
+
+**Statut : fait.** Bug découvert en base réelle lors du Lot 2 (voir plus haut :
+17 tenants, 16 lignes `site_settings`, le tenant manquant est "ROBERT ERIC").
+Cause : `fetchSiteSettings()` (`src/lib/tenant.ts`) utilisait `.single()` sur
+une relation 0..1 — Supabase lève une erreur PostgREST dès qu'aucune ligne ne
+correspond, au lieu de renvoyer un résultat vide exploitable.
+
+Correctif : `.single()` → `.maybeSingle()`, type de retour
+`SiteSettings | null` au lieu de `SiteSettings`. Un tenant sans
+`site_settings` ne fait plus planter l'écran qui le consulte — les deux
+appelants (`useAdminTenant()`, `TeamManager`) traitaient déjà `settings`
+comme potentiellement absent, ce correctif rend enfin ce cas atteignable au
+lieu de crasher avant. Une vraie erreur Supabase (réseau, RLS) continue de
+lever une exception, inchangé. Aucune ligne créée en base, aucune écriture.
+
+Testé : `src/lib/tenant.test.ts` (3 cas — ligne présente, 0 ligne, erreur
+réelle propagée).
+
+**Reste à traiter séparément, hors de ce lot** : `admin.settings.tsx` affiche
+"Chargement..." indéfiniment (jamais un état "aucun réglage pour ce tenant")
+quand `settings` est `null` — l'écran attend toujours une ligne existante.
+Pas corrigé ici : cet écran est le périmètre exact du Lot F (Entreprise/
+Apparence/SEO/Contact), volontairement non touché par ce correctif ciblé.
 
 ## Lot (dette, différé) — `AiTab` peut relire un cache IA périmé après une écriture Services/Zones
 
