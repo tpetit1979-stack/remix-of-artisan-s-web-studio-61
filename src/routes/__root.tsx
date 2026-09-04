@@ -63,7 +63,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     // same exemption: all four are platform Auth surfaces — none of them
     // may ever resolve a client tenant by Host, even though none currently
     // reads the loader's tenant/settings. Authentication belongs to the
-    // Lignia platform, never to an artisan's public site: redirect_to for
+    // SUPORDO platform, never to an artisan's public site: redirect_to for
     // both the invite and the reset email is built from getPlatformOrigin()
     // (src/lib/platform-url.ts), the single shared source of truth — never
     // from a tenant's own domain.

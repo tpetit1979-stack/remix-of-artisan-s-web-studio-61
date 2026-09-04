@@ -20,7 +20,7 @@ describe("getPlatformOrigin", () => {
 
   it("returns VITE_PLATFORM_URL in production when set", () => {
     vi.stubEnv("PROD", true);
-    vi.stubEnv("VITE_PLATFORM_URL", "https://app.lignia.fr");
-    expect(getPlatformOrigin()).toBe("https://app.lignia.fr");
+    vi.stubEnv("VITE_PLATFORM_URL", "https://app.example.com");
+    expect(getPlatformOrigin()).toBe("https://app.example.com");
   });
 });

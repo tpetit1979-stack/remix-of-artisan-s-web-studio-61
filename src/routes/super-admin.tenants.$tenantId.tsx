@@ -549,8 +549,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
         tagline: form.tagline || null,
         years_experience: form.years_experience ? parseInt(form.years_experience) : null,
         seo_boost_text: form.seo_boost_text || null,
-        is_active: form.is_active, has_lignia: form.has_lignia,
-        lignia_tenant_id: form.lignia_tenant_id || null,
+        is_active: form.is_active,
       } as any).eq("id", tenantId);
       if (error) throw error;
     },
@@ -610,14 +609,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
               <Switch checked={form.is_active ?? true} onCheckedChange={v => set("is_active", v)} />
               <Label className="text-sm">Actif</Label>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={form.has_lignia ?? false} onCheckedChange={v => set("has_lignia", v)} />
-              <Label className="text-sm">LIGNIA</Label>
-            </div>
           </div>
-          {form.has_lignia && (
-            <Field label="LIGNIA Tenant ID"><Input value={form.lignia_tenant_id ?? ""} onChange={e => set("lignia_tenant_id", e.target.value)} /></Field>
-          )}
         </CardContent>
       </Card>
 

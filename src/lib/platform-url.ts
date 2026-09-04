@@ -2,7 +2,7 @@
  * Single source of truth for the platform's own origin — used to build
  * redirect_to for every back-office Auth flow (invite, password reset), so
  * none of them can ever be built from a tenant's own domain. Authentication
- * belongs to the Lignia platform, never to an artisan's public site.
+ * belongs to the SUPORDO platform, never to an artisan's public site.
  *
  * Fails closed in production if VITE_PLATFORM_URL is missing, rather than
  * silently falling back to window.location.origin — a production Auth link

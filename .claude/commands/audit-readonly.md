@@ -1,5 +1,5 @@
 ---
-description: Audit lecture seule d'un sujet Lignia — preuve, réfutation, recommandation. N'implémente rien.
+description: Audit lecture seule d'un sujet SUPORDO — preuve, réfutation, recommandation. N'implémente rien.
 ---
 
 Mission read-only sur : $ARGUMENTS

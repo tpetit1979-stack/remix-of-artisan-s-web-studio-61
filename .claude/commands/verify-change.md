@@ -1,5 +1,5 @@
 ---
-description: Vérifie une implémentation Lignia déjà faite — diff, build, tests, effets de bord. Ne commite rien.
+description: Vérifie une implémentation SUPORDO déjà faite — diff, build, tests, effets de bord. Ne commite rien.
 ---
 
 Vérifie l'implémentation en cours sur : $ARGUMENTS
