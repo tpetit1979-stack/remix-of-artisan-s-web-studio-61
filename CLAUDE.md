@@ -1,4 +1,4 @@
-# Instructions projet — Lignia
+# Instructions projet — SUPORDO
 
 Avant toute modification significative de l'Admin, du Super Admin, des routes ou
 du modèle de données :
@@ -84,9 +84,10 @@ Backlog d'exécution en cours : `docs/product/execution-backlog.md`.
 
 ## Méthode de travail avec Claude
 
-Deux projets s'appellent Lignia. Ce repo est **Lignia Sites Artisans**
-(sites vitrines multi-tenant). Le CRM métier Lignia (devis/catalogue) est
-un projet distinct — n'en importer aucune décision, table ou workflow ici.
+Deux projets s'appelaient Lignia. Ce repo est **SUPORDO Sites Artisans**
+(sites vitrines multi-tenant, anciennement Lignia Sites Artisans). Le CRM
+métier Lignia (devis/catalogue) est un projet distinct — n'en importer
+aucune décision, table ou workflow ici.
 
 ### Doctrine de preuve
 Toute affirmation importante distingue explicitement :
@@ -106,7 +107,7 @@ cohérence tenant lorsque des IDs reliés sont écrits. Ne jamais conclure
 à partir d'une seule couche de protection.
 
 ### Où trouver la vérité produit
-`CLAUDE.md` explique comment travailler sur Lignia, pas ce qu'est Lignia.
+`CLAUDE.md` explique comment travailler sur SUPORDO, pas ce qu'est SUPORDO.
 Architecture/principes : `docs/product/constitution.md` · état par lot :
 `docs/product/execution-backlog.md` · vérité par domaine :
 `docs/product/objects/*.md` · état Git/déploiement :
