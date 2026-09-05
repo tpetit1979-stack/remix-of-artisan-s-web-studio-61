@@ -7,12 +7,13 @@ Date : 2026-09-05
 Aucune page n'a pu être récupérée. Le domaine est refusé par le proxy d'egress
 de l'environnement d'exécution (politique réseau de l'organisation).
 
-| URL | Outil | Résultat |
-| --- | --- | --- |
-| https://support.costructor.co/fr/ | `curl` | `curl: (56) CONNECT tunnel failed, response 403` |
-| https://support.costructor.co/fr/ | WebFetch | `EGRESS_BLOCKED — Access to support.costructor.co is blocked by the network egress proxy` |
+| URL | Outil | Tentative | Résultat |
+| --- | --- | --- | --- |
+| https://support.costructor.co/fr/ | `curl` | 2026-09-05 12:21 UTC | `curl: (56) CONNECT tunnel failed, response 403` |
+| https://support.costructor.co/fr/ | WebFetch | 2026-09-05 12:21 UTC | `EGRESS_BLOCKED — Access to support.costructor.co is blocked by the network egress proxy` |
+| https://support.costructor.co/fr/ | `curl` | 2026-09-05 12:49 UTC | `curl: (56) CONNECT tunnel failed, response 403` |
 
-Trace côté proxy (`/__agentproxy/status`) :
+Traces côté proxy (`$HTTPS_PROXY/__agentproxy/status`) :
 
 ```
 {
@@ -21,7 +22,15 @@ Trace côté proxy (`/__agentproxy/status`) :
   "detail": "gateway answered 403 to CONNECT (policy denial or upstream failure)",
   "host": "support.costructor.co:443"
 }
+{
+  "ts": "2026-09-05T12:49:47.764Z",
+  "kind": "connect_rejected",
+  "detail": "gateway answered 403 to CONNECT (policy denial or upstream failure)",
+  "host": "support.costructor.co:443"
+}
 ```
+
+Deux tentatives séparées, même refus. Le blocage n'est pas transitoire.
 
 ## Conséquence
 
