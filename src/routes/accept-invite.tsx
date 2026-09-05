@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,17 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-export const Route = createFileRoute("/update-password")({
+export const Route = createFileRoute("/accept-invite")({
   head: () => ({
     meta: [
-      { title: "Nouveau mot de passe" },
+      { title: "Bienvenue" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: UpdatePasswordPage,
+  component: AcceptInvitePage,
 });
 
-function UpdatePasswordPage() {
+function AcceptInvitePage() {
   const navigate = useNavigate();
   const readyRef = useRef(false);
   const [ready, setReady] = useState(false);
@@ -27,28 +27,30 @@ function UpdatePasswordPage() {
   const [confirm, setConfirm] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Supabase processes the email link's token on mount. resetPasswordForEmail()
-  // (forgot-password.tsx) is the only flow that redirects here, and it always
-  // emits PASSWORD_RECOVERY — verified directly in the installed SDK
-  // (GoTrueClient._initialize: `redirectType === 'recovery' ? 'PASSWORD_RECOVERY' : 'SIGNED_IN'`).
-  // Invite links redirect to /accept-invite instead (see inviteTenantAdmin in
-  // tenant-provisioning.ts), so this page only ever needs the recovery event.
+  // This route is only ever reached via the redirect_to passed to
+  // inviteUserByEmail() (see inviteTenantAdmin in tenant-provisioning.ts) —
+  // resetPasswordForEmail() always redirects to /update-password instead.
+  // So SIGNED_IN here is unambiguous by construction (the destination, not
+  // the event, carries the meaning) — no need to inspect the URL's `type`
+  // param, which the SDK clears before app code can reliably read it.
   //
-  // PASSWORD_RECOVERY alone isn't enough: the SDK fires it via setTimeout(0)
-  // from inside its own _initialize(), which races against this effect
-  // subscribing — if it fires first, it's lost (no replay). INITIAL_SESSION
-  // is the fallback: emitted once, unconditionally, to every new
-  // subscription, always after the SDK's init chain (including saving any
-  // URL-detected session) has finished, so a non-null session there
-  // reliably reflects the recovery session even when PASSWORD_RECOVERY was
-  // missed. A null session there — including an already-logged-in user who
-  // navigates here directly — correctly falls through to the timeout below.
-  // The readyRef guard prevents a redundant second update if both events
-  // end up firing.
+  // SIGNED_IN alone isn't enough, though: the SDK fires it via setTimeout(0)
+  // from inside its own _initialize() (verified in the installed
+  // @supabase/auth-js source), which can resolve before OR after this
+  // effect subscribes — there is no ordering guarantee. If SIGNED_IN fires
+  // first, it's lost (onAuthStateChange doesn't replay past events). The
+  // fallback is INITIAL_SESSION: the SDK emits it once, unconditionally, to
+  // every new subscription (_emitInitialSession), always AFTER its init
+  // chain (including saving any URL-detected session) has finished — so a
+  // non-null session there reliably reflects the invite session even when
+  // SIGNED_IN was missed. A null session there means no session ever
+  // existed (an actually invalid/expired link), correctly left to the
+  // timeout below. The readyRef guard prevents a redundant second update if
+  // both events end up firing.
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (readyRef.current) return;
-      if (event === "PASSWORD_RECOVERY" || (event === "INITIAL_SESSION" && session)) {
+      if (event === "SIGNED_IN" || (event === "INITIAL_SESSION" && session)) {
         readyRef.current = true;
         setReady(true);
       }
@@ -76,7 +78,7 @@ function UpdatePasswordPage() {
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      toast.success("Mot de passe mis à jour.");
+      toast.success("Compte activé.");
       navigate({ to: "/login", search: { redirect: "" } });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur lors de la mise à jour.");
@@ -91,13 +93,8 @@ function UpdatePasswordPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Lien invalide ou expiré</CardTitle>
-            <CardDescription>Demandez un nouveau lien de réinitialisation.</CardDescription>
+            <CardDescription>Contactez votre agence pour recevoir une nouvelle invitation.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Link to="/forgot-password">
-              <Button className="w-full">Redemander un lien</Button>
-            </Link>
-          </CardContent>
         </Card>
       </div>
     );
@@ -115,13 +112,13 @@ function UpdatePasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Nouveau mot de passe</CardTitle>
-          <CardDescription>Choisissez un nouveau mot de passe pour votre compte.</CardDescription>
+          <CardTitle>Bienvenue</CardTitle>
+          <CardDescription>Choisissez un mot de passe pour activer votre compte.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">Nouveau mot de passe</Label>
+              <Label htmlFor="password">Mot de passe</Label>
               <Input
                 id="password"
                 type="password"
@@ -146,7 +143,7 @@ function UpdatePasswordPage() {
             </div>
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Mettre à jour le mot de passe
+              Activer mon compte
             </Button>
           </form>
         </CardContent>

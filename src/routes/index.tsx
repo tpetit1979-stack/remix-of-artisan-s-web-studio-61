@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import {
   fetchPublicSiteSettings,
@@ -10,6 +11,7 @@ import {
   resolveTenantForSsr,
 } from "@/lib/tenant";
 import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
 import { useCommercialPromises } from "@/hooks/use-commercial-promises";
@@ -29,7 +31,8 @@ import { SeoLongText } from "@/components/public/SeoLongText";
 import { TeamSection } from "@/components/public/TeamSection";
 import { PartnersSection } from "@/components/public/PartnersSection";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { PortfolioCard } from "@/components/public/PortfolioCard";
+import { PortfolioViewer, type PortfolioViewerItem } from "@/components/public/PortfolioViewer";
 import { ArrowRight, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -88,6 +91,7 @@ function HomePage() {
   const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();
   const { buttonLabel } = useEditorialTexts();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -130,7 +134,18 @@ function HomePage() {
   }
 
   const uniqueCities = Array.from(new Set(areas.map((a) => a.city)));
-  const publishedPortfolio = portfolio.filter((p) => p.is_published);
+  const publishedPortfolio = portfolio.filter(isAuthenticPublicPortfolioItem);
+  const portfolioViewerItems: PortfolioViewerItem[] = publishedPortfolio.map((p) => {
+    const service = services.find((s) => s.id === p.service_id);
+    return {
+      id: p.id,
+      title: p.title,
+      description: p.description,
+      city: p.city,
+      imageUrl: p.image_url,
+      service: service ? { name: service.name, slug: service.slug } : null,
+    };
+  });
 
   return (
     <div className="flex min-h-screen flex-col pb-20 md:pb-0">
@@ -173,29 +188,15 @@ function HomePage() {
               </div>
 
               <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {publishedPortfolio.slice(0, 6).map((p) => (
-                  <Card key={p.id} className="group overflow-hidden border-border transition-all hover:shadow-lg hover:shadow-foreground/5">
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={p.image_url}
-                        alt={p.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <CardContent className="p-5">
-                      <h3 className="font-semibold text-foreground">{p.title}</h3>
-                      {p.description && (
-                        <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2">{p.description}</p>
-                      )}
-                      {p.city && (
-                        <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-                          <MapPin className="h-3 w-3" />{p.city}
-                        </span>
-                      )}
-                    </CardContent>
-                  </Card>
+                {portfolioViewerItems.slice(0, 6).map((item, i) => (
+                  <PortfolioCard
+                    key={item.id}
+                    title={item.title}
+                    imageUrl={item.imageUrl}
+                    city={item.city}
+                    serviceName={item.service?.name}
+                    onOpen={() => setOpenIndex(i)}
+                  />
                 ))}
               </div>
               {publishedPortfolio.length > 6 && (
@@ -265,6 +266,11 @@ function HomePage() {
       </main>
 
       <PublicFooter />
+      <PortfolioViewer
+        items={portfolioViewerItems.slice(0, 6)}
+        index={openIndex}
+        onIndexChange={setOpenIndex}
+      />
     </div>
   );
 }

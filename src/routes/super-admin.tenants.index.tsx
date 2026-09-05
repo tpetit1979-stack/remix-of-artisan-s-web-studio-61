@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import {
-  Plus, Globe, Phone, Mail, Zap, ExternalLink, Search, Building2,
+  Plus, Globe, Phone, Mail, ExternalLink, Search, Building2,
   Wrench, MapPin, Shield, Image, Tag, MessageCircle, Rocket,
   Check, X as XIcon, ArrowRight, Trash2, AlertTriangle, Users,
 } from "lucide-react";
@@ -263,7 +263,6 @@ function TenantsIndex() {
     }
     if (statusFilter === "active") result = result.filter((t) => t.is_active);
     if (statusFilter === "inactive") result = result.filter((t) => !t.is_active);
-    if (statusFilter === "lignia") result = result.filter((t) => t.has_lignia);
     if (statusFilter === "incomplete") {
       result = result.filter((t) => !servicesByTenant[t.id] || !areasByTenant[t.id]);
     }
@@ -361,7 +360,6 @@ function TenantsIndex() {
             <SelectItem value="all">Tous</SelectItem>
             <SelectItem value="active">Actifs</SelectItem>
             <SelectItem value="inactive">Inactifs</SelectItem>
-            <SelectItem value="lignia">LIGNIA</SelectItem>
             <SelectItem value="incomplete">Incomplets</SelectItem>
             <SelectItem value="no_brands">Sans marque</SelectItem>
             <SelectItem value="unread_contact">Demande non lue</SelectItem>
@@ -394,12 +392,6 @@ function TenantsIndex() {
                         <Badge variant="default" className="text-xs">Actif</Badge>
                       ) : (
                         <Badge variant="secondary" className="text-xs">Inactif</Badge>
-                      )}
-                      {t.has_lignia && (
-                        <Badge variant="outline" className="text-xs border-primary text-primary">
-                          <Zap className="h-3 w-3 mr-1" />
-                          LIGNIA
-                        </Badge>
                       )}
                       {isReadyToPublish(t.id) && (
                         <Badge variant="outline" className="text-xs border-green-600 text-green-700">

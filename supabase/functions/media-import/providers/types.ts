@@ -50,7 +50,7 @@ export const SEARCH_TIMEOUT_MS = 10_000;
 export const DOWNLOAD_TIMEOUT_MS = 20_000;
 export const MAX_DOWNLOAD_BYTES = 20 * 1024 * 1024; // 20 MB
 export const ALLOWED_MEDIA_CONTENT_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-export const MEDIA_IMPORT_USER_AGENT = "Lignia Media Importer";
+export const MEDIA_IMPORT_USER_AGENT = "SUPORDO Media Importer";
 
 /** fetch() with an upper bound on wait time. A hung external API must never
  *  block this function for 30-60s — it fails fast with a TIMEOUT ProviderError. */

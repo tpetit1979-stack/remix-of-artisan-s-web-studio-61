@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { loadServiceCityPage, type ServiceCityPageData } from "@/lib/tenant-loader";
 import { generateSeoTitle, generateSeoDescription, generateH1, generateIntroText, generateJsonLd, generateServiceJsonLd } from "@/lib/seo";
-import type { PortfolioItem, PublicService, PublicServiceArea } from "@/lib/tenant";
+import type { PublicService, PublicServiceArea } from "@/lib/tenant";
 import {
   resolveTenantInputForRoute,
   resolveTenantForSsr,
@@ -16,8 +17,9 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
 import { ServiceMedia } from "@/components/public/ServiceMedia";
+import { PortfolioCard } from "@/components/public/PortfolioCard";
+import { PortfolioViewer, type PortfolioViewerItem } from "@/components/public/PortfolioViewer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Phone, MapPin, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/$slug")({
@@ -119,7 +121,16 @@ function ServiceCityPage() {
   const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();
   const { buttonLabel } = useEditorialTexts();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const otherServices = allServices.filter((s: PublicService) => s.id !== service.id);
+  const portfolioViewerItems: PortfolioViewerItem[] = relatedPortfolio.slice(0, 6).map((p) => ({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    city: p.city,
+    imageUrl: p.image_url,
+    service: { name: service.name, slug: service.slug },
+  }));
 
   const crossLinks = allAreas
     .filter((a: PublicServiceArea) => a.city === city && a.service_id !== service.id)
@@ -210,26 +221,14 @@ function ServiceCityPage() {
                 Nos réalisations{city ? ` à ${city}` : ""}
               </h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {relatedPortfolio.slice(0, 6).map((p: PortfolioItem) => (
-                  <Card key={p.id} className="overflow-hidden">
-                    <img
-                      src={p.image_url}
-                      alt={p.title}
-                      className="aspect-video w-full object-cover"
-                      loading="lazy"
-                    />
-                    <CardContent className="p-4">
-                      <h3 className="font-medium text-foreground">{p.title}</h3>
-                      {p.description && (
-                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{p.description}</p>
-                      )}
-                      {p.city && (
-                        <span className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                          <MapPin className="h-3 w-3" />{p.city}
-                        </span>
-                      )}
-                    </CardContent>
-                  </Card>
+                {portfolioViewerItems.map((item, i) => (
+                  <PortfolioCard
+                    key={item.id}
+                    title={item.title}
+                    imageUrl={item.imageUrl}
+                    city={item.city}
+                    onOpen={() => setOpenIndex(i)}
+                  />
                 ))}
               </div>
               <div className="mt-6 text-center">
@@ -310,6 +309,7 @@ function ServiceCityPage() {
       </main>
 
       <PublicFooter />
+      <PortfolioViewer items={portfolioViewerItems} index={openIndex} onIndexChange={setOpenIndex} />
     </div>
   );
 }

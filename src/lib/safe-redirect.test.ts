@@ -36,6 +36,7 @@ describe("safeRedirect", () => {
     expect(safeRedirect("/login/anything")).toBeNull();
     expect(safeRedirect("/forgot-password")).toBeNull();
     expect(safeRedirect("/update-password")).toBeNull();
+    expect(safeRedirect("/accept-invite")).toBeNull();
   });
 
   it("rejects an already-nested redirect", () => {

@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useCommercialPromises } from "@/hooks/use-commercial-promises";
 import { useEditorialTexts } from "@/hooks/use-editorial-texts";
@@ -13,12 +14,15 @@ import {
 } from "@/lib/tenant";
 import { buildPageTitle } from "@/lib/seo";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CTABanner } from "@/components/public/CTABanner";
 import { ServiceMedia } from "@/components/public/ServiceMedia";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { PortfolioCard } from "@/components/public/PortfolioCard";
+import { PortfolioViewer, type PortfolioViewerItem } from "@/components/public/PortfolioViewer";
 import { Phone, MapPin, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/services/$serviceSlug")({
@@ -65,6 +69,7 @@ function ServiceDetailPage() {
   const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();
   const { buttonLabel } = useEditorialTexts();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const { data: services = [] } = useQuery({
     queryKey: ["services", tenant?.id],
@@ -99,7 +104,17 @@ function ServiceDetailPage() {
   }
 
   const serviceAreas = areas.filter((a) => a.service_id === service.id);
-  const relatedPortfolio = portfolio.filter((p) => p.service_id === service.id && p.is_published);
+  const relatedPortfolio = portfolio.filter(
+    (p) => p.service_id === service.id && isAuthenticPublicPortfolioItem(p),
+  );
+  const portfolioViewerItems: PortfolioViewerItem[] = relatedPortfolio.slice(0, 6).map((p) => ({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    city: p.city,
+    imageUrl: p.image_url,
+    service: { name: service.name, slug: service.slug },
+  }));
   const otherServices = services.filter((s) => s.id !== service.id);
 
   return (
@@ -166,20 +181,14 @@ function ServiceDetailPage() {
             <div className="mx-auto max-w-7xl px-4">
               <h2 className="text-2xl font-semibold text-foreground">Nos réalisations</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {relatedPortfolio.slice(0, 6).map((p) => (
-                  <Card key={p.id} className="overflow-hidden">
-                    <img
-                      src={p.image_url}
-                      alt={p.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="aspect-video w-full object-cover"
-                    />
-                    <CardContent className="p-4">
-                      <h3 className="font-medium text-foreground">{p.title}</h3>
-                      {p.city && <span className="text-xs text-muted-foreground"><MapPin className="mr-1 inline h-3 w-3" />{p.city}</span>}
-                    </CardContent>
-                  </Card>
+                {portfolioViewerItems.map((item, i) => (
+                  <PortfolioCard
+                    key={item.id}
+                    title={item.title}
+                    imageUrl={item.imageUrl}
+                    city={item.city}
+                    onOpen={() => setOpenIndex(i)}
+                  />
                 ))}
               </div>
             </div>
@@ -218,6 +227,7 @@ function ServiceDetailPage() {
         />
       </main>
       <PublicFooter />
+      <PortfolioViewer items={portfolioViewerItems} index={openIndex} onIndexChange={setOpenIndex} />
     </div>
   );
 }

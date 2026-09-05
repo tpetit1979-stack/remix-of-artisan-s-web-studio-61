@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { PortfolioItem } from "./tenant";
+import { matchesServiceAndCity } from "./portfolio";
 import {
   publicView,
   PUBLIC_SITE_SETTINGS_COLUMNS,
@@ -80,16 +81,21 @@ export async function loadServiceCityPage(
     .order("sort_order", { ascending: true });
   const allServices = (allServicesResult.data ?? []) as PublicService[];
 
-  // Fetch related portfolio items (same service or same city)
+  // Fetch related portfolio items — must match this exact service AND this
+  // exact city, so a proof from another city/service never gets attributed
+  // to the wrong Service×Ville page (was `||`, too permissive). Also
+  // requires content_kind='real_project': a platform illustration is never
+  // valid proof of a real job, even if published.
   const { data: portfolio } = await supabase
     .from("portfolio")
     .select("*")
     .eq("tenant_id", tenant.id)
     .eq("is_published", true)
+    .eq("content_kind", "real_project")
     .order("sort_order", { ascending: true });
 
-  const relatedPortfolio = (portfolio ?? []).filter(
-    (p) => p.service_id === service.id || p.city === area.city,
+  const relatedPortfolio = (portfolio ?? []).filter((p) =>
+    matchesServiceAndCity(p, service.id, area.city),
   );
 
   return {

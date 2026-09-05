@@ -17,6 +17,7 @@ import {
   ArrowLeft, Plus, Pencil, Trash2, GripVertical, Settings, Wrench,
   MapPin, Building2, ExternalLink, Wand2, Loader2, Shield, Check, Palette,
   Phone, Eye, ChevronDown, ChevronUp, UserCog, Image as ImageIcon, Calendar, Users, Handshake,
+  Mail,
 } from "lucide-react";
 import { InstagramIcon, FacebookIcon, LinkedinIcon } from "@/components/public/SocialIcons";
 import { useState, useEffect, useMemo, useCallback } from "react";
@@ -24,11 +25,13 @@ import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
 import { detectCommercialPromiseIssues } from "@/lib/commercial-promises";
 import { buildPublicSiteUrl, fetchAllServices, fetchServiceAreas } from "@/lib/tenant";
+import { checkTenantProvisioningStatus, inviteTenantAdmin } from "@/lib/tenant-provisioning";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
 import { PartnersManager } from "@/components/admin/PartnersManager";
 import { ServicesManager } from "@/components/admin/ServicesManager";
 import { ZonesManager } from "@/components/admin/ZonesManager";
+import { PortfolioManager } from "@/components/admin/PortfolioManager";
 import { TenantLogoManager } from "@/components/admin/TenantLogoManager";
 import { TenantGooglePlacesManager } from "@/components/admin/TenantGooglePlacesManager";
 
@@ -81,7 +84,7 @@ function hexToOklchPreview(hex: string) {
 // (the "Tabs" section of TenantDetail) — adding a tab there without adding
 // it here makes it unreachable via ?tab= but doesn't fail visibly.
 const VALID_TABS = [
-  "tenant", "settings", "services", "zones", "certifications", "team", "partners", "booking", "ai",
+  "tenant", "settings", "services", "zones", "portfolio", "certifications", "team", "partners", "booking", "ai",
 ] as const;
 type TabValue = (typeof VALID_TABS)[number];
 function isTabValue(value: string): value is TabValue {
@@ -283,6 +286,27 @@ function TenantDetail() {
     },
   });
 
+  const { data: provisioning, refetch: refetchProvisioning } = useQuery({
+    queryKey: ["sa-provisioning", tenantId],
+    queryFn: () => checkTenantProvisioningStatus(tenantId),
+  });
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const inviteMutation = useMutation({
+    mutationFn: () => inviteTenantAdmin(tenantId, inviteEmail.trim()),
+    onSuccess: (result) => {
+      toast.success(
+        result.status === "invited"
+          ? "Invitation envoyée à l'artisan."
+          : "Compte existant relié à ce tenant.",
+      );
+      setInviteOpen(false);
+      setInviteEmail("");
+      refetchProvisioning();
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Échec de l'invitation"),
+  });
+
   // Init design form from settings
   useEffect(() => {
     if (settings && !designForm) setDesignForm({ ...settings });
@@ -346,20 +370,6 @@ function TenantDetail() {
           >
             <UserCog className="h-3.5 w-3.5" /> Gérer ce site
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 text-xs gap-1.5"
-            disabled={!tenant}
-            onClick={() => {
-              if (!tenant) return;
-              startImpersonation(tenant.id, tenant.company_name);
-              toast.success(`Impersonation : ${tenant.company_name}`);
-              navigate({ to: "/admin/portfolio" });
-            }}
-          >
-            <ImageIcon className="h-3.5 w-3.5" /> Gérer les réalisations
-          </Button>
           <div className="hidden md:flex items-center gap-1.5">
             {completionItems.map(item => (
               <Badge key={item.label} variant={item.ok ? "secondary" : "outline"} className="text-[10px] px-1.5 py-0">
@@ -383,6 +393,29 @@ function TenantDetail() {
         </Button>
       </div>
 
+      {/* Provisioning — recomputed on demand, never stored, see
+          checkTenantProvisioningStatus(). Compte/Domaine deliberately
+          separate from the completion badges above: "le site est prêt"
+          and "l'artisan peut se connecter" are different questions. */}
+      <div className="flex flex-wrap items-center gap-1.5 text-xs">
+        <Badge variant={provisioning?.compte === "prêt" ? "secondary" : "outline"} className="gap-1 px-1.5 py-0 text-[10px]">
+          {provisioning?.compte === "prêt" && <Check className="h-2.5 w-2.5" />}
+          Compte : {provisioning?.compte ?? "…"}
+        </Badge>
+        <Badge variant={provisioning?.domaine === "configuré" ? "secondary" : "outline"} className="gap-1 px-1.5 py-0 text-[10px]">
+          {provisioning?.domaine === "configuré" && <Check className="h-2.5 w-2.5" />}
+          Domaine : {provisioning?.domaine ?? "…"}
+        </Badge>
+        <Badge variant="outline" className="px-1.5 py-0 text-[10px] text-muted-foreground">
+          Recette : à faire manuellement
+        </Badge>
+        {provisioning && provisioning.compte !== "prêt" && (
+          <Button size="sm" variant="outline" className="h-6 gap-1 px-2 text-[10px]" onClick={() => setInviteOpen(true)}>
+            <Mail className="h-3 w-3" /> Inviter l'artisan
+          </Button>
+        )}
+      </div>
+
       {/* Tabs — value= list must stay in sync with VALID_TABS above */}
       <Tabs value={activeTab} onValueChange={setTab}>
         <TabsList className="w-full justify-start overflow-x-auto">
@@ -390,6 +423,7 @@ function TenantDetail() {
           <TabsTrigger value="settings"><Palette className="h-3 w-3 mr-1" /> Design</TabsTrigger>
           <TabsTrigger value="services"><Wrench className="h-3 w-3 mr-1" /> Services</TabsTrigger>
           <TabsTrigger value="zones"><MapPin className="h-3 w-3 mr-1" /> Zones</TabsTrigger>
+          <TabsTrigger value="portfolio"><ImageIcon className="h-3 w-3 mr-1" /> Réalisations</TabsTrigger>
           <TabsTrigger value="certifications"><Shield className="h-3 w-3 mr-1" /> RGE</TabsTrigger>
           <TabsTrigger value="team"><Users className="h-3 w-3 mr-1" /> Équipe</TabsTrigger>
           <TabsTrigger value="partners"><Handshake className="h-3 w-3 mr-1" /> Partenaires</TabsTrigger>
@@ -408,6 +442,9 @@ function TenantDetail() {
         </TabsContent>
         <TabsContent value="zones" className="mt-3">
           <ZonesManager tenantId={tenantId} />
+        </TabsContent>
+        <TabsContent value="portfolio" className="mt-3">
+          <PortfolioManager key={tenantId} tenantId={tenantId} />
         </TabsContent>
         <TabsContent value="certifications" className="mt-3">
           <CertificationsTab tenantId={tenantId} tenant={tenant} certifications={certifications} />
@@ -446,6 +483,42 @@ function TenantDetail() {
           </div>
         </section>
       )}
+
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Inviter l'artisan</DialogTitle>
+          </DialogHeader>
+          <form
+            className="space-y-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              inviteMutation.mutate();
+            }}
+          >
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-email">Email de l'artisan</Label>
+              <Input
+                id="invite-email"
+                type="email"
+                required
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="artisan@exemple.fr"
+              />
+              <p className="text-xs text-muted-foreground">
+                Un email d'invitation natif Supabase est envoyé — l'artisan choisit lui-même son mot de passe, jamais transmis en clair.
+              </p>
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button type="button" variant="outline" onClick={() => setInviteOpen(false)}>Annuler</Button>
+              <Button type="submit" disabled={inviteMutation.isPending}>
+                {inviteMutation.isPending ? "Envoi..." : "Envoyer l'invitation"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -476,8 +549,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
         tagline: form.tagline || null,
         years_experience: form.years_experience ? parseInt(form.years_experience) : null,
         seo_boost_text: form.seo_boost_text || null,
-        is_active: form.is_active, has_lignia: form.has_lignia,
-        lignia_tenant_id: form.lignia_tenant_id || null,
+        is_active: form.is_active,
       } as any).eq("id", tenantId);
       if (error) throw error;
     },
@@ -537,14 +609,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
               <Switch checked={form.is_active ?? true} onCheckedChange={v => set("is_active", v)} />
               <Label className="text-sm">Actif</Label>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={form.has_lignia ?? false} onCheckedChange={v => set("has_lignia", v)} />
-              <Label className="text-sm">LIGNIA</Label>
-            </div>
           </div>
-          {form.has_lignia && (
-            <Field label="LIGNIA Tenant ID"><Input value={form.lignia_tenant_id ?? ""} onChange={e => set("lignia_tenant_id", e.target.value)} /></Field>
-          )}
         </CardContent>
       </Card>
 

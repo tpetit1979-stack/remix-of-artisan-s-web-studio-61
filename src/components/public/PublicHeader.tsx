@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTenant, usePreviewTenantSearch } from "@/hooks/use-tenant";
 import { useEditorialTexts } from "@/hooks/use-editorial-texts";
 import { fetchPortfolio } from "@/lib/tenant";
+import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { Phone, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookingButton } from "./BookingButton";
@@ -24,7 +25,7 @@ export function PublicHeader() {
 
   if (!tenant) return null;
 
-  const hasPortfolio = portfolio.some((p) => p.is_published);
+  const hasPortfolio = portfolio.some(isAuthenticPublicPortfolioItem);
 
   const navLinks = [
     { to: "/" as const, label: "Accueil" },

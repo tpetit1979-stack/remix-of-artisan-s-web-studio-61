@@ -559,7 +559,7 @@ function ResolvedServiceImage({
 
 const MEDIA_SOURCE_LABEL: Record<string, string> = {
   tenant: "Photo personnalisée",
-  template: "Illustration proposée par Lignia",
+  template: "Illustration proposée par SUPORDO",
   placeholder: "Aucune illustration",
 };
 
