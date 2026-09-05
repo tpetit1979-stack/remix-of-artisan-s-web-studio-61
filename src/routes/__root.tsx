@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, redirect, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { TenantProvider, usePreviewTenantSearch, isAdminRoute } from "@/hooks/use-tenant";
@@ -9,6 +9,7 @@ import {
   resolveTenantInputForRoute,
   resolveTenantForSsr,
   fetchPublicSiteSettings,
+  isPlatformHost,
   type PublicTenant,
   type PublicSiteSettings,
 } from "@/lib/tenant";
@@ -87,8 +88,26 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ) {
       return { tenant: null, settings: null };
     }
+    // supordo.com/www.supordo.com is the platform's own domain, never a
+    // tenant's — hitting it bare (exactly "/") means "go administer your
+    // site", not "show a tenant that doesn't exist". Deliberately narrow:
+    // only the exact root path, only the platform host, computed and
+    // thrown BEFORE the try/catch below so this redirect() is never
+    // swallowed by its catch-all. Every other path on this host (including
+    // /sitemap.xml, /robots.txt, or a would-be tenant route like /services)
+    // is untouched — it simply resolves no tenant, same as any unmatched
+    // domain, and 404s exactly as it already does.
+    let input: Awaited<ReturnType<typeof resolveTenantInputForRoute>> | null = null;
     try {
-      const input = await resolveTenantInputForRoute();
+      input = await resolveTenantInputForRoute();
+    } catch {
+      input = null;
+    }
+    if (input && location.pathname === "/" && isPlatformHost(input.hostname)) {
+      throw redirect({ to: "/login", search: { redirect: "" } });
+    }
+    try {
+      if (!input) return { tenant: null, settings: null };
       const tenant = await resolveTenantForSsr(input);
       if (!tenant) return { tenant: null, settings: null };
       const settings = await fetchPublicSiteSettings(tenant.id).catch(() => null);

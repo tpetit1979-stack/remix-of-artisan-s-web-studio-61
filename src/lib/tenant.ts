@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestUrl } from "@tanstack/react-start/server";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { getPlatformOrigin } from "./platform-url";
 
 export type Tenant = Tables<"tenants">;
 export type SiteSettings = Tables<"site_settings">;
@@ -143,9 +144,42 @@ function isDevOrPreviewHost(host: string): boolean {
   );
 }
 
+/**
+ * True when `host` is the platform's own hostname (e.g. supordo.com) or its
+ * www. variant — never a tenant's custom domain. Reads getPlatformOrigin(),
+ * the single source of truth also used to build Auth redirect links, so a
+ * future platform domain change never needs a second place updated. Its
+ * fail-closed throw (production, VITE_PLATFORM_URL unset) is caught here
+ * and treated as "can't tell, so no" — this only gates a resolver
+ * short-circuit, not a security-sensitive redirect, so it must never crash
+ * the tenant resolution path over a missing env var.
+ *
+ * Strict hostname equality only, never `.includes()`: a tenant domain that
+ * merely contains the platform's name (e.g. "supordo-artisan.fr") or a
+ * subdomain of it (e.g. "foo.supordo.com") must never be misclassified as
+ * the platform itself — nothing in this codebase reserves such a subdomain
+ * for the platform today.
+ */
+export function isPlatformHost(host: string): boolean {
+  let platformOrigin: string | undefined;
+  try {
+    platformOrigin = getPlatformOrigin();
+  } catch {
+    return false;
+  }
+  if (!platformOrigin) return false;
+  let platformHostname: string;
+  try {
+    platformHostname = normalizeHostname(new URL(platformOrigin).hostname);
+  } catch {
+    return false;
+  }
+  return normalizeHostname(host) === platformHostname;
+}
+
 export async function fetchTenantByHostname(host: string): Promise<PublicTenant | null> {
   const normalized = normalizeHostname(host);
-  if (isDevOrPreviewHost(normalized)) return null;
+  if (isDevOrPreviewHost(normalized) || isPlatformHost(normalized)) return null;
   const { data, error } = await publicView("public_tenants")
     .select(PUBLIC_TENANT_COLUMNS)
     .or(`domain.eq.${normalized},domain.eq.www.${normalized}`)
