@@ -1,0 +1,53 @@
+# Sources documentaires des concurrents
+# Généré le 2026-09-06
+#
+# ÉTAT DES CHAMPS
+# Les valeurs `site`, `doc`, `doc_config` et `doc_prefixe` sont à null :
+# aucune n'a pu être vérifiée. L'egress HTTPS de l'environnement d'exécution
+# refuse toutes les requêtes (403 au CONNECT, y compris example.com), donc
+# aucune URL n'a pu être ouverte ni confirmée. Elles ne sont pas devinées :
+# une URL inventée ici serait indiscernable d'une URL constatée.
+#
+# doc_config : `sous_domaine` ou `integre` (voir 01-discovery/METHODE.md).
+# doc_prefixe : préfixe de chemin à conserver au filtrage du sitemap.
+#   - si doc_config vaut `sous_domaine` : préfixe dans ce sous-domaine (souvent "/").
+#   - si doc_config vaut `integre`      : préfixe dans le site principal.
+# Un concurrent peut cumuler les deux cas : ajouter alors une seconde entrée
+# sous le même `nom`.
+
+concurrents:
+  - nom: axonaut
+    site: null
+    doc: null
+    doc_config: null
+    doc_prefixe: null
+
+  - nom: costructor
+    site: null
+    doc: null
+    doc_config: null
+    doc_prefixe: null
+
+  - nom: inter-fast
+    site: null
+    doc: null
+    doc_config: null
+    doc_prefixe: null
+
+  - nom: openfire
+    site: null
+    doc: null
+    doc_config: null
+    doc_prefixe: null
+
+  - nom: sellsy
+    site: null
+    doc: null
+    doc_config: null
+    doc_prefixe: null
+
+  - nom: vertuoza
+    site: null
+    doc: null
+    doc_config: null
+    doc_prefixe: null
