@@ -313,10 +313,6 @@ function OnboardingWizard() {
         .insert({
           company_name: data.company_name,
           slug: baseSlug,
-          // Native SUPORDO URL, available immediately — a tenant is public
-          // from creation even before a custom domain is connected. Super
-          // Admin can still overwrite this later once a real domain exists.
-          domain: `${baseSlug}.supordo.com`,
           siret: data.siret || null,
           phone: data.phone || null,
           email: data.email || null,
