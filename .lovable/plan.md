@@ -1,66 +1,147 @@
-# Impact de la levée du domaine primaire — analyse en lecture seule
+# Audit — provisionnement automatique des sous-domaines `*.supordo.com` chez Lovable
 
-Objectif : établir, avant toute modification, ce que change le retrait du statut
-« primaire » de `supordo.com` — seule action capable de faire servir
-`easydep.supordo.com` par l'application. Aucune modification n'est proposée ici.
+Mission strictement lecture seule. Aucun domaine, DNS, code, variable, donnée ni
+publication n'a été touché. EASYDEP intact.
 
-## Situation constatée (PROUVÉ)
+## A — CE QUE SUPORDO AUTOMATISE DÉJÀ
 
-| Domaine | Statut | Comportement actuel |
-| --- | --- | --- |
-| `supordo.com` | actif, **primaire** (14 j 10 h) | sert l'application ; `/` → 307 `/login?redirect=` |
-| `www.supordo.com` | actif (13 j 19 h) | 302 → `https://supordo.com/` |
-| `easydep.supordo.com` | actif (6 h 24) | 302 → `https://supordo.com/` — **le SSR n'est jamais atteint** |
+`entreprise → slug → ?`
 
-DNS et vérification de propriété conformes pour les trois. Build publié à jour
-(`/assets/index-DygM7NPM.js`, resolver par hostname présent).
+- Recherche d'entreprise (nom / SIRET) et création du tenant existent
+  [PROUVÉ PROJET LOVABLE : `src/components/admin/CompanySearch.tsx`,
+  `src/routes/super-admin.onboarding.tsx`].
+- Normalisation du slug : `generateSlug()` (minuscules, accents retirés, tirets)
+  [PROUVÉ PROJET LOVABLE : `src/lib/tenant-admin.ts:16`], avec détection de
+  doublon par SIRET puis slug (`findExistingTenantByIdentity`).
+- Résolution multi-tenant par hostname : `resolveTenantForSsr` +
+  `fetchTenantByHostname` interrogent `public_tenants` sur
+  `domain.eq.<host>` / `domain.eq.www.<host>`, `isPlatformHost()` en égalité
+  stricte [PROUVÉ PROJET LOVABLE : `src/lib/tenant.ts`], présent dans le build
+  publié [PROUVÉ TEST/RUNTIME : `/assets/index-DygM7NPM.js`].
+- **Ce qui n'existe PAS** : aucune ligne de code ne compose
+  `<slug>.supordo.com`. Aucune occurrence de `supordo.com` hors commentaires et
+  tests [PROUVÉ PROJET LOVABLE : recherche `supordo\.com` sur `src/`,
+  `supabase/`]. `tenants.domain` est donc saisi à la main aujourd'hui.
 
-## Ce que le retrait du primaire change
+## B — CE QUE LOVABLE AUTOMATISE DÉJÀ
 
-Sans domaine primaire, plus aucune redirection entre domaines connectés : chaque
-domaine sert l'application à sa propre adresse.
+- Émission et renouvellement TLS pour chaque hostname connecté
+  [PROUVÉ DOCUMENTATION LOVABLE : FAQ « Does Lovable provide an SSL
+  certificate »].
+- Vérification de propriété par TXT `_lovable`, routage par A `185.158.133.1`
+  [PROUVÉ CONFIGURATION ACTUELLE : les 3 domaines du projet].
+- Redirections automatiques des domaines connectés vers le Primary (temporaires,
+  jamais 301) [PROUVÉ DOCUMENTATION LOVABLE + PROUVÉ TEST/RUNTIME : 302
+  `easydep` → `supordo.com`].
+- Ajout automatique du domaine aux Redirect URLs Auth (Cloud uniquement — sans
+  effet ici, Supabase externe).
+- Un seul build sert tous les hostnames connectés [PROUVÉ TEST/RUNTIME : même
+  bundle `/assets/index-DygM7NPM.js`].
 
-- `easydep.supordo.com` — atteint enfin le SSR. Résolution par hostname :
-  `isPlatformHost()` compare en égalité stricte à `supordo.com`, donc ce
-  sous-domaine n'est pas traité comme plateforme ; lookup
-  `domain.eq.easydep.supordo.com` / `domain.eq.www.easydep.supordo.com` sur
-  `public_tenants`. Le tenant EASYDEP a `domain = "easydep.supordo.com"` — le
-  site vitrine doit donc s'afficher. Reste à confirmer en navigateur après le
-  changement (aucun test possible tant que la redirection existe).
-- `supordo.com` — inchangé : reste connecté, sert l'application, `/` redirige
-  vers `/login` (règle applicative dans `src/routes/__root.tsx`, indépendante du
-  réglage primaire).
-- `www.supordo.com` — **change de comportement** : ne redirige plus vers
-  l'apex. `normalizeHostname()` retire le préfixe `www.`, donc
-  `isPlatformHost("www.supordo.com")` est vrai : la page racine y redirigera vers
-  `/login` au lieu de canonicaliser vers `supordo.com`. Deux adresses plateforme
-  servent alors le même contenu.
+## C — CE QUI RESTE MANUEL
 
-## Ce qui est perdu
+Par tenant, aujourd'hui : (1) créer l'enregistrement DNS `A slug → 185.158.133.1`
+chez OVH ; (2) Project → Settings → Domains → Connect existing domain ; (3)
+attendre la vérification + le certificat ; (4) renseigner `tenants.domain`.
+Plus, une fois pour toutes : ne pas avoir de Primary Domain, sinon tout
+sous-domaine est redirigé avant d'atteindre le SSR [PROUVÉ TEST/RUNTIME].
 
-1. La canonicalisation `www` → apex (impact SEO faible : la plateforme est en
-   `noindex` sur `/login`, mais l'apex reste la seule adresse à communiquer).
-2. Le point d'entrée unique : tout futur domaine connecté servira l'application
-   directement, sans redirection automatique vers `supordo.com`.
+## D — WILDCARD LOVABLE : NON SUPPORTÉ
 
-Aucune perte côté authentification : les liens d'invitation et de réinitialisation
-sont construits depuis `VITE_PLATFORM_URL` / le secret Edge `PLATFORM_URL`, tous
-deux à `https://supordo.com`, jamais depuis le host visité.
+- Documentation : « Can I connect multiple subdomains? Yes… **but each one must
+  be added and configured individually** ». Aucune mention de wildcard nulle part
+  [PROUVÉ DOCUMENTATION LOVABLE : `features/custom-domain`].
+- Interface/outil : l'ajout de `*.supordo.com` est refusé (« domain name is not
+  valid or not allowed ») [PROUVÉ TEST/RUNTIME, essai antérieur].
+- **B — wildcard DNS seul, sans déclaration Lovable : NE FONCTIONNE PAS.** Test
+  décisif : requête HTTPS vers `185.158.133.1` avec Host
+  `test-inexistant.supordo.com` → `TLS alert handshake failure` : l'edge ne
+  présente aucun certificat pour un hostname non enregistré, la requête n'atteint
+  jamais l'application [PROUVÉ TEST/RUNTIME]. Un `A *` chez OVH ne suffirait donc
+  pas — le blocage est TLS, en amont du routage.
+- Interaction Primary : indépendante du sujet, mais bloquante tant qu'elle est
+  active (voir C).
 
-## Réversibilité
+## E — API / PROVISIONING LOVABLE : NON SUPPORTÉ
 
-Le réglage est réversible à tout moment (redéfinir `supordo.com` comme primaire
-rétablit les redirections). Aucune donnée, aucun DNS, aucun code n'est touché.
+- Spécification publique `https://api.lovable.dev/v1/openapi.yaml` inspectée
+  (875 ko) : **aucun chemin `/domains`**. Le groupe « Deploy & domains » ne
+  contient que publish / unpublish / update publish settings / get publish status
+  [PROUVÉ DOCUMENTATION LOVABLE].
+- Aucun CLI, webhook, fichier déclaratif versionné ni automatisation documentée
+  n'ajoute un domaine. Le dépôt Git ne porte aucune configuration de domaines.
+- Une éventuelle API interne derrière l'interface : NON PROUVÉE, et de toute
+  façon **NON SUPPORTÉE POUR PRODUCTION**.
+- Note : l'API publique est réservée aux plans Business et supérieurs, et ne
+  changerait rien ici puisqu'elle n'expose pas les domaines.
 
-## Points non prouvés
+## F — LIMITES À 10 / 50 / 100 / 1 000 TENANTS
 
-- Le rendu réel du site EASYDEP sur `easydep.supordo.com` (non observable tant
-  que la redirection est active).
-- Le certificat TLS de `easydep.supordo.com` sur une réponse applicative (seule
-  la réponse de redirection a été observée, en HTTPS valide).
+- Aucune limite chiffrée de domaines par projet, workspace ou plan n'est
+  documentée ; les domaines personnalisés exigent un plan payant [PROUVÉ
+  DOCUMENTATION LOVABLE].
+- Limite réelle = coût opérationnel humain, linéaire : 2 gestes (DNS + connexion)
+  et une attente de certificat par tenant. 10 tenants ≈ acceptable ; 50 ≈ pénible
+  mais faisable ; 100 ≈ ~200 gestes manuels ; 1 000 ≈ intenable [INFÉRENCE].
+- Plafond technique éventuel de l'edge (nombre de certificats par zone) : NON
+  PROUVÉ.
 
-## Décision demandée
+## G — SOLUTION LA PLUS SIMPLE AUJOURD'HUI
 
-Aucune action tant que vous n'avez pas tranché. Le retrait du primaire se fait
-dans Réglages du projet → Domaines → menu `⋯` de `supordo.com` → « Unset as
-primary » : une action d'interface, côté vous, que je ne déclenche pas.
+**Solution 1 — Lovable + connexion manuelle par sous-domaine**, complétée par
+deux automatisations internes gratuites côté SUPORDO :
+1. calculer et pré-remplir `tenants.domain = <slug>.supordo.com` à la création
+   (aujourd'hui absent du code) ;
+2. afficher dans l'onboarding une check-list « DNS créé / domaine connecté /
+   certificat actif », le tenant restant hors ligne jusque-là.
+
+Comparaison : Solution 2 (wildcard natif) impossible (D) ; Solution 3 (API de
+provisionnement) inexistante (E) ; Solution 4 — aucune capacité Lovable
+officiellement supportée ne couvre le besoin (recherche documentaire complète).
+Aucun changement d'hébergeur ni proxy externe n'est nécessaire à ce stade.
+
+## H — À PARTIR DE QUEL PROBLÈME ELLE DEVIENT INSUFFISANTE
+
+Trois seuils concrets, pas un nombre théorique :
+- création de tenants en libre-service ou en lot (l'artisan ou un prospect
+  déclenche la mise en ligne sans vous) ;
+- délai de mise en ligne devenu argument commercial (« en ligne en 5 minutes »)
+  incompatible avec DNS + certificat manuels ;
+- au-delà de ~50 tenants, le coût de gestion et le risque d'oubli (domaine
+  connecté mais DNS absent, ou inverse) dépassent le gain.
+
+## I — AUTOMATISATION MAXIMALE EN RESTANT CHEZ LOVABLE
+
+Peuvent être automatisés : le slug, la valeur de `tenants.domain`, la création de
+l'enregistrement DNS chez OVH (API registrar, hors Lovable), la détection de
+l'état réel du domaine, l'activation du tenant seulement quand son hôte répond.
+Ne peut pas l'être : **la déclaration du hostname côté Lovable et l'émission du
+certificat** — geste d'interface, sans API supportée [PROUVÉ DOCUMENTATION
+LOVABLE + PROUVÉ TEST/RUNTIME]. C'est le plafond d'automatisation.
+
+## J — LE 101e CLIENT (`acme-chauffage.supordo.com`)
+
+Solution 1 (seule réellement disponible) : créer le DNS `A acme-chauffage →
+185.158.133.1` chez OVH ; ajouter le hostname dans Project → Settings → Domains ;
+attendre vérification TXT + certificat ; vérifier que `tenants.domain`
+correspond. **Republication non nécessaire** (le projet est déjà publié, un seul
+build sert tous les hostnames) ; **aucune API à appeler** ; ne rien faire ne
+fonctionne pas — le hostname échouerait en TLS avant d'atteindre l'application
+[PROUVÉ TEST/RUNTIME].
+
+## K — INCONNUES RESTANTES
+
+- Existence d'une capacité wildcard non documentée, activable par le support
+  Lovable (enterprise / SaaS-for-SaaS) : NON PROUVÉ — seule une demande au
+  support peut trancher.
+- Nombre maximal de certificats/hostnames par projet : NON PROUVÉ.
+- Comportement réel de `easydep.supordo.com` servi par l'application : NON PROUVÉ
+  tant que le Primary Domain reste actif.
+
+## L — PROCHAINE ACTION MINIMALE
+
+Poser une seule question au support Lovable : « un projet peut-il accepter un
+wildcard `*.supordo.com`, ou déclarer des hostnames par API ? » — sa réponse
+tranche définitivement D et E. En parallèle, retirer le Primary Domain pour que
+`easydep.supordo.com` serve enfin l'application. Rien d'autre n'est à construire
+aujourd'hui.
