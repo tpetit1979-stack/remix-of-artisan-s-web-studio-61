@@ -30,16 +30,16 @@ export function SupordoHero() {
             de chantier sans avoir à gérer votre site.
           </p>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center lg:mt-10 lg:gap-4">
             <button
               type="button"
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
             >
               Découvrir SUPORDO Sites
             </button>
             <button
               type="button"
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] border border-[var(--supordo-mint-200)] bg-white px-6 text-sm font-semibold text-[var(--supordo-forest)] transition-colors hover:border-[var(--supordo-green)] hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] sm:w-auto"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[6px] px-6 text-sm font-semibold text-[var(--supordo-forest)] transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] sm:w-auto sm:border sm:border-[var(--supordo-mint-200)] sm:bg-white sm:hover:border-[var(--supordo-green)] lg:min-h-[52px] lg:px-7 lg:text-base"
             >
               Voir un exemple
             </button>
@@ -47,8 +47,8 @@ export function SupordoHero() {
         </div>
 
         {/* Photography slot — asset still to be supplied */}
-        <div className="lg:pl-4">
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)]">
+        <div>
+          <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:aspect-auto lg:h-full lg:max-h-[560px] lg:min-h-[420px]">
             <div className="flex h-full w-full items-end p-5 md:p-6">
               <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
                 Photographie métier SUPORDO — à fournir
