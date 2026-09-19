@@ -111,7 +111,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     } catch {
       input = null;
     }
-    if (input && location.pathname === "/" && isPlatformHost(input.hostname)) {
+    // On a dev/preview host, "/" also shows the brand landing so the marketing
+    // surface is reviewable before launch — except when an explicit ?tenant=
+    // asks for an artisan site preview, which stays authoritative.
+    if (
+      input &&
+      location.pathname === "/" &&
+      !input.tenantSlugParam &&
+      isMarketingHost(input.hostname)
+    ) {
       return { tenant: null, settings: null, isPlatformLanding: true };
     }
     try {
