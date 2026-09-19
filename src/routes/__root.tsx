@@ -19,7 +19,16 @@ interface RouterContext {
   queryClient: QueryClient;
   tenant: PublicTenant | null;
   settings: PublicSiteSettings | null;
+  /**
+   * True only on the platform's own host at exactly "/" (supordo.com) — the
+   * SUPORDO brand landing. Never true on a tenant hostname, never true on any
+   * other path. Consumed by src/routes/index.tsx to render the SUPORDO landing
+   * instead of an artisan site, and by RootComponent to keep tenant-owned
+   * global chrome (TenantTheme, FloatingCTA) off that page.
+   */
+  isPlatformLanding: boolean;
 }
+
 
 function NotFoundComponent() {
   const previewTenant = usePreviewTenantSearch();
