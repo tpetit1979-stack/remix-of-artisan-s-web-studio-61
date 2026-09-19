@@ -19,13 +19,13 @@ export function SupordoHero() {
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-12 md:px-8 md:py-16 lg:grid-cols-2 lg:gap-20 lg:py-24 lg:min-h-[calc(100dvh-72px)]">
         {/* Text first in the DOM: also the mobile order */}
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)]">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
             SUPORDO SITES
           </p>
-          <h1 className="mt-5 text-[2rem] font-extrabold leading-[1.1] tracking-[-0.02em] text-[var(--supordo-forest)] sm:text-[2.5rem] lg:text-[3.25rem]">
+          <h1 className="mt-5 max-w-[12ch] text-[2.25rem] font-extrabold leading-[1.08] tracking-[-0.02em] text-[var(--supordo-forest)] sm:text-[2.75rem] lg:mt-6 lg:text-[3.5rem]">
             Un vrai site pro. Un espace simple pour le faire vivre.
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--supordo-graphite)] lg:mt-7 lg:text-lg">
             Ajoutez vos services, vos zones et vos réalisations. Publiez vos photos
             de chantier sans avoir à gérer votre site.
           </p>
