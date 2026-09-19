@@ -56,18 +56,15 @@ export function SupordoTrades() {
           </p>
         </div>
 
-        <div className="mt-10 md:mt-12">
-          <p className="mb-4 text-sm font-medium text-[var(--supordo-graphite)] md:hidden">
-            Faites défiler les métiers
-          </p>
+        <div className="mt-8 md:mt-10">
           <ul
-            className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-5 [scrollbar-color:var(--supordo-green)_var(--supordo-mint-100)] [scrollbar-width:thin] md:-mx-8 md:gap-5 md:px-8 lg:mx-0 lg:px-0"
+            className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-5 [scrollbar-color:var(--supordo-green)_var(--supordo-mint-100)] [scrollbar-width:thin] md:-mx-8 md:gap-5 md:px-8 lg:ml-0 lg:-mr-16 lg:pr-16"
             aria-label="Métiers accompagnés par SUPORDO Sites"
           >
             {TRADES.map((trade) => (
               <li
                 key={trade.name}
-                className="w-[82vw] max-w-[340px] shrink-0 snap-start md:w-[330px] lg:w-[350px]"
+                className="w-[70vw] max-w-[300px] shrink-0 snap-start md:w-[300px] lg:w-[268px]"
               >
                 <article className="overflow-hidden rounded-[6px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)]">
                   <div className="aspect-[4/5] bg-[var(--supordo-mint-100)]">
