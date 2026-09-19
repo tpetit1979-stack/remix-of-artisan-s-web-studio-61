@@ -329,7 +329,7 @@ Trois mouvements autorisés : le rail Métiers `[FAIT]` · une apparition douce 
 
 | Section | Desktop | Tablette | Mobile |
 |---|---|---|---|
-| Hero | deux colonnes, premier écran | deux colonnes resserrées | texte, puis image, boutons empilés |
+| Hero | deux colonnes, premier écran | deux colonnes resserrées | texte, puis image, action principale en pleine largeur (aucune action secondaire en V1) |
 | Métiers | 4 cartes + amorce | 3 cartes | 1 carte + ~22 % de la suivante |
 | Acte 3 | asymétrie deux tiers / un tiers | idem, écart réduit | résultat public seul, puis fiche recadrée |
 | Acte 4 | trois états en ligne | trois états sur deux lignes | trois états empilés |
@@ -461,7 +461,7 @@ Les sous-tâches réellement indépendantes commencent sans attendre les autres.
 | 1.3 Créer `/demarrer/confirmation`, non indexée | nouvelle route | 1.2 |
 | 1.4 Créer les deux pages sous `/legal/` | 2 nouvelles routes | textes fournis, question 13 |
 | 1.5 Créer le pied de page de marque | nouveau composant, `SupordoLanding.tsx` | 1.4 |
-| 1.6 Activer l'action principale du Hero, masquer l'action secondaire tant qu'elle n'a pas de destination réelle, et corriger le texte ambigu (« sans avoir à gérer votre site » → « sans avoir à construire ni mettre en page votre site » ou équivalent vérifié en contexte) sans modifier le H1. | `SupordoHero.tsx` | 1.2 |
+| 1.6 Activer « Demander mon site » vers `/demarrer`, masquer « Voir un exemple » tant qu'aucune destination réelle n'existe, et corriger la phrase ambiguë du Hero (« sans avoir à gérer votre site » → « sans avoir à construire ni mettre en page votre site » ou équivalent vérifié en contexte) sans modifier le H1. | `SupordoHero.tsx` | 1.2, afin que `/demarrer` soit réellement fonctionnel. Aucune dépendance à un exemple en V1. |
 | 1.7 Déposer ce plan dans `docs/product/plan-directeur-supordo-com.md` | documentation | — |
 
 Validation : aucun élément de menu ni bouton sans destination · une demande réelle arrive à destination · les mentions légales sont accessibles depuis le pied de page · un client existant atteint `/login` en un geste sur téléphone · les sites artisans et `/login` strictement inchangés.
@@ -546,11 +546,11 @@ Attendent une décision : 1.1 et 1.6 (libellé de l'action, et disponibilité d'
 - **Action secondaire « Voir un exemple » : masquée** tant qu'aucun exemple réel ou site de démonstration explicitement assumé n'existe. Ni `/exemples` vide, ni bouton inerte, ni faux client. `/exemples` reste prévue au Lot 5. — remplace la question 3 pour le Lot 1.
 - **Traitement V1 de `/demarrer` : envoi par e-mail vers une adresse SUPORDO, aucune nouvelle table.** — ferme la question 4 sur le principe ; restent les paramètres d'implémentation ci-dessous.
 
-### Chemin technique minimal pour `/demarrer` `[FAIT]` sur l'infrastructure
+### Chemin technique minimal pour `/demarrer`
 
-L'infrastructure d'envoi existe déjà et est réutilisable : une fonction serveur `notify-contact` envoie des e-mails via Resend, avec la clé `RESEND_API_KEY` et une adresse d'expéditeur `NOTIFY_FROM_EMAIL` en secrets côté serveur, jamais exposées au navigateur. **Aucune nouvelle infrastructure n'est nécessaire.**
+**`[FAIT — INFRASTRUCTURE RÉUTILISABLE]`** : Resend est déjà utilisé dans le projet · la fonction serveur `notify-contact` existe · les secrets serveur nécessaires (`RESEND_API_KEY`, adresse d'expédition) existent et ne sont jamais exposés au navigateur.
 
-Différence à respecter : `notify-contact` est adossé à la table `contacts` d'un artisan (il « réclame » une ligne existante pour garantir un seul envoi). Il ne convient donc pas tel quel à une demande commerciale SUPORDO, qui n'a pas de ligne en base — et la doctrine V1 est justement de ne pas créer de table.
+**`[À CRÉER]`** : une fonction dédiée aux demandes commerciales SUPORDO, sans dépendance à une ligne de contacts artisan, sans nouvelle table marketing. `notify-contact` est adossé à la table `contacts` d'un artisan (il « réclame » une ligne existante pour garantir un seul envoi) et ne convient donc pas tel quel.
 
 Flux recommandé, sans table :
 
@@ -572,12 +572,12 @@ Point de vigilance, sans changer la doctrine : l'e-mail seul n'offre aucune trac
 | Plausible, Matomo, PostHog, Hotjar, Clarity | absents | — | — | — | non |
 | Outils publicitaires, scripts marketing | absents | — | — | — | non |
 | Messagerie ou widget externe | absent | — | — | — | non |
-| Google Fonts (Manrope) | **présent** | en-tête du document racine | **oui** | police de la marque | **à vérifier, sans bloquer le Lot 1** : ressource tierce chargée depuis un domaine Google, à mentionner dans la politique de confidentialité. Pendant l'exécution : vérifier le mode de chargement actuel, vérifier si une version locale exploitable et licenciée est déjà présente dans le projet ; si le passage en local est trivial et sûr, le recommander ; sinon conserver l'état actuel et noter la décision à prendre avant lancement. Aucun fichier de police n'est partagé ni exporté. |
+| Google Fonts (Manrope distante) | **présent** | en-tête du document racine | **oui** | police de la marque | **dépendance tierce à documenter, et éventuellement à remplacer par un hébergement local ; aucun bandeau de consentement créé sur ce seul constat.** Décision repoussée avant lancement public, ne bloque pas le Lot 1. Pendant l'exécution : vérifier le mode de chargement actuel, vérifier si une version locale exploitable et licenciée est déjà présente ; si le passage en local est trivial et sûr, le recommander ; sinon conserver l'état actuel. Aucun fichier de police n'est partagé ni exporté. |
 | Carte Google Maps intégrée | présent | page contact d'un **site artisan** | **non** | localiser l'entreprise | hors périmètre supordo.com ; à traiter dans le légal des sites artisans |
 | Stockage navigateur de la session de connexion | présent | client Supabase | oui, sur `/login` et l'espace | maintenir la session | strictement nécessaire, pas de consentement |
 | Cookie d'état du menu latéral | présent | composant d'interface | espace client uniquement | confort d'affichage | strictement nécessaire |
 
-**Conclusion : aucun traceur soumis à consentement sur supordo.com. Aucun bandeau n'est à créer.** Seul point à trancher : conserver Google Fonts en distant ou héberger la police localement.
+**Conclusion : aucun traceur soumis à consentement sur supordo.com. Aucun bandeau n'est à créer.** La police distante est une dépendance tierce à documenter, pas un traceur soumis à consentement ; le choix entre police distante et hébergement local reste à trancher avant le lancement public et ne bloque pas le Lot 1.
 
 ### Informations légales
 
