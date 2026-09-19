@@ -20,6 +20,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { HeroSection } from "@/components/public/HeroSection";
+import { SupordoLanding } from "@/components/marketing/SupordoLanding";
+
 
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { HowItWorks } from "@/components/public/HowItWorks";
@@ -36,7 +38,13 @@ import { PortfolioViewer, type PortfolioViewerItem } from "@/components/public/P
 import { ArrowRight, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
+  loader: async ({ context }) => {
+    // Platform host at "/" (supordo.com) = SUPORDO brand landing, resolved in
+    // __root's beforeLoad. No tenant is resolved and no tenant data is
+    // fetched here — a tenant hostname takes the branch below, unchanged.
+    if (context.isPlatformLanding) {
+      return { platformLanding: true as const };
+    }
     const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
@@ -50,11 +58,32 @@ export const Route = createFileRoute("/")({
         .eq("tenant_id", tenant.id)
         .eq("is_active", true),
     ]);
-    return { tenant, settings, services, areas, certifications: certifications ?? [] };
+    return {
+      platformLanding: false as const,
+      tenant,
+      settings,
+      services,
+      areas,
+      certifications: certifications ?? [],
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
+    if (loaderData.platformLanding) {
+      const title = "SUPORDO — Un vrai site pro pour les artisans et entreprises locales";
+      const description =
+        "SUPORDO Sites : un vrai site professionnel et un espace simple pour le faire vivre. Ajoutez vos services, vos zones et vos réalisations.";
+      return {
+        meta: [
+          { title },
+          { name: "description", content: description },
+          { property: "og:title", content: title },
+          { property: "og:description", content: description },
+        ],
+      };
+    }
     const { tenant, settings, services, areas, certifications } = loaderData;
+
     const title = buildPageTitle(settings, tenant);
     const description = buildPageDescription(settings, tenant);
     const baseUrl = tenant.domain ? `https://${tenant.domain}` : "";
@@ -83,10 +112,24 @@ export const Route = createFileRoute("/")({
       ],
     };
   },
-  component: HomePage,
+  component: HomeRoute,
 });
 
-function HomePage() {
+/**
+ * "/" serves two different products depending on the hostname:
+ * - the platform host (supordo.com) → the SUPORDO brand landing;
+ * - any tenant hostname → that artisan's public site, unchanged.
+ * The switch lives here (not inside TenantHomePage) so the artisan site's
+ * component and all its tenant hooks are untouched.
+ */
+function HomeRoute() {
+  const data = Route.useLoaderData();
+  if (data?.platformLanding) return <SupordoLanding />;
+  return <TenantHomePage />;
+}
+
+function TenantHomePage() {
+
   const { tenant, settings, isLoading, error } = useTenant();
   const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();

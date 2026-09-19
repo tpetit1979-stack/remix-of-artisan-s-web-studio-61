@@ -1,4 +1,4 @@
-import { Outlet, Link, redirect, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { TenantProvider, usePreviewTenantSearch, isAdminRoute } from "@/hooks/use-tenant";
@@ -19,7 +19,16 @@ interface RouterContext {
   queryClient: QueryClient;
   tenant: PublicTenant | null;
   settings: PublicSiteSettings | null;
+  /**
+   * True only on the platform's own host at exactly "/" (supordo.com) — the
+   * SUPORDO brand landing. Never true on a tenant hostname, never true on any
+   * other path. Consumed by src/routes/index.tsx to render the SUPORDO landing
+   * instead of an artisan site, and by RootComponent to keep tenant-owned
+   * global chrome (TenantTheme, FloatingCTA) off that page.
+   */
+  isPlatformLanding: boolean;
 }
+
 
 function NotFoundComponent() {
   const previewTenant = usePreviewTenantSearch();
@@ -86,17 +95,16 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       location.pathname === "/update-password" ||
       location.pathname === "/accept-invite"
     ) {
-      return { tenant: null, settings: null };
+      return { tenant: null, settings: null, isPlatformLanding: false };
     }
     // supordo.com/www.supordo.com is the platform's own domain, never a
-    // tenant's — hitting it bare (exactly "/") means "go administer your
-    // site", not "show a tenant that doesn't exist". Deliberately narrow:
-    // only the exact root path, only the platform host, computed and
-    // thrown BEFORE the try/catch below so this redirect() is never
-    // swallowed by its catch-all. Every other path on this host (including
-    // /sitemap.xml, /robots.txt, or a would-be tenant route like /services)
-    // is untouched — it simply resolves no tenant, same as any unmatched
-    // domain, and 404s exactly as it already does.
+    // tenant's — hitting it bare (exactly "/") is the SUPORDO brand landing,
+    // not a tenant that doesn't exist. Deliberately narrow: only the exact
+    // root path, only the platform host. Every other path on this host
+    // (including /sitemap.xml, /robots.txt, or a would-be tenant route like
+    // /services) is untouched — it simply resolves no tenant, same as any
+    // unmatched domain, and 404s exactly as it already does. /login keeps
+    // working unchanged; it is simply no longer forced from "/".
     let input: Awaited<ReturnType<typeof resolveTenantInputForRoute>> | null = null;
     try {
       input = await resolveTenantInputForRoute();
@@ -104,18 +112,19 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       input = null;
     }
     if (input && location.pathname === "/" && isPlatformHost(input.hostname)) {
-      throw redirect({ to: "/login", search: { redirect: "" } });
+      return { tenant: null, settings: null, isPlatformLanding: true };
     }
     try {
-      if (!input) return { tenant: null, settings: null };
+      if (!input) return { tenant: null, settings: null, isPlatformLanding: false };
       const tenant = await resolveTenantForSsr(input);
-      if (!tenant) return { tenant: null, settings: null };
+      if (!tenant) return { tenant: null, settings: null, isPlatformLanding: false };
       const settings = await fetchPublicSiteSettings(tenant.id).catch(() => null);
-      return { tenant, settings };
+      return { tenant, settings, isPlatformLanding: false };
     } catch {
-      return { tenant: null, settings: null };
+      return { tenant: null, settings: null, isPlatformLanding: false };
     }
   },
+
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -125,7 +134,18 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      // Manrope is the SUPORDO brand typeface, used only inside
+      // .supordo-brand (marketing surfaces). Loading it here is the only
+      // supported way to fetch a web font on this stack; it changes nothing
+      // on the artisan sites, whose own font still comes from TenantTheme.
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
+      },
     ],
+
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -147,20 +167,24 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient, tenant, settings } = Route.useRouteContext();
+  const { queryClient, tenant, settings, isPlatformLanding } = Route.useRouteContext();
   const location = useLocation();
   // TenantTheme (global :root color/font override) and FloatingCTA (phone
   // number + link out to /contact) belong to the public site only — never
   // render them on /admin or /super-admin, on top of not resolving any
-  // tenant data there in the first place (see TenantProvider).
+  // tenant data there in the first place (see TenantProvider), and never on
+  // the SUPORDO brand landing either: that page is not an artisan site, so a
+  // tenant-owned theme or "demander un devis" bar has nothing to do there.
   const onAdminRoute = isAdminRoute(location.pathname);
+  const withoutTenantChrome = onAdminRoute || isPlatformLanding;
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TenantProvider initialTenant={tenant} initialSettings={settings}>
-          {!onAdminRoute && <TenantTheme />}
+          {!withoutTenantChrome && <TenantTheme />}
           <Outlet />
-          {!onAdminRoute && <FloatingCTA />}
+          {!withoutTenantChrome && <FloatingCTA />}
+
           <Toaster position="top-right" richColors />
         </TenantProvider>
       </AuthProvider>
