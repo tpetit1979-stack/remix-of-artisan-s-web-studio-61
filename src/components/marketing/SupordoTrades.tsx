@@ -1,22 +1,35 @@
 /**
  * Trade recognition section for the SUPORDO Sites marketing landing only.
  *
- * The illustration files do not exist in the repository yet. Each card keeps
- * the final image footprint and names its expected asset explicitly rather
- * than substituting tenant media or a decorative stand-in. Once supplied,
- * images belong in `src/assets/marketing/trades/` using the filenames below.
+ * Illustrations are SUPORDO-owned brand assets served from the CDN through
+ * `.asset.json` pointers. No tenant media is used here.
  */
+import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json";
+import plombier from "@/assets/marketing/trades/plombier.webp.asset.json";
+import electricien from "@/assets/marketing/trades/electricien.webp.asset.json";
+import ramoneurCheminee from "@/assets/marketing/trades/ramoneur-cheminee.webp.asset.json";
+import climaticien from "@/assets/marketing/trades/climaticien.webp.asset.json";
+import couvreur from "@/assets/marketing/trades/couvreur.webp.asset.json";
+import menuisier from "@/assets/marketing/trades/menuisier.webp.asset.json";
+import macon from "@/assets/marketing/trades/macon.webp.asset.json";
+import paysagiste from "@/assets/marketing/trades/paysagiste.webp.asset.json";
+import peintre from "@/assets/marketing/trades/peintre.webp.asset.json";
+
 const TRADES = [
-  { name: "Chauffagiste", asset: "chauffagiste.webp" },
-  { name: "Plombier", asset: "plombier.webp" },
-  { name: "Électricien", asset: "electricien.webp" },
-  { name: "Ramoneur · Professionnel de la cheminée", asset: "ramoneur-cheminee.webp" },
-  { name: "Climaticien", asset: "climaticien.webp" },
-  { name: "Couvreur", asset: "couvreur.webp" },
-  { name: "Menuisier", asset: "menuisier.webp" },
-  { name: "Maçon", asset: "macon.webp" },
-  { name: "Paysagiste", asset: "paysagiste.webp" },
-  { name: "Peintre", asset: "peintre.webp" },
+  { name: "Chauffagiste", image: chauffagiste.url, alt: "Chauffagiste installant une pompe à chaleur" },
+  { name: "Plombier", image: plombier.url, alt: "Plombier intervenant sous un meuble de salle de bain" },
+  { name: "Électricien", image: electricien.url, alt: "Électricien travaillant sur un tableau électrique" },
+  {
+    name: "Ramoneur · Professionnel de la cheminée",
+    image: ramoneurCheminee.url,
+    alt: "Ramoneur entretenant un conduit de poêle à bois",
+  },
+  { name: "Climaticien", image: climaticien.url, alt: "Climaticien posant une unité intérieure de climatisation" },
+  { name: "Couvreur", image: couvreur.url, alt: "Couvreur travaillant sur une toiture" },
+  { name: "Menuisier", image: menuisier.url, alt: "Menuisier travaillant le bois en atelier" },
+  { name: "Maçon", image: macon.url, alt: "Maçon réalisant un ouvrage de maçonnerie" },
+  { name: "Paysagiste", image: paysagiste.url, alt: "Paysagiste taillant une haie" },
+  { name: "Peintre", image: peintre.url, alt: "Peintre réalisant une peinture intérieure" },
 ] as const;
 
 export function SupordoTrades() {
