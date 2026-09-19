@@ -134,7 +134,7 @@ export function normalizeHostname(host: string): string {
   return host.trim().toLowerCase().split(":")[0].replace(/^www\./, "");
 }
 
-function isDevOrPreviewHost(host: string): boolean {
+export function isDevOrPreviewHost(host: string): boolean {
   return (
     !host ||
     host === "localhost" ||
