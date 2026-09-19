@@ -21,6 +21,7 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { HeroSection } from "@/components/public/HeroSection";
 import { SupordoLanding } from "@/components/marketing/SupordoLanding";
+import { getLeadIntakeStatus } from "@/lib/supordo-lead.functions";
 
 
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
@@ -43,7 +44,11 @@ export const Route = createFileRoute("/")({
     // __root's beforeLoad. No tenant is resolved and no tenant data is
     // fetched here — a tenant hostname takes the branch below, unchanged.
     if (context.isPlatformLanding) {
-      return { platformLanding: true as const };
+      // The brand calls to action are only shown when a request sent from
+      // /demarrer really reaches SUPORDO (recipient, sender and Resend key
+      // configured server-side).
+      const { configured } = await getLeadIntakeStatus();
+      return { platformLanding: true as const, leadIntakeReady: configured };
     }
     const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);

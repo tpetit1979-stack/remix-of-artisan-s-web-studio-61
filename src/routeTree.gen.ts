@@ -26,12 +26,14 @@ import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SuperAdminIndexRouteImport } from './routes/super-admin.index'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
+import { Route as DemarrerIndexRouteImport } from './routes/demarrer.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SuperAdminTenantsRouteImport } from './routes/super-admin.tenants'
 import { Route as SuperAdminOnboardingRouteImport } from './routes/super-admin.onboarding'
 import { Route as SuperAdminMediaLibraryRouteImport } from './routes/super-admin.media-library'
 import { Route as SuperAdminBrandsRouteImport } from './routes/super-admin.brands'
 import { Route as ServicesServiceSlugRouteImport } from './routes/services.$serviceSlug'
+import { Route as DemarrerConfirmationRouteImport } from './routes/demarrer.confirmation'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
@@ -129,6 +131,11 @@ const ServicesIndexRoute = ServicesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ServicesRoute,
 } as any)
+const DemarrerIndexRoute = DemarrerIndexRouteImport.update({
+  id: '/demarrer/',
+  path: '/demarrer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -158,6 +165,11 @@ const ServicesServiceSlugRoute = ServicesServiceSlugRouteImport.update({
   id: '/$serviceSlug',
   path: '/$serviceSlug',
   getParentRoute: () => ServicesRoute,
+} as any)
+const DemarrerConfirmationRoute = DemarrerConfirmationRouteImport.update({
+  id: '/demarrer/confirmation',
+  path: '/demarrer/confirmation',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminTeamRoute = AdminTeamRouteImport.update({
   id: '/team',
@@ -241,12 +253,14 @@ export interface FileRoutesByFullPath {
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
+  '/demarrer/confirmation': typeof DemarrerConfirmationRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/demarrer/': typeof DemarrerIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super-admin/': typeof SuperAdminIndexRoute
   '/super-admin/tenants/$tenantId': typeof SuperAdminTenantsTenantIdRouteWithChildren
@@ -274,11 +288,13 @@ export interface FileRoutesByTo {
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
+  '/demarrer/confirmation': typeof DemarrerConfirmationRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/admin': typeof AdminIndexRoute
+  '/demarrer': typeof DemarrerIndexRoute
   '/services': typeof ServicesIndexRoute
   '/super-admin': typeof SuperAdminIndexRoute
   '/super-admin/tenants/$tenantId': typeof SuperAdminTenantsTenantIdRouteWithChildren
@@ -310,12 +326,14 @@ export interface FileRoutesById {
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
+  '/demarrer/confirmation': typeof DemarrerConfirmationRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/demarrer/': typeof DemarrerIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super-admin/': typeof SuperAdminIndexRoute
   '/super-admin/tenants/$tenantId': typeof SuperAdminTenantsTenantIdRouteWithChildren
@@ -348,12 +366,14 @@ export interface FileRouteTypes {
     | '/admin/services'
     | '/admin/settings'
     | '/admin/team'
+    | '/demarrer/confirmation'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/super-admin/tenants'
     | '/admin/'
+    | '/demarrer/'
     | '/services/'
     | '/super-admin/'
     | '/super-admin/tenants/$tenantId'
@@ -381,11 +401,13 @@ export interface FileRouteTypes {
     | '/admin/services'
     | '/admin/settings'
     | '/admin/team'
+    | '/demarrer/confirmation'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/admin'
+    | '/demarrer'
     | '/services'
     | '/super-admin'
     | '/super-admin/tenants/$tenantId'
@@ -416,12 +438,14 @@ export interface FileRouteTypes {
     | '/admin/services'
     | '/admin/settings'
     | '/admin/team'
+    | '/demarrer/confirmation'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/super-admin/tenants'
     | '/admin/'
+    | '/demarrer/'
     | '/services/'
     | '/super-admin/'
     | '/super-admin/tenants/$tenantId'
@@ -445,6 +469,8 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuperAdminRoute: typeof SuperAdminRouteWithChildren
   UpdatePasswordRoute: typeof UpdatePasswordRoute
+  DemarrerConfirmationRoute: typeof DemarrerConfirmationRoute
+  DemarrerIndexRoute: typeof DemarrerIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -568,6 +594,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesIndexRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/demarrer/': {
+      id: '/demarrer/'
+      path: '/demarrer'
+      fullPath: '/demarrer/'
+      preLoaderRoute: typeof DemarrerIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -609,6 +642,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/$serviceSlug'
       preLoaderRoute: typeof ServicesServiceSlugRouteImport
       parentRoute: typeof ServicesRoute
+    }
+    '/demarrer/confirmation': {
+      id: '/demarrer/confirmation'
+      path: '/demarrer/confirmation'
+      fullPath: '/demarrer/confirmation'
+      preLoaderRoute: typeof DemarrerConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/team': {
       id: '/admin/team'
@@ -793,6 +833,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuperAdminRoute: SuperAdminRouteWithChildren,
   UpdatePasswordRoute: UpdatePasswordRoute,
+  DemarrerConfirmationRoute: DemarrerConfirmationRoute,
+  DemarrerIndexRoute: DemarrerIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
