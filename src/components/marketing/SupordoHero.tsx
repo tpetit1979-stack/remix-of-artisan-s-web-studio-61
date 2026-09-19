@@ -47,7 +47,7 @@ export function SupordoHero() {
         </div>
 
         {/* Photography slot — asset still to be supplied */}
-        <div>
+        <div className="lg:h-full">
           <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:aspect-auto lg:h-full lg:max-h-[560px] lg:min-h-[420px]">
             <div className="flex h-full w-full items-end p-5 md:p-6">
               <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
