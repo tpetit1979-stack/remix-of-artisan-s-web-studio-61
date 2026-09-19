@@ -36,7 +36,13 @@ import { PortfolioViewer, type PortfolioViewerItem } from "@/components/public/P
 import { ArrowRight, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
+  loader: async ({ context }) => {
+    // Platform host at "/" (supordo.com) = SUPORDO brand landing, resolved in
+    // __root's beforeLoad. No tenant is resolved and no tenant data is
+    // fetched here — a tenant hostname takes the branch below, unchanged.
+    if (context.isPlatformLanding) {
+      return { platformLanding: true as const };
+    }
     const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
     if (!tenant) throw notFound();
@@ -50,11 +56,32 @@ export const Route = createFileRoute("/")({
         .eq("tenant_id", tenant.id)
         .eq("is_active", true),
     ]);
-    return { tenant, settings, services, areas, certifications: certifications ?? [] };
+    return {
+      platformLanding: false as const,
+      tenant,
+      settings,
+      services,
+      areas,
+      certifications: certifications ?? [],
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
+    if (loaderData.platformLanding) {
+      const title = "SUPORDO — Un vrai site pro pour les artisans et entreprises locales";
+      const description =
+        "SUPORDO Sites : un vrai site professionnel et un espace simple pour le faire vivre. Ajoutez vos services, vos zones et vos réalisations.";
+      return {
+        meta: [
+          { title },
+          { name: "description", content: description },
+          { property: "og:title", content: title },
+          { property: "og:description", content: description },
+        ],
+      };
+    }
     const { tenant, settings, services, areas, certifications } = loaderData;
+
     const title = buildPageTitle(settings, tenant);
     const description = buildPageDescription(settings, tenant);
     const baseUrl = tenant.domain ? `https://${tenant.domain}` : "";
