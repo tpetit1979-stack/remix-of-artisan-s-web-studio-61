@@ -95,17 +95,16 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       location.pathname === "/update-password" ||
       location.pathname === "/accept-invite"
     ) {
-      return { tenant: null, settings: null };
+      return { tenant: null, settings: null, isPlatformLanding: false };
     }
     // supordo.com/www.supordo.com is the platform's own domain, never a
-    // tenant's — hitting it bare (exactly "/") means "go administer your
-    // site", not "show a tenant that doesn't exist". Deliberately narrow:
-    // only the exact root path, only the platform host, computed and
-    // thrown BEFORE the try/catch below so this redirect() is never
-    // swallowed by its catch-all. Every other path on this host (including
-    // /sitemap.xml, /robots.txt, or a would-be tenant route like /services)
-    // is untouched — it simply resolves no tenant, same as any unmatched
-    // domain, and 404s exactly as it already does.
+    // tenant's — hitting it bare (exactly "/") is the SUPORDO brand landing,
+    // not a tenant that doesn't exist. Deliberately narrow: only the exact
+    // root path, only the platform host. Every other path on this host
+    // (including /sitemap.xml, /robots.txt, or a would-be tenant route like
+    // /services) is untouched — it simply resolves no tenant, same as any
+    // unmatched domain, and 404s exactly as it already does. /login keeps
+    // working unchanged; it is simply no longer forced from "/".
     let input: Awaited<ReturnType<typeof resolveTenantInputForRoute>> | null = null;
     try {
       input = await resolveTenantInputForRoute();
@@ -113,18 +112,19 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       input = null;
     }
     if (input && location.pathname === "/" && isPlatformHost(input.hostname)) {
-      throw redirect({ to: "/login", search: { redirect: "" } });
+      return { tenant: null, settings: null, isPlatformLanding: true };
     }
     try {
-      if (!input) return { tenant: null, settings: null };
+      if (!input) return { tenant: null, settings: null, isPlatformLanding: false };
       const tenant = await resolveTenantForSsr(input);
-      if (!tenant) return { tenant: null, settings: null };
+      if (!tenant) return { tenant: null, settings: null, isPlatformLanding: false };
       const settings = await fetchPublicSiteSettings(tenant.id).catch(() => null);
-      return { tenant, settings };
+      return { tenant, settings, isPlatformLanding: false };
     } catch {
-      return { tenant: null, settings: null };
+      return { tenant: null, settings: null, isPlatformLanding: false };
     }
   },
+
   head: () => ({
     meta: [
       { charSet: "utf-8" },
