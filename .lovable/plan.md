@@ -36,7 +36,8 @@ Trois contextes distincts coexistent :
 
 - **Hôte marketing SUPORDO** : la landing, `/demarrer`, `/legal/...`, les futures pages marketing.
 - **Hôte site artisan** : `/`, `/services`, `/services/:slug`, `/realisations`, `/contact`, `/mentions-legales`, etc.
-- **Espace produit et session** : `/login`, l'authentification, `/admin/*`, `/super-admin/*`.
+- **Plateforme et authentification** : `/login`, `/forgot-password`, `/update-password`, `/accept-invite`.
+- **Espace authentifié** : `/admin/*`, `/super-admin/*`. La session est une condition d'accès, pas un hôte.
 
 **Règle non négociable** : toute nouvelle adresse marketing doit être résolue sans modifier le comportement de secours ni celui des adresses des sites artisans.
 
@@ -86,7 +87,7 @@ Trois contextes distincts coexistent :
 
 ```
 supordo.com
-├── /                            LOT 1-4  page commerciale unique
+├── /                            LOT 1-4  page commerciale unique, livrée acte par acte
 ├── /demarrer                    LOT 1    parcours de prise de contact
 ├── /demarrer/confirmation       LOT 1    accusé de réception, non indexée
 ├── /legal/mentions-legales      LOT 1    légal plateforme
@@ -96,6 +97,8 @@ supordo.com
 ├── /metiers/<metier>            REPOUSSÉ une page pilote, hors lots
 └── /login                       existant, inchangé
 ```
+
+**`/` — Lots 1 à 4 : livraison progressive par actes, validation après chaque lot. Aucun lot ne rend visible une section dont la preuve, le contenu ou la destination réelle n'est pas disponible.**
 
 **Pages légales — préfixe retenu : `/legal/`** `[À FIGER]`. Aucune route artisan ni plateforme ne commence par `/legal`, alors que `/mentions-legales` est déjà la page légale des sites artisans ; le préfixe isole durablement tout le légal de la plateforme. **Le nom exact reste une convention technique proposée**, renommable au Lot 1 sans conséquence tant que le préfixe reste distinct du vocabulaire artisan.
 
@@ -109,7 +112,9 @@ supordo.com
 
 ### Acte 1 — Hero `[FAIT]`
 
-Question : « Qu'est-ce que c'est ? » · Message : un vrai site professionnel · Desktop : deux colonnes, image à droite, hauteur du premier écran · Mobile : texte puis image, boutons empilés · Manque : la photographie éditoriale et les destinations des boutons · Une correction éditoriale minimale est intégrée au Lot 1, voir 1.6.
+Question : « Qu'est-ce que c'est ? » · Message : un vrai site professionnel · Desktop : deux colonnes, image à droite, hauteur du premier écran · Mobile : texte puis image, **action principale en pleine largeur** · Manque : la photographie éditoriale.
+
+**Doctrine V1 des actions du Hero** : une seule action visible, « Demander mon site » → `/demarrer`. L'action secondaire « Voir un exemple » est masquée tant qu'aucune destination réelle ni démonstration explicitement assumée n'existe — elle n'existe donc visuellement, y compris sur téléphone, que lorsqu'une vraie preuve est disponible. Correction éditoriale minimale intégrée au Lot 1, voir 1.6.
 
 ### Acte 2 — Métiers `[FAIT]`
 
@@ -121,7 +126,7 @@ Question : « Qu'est-ce que j'obtiens réellement, et qu'est-ce qui est différe
 
 Message : ce que vous renseignez est présenté proprement à vos clients.
 
-**Objet retenu : un service, éventuellement accompagné de sa zone d'intervention — pas une réalisation photographique.** Le service est l'objet le plus adapté : le client le saisit réellement (nom, description, photo), et il produit une page publique complète. Ce choix évite de dépenser la démonstration photo dès l'Acte 3 et prouve d'emblée que SUPORDO ne concerne pas seulement les photos.
+**Objet retenu : un service, éventuellement accompagné de sa zone d'intervention — pas une réalisation photographique.** Le service est l'objet le plus adapté : le client le saisit réellement (nom, description, photo), et il alimente une présentation publique identifiable. Ce choix évite de dépenser la démonstration photo dès l'Acte 3 et prouve d'emblée que SUPORDO ne concerne pas seulement les photos.
 
 Preuve : un même service — par exemple « Installation de poêle à bois » — d'un côté tel qu'il est renseigné dans l'espace, de l'autre tel qu'il est présenté sur le site public. Même libellé, même information, même entreprise de démonstration que l'Acte 4.
 
@@ -143,7 +148,7 @@ Message : votre travail devient une preuve visible. La phrase de généralisatio
 
 Preuve : chantier terminé → photo → fiche réalisation → résultat public. Même entreprise de démonstration que l'Acte 3, **objet différent**.
 
-Desktop : trois états côte à côte, largeurs égales, légende factuelle sous chacun. Mobile : trois états empilés. Action : secondaire.
+Desktop : trois états côte à côte, largeurs égales, légende factuelle sous chacun. Mobile : trois états empilés. **Aucune action visible dans l'Acte 4 en V1** ; une action pourra être ajoutée plus tard uniquement si elle possède une destination réelle et distincte.
 
 Fonction de l'acte : raconter une situation de terrain et sa transformation en preuve commerciale. Ton : réel, chantier, résultat.
 
@@ -229,11 +234,11 @@ Voir bloc 7.
 - Au défilement : une bordure basse apparaît. Aucun rétrécissement, aucune ombre.
 - Évolution future : une entrée « Produits » quand un second produit existera. Rien à préparer aujourd'hui.
 
-### Libellé de l'action principale `[OUVERT]` — micro-décision 12
+### Libellé de l'action principale `[RETENU]`
 
-L'adresse `/demarrer` est retenue, mais le libellé du bouton doit décrire ce qui se passe réellement. Si la page est un formulaire de prise de contact et non une mise en route immédiate, « Démarrer » peut surpromettre. À trancher une fois, puis **le même libellé partout** : en-tête, Hero, offre, action finale. Pistes : « Démarrer », « Demander mon site », « Parler de mon projet ».
+**« Demander mon site » → `/demarrer`.** Identique partout en V1 : en-tête, Hero, offre, action finale. Décision fermée, plus aucune variante à l'étude.
 
-Action secondaire : « Voir un exemple », **uniquement quand une destination réelle et crédible existe**. Jamais de `/exemples` vide, jamais de bouton inerte, jamais de faux client. À défaut, le bouton secondaire est temporairement masqué.
+Action secondaire : « Voir un exemple » **masquée** tant qu'aucune destination réelle et crédible n'existe. Jamais de `/exemples` vide, jamais de bouton inerte, jamais de faux client.
 
 ---
 
@@ -324,7 +329,7 @@ Trois mouvements autorisés : le rail Métiers `[FAIT]` · une apparition douce 
 
 | Section | Desktop | Tablette | Mobile |
 |---|---|---|---|
-| Hero | deux colonnes, premier écran | deux colonnes resserrées | texte, puis image, boutons empilés |
+| Hero | deux colonnes, premier écran | deux colonnes resserrées | texte, puis image, action principale en pleine largeur (aucune action secondaire en V1) |
 | Métiers | 4 cartes + amorce | 3 cartes | 1 carte + ~22 % de la suivante |
 | Acte 3 | asymétrie deux tiers / un tiers | idem, écart réduit | résultat public seul, puis fiche recadrée |
 | Acte 4 | trois états en ligne | trois états sur deux lignes | trois états empilés |
@@ -423,8 +428,8 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 
 1. **Tarif** : publie-t-on 49 € HT/mois et les 0 € de création, ou l'acte 6 reste-t-il sans chiffre au lancement ?
 2. **Conditions de l'offre** : engagement, propriété du nom de domaine, cas d'un domaine déjà détenu, résiliation, récupération des contenus, support inclus, modifications comprises, suppléments facturés.
-3. **« Voir un exemple »** : quel site client réel, avec quel accord écrit ? À défaut, masquer temporairement le bouton.
-4. **Traitement de `/demarrer` — partiellement tranché.** *Architecture RETENUE* : envoi par e-mail, aucune nouvelle table marketing, réutilisation de l'infrastructure d'envoi existante via une fonction serveur adaptée. *Paramètres opérationnels encore à fournir* : destinataire, expéditeur, personnes ayant accès, règle de conservation, information sur les données personnelles, anti-spam, comportement en erreur.
+3. **« Voir un exemple »** : quel site client réel, avec quel accord écrit ? Sans réponse, le bouton reste masqué en V1 — ne bloque plus le Lot 1.
+4. **Traitement de `/demarrer` — partiellement tranché.** *Architecture RETENUE* : envoi par e-mail, aucune nouvelle table marketing, réutilisation de l'infrastructure d'envoi existante via une fonction serveur adaptée. **L'absence de stockage en base ne signifie pas absence de traitement ni de conservation : les informations du formulaire sont transmises et temporairement conservées dans la messagerie de destination, selon une règle documentée.** *Paramètres opérationnels encore à fournir* : destinataire, expéditeur, personnes ayant accès, durée ou règle de conservation, information sur les données personnelles, anti-spam, comportement en erreur.
 5. **Captures produit** : compte de démonstration dédié, ou capture d'un client réel avec accord ?
 6. **Certifications** : assume-t-on publiquement qu'elles sont saisies par SUPORDO ? Tant que non tranché, elles sont retirées de l'Acte 5.
 7. **Adresse canonique** : `supordo.com` ou `www.supordo.com` ?
@@ -432,7 +437,6 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 9. **Création initiale du site** : intervention SUPORDO, automatisation, génération assistée, validation humaine, nombre d'allers-retours, délai. Cette réponse conditionne l'Acte 5, l'offre et `/demarrer`.
 10. **Publication** : pour chaque contenu modifiable — saisie par le client, validation éventuelle, publication immédiate ou non, intervention SUPORDO éventuelle. **Aucune formulation ne doit laisser croire à une publication automatique si ce n'est pas le comportement réel.**
 11. **Demandes reçues du site artisan** : où elles arrivent, qui les reçoit, si elles sont conservées, où elles sont consultables. **Ne jamais présenter cela comme un outil de gestion de clientèle si le produit ne le fait pas.**
-12. **Libellé de l'action principale** : à figer avant l'activation des boutons, et identique partout.
 13. **Inventaire des traceurs** : mesure d'audience, pixels, outils marketing, contenus tiers, vidéos, messagerie, autres scripts — détermine s'il faut un mécanisme de consentement.
 
 ---
@@ -443,11 +447,8 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 
 | À trancher | Bloque |
 |---|---|
-| Traitement complet de `/demarrer` (question 4) | 1.2, 1.3 |
-| Vrai exemple disponible, ou décision de masquer le bouton secondaire (question 3) | 1.6 |
+| Paramètres opérationnels de `/demarrer` (question 4) : destinataire, expéditeur, accès, conservation, information sur les données | 1.2, 1.3 |
 | Textes légaux fournis | 1.4 |
-| Inventaire initial des traceurs (question 13) | 1.4 pour la page confidentialité |
-| Libellé de l'action principale (question 12) | 1.1, 1.6 |
 
 Les sous-tâches réellement indépendantes commencent sans attendre les autres. Aucun sixième lot n'est créé.
 
@@ -455,12 +456,12 @@ Les sous-tâches réellement indépendantes commencent sans attendre les autres.
 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 1.1 Nettoyer l'en-tête : retirer CRM et Ressources, ajouter l'action principale, rendre « Se connecter » atteignable sur téléphone | `SupordoHeader.tsx` | question 12 |
+| 1.1 Nettoyer l'en-tête : retirer CRM et Ressources, ajouter « Demander mon site » → `/demarrer`, rendre « Se connecter » atteignable sur téléphone | `SupordoHeader.tsx` | — |
 | 1.2 Créer `/demarrer` et son formulaire. Structure proposée : entreprise, métier, ville, email, téléphone, message. **Pendant l'exécution, chaque champ est classé obligatoire ou facultatif selon son utilité commerciale réelle — aucune donnée collectée « au cas où ».** | nouvelle route, nouveau composant | paramètres opérationnels de la question 4 |
 | 1.3 Créer `/demarrer/confirmation`, non indexée | nouvelle route | 1.2 |
 | 1.4 Créer les deux pages sous `/legal/` | 2 nouvelles routes | textes fournis, question 13 |
 | 1.5 Créer le pied de page de marque | nouveau composant, `SupordoLanding.tsx` | 1.4 |
-| 1.6 Activer l'action principale du Hero, masquer l'action secondaire tant qu'elle n'a pas de destination réelle, et corriger le texte ambigu (« sans avoir à gérer votre site » → « sans avoir à construire ni mettre en page votre site » ou équivalent vérifié en contexte) sans modifier le H1. | `SupordoHero.tsx` | 1.2 |
+| 1.6 Activer « Demander mon site » vers `/demarrer`, masquer « Voir un exemple » tant qu'aucune destination réelle n'existe, et corriger la phrase ambiguë du Hero (« sans avoir à gérer votre site » → « sans avoir à construire ni mettre en page votre site » ou équivalent vérifié en contexte) sans modifier le H1. | `SupordoHero.tsx` | 1.2, afin que `/demarrer` soit réellement fonctionnel. Aucune dépendance à un exemple en V1. |
 | 1.7 Déposer ce plan dans `docs/product/plan-directeur-supordo-com.md` | documentation | — |
 
 Validation : aucun élément de menu ni bouton sans destination · une demande réelle arrive à destination · les mentions légales sont accessibles depuis le pied de page · un client existant atteint `/login` en un geste sur téléphone · les sites artisans et `/login` strictement inchangés.
@@ -545,11 +546,11 @@ Attendent une décision : 1.1 et 1.6 (libellé de l'action, et disponibilité d'
 - **Action secondaire « Voir un exemple » : masquée** tant qu'aucun exemple réel ou site de démonstration explicitement assumé n'existe. Ni `/exemples` vide, ni bouton inerte, ni faux client. `/exemples` reste prévue au Lot 5. — remplace la question 3 pour le Lot 1.
 - **Traitement V1 de `/demarrer` : envoi par e-mail vers une adresse SUPORDO, aucune nouvelle table.** — ferme la question 4 sur le principe ; restent les paramètres d'implémentation ci-dessous.
 
-### Chemin technique minimal pour `/demarrer` `[FAIT]` sur l'infrastructure
+### Chemin technique minimal pour `/demarrer`
 
-L'infrastructure d'envoi existe déjà et est réutilisable : une fonction serveur `notify-contact` envoie des e-mails via Resend, avec la clé `RESEND_API_KEY` et une adresse d'expéditeur `NOTIFY_FROM_EMAIL` en secrets côté serveur, jamais exposées au navigateur. **Aucune nouvelle infrastructure n'est nécessaire.**
+**`[FAIT — INFRASTRUCTURE RÉUTILISABLE]`** : Resend est déjà utilisé dans le projet · la fonction serveur `notify-contact` existe · les secrets serveur nécessaires (`RESEND_API_KEY`, adresse d'expédition) existent et ne sont jamais exposés au navigateur.
 
-Différence à respecter : `notify-contact` est adossé à la table `contacts` d'un artisan (il « réclame » une ligne existante pour garantir un seul envoi). Il ne convient donc pas tel quel à une demande commerciale SUPORDO, qui n'a pas de ligne en base — et la doctrine V1 est justement de ne pas créer de table.
+**`[À CRÉER]`** : une fonction dédiée aux demandes commerciales SUPORDO, sans dépendance à une ligne de contacts artisan, sans nouvelle table marketing. `notify-contact` est adossé à la table `contacts` d'un artisan (il « réclame » une ligne existante pour garantir un seul envoi) et ne convient donc pas tel quel.
 
 Flux recommandé, sans table :
 
@@ -571,12 +572,12 @@ Point de vigilance, sans changer la doctrine : l'e-mail seul n'offre aucune trac
 | Plausible, Matomo, PostHog, Hotjar, Clarity | absents | — | — | — | non |
 | Outils publicitaires, scripts marketing | absents | — | — | — | non |
 | Messagerie ou widget externe | absent | — | — | — | non |
-| Google Fonts (Manrope) | **présent** | en-tête du document racine | **oui** | police de la marque | **à vérifier, sans bloquer le Lot 1** : ressource tierce chargée depuis un domaine Google, à mentionner dans la politique de confidentialité. Pendant l'exécution : vérifier le mode de chargement actuel, vérifier si une version locale exploitable et licenciée est déjà présente dans le projet ; si le passage en local est trivial et sûr, le recommander ; sinon conserver l'état actuel et noter la décision à prendre avant lancement. Aucun fichier de police n'est partagé ni exporté. |
+| Google Fonts (Manrope distante) | **présent** | en-tête du document racine | **oui** | police de la marque | **dépendance tierce à documenter, et éventuellement à remplacer par un hébergement local ; aucun bandeau de consentement créé sur ce seul constat.** Décision repoussée avant lancement public, ne bloque pas le Lot 1. Pendant l'exécution : vérifier le mode de chargement actuel, vérifier si une version locale exploitable et licenciée est déjà présente ; si le passage en local est trivial et sûr, le recommander ; sinon conserver l'état actuel. Aucun fichier de police n'est partagé ni exporté. |
 | Carte Google Maps intégrée | présent | page contact d'un **site artisan** | **non** | localiser l'entreprise | hors périmètre supordo.com ; à traiter dans le légal des sites artisans |
 | Stockage navigateur de la session de connexion | présent | client Supabase | oui, sur `/login` et l'espace | maintenir la session | strictement nécessaire, pas de consentement |
 | Cookie d'état du menu latéral | présent | composant d'interface | espace client uniquement | confort d'affichage | strictement nécessaire |
 
-**Conclusion : aucun traceur soumis à consentement sur supordo.com. Aucun bandeau n'est à créer.** Seul point à trancher : conserver Google Fonts en distant ou héberger la police localement.
+**Conclusion : aucun traceur soumis à consentement sur supordo.com. Aucun bandeau n'est à créer.** La police distante est une dépendance tierce à documenter, pas un traceur soumis à consentement ; le choix entre police distante et hébergement local reste à trancher avant le lancement public et ne bloque pas le Lot 1.
 
 ### Informations légales
 
