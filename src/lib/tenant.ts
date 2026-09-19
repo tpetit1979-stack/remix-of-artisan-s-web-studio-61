@@ -177,6 +177,21 @@ export function isPlatformHost(host: string): boolean {
   return normalizeHostname(host) === platformHostname;
 }
 
+/**
+ * True on a host where the SUPORDO marketing surfaces (the brand landing at
+ * "/" and /demarrer) are allowed to render: the platform host in production,
+ * plus the dev/preview hosts so those pages can actually be reviewed before
+ * launch. Composes the two existing predicates — no new host logic, and no
+ * "there is no tenant" fallback: a real artisan domain matches neither, so in
+ * production it never reaches the marketing surfaces.
+ */
+export function isMarketingHost(host: string): boolean {
+  const normalized = normalizeHostname(host);
+  return isPlatformHost(normalized) || isDevOrPreviewHost(normalized);
+}
+
+
+
 export async function fetchTenantByHostname(host: string): Promise<PublicTenant | null> {
   const normalized = normalizeHostname(host);
   if (isDevOrPreviewHost(normalized) || isPlatformHost(normalized)) return null;
