@@ -518,3 +518,72 @@ Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dan
 Peuvent commencer immédiatement : **1.7** (déposer le plan dans le dépôt) et **1.5** dans sa structure, en attendant les adresses légales. **3.0**, la vérification d'ergonomie mobile, peut également être menée dès maintenant en parallèle, puisqu'elle n'exige aucune décision.
 
 Attendent une décision : 1.1 et 1.6 (libellé de l'action, et disponibilité d'un exemple) · 1.2 et 1.3 (traitement des demandes) · 1.4 (textes légaux et inventaire des traceurs).
+
+---
+
+## 17. Gate du Lot 1 — fermé le 19/09/2026
+
+### Décisions humaines désormais prises `[RETENU]`
+
+- **Libellé de l'action principale V1 : « Demander mon site »**, route `/demarrer`. Identique dans l'en-tête, le Hero, l'offre et l'action finale. « Démarrer » n'est plus utilisé comme action commerciale principale en V1. — remplace la question 12, qui est fermée.
+- **Action secondaire « Voir un exemple » : masquée** tant qu'aucun exemple réel ou site de démonstration explicitement assumé n'existe. Ni `/exemples` vide, ni bouton inerte, ni faux client. `/exemples` reste prévue au Lot 5. — remplace la question 3 pour le Lot 1.
+- **Traitement V1 de `/demarrer` : envoi par e-mail vers une adresse SUPORDO, aucune nouvelle table.** — ferme la question 4 sur le principe ; restent les paramètres d'implémentation ci-dessous.
+
+### Chemin technique minimal pour `/demarrer` `[FAIT]` sur l'infrastructure
+
+L'infrastructure d'envoi existe déjà et est réutilisable : une fonction serveur `notify-contact` envoie des e-mails via Resend, avec la clé `RESEND_API_KEY` et une adresse d'expéditeur `NOTIFY_FROM_EMAIL` en secrets côté serveur, jamais exposées au navigateur. **Aucune nouvelle infrastructure n'est nécessaire.**
+
+Différence à respecter : `notify-contact` est adossé à la table `contacts` d'un artisan (il « réclame » une ligne existante pour garantir un seul envoi). Il ne convient donc pas tel quel à une demande commerciale SUPORDO, qui n'a pas de ligne en base — et la doctrine V1 est justement de ne pas créer de table.
+
+Flux recommandé, sans table :
+
+1. Formulaire sur `/demarrer`, validation par schéma côté client et côté serveur (longueurs, format d'adresse, champs obligatoires).
+2. Une fonction serveur dédiée à l'envoi, sur le modèle de `notify-contact` : appel Resend avec la même clé et la même adresse d'expéditeur, destinataire = adresse SUPORDO.
+3. Anti-spam sans service tiers, donc sans nouveau traceur : champ leurre invisible, délai minimal avant soumission, limitation du nombre d'envois par adresse IP dans la fonction.
+4. Message de succès explicite, message d'erreur explicite invitant à téléphoner ou écrire directement — **jamais d'échec silencieux** : si l'envoi échoue, l'interface le dit.
+5. Redirection vers `/demarrer/confirmation`, non indexée.
+6. Mention d'information sur les données personnelles sous le formulaire, avec lien vers la page de confidentialité.
+
+Point de vigilance, sans changer la doctrine : l'e-mail seul n'offre aucune trace de rattrapage si Resend échoue définitivement. Le risque est accepté en V1 à condition que l'échec soit visible par le visiteur, et que l'adresse de destination soit une boîte réellement surveillée. Deux paramètres restent à fournir : **l'adresse de destination**, et **si l'expéditeur actuel convient ou s'il faut une adresse d'expédition SUPORDO dédiée**.
+
+### Inventaire des traceurs `[FAIT]` — aucun bandeau créé
+
+| Élément | Présent | Fichier | Chargé sur supordo.com | Finalité | Analyse de consentement |
+|---|---|---|---|---|---|
+| Google Analytics, Tag Manager | absent | — | — | — | non |
+| Pixel Meta / Facebook | absent | — | — | — | non |
+| Plausible, Matomo, PostHog, Hotjar, Clarity | absents | — | — | — | non |
+| Outils publicitaires, scripts marketing | absents | — | — | — | non |
+| Messagerie ou widget externe | absent | — | — | — | non |
+| Google Fonts (Manrope) | **présent** | en-tête du document racine | **oui** | police de la marque | **à vérifier** : ressource tierce chargée depuis un domaine Google ; non nécessaire au consentement dans la plupart des lectures, mais à mentionner dans la politique de confidentialité, ou à héberger localement pour clore le sujet |
+| Carte Google Maps intégrée | présent | page contact d'un **site artisan** | **non** | localiser l'entreprise | hors périmètre supordo.com ; à traiter dans le légal des sites artisans |
+| Stockage navigateur de la session de connexion | présent | client Supabase | oui, sur `/login` et l'espace | maintenir la session | strictement nécessaire, pas de consentement |
+| Cookie d'état du menu latéral | présent | composant d'interface | espace client uniquement | confort d'affichage | strictement nécessaire |
+
+**Conclusion : aucun traceur soumis à consentement sur supordo.com. Aucun bandeau n'est à créer.** Seul point à trancher : conserver Google Fonts en distant ou héberger la police localement.
+
+### Informations légales
+
+**A — déjà disponibles dans le dépôt** : l'hébergement est assuré par Supabase et Cloudflare (déjà écrit dans la page légale des sites artisans) · l'envoi d'e-mails passe par Resend · le stockage des fichiers et la base de données sont chez Supabase · la seule donnée personnelle collectée par `/demarrer` sera celle saisie dans le formulaire.
+
+**B — à fournir, rien ne peut être inventé** :
+
+1. Dénomination sociale exacte, forme juridique et capital le cas échéant.
+2. Adresse du siège.
+3. Numéro SIRET ou SIREN, et numéro de TVA intracommunautaire s'il existe.
+4. Nom du responsable de la publication.
+5. Adresse e-mail et téléphone de contact à publier.
+6. Numéro d'inscription au registre du commerce, si applicable.
+7. Adresse de destination des demandes `/demarrer`, et adresse d'expédition souhaitée.
+8. Durée de conservation des demandes reçues par e-mail, et personnes y ayant accès.
+9. Adresse à laquelle une personne peut exercer ses droits sur ses données.
+10. Nom d'un éventuel sous-traitant supplémentaire non listé en A.
+11. Décision sur Google Fonts : distant ou hébergé localement.
+
+### Questions fermées par ce gate
+
+3 (pour le Lot 1), 4 (sur le principe), 12, 13.
+
+### Questions encore ouvertes, inchangées
+
+1, 2, 5, 6, 7, 8, 9, 10, 11 — aucune ne bloque le Lot 1.
