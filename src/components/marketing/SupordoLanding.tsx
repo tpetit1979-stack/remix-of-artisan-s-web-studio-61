@@ -1,6 +1,7 @@
 import { SupordoHeader } from "./SupordoHeader";
 import { SupordoHero } from "./SupordoHero";
 import { SupordoTrades } from "./SupordoTrades";
+import { SupordoActThree } from "./SupordoActThree";
 import { SupordoFooter } from "./SupordoFooter";
 
 /**
@@ -25,6 +26,7 @@ export function SupordoLanding({ leadIntakeReady = false }: { leadIntakeReady?: 
       <main>
         <SupordoHero leadIntakeReady={leadIntakeReady} />
         <SupordoTrades />
+        <SupordoActThree />
       </main>
       <SupordoFooter />
     </div>
