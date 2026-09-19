@@ -1,57 +1,47 @@
-# SUPORDO — 4 territoires créatifs (exploration, aucun build)
+# SUPORDO — Direction visuelle V2 (exploration, aucun build)
 
-Mission : recherche d'identité créative pour la marque SUPORDO. Pas de landing finale, pas de design system, pas de logo, pas de palette définitive. Même contenu de base partout (hero « Un vrai site professionnel pour votre entreprise », CTA « Être rappelé », boucle photo chantier → espace → site, preuves services/zones/réalisations/certifications, « Se connecter » discret). Seule la direction créative change.
+Piste précédente abandonnée : dossier technique, blueprint, références, mesure de précision, document d'atelier, magazine d'architecture, serif italique, papier ivoire. Non retenue comme identité.
 
-Rappel de contexte vérifié : aucune identité SUPORDO n'existe aujourd'hui (login par défaut sans marque ; racine publiée en 404). Les sites artisans gardent leur propre identité par tenant — aucun territoire ne doit les polluer.
+## Ce que les références nous apprennent (méthode, jamais style)
 
----
+- **InterFast** — pédagogie produit immédiate : on comprend en quelques secondes le type de logiciel, on voit l'interface, on voit les métiers. À reprendre **uniquement** comme exigence de clarté. Son bleu, son univers logiciel BTP et son empilement de cartes sont exclus.
+- **Simplébo** — discipline commerciale : promesse → offre → preuves → témoignages → objections → CTA. Structure d'argumentation, pas structure visuelle.
+- **Qonto** — niveau de maturité de marque visé : photographie réelle, produit réellement présent, grandes compositions simples, respiration, alternance photo / interface, sophistication sans décoration.
+- **Pennylane** — énergie chromatique : couleur forte sur fonds très doux, identité visible sans surcharge. Le vert SUPORDO doit être le nôtre, pas le leur.
 
-## T1 — Document d'atelier
+## Hypothèse chromatique SUPORDO (non définitive)
 
-- **IDÉE** : la page est un beau document de reportage. La photographie de travail réel est la colonne vertébrale ; le texte se met au service de l'image comme des légendes et annotations de carnet de terrain.
-- **SIGNATURE** : la photo réelle annotée — fines lignes de renvoi, références numérotées (Fig. 01), typographie de légende en retrait. La « preuve documentée » comme geste graphique.
-- **BRAND** : supordo.com comme un magazine de métier : couvertures photo, marges généreuses, asymétrie, aucune grille de cartes.
-- **PRODUCT** : l'espace SUPORDO garde la même encre et les mêmes filets, mais disparaît derrière la fonction ; les annotations deviennent des aides discrètes.
-- **TENANT** : neutre par construction — c'est la photo de l'artisan qui porte la couleur ; le système graphique SUPORDO reste un cadre, pas une teinte imposée.
-- **TEST SANS LOGO** : le couple photo-reportage + annotation fine est un réflexe reconnaissable après quelques expositions, y compris en campagne.
-- **RISQUE** : basculer dans le « beau livre » trop précieux, qui intimide ou semble lent ; exige un stock constant de vraies bonnes photos — un média faible casse tout le territoire.
+| Rôle | Valeur d'exploration |
+|---|---|
+| Vert signature | `#054f31` — vert profond, ni menthe, ni turquoise, ni vert Pennylane |
+| Surface claire | `#f0f7f4` — lavis vert très pâle pour les grandes zones calmes |
+| Ton très sombre | `#021a10` — vert quasi noir pour les blocs de contraste |
+| Fond neutre | `#fafaf9` — blanc cassé chaud |
+| Accent secondaire | aucun pour l'instant — à n'ajouter que si un besoin réel apparaît |
 
-## T2 — Registre
+Typographie d'exploration : Inter en graisses lourdes, titres capitales à interlettrage serré, texte courant en poids moyen. Angles nets, bordures filaires, aucune carte arrondie flottante.
 
-- **IDÉE** : le monde structuré assumé comme esthétique. Les faits réels de l'entreprise (ville, date, service) sont présentés comme des entrées d'un registre tenu avec soin — la donnée métier devient belle.
-- **SIGNATURE** : l'entrée numérotée — lignes réglées, métadonnées tabulaires en monospace, tampon d'accent unique, photos en petites « planches de preuve » légendées.
-- **BRAND** : supordo.com comme un index consultable ; chaque section est un folio. Très distinctif face à n'importe quel SaaS.
-- **PRODUCT** : traduction naturelle et calme — l'espace SUPORDO EST déjà un registre (services, zones, réalisations datées) ; le territoire lui donne une cohérence sans effort.
-- **TENANT** : sans risque de pollution — le registre est la couche SUPORDO ; le site artisan reste libre.
-- **TEST SANS LOGO** : la ligne réglée + numérotation + tampon forment un système propriétaire identifiable même sur un simple devis ou un e-mail.
-- **RISQUE** : la caricature administrative (formulaire d'État, paperasse) ; danger de froideur si la photographie n'apporte pas la chaleur. Aussi le plus difficile à rendre chaleureux sur mobile.
+## Système de marque appliqué
 
-## T3 — La même photo
+- **Photographie structurelle** : personnes réelles au travail, gestes, mains, matériaux, installations, chantiers, réalisations terminées, usage du téléphone sur le terrain. Cadrages documentaires. Zéro cliché stock (artisan souriant avec perceuse, casque jaune, poignée de main, équipe posée).
+- **Produit réellement présent** : les surfaces produit sont ancrées dans la composition, jamais des mockups flottants génériques.
+- **Grammaire commune aux deux pages** : même navigation (mot-symbole SUPORDO + étiquette produit, « Se connecter » discret, un seul CTA principal), même alternance fond neutre → passage vert pâle → bloc vert très sombre pleine largeur.
 
-- **IDÉE** : la transformation elle-même est la marque. Une seule photo réelle traverse la page en trois états : chantier → espace SUPORDO → site public. Le dispositif EST le message.
-- **SIGNATURE** : le continuum en trois états — la même image recadrée, reliée par des lignes fines et des numéros d'étape. Mécanique comprise presque sans texte.
-- **BRAND** : supordo.com construit chaque section autour de ce voyage ; campagnes déclinables immédiatement (une photo, trois vies).
-- **PRODUCT** : l'espace devient l'étape 2 visible du dispositif — l'utilisateur reconnaît « l'endroit du milieu » qu'il a vu sur le site.
-- **TENANT** : parfaitement sûr — le dispositif montre les sites artisans sans jamais imposer leur style.
-- **TEST SANS LOGO** : le triptyque « même photo, trois mondes » est un réflexe de marque fort et imitable-difficilement sans le produit derrière.
-- **RISQUE** : le gimmick — si la démonstration visuelle est fausse ou surjouée, la promesse s'effondre ; exige des captures produit réelles et honnêtes. Moins porteur d'émotion seul, il a besoin d'une chaleur typographique ou photo d'appoint.
+## ÉCRAN A — SUPORDO Sites
 
-## T4 — Signal de chantier
+Hero : un vrai site professionnel + l'espace SUPORDO + les vraies photos de chantier qui le nourrissent, tenus dans une seule composition. Deuxième section : la boucle signature — **la même photographie** sur le chantier, dans l'espace SUPORDO au moment de la publication, puis en ligne sur le site public.
 
-- **IDÉE** : emprunter le langage graphique du marquage de chantier et le rendre élégant — typographie condensée façon pochoir, filets longs comme des traits de marquage, photo duotone contrastée, un accent vif fonctionnel (peinture de traçage) sur neutres calmes.
-- **SIGNATURE** : le filet de marquage + le mot condensé massif ; l'accent vif n'apparaît que pour les repères utiles (étape, CTA), jamais en décoration.
-- **BRAND** : supordo.com à haute tension visuelle — le plus mémorisable et le plus « vu nulle part » des quatre.
-- **PRODUCT** : à diluer fortement — l'espace garde seulement le filet et l'accent fonctionnels ; la typographie reste lisible et calme.
-- **TENANT** : séparation nette car le langage « marqueur » est identifié SUPORDO et n'entre pas dans les thèmes artisans.
-- **TEST SANS LOGO** : la combinaison condensé + filet + accent unique est reconnaissable immédiatement, y compris en affichage ou véhicule.
-- **RISQUE** : la caricature BTP (rubalise, casque, orange partout) que le cadrage interdit explicitement ; peut aussi sembler agressif ou masculin-industriel si la photo et le ton ne contrebalancent pas.
+## ÉCRAN B — SUPORDO CRM
 
----
+Hero : logiciel de gestion pour entreprise de terrain, interface lisible comme sujet principal (pipeline / planning), adossée à une photographie de terrain. Deuxième section : parcours produit réel — prospect, devis, planning, chantier, facture. Aucune fonction inventée au-delà de ce périmètre.
 
-## Prototypes
+## Tests avant présentation
 
-Quatre vagues générées (3 variantes par territoire) via l'exploration Design Directions, sans toucher au projet. La comparaison se fait dans les cartes de sélection affichées en conversation.
+- **5 secondes** : chaque page dit clairement ce qu'elle vend (un site professionnel / un logiciel de gestion).
+- **Test artisan** : plombier, électricien, chauffagiste, couvreur, paysagiste peuvent se reconnaître dans les photos et le vocabulaire.
+- **Test sans logo** : vert signature + capitales lourdes + blocs vert très sombre + photo documentaire ancrée forment un début de langage propre.
+- **Test anti-template** : la photographie de terrain et la boucle chantier → photo → espace → site ne survivraient pas au remplacement par un SaaS RH.
 
-## Après la sélection (hors mission actuelle)
+## Suite (hors passe actuelle)
 
-Affiner le ou les territoires retenus, puis seulement : landing, primitives réutilisables, déclinaison Product. « Modern Corporate Precision » reste une hypothèse antérieure, ni validée ni détruite.
+Après choix de l'hypothèse : affiner couleur et typographie, définir les primitives réutilisables, puis seulement construire `/sites` et `/crm`. Aucune modification du dépôt à ce stade.
