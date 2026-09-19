@@ -1,7 +1,12 @@
+import { Link } from "@tanstack/react-router";
+
 /**
  * SUPORDO Sites hero — marketing surface only (supordo.com).
  *
- * Copy is fixed by the brand and must not be rephrased here.
+ * Copy is fixed by the brand and must not be rephrased here; the H1 is
+ * untouched. Only the ambiguous line about "gérer votre site" was corrected,
+ * since SUPORDO does not run the business's site content for them — it spares
+ * them building and laying it out.
  *
  * The right-hand column is a photography slot, not decoration: SUPORDO owns
  * no definitive trade photograph yet, and an artisan tenant's own photo is
@@ -9,11 +14,11 @@
  * image's footprint (same column, same aspect ratio, same radius) so dropping
  * the real photograph in later needs no change to this composition.
  *
- * Both CTAs are rendered as buttons without a destination: neither a SUPORDO
- * Sites product page nor an example-site page exists as a route yet, and no
- * route may be invented here.
+ * One action only: "Demander mon site", and only when a request can really be
+ * sent. "Voir un exemple" stays absent until a real example site exists — no
+ * disabled button, no empty slot, no invented client.
  */
-export function SupordoHero() {
+export function SupordoHero({ leadIntakeReady = false }: { leadIntakeReady?: boolean }) {
   return (
     <section className="bg-[var(--supordo-warm)]">
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-12 md:px-8 md:py-16 lg:grid-cols-2 lg:gap-20 lg:py-24 lg:min-h-[calc(100dvh-72px)]">
@@ -27,23 +32,19 @@ export function SupordoHero() {
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--supordo-graphite)] lg:mt-7 lg:text-lg">
             Ajoutez vos services, vos zones et vos réalisations. Publiez vos photos
-            de chantier sans avoir à gérer votre site.
+            de chantier sans avoir à construire ni mettre en page votre site.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center lg:mt-10 lg:gap-4">
-            <button
-              type="button"
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
-            >
-              Découvrir SUPORDO Sites
-            </button>
-            <button
-              type="button"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[6px] px-6 text-sm font-semibold text-[var(--supordo-forest)] transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] sm:w-auto sm:border sm:border-[var(--supordo-mint-200)] sm:bg-white sm:hover:border-[var(--supordo-green)] lg:min-h-[52px] lg:px-7 lg:text-base"
-            >
-              Voir un exemple
-            </button>
-          </div>
+          {leadIntakeReady && (
+            <div className="mt-8 lg:mt-10">
+              <Link
+                to="/demarrer"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
+              >
+                Demander mon site
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Photography slot — asset still to be supplied */}
