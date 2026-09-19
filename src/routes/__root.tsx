@@ -1,4 +1,4 @@
-import { Outlet, Link, redirect, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { TenantProvider, usePreviewTenantSearch, isAdminRoute } from "@/hooks/use-tenant";
@@ -156,18 +156,22 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient, tenant, settings } = Route.useRouteContext();
+  const { queryClient, tenant, settings, isPlatformLanding } = Route.useRouteContext();
   const location = useLocation();
   // TenantTheme (global :root color/font override) and FloatingCTA (phone
   // number + link out to /contact) belong to the public site only — never
   // render them on /admin or /super-admin, on top of not resolving any
-  // tenant data there in the first place (see TenantProvider).
+  // tenant data there in the first place (see TenantProvider), and never on
+  // the SUPORDO brand landing either: that page is not an artisan site, so a
+  // tenant-owned theme or "demander un devis" bar has nothing to do there.
   const onAdminRoute = isAdminRoute(location.pathname);
+  const withoutTenantChrome = onAdminRoute || isPlatformLanding;
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TenantProvider initialTenant={tenant} initialSettings={settings}>
-          {!onAdminRoute && <TenantTheme />}
+          {!withoutTenantChrome && <TenantTheme />}
+
           <Outlet />
           {!onAdminRoute && <FloatingCTA />}
           <Toaster position="top-right" richColors />
