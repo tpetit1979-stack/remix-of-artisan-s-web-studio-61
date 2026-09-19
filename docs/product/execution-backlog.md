@@ -878,3 +878,35 @@ pas maintenant :
 
 **Portée** : catégorie A, mais rattachée au chantier IA/onboarding (branche
 `claude/generate-tenant-gemini-adapter`), pas à Lot B.
+
+## Section Métiers — landing SUPORDO Sites
+
+**Statut : implémentée — illustrations définitives en attente.** Cette section
+appartient uniquement à la landing de marque sur `supordo.com/`. Elle ne change
+ni les sites publics des tenants, ni l'Admin, ni le Super Admin.
+
+## Ce que ce lot simplifie
+
+- 0 reconnaissance directe du métier sur la landing → 10 métiers nommés dans
+  un rail éditorial unique.
+- Sur mobile, 1 carte principale reste lisible à la fois au lieu d'une grille
+  de petites illustrations.
+
+## Ce que ce lot supprime
+
+Rien. Le Header et le Hero validés restent inchangés.
+
+## Ce qui reste à migrer
+
+- Ajouter les 10 illustrations SUPORDO définitives dans
+  `src/assets/marketing/trades/`, avec les noms documentés dans
+  `SupordoTrades.tsx`.
+- Les cartes restent sans destination jusqu'à la création et validation d'une
+  première page métier pilote.
+
+## Risques connus
+
+- La capacité réelle des illustrations à former un système visuel de marque
+  reste non vérifiable tant que les dix fichiers définitifs sont absents.
+- Les emplacements préservent volontairement leur taille finale ; ils ne
+  simulent ni personnage, ni équipement, ni contenu métier.
