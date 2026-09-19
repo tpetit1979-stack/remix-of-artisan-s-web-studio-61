@@ -910,3 +910,21 @@ Rien. Le Header et le Hero validés restent inchangés.
   reste non vérifiable tant que les dix fichiers définitifs sont absents.
 - Les emplacements préservent volontairement leur taille finale ; ils ne
   simulent ni personnage, ni équipement, ni contenu métier.
+
+## Lot — Illustrations métier SUPORDO (section Métiers)
+
+### Ce que ce lot simplifie
+La section Métiers de la landing SUPORDO montre les dix métiers par leurs illustrations
+définitives, servies depuis le CDN via des pointeurs `.asset.json` (aucun binaire dans le repo).
+
+### Ce que ce lot supprime
+Les dix placeholders textuels qui annonçaient les noms de fichiers attendus.
+
+### Ce qui reste à migrer
+Photographie métier définitive du Hero SUPORDO ; destinations réelles des CTA, des entrées
+Sites / CRM / Tarifs / Ressources ; page métier pilote Chauffagiste.
+
+### Risques connus
+Les cartes restent sans destination : aucune route métier n'existe. Les illustrations sont
+recadrées en `object-cover` centré ; un futur remplacement d'illustration au cadrage très
+différent peut demander un `object-position` dédié.
