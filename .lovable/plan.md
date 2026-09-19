@@ -1,41 +1,32 @@
-# SUPORDO — Calibration avant V0.2
+# SUPORDO — Dual Record, test de robustesse
 
-La V0.1 reste une **hypothèse de travail**, pas une constitution graphique. Trois variables sont rouvertes avant de figer quoi que ce soit. Aucune modification du dépôt.
+Décisions retenues comme hypothèses figées pendant ce test, aucune n'est rouverte ici : typographie **Manrope** seule, vert de marque **`#00875A`**, système **Warm 50 / Mint 100 / Mint 200 / Forest 900 / Forest 950** conservé, signature candidate **Dual Record**. Aucun Clay. Aucune modification du dépôt.
 
-## Ce que cette étape change par rapport à la V0.1
+## Le principe testé
 
-| Décision V0.1 | Statut |
-|---|---|
-| Architecture Forest / Green / Mint / Warm | Conservée comme principe |
-| `#1E9E5A` « SUPORDO Green » | **Rouvert** — testé, pas baptisé |
-| Inter comme famille | **Rouvert** — témoin parmi trois, doit gagner sa place |
-| Clay `#C4622D` | **Retiré** de la palette de marque |
-| 7 styles typo, boutons 44/48, rayons 4/6/10, pas d'ombre sur les boutons | Conservés comme discipline |
-| Cartes toutes en padding 32 + bordure + ombre | **Assoupli** — la carte n'est pas un gabarit unique |
-| Photos limitées à 4:5 / 16:9 / 1:1 | **Assoupli** — la direction artistique doit pouvoir recadrer |
-| Alternance Warm / Mint / Forest | Principe, jamais une séquence mécanique |
-| Grille 1200 / 12 colonnes, footer Forest, aucun gradient, aucun bleu | Conservés |
+La réalité métier reste dominante. SUPORDO y ajoute une seule couche d'information structurée : petite, précise, utile. La photographie porte le fait ; la surface SUPORDO porte l'information exploitable qui en est tirée.
 
-Les couleurs sémantiques produit (erreur, alerte, succès, états métier du CRM) seront définies plus tard, séparément de la palette identitaire. On ne les mélange pas maintenant.
+## Le protocole
 
-## Architecture de marque
+Quatre applications strictement identiques du même geste, jamais quatre interprétations.
 
-**SUPORDO** est la marque, permanente et unique. **Sites** et **CRM** sont des noms de produits, jamais des variantes du logo. Sur une page produit : petit indicateur « SUPORDO Sites », puis le H1. Le CRM figure dans la navigation comme destination de marque ; son statut devra être explicite au moment de la publication (par exemple « CRM — bientôt »), ce qui relève de l'architecture commerciale, pas du système visuel.
+| # | Métier | Type d'enregistrement |
+|---|---|---|
+| 1 | Chauffage, installation | Réalisation · Installation poêle à bois · Frontignan · publié |
+| 2 | Électricité, intervention | Intervention · Remplacement tableau électrique · Sète · terminée |
+| 3 | Charpente, réalisation | Réalisation · Charpente traditionnelle · Mèze · publié |
+| 4 | Contexte CRM, projet | Chantier · Rénovation salle de bain · Devis envoyé · 14 mars |
 
-## Le protocole de calibration
+Constantes dans les quatre cas : photographie réelle dominante, couleurs naturelles, aucun filtre vert, aucune personne posant face caméra. Surface SUPORDO petite et plate, rayon 6 px, bordure 1 px Mint 200, un seul marqueur 2 px `#00875A`, même position logique en bas à gauche, alignée d'équerre sur le bord de la photo.
 
-Un même mini-hero SUPORDO Sites, répété neuf fois. Mêmes textes, même grille, même photo, mêmes boutons, mêmes espacements. Une seule variable change par rangée, jamais deux à la fois.
+Interdits maintenus : tooltip, bulle, étiquette décorative, carte publicitaire, étape numérotée, flèche, schéma, gradient, vocabulaire blueprint. La surface ne couvre jamais le sujet principal de la photographie.
 
-**Rangée A — typographie.** Trois familles réellement différentes, compatibles avec une marque européenne professionnelle. Inter est un témoin, pas la solution par défaut. Ce qui est comparé n'est pas le nom de la police mais la combinaison poids / interlettrage / interligne, car c'est de là que vient la sensation de finition.
+## La seule question posée
 
-**Rangée B — intensité du vert.** Forest, Mint et Warm restent constants. Seul le vert de marque varie : l'actuel et sage, un plus vif, un plus singulier. Aucun vert Pennylane, aucun citron, aucun teal. La question posée est simple : le vert porte-t-il une tension, ou lit-on « logiciel écologique » ?
+Ce principe reste-t-il identifiable et élégant quel que soit le métier et quel que soit le produit SUPORDO ?
 
-**Rangée C — signature graphique.** Trois micro-principes très sobres pour matérialiser « le réel entre dans SUPORDO et ressort structuré » : photo → réalisation, chantier → dossier, travail réel → présence numérique. Aucun blueprint, aucune étape numérotée, aucune flèche, aucun gradient, aucun motif décoratif. Le principe doit tenir sur une photographie, sur une page Sites et dans un futur écran CRM.
+La seule variable encore ouverte est l'attache de la surface : chevauchement dans l'image, débordement sous le bord, ou posée à l'intérieur du cadre. Le contenu, la typographie, la couleur et le positionnement logique sont identiques partout.
 
-## Ce qui reste manquant, et assumé comme tel
+## Après ce test
 
-1. **Le wordmark SUPORDO** — sa forme n'est pas définie. C'est la prochaine étape, avant toute page.
-2. **La direction photographique** — la V0.1 donne une spécification de cadrage, pas encore une direction.
-3. **Le geste propriétaire** — c'est précisément l'objet de la rangée C.
-
-Tant que ces trois points ne sont pas tranchés, le système est professionnel mais pas encore propriétaire. Header, boutons, footer, grille, rayons et rythme n'attendent qu'une identité à transporter.
+Si le principe tient : il devient la signature graphique de la V0.2, et la planche de fondations reprend header, boutons, cartes, footer, grille et rythme autour de lui. Restent ensuite à définir, dans cet ordre : le wordmark SUPORDO, puis la direction photographique réelle.
