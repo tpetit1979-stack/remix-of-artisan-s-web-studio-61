@@ -9,7 +9,7 @@ import {
   resolveTenantInputForRoute,
   resolveTenantForSsr,
   fetchPublicSiteSettings,
-  isPlatformHost,
+  isMarketingHost,
   type PublicTenant,
   type PublicSiteSettings,
 } from "@/lib/tenant";
