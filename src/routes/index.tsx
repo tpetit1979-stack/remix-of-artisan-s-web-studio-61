@@ -129,7 +129,7 @@ export const Route = createFileRoute("/")({
  */
 function HomeRoute() {
   const data = Route.useLoaderData();
-  if (data?.platformLanding) return <SupordoLanding />;
+  if (data?.platformLanding) return <SupordoLanding leadIntakeReady={data.leadIntakeReady} />;
   return <TenantHomePage />;
 }
 
