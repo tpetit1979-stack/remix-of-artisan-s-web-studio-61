@@ -66,19 +66,18 @@ export function SupordoTrades() {
           >
             {TRADES.map((trade) => (
               <li
-                key={trade.asset}
+                key={trade.name}
                 className="w-[82vw] max-w-[340px] shrink-0 snap-start md:w-[330px] lg:w-[350px]"
               >
                 <article className="overflow-hidden rounded-[6px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)]">
-                  <div className="flex aspect-[4/5] items-center justify-center bg-[var(--supordo-mint-100)] px-8 text-center">
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--supordo-forest)]">
-                        Illustration SUPORDO à ajouter
-                      </p>
-                      <p className="mt-2 break-all text-xs text-[var(--supordo-graphite)]/70">
-                        {trade.asset}
-                      </p>
-                    </div>
+                  <div className="aspect-[4/5] bg-[var(--supordo-mint-100)]">
+                    <img
+                      src={trade.image}
+                      alt={trade.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover object-center"
+                    />
                   </div>
                   <div className="flex min-h-20 items-center border-t border-[var(--supordo-mint-200)] px-5 py-4">
                     <h3 className="text-lg font-bold leading-snug text-[var(--supordo-forest)]">
