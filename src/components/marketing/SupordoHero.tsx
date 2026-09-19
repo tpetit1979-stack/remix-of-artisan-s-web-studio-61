@@ -16,7 +16,7 @@
 export function SupordoHero() {
   return (
     <section className="bg-[var(--supordo-warm)]">
-      <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-2 lg:gap-16 lg:py-28">
+      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-12 md:px-8 md:py-16 lg:grid-cols-2 lg:gap-20 lg:py-24 lg:min-h-[calc(100dvh-72px)]">
         {/* Text first in the DOM: also the mobile order */}
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)]">
