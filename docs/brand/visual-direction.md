@@ -14,6 +14,8 @@ code au moment de la rédaction (`80c6fe2bc468b148fa2d362143cd03d6d2fcdb43`,
 
 > **« SUPORDO ne décore pas le réel. Il l'organise. »**
 
+> **« La sobriété ne doit pas remplacer la preuve. Elle doit la rendre plus visible. »**
+
 Principe interne de direction artistique, pas nécessairement un slogan
 commercial. Il se traduit concrètement dans le code actuel par l'absence
 vérifiée de gradient décoratif, de blob, de glassmorphism ou de mockup

@@ -77,6 +77,17 @@ communication SUPORDO elle-même (Couche A) : pas de faux témoignage, pas de
 fausse statistique, conformément aux territoires à éviter de
 `visual-direction.md`.
 
+## Chaque section doit justifier sa présence
+
+Principe issu de la dernière revue design : aucune section visuelle ne doit
+exister uniquement pour remplir l'espace. Chaque média (photo, illustration,
+capture, bloc) doit explicitement expliquer, prouver, rassurer ou faire
+avancer la décision du visiteur — sinon elle n'a pas sa place. Ce principe
+généralise un risque déjà identifié ponctuellement dans
+`docs/product/plan-directeur-supordo-com.md` §14 ("la famille preuve
+appariée répétée partout : le geste devient un tic") — il en fait une règle
+de décision transverse, pas seulement une mise en garde sur un cas précis.
+
 ## Standardiser le fonctionnement, personnaliser la perception
 
 Doctrine issue de l'audit multi-métier de cette même série de missions.

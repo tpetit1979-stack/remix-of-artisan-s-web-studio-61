@@ -75,7 +75,7 @@ Trois contextes distincts coexistent :
 
 **Adresses** : `/` vend SUPORDO Sites · pas de `/sites` · pas de `/crm` · pas d'entrée « Ressources » · `/demarrer` est le parcours commercial unique · `/contact` n'est pas utilisée côté SUPORDO · `/exemples` seulement avec de vrais sites et les accords écrits · `/tarifs` autonome seulement si la complexité de l'offre le justifie · pages métier plus tard, une page pilote d'abord.
 
-**Récit** : Hero puis Métiers conservés, non redessinés · Acte 3 avant Acte 4 · **l'Acte 3 et l'Acte 4 portent sur la même entreprise de démonstration et le même univers métier, mais sur deux objets différents** · le site public reste visuellement dominant · l'Acte 4 est une démonstration, pas la définition du produit · réassurance et action finale fusionnées.
+**Récit** : logique Marque → Produit → Résultat — je reconnais mon métier (Acte 2), je vois ce que SUPORDO organise (Acte 3), je vois ce que mon client final verra (Acte 4) · Hero puis Métiers conservés, non redessinés · Acte 3 avant Acte 4 · **l'Acte 3 et l'Acte 4 portent sur la même entreprise de démonstration et le même univers métier, mais sur deux objets différents** · le site public reste visuellement dominant · l'Acte 4 est une démonstration, pas la définition du produit · réassurance et action finale fusionnées · la page ne vend pas d'abord un abonnement logiciel : résultat visible (Actes 3-4), puis fonctionnement crédible (Acte 5), puis prise en charge claire (Acte 5), puis abonnement compréhensible (Acte 6) — l'ordre des actes l'incarne déjà, ce principe le rend explicite.
 
 **Intégrité** : aucune preuve, statistique, interface, réalisation ni témoignage inventé · aucune grille artificielle de forfaits ou de fonctionnalités.
 
@@ -264,7 +264,7 @@ Aucune mention du futur produit `[RETENU]`. Aucun réseau social sans compte ré
 | Forest en fond : une seule occurrence par page | `[À FIGER]` | Forest reste la couleur des titres partout |
 | Bordure Mint systématique en remplacement des ombres | `[À FIGER]`, fondé sur un constat `[FAIT]` | formalise une pratique existante |
 | Tailles typographiques exactes | `[À FIGER]` — Hero et Métiers sont `[FAIT]`, l'échelle complète est une extrapolation | à valider une fois |
-| Rayons 6 px et 10 px | `[FAIT]` | formalisation |
+| Rayons 6 px et 10 px | `[FAIT]` | formalisation ; règle générale, exceptions fonctionnelles possibles si elles restent cohérentes avec la direction existante |
 | Animations autorisées | `[À FIGER]` — seul le rail Métiers existe `[FAIT]` | la transition contenu → site est à valider au Lot 2 |
 
 ### A — Typographie `[À FIGER]`
@@ -282,7 +282,7 @@ Un seul H1 par page. Un seul petit label par section. Poids : 400, 500, 600, 800
 
 ### B — Grille
 
-Contenu 1200 px `[FAIT]`. Texte 650 à 760 px maximum `[À FIGER]`. Marges 20 px / 32 px `[FAIT]`. Douze colonnes desktop, gouttière 32 px ; six tablette ; une téléphone. Rythme vertical 64 / 80 / 96 px. Points de rupture `sm`, `md`, `lg` `[FAIT]`.
+Contenu 1200 px `[FAIT]` — norme d'usage marketing, pas un dogme absolu : un média peut occuper davantage de largeur si la composition le justifie. Texte 650 à 760 px maximum `[À FIGER]`, et reste toujours plus étroit que les médias qui l'entourent. Marges 20 px / 32 px `[FAIT]`. Douze colonnes desktop, gouttière 32 px ; six tablette ; une téléphone. Rythme vertical 64 / 80 / 96 px. Points de rupture `sm`, `md`, `lg` `[FAIT]`.
 
 ### C — Couleurs `[À FIGER]` sur la fonction, `[RETENU]` sur les valeurs
 
@@ -317,7 +317,7 @@ Contour de focus obligatoire `[FAIT]`. Aucune autre variante, aucun bouton à ic
 
 ### F — Captures produit `[À FIGER]`
 
-Recadrage sur une seule tâche · bordure 1 px Mint, rayon 10 px, aucun cadre de navigateur · **les composants marketing n'utilisent aucune ombre décorative ; une capture produit peut recevoir une séparation visuelle minimale uniquement si nécessaire à sa lisibilité, sans créer d'effet de profondeur** · aucune perspective · données réelles ou explicitement de démonstration · au maximum une légende sous l'image · le lien avec le résultat public se fait par le contenu identique · l'espace client sur téléphone ne se montre qu'après la question 8.
+Recadrage sur une seule tâche — une donnée ou une tâche réelle et ciblée, jamais un tableau de bord complet ou une interface fictive lorsqu'une vue simple suffit à la preuve · bordure 1 px Mint, rayon 10 px, aucun cadre de navigateur · **les composants marketing n'utilisent aucune ombre décorative ; une capture produit peut recevoir une séparation visuelle minimale uniquement si nécessaire à sa lisibilité, sans créer d'effet de profondeur** · aucune perspective · données réelles ou explicitement de démonstration · au maximum une légende sous l'image · le lien avec le résultat public se fait par le contenu identique · l'espace client sur téléphone ne se montre qu'après la question 8.
 
 ### G — Mouvement `[À FIGER]`
 
