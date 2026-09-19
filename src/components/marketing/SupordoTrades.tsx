@@ -58,7 +58,7 @@ export function SupordoTrades() {
 
         <div className="mt-8 md:mt-10">
           <ul
-            className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-5 [scrollbar-color:var(--supordo-green)_var(--supordo-mint-100)] [scrollbar-width:thin] md:-mx-8 md:gap-5 md:px-8 lg:mx-0 lg:px-0"
+            className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-5 [scrollbar-color:var(--supordo-green)_var(--supordo-mint-100)] [scrollbar-width:thin] md:-mx-8 md:gap-5 md:px-8 lg:ml-0 lg:-mr-16 lg:pr-16"
             aria-label="Métiers accompagnés par SUPORDO Sites"
           >
             {TRADES.map((trade) => (
