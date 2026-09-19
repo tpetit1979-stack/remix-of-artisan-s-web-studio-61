@@ -49,7 +49,7 @@ Trois contextes distincts coexistent :
 | Zones d'intervention | PROUVÉ | oui |
 | Réalisations : photo, titre, ville, service, publication au cas par cas | PROUVÉ | oui — objet de l'Acte 4 |
 | Équipe, marques, logos partenaires | PROUVÉ | oui |
-| Demandes reçues via le formulaire du site artisan | PROUVÉ qu'un écran « Demandes reçues » existe ; le circuit exact reste à clarifier (question 11) | ne pas décrire le circuit avant clarification |
+| Demandes reçues via le formulaire du site artisan | PROUVÉ — insertion dans `contacts`, consultable dans `/admin/contacts`, notification e-mail tentée si l'adresse du tenant est configurée (question 11 fermée, voir §18) | ne jamais promettre une notification garantie, ni un suivi humain par SUPORDO |
 | Connexion et redirection selon le rôle | PROUVÉ | oui |
 | Informations d'entreprise | PARTIEL : téléphone, email, texte d'accueil, couleurs, référencement. Pas d'adresse ni de mentions administratives | formuler prudemment |
 | Logo de l'entreprise | NON DISPONIBLE côté client, géré par SUPORDO | ne pas promettre |
@@ -164,7 +164,7 @@ Question : « Concrètement, qui fait quoi ? » · Message : SUPORDO s'occupe de
 
 | Formulation | Preuve technique | Limite à énoncer ou à vérifier |
 |---|---|---|
-| Crée et met en ligne le site | dépend de la question 9 (création initiale) | ne rien écrire avant cette réponse |
+| « SUPORDO prépare votre site à partir des informations de votre entreprise, avec l'aide de l'IA » | question 9 fermée (voir §18) — `super-admin.onboarding.tsx`, `generate-tenant`, domaine natif `{slug}.supordo.com` créé avec le tenant | ne jamais écrire « vérifié avant mise en ligne » comme procédure qualité distincte ; ne promettre aucun délai ; ne jamais laisser entendre une création ou un accès autonome de l'artisan — l'invitation de l'artisan est une étape séparée |
 | Héberge le site | infrastructure gérée par SUPORDO | pas de promesse de disponibilité chiffrée sans engagement défini |
 | Chiffre les échanges (à la place de « sécurise ») | certificat et connexion chiffrée | **ne jamais laisser entendre une garantie générale de cybersécurité** |
 | Assure la maintenance technique | mises à jour du socle commun | **distinguer explicitement maintenance technique et modification de contenu** : la seconde appartient au client |
@@ -172,13 +172,13 @@ Question : « Concrètement, qui fait quoi ? » · Message : SUPORDO s'occupe de
 | Fait évoluer le socle commun | améliorations communes à tous les sites | ne promettre aucune fonctionnalité future nommée |
 | Saisit les qualifications professionnelles | capacité réelle côté SUPORDO | **retirée de l'Acte 5 tant que la question 6 n'est pas tranchée** |
 
-Côté client : vos services, vos zones d'intervention, vos réalisations et leurs photos, votre équipe, vos marques et partenaires, vos coordonnées. La formulation exacte de ce qui est publié immédiatement dépend de la question 10.
+Côté client, question 10 fermée (voir §18) : services, réalisations, partenaires et coordonnées ont un contrôle de visibilité ou un effet public réel et immédiat (`ServicesManager.tsx`, `PortfolioManager.tsx`, `PartnersManager.tsx`) ; les zones d'intervention sont publiques dès l'ajout, sans bascule (aucune colonne de publication sur `service_areas`) ; l'équipe reste gérée par le client mais son affichage général dépend d'un réglage réservé à SUPORDO (`site_settings.team_presentation_mode`) ; les marques peuvent être saisies mais **n'ont aujourd'hui aucun rendu public** — ne jamais les citer comme visibles sur le site. Ne jamais généraliser « vos photos remplacent automatiquement les illustrations » comme promesse transverse — c'est vrai service par service, pas une promesse globale.
 
 Aucun visuel. Desktop : deux colonnes. Mobile : deux blocs empilés. Action : aucune.
 
 ### Acte 6 — Offre
 
-Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions. **Aucune grille de forfaits.** Bloqué par les questions 1, 2 et 9.
+Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions. **Aucune grille de forfaits.** Bloqué par les questions 1 et 2 (question 9 fermée, voir §18).
 
 ### Acte 7 — Réassurance et décision
 
@@ -190,8 +190,8 @@ Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions
 | Le site fonctionne-t-il sur téléphone ? | RÉPONSE CONNUE : oui |
 | Qui s'occupe de la maintenance ? | RÉPONSE CONNUE : SUPORDO, pour la maintenance technique |
 | Que se passe-t-il si je ne publie jamais rien ? | RÉPONSE CONNUE, formulation factuelle imposée : « Le site reste en ligne avec les informations déjà renseignées. » Le mot « complet » est interdit. |
-| Mes contenus apparaissent-ils tout de suite ? | DÉPEND DE LA QUESTION 10 |
-| Combien de temps pour être en ligne ? | DÉPEND DE LA QUESTION 9 |
+| Mes contenus apparaissent-ils tout de suite ? | RÉPONSE CONNUE, question 10 fermée : oui pour services, réalisations, partenaires, coordonnées et zones ; l'équipe dépend d'un réglage activé avec l'agence ; les marques n'ont aujourd'hui aucun rendu public |
+| Combien de temps pour être en ligne ? | RÉPONSE CONNUE en partie, question 9 fermée sur le principe : le site est en ligne dès sa création par SUPORDO, sur une adresse SUPORDO ; aucun délai chiffré n'est mesuré, ne pas en promettre un |
 | J'ai déjà un nom de domaine, que se passe-t-il ? | DÉCISION À PRENDRE, question 2 |
 | Puis-je partir, et que deviennent mon domaine et mes contenus ? | DÉCISION À PRENDRE, question 2 |
 
@@ -434,9 +434,9 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 6. **Certifications** : assume-t-on publiquement qu'elles sont saisies par SUPORDO ? Tant que non tranché, elles sont retirées de l'Acte 5.
 7. **Adresse canonique** : `supordo.com` ou `www.supordo.com` ?
 8. **Ergonomie mobile de l'espace client** — devenue un point de contrôle du Lot 3, plus une simple question. À vérifier réellement : création et modification d'une réalisation, ajout d'une photo, titre, ville, service, publication. Si l'expérience n'est pas exploitable, la représentation de l'Acte 4 est adaptée honnêtement.
-9. **Création initiale du site** : intervention SUPORDO, automatisation, génération assistée, validation humaine, nombre d'allers-retours, délai. Cette réponse conditionne l'Acte 5, l'offre et `/demarrer`.
-10. **Publication** : pour chaque contenu modifiable — saisie par le client, validation éventuelle, publication immédiate ou non, intervention SUPORDO éventuelle. **Aucune formulation ne doit laisser croire à une publication automatique si ce n'est pas le comportement réel.**
-11. **Demandes reçues du site artisan** : où elles arrivent, qui les reçoit, si elles sont conservées, où elles sont consultables. **Ne jamais présenter cela comme un outil de gestion de clientèle si le produit ne le fait pas.**
+9. **Création initiale du site** : intervention SUPORDO, automatisation, génération assistée, validation humaine, nombre d'allers-retours, délai. Cette réponse conditionne l'Acte 5, l'offre et `/demarrer`. — **fermée, voir §18.**
+10. **Publication** : pour chaque contenu modifiable — saisie par le client, validation éventuelle, publication immédiate ou non, intervention SUPORDO éventuelle. **Aucune formulation ne doit laisser croire à une publication automatique si ce n'est pas le comportement réel.** — **fermée, voir §18.**
+11. **Demandes reçues du site artisan** : où elles arrivent, qui les reçoit, si elles sont conservées, où elles sont consultables. **Ne jamais présenter cela comme un outil de gestion de clientèle si le produit ne le fait pas.** — **fermée, voir §18.**
 13. **Inventaire des traceurs** : mesure d'audience, pixels, outils marketing, contenus tiers, vidéos, messagerie, autres scripts — détermine s'il faut un mécanisme de consentement.
 
 ---
@@ -483,18 +483,18 @@ Validation : à froid, une personne comprend sans lire que ce qu'elle renseigne 
 | 3.0 **Vérifier l'ergonomie mobile de la création de réalisation** : ajout de photo, titre, ville, service, publication | vérification, aucune modification | — |
 | 3.1 Obtenir la photo de chantier réelle et autorisée | médias | accord client |
 | 3.2 Construire l'Acte 4, trois états, même entreprise que l'Acte 3, objet différent | nouveau composant | 3.0, 3.1 |
-| 3.3 Construire l'Acte 5 après validation du tableau formulation → preuve → limite | nouveau composant | questions 6, 9, 10 |
+| 3.3 Construire l'Acte 5 après validation du tableau formulation → preuve → limite | nouveau composant | question 6 (questions 9, 10 fermées, voir §18) |
 
 Validation : trois états et pas cinq · aucune scène mobile fictive · la phrase de généralisation présente mais discrète · chaque ligne de l'Acte 5 adossée à une preuve technique et à sa limite · les qualifications absentes tant que la question 6 n'est pas tranchée.
 
 ### LOT 4 — Offre et décision, Actes 6 et 7
 
-**Bloqué tant que les questions 1, 2 et 9 ne sont pas tranchées.**
+**Bloqué tant que les questions 1 et 2 ne sont pas tranchées** (question 9 fermée, voir §18).
 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 4.1 Construire l'Acte 6, offre unique | nouveau composant | questions 1, 2, 9 |
-| 4.2 Construire l'Acte 7, questions-réponses et action finale | nouveau composant | questions 2, 9, 10 |
+| 4.1 Construire l'Acte 6, offre unique | nouveau composant | questions 1, 2 |
+| 4.2 Construire l'Acte 7, questions-réponses et action finale | nouveau composant | question 2 |
 
 Validation : une seule offre, aucun prix barré, aucune réponse inventée, aucun emploi du mot « complet ».
 
@@ -522,11 +522,11 @@ Sections modifiées : capacités du produit (service qualifié d'objet de l'Acte
 
 ## Décisions qui restent ouvertes
 
-Tarif · conditions de l'offre · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client · création initiale du site · règles de publication · circuit des demandes reçues · libellé de l'action principale · inventaire des traceurs.
+Tarif · conditions de l'offre · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client · libellé de l'action principale · inventaire des traceurs. (Création initiale du site, règles de publication et circuit des demandes reçues : fermées, voir §18.)
 
 ## Impact sur les cinq lots
 
-Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dans le lot. Lot 2 : porte désormais sur un service, plus sur une réalisation. Lot 3 : gagne un point de contrôle bloquant, la vérification mobile, et dépend des questions 9 et 10 pour l'Acte 5. Lot 4 : dépend aussi de la question 9. Lot 5 : accueille la correction `llms.txt` en dernière priorité.
+Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dans le lot. Lot 2 : porte désormais sur un service, plus sur une réalisation. Lot 3 : gagne un point de contrôle bloquant, la vérification mobile ; les questions 9 et 10 pour l'Acte 5 sont fermées (§18), seule la question 6 le bloque encore. Lot 4 : n'est plus bloqué par la question 9. Lot 5 : accueille la correction `llms.txt` en dernière priorité.
 
 ## Prêt pour EXEC ?
 
@@ -604,3 +604,62 @@ Point de vigilance, sans changer la doctrine : l'e-mail seul n'offre aucune trac
 ### Questions encore ouvertes, inchangées
 
 1, 2, 5, 6, 7, 8, 9, 10, 11 — aucune ne bloque le Lot 1.
+
+---
+
+## 18. Gate Q9/Q10/Q11 — fermé le 19/09/2026
+
+Vérification en lecture seule du comportement réel du produit (code actuel,
+pas les documents), à partir du code de création de tenant, des composants
+d'administration et du flux de contact. Aucun fichier produit modifié pour
+produire ce gate.
+
+### Décisions désormais actées `[RETENU]`
+
+- **Question 9 — Création initiale.** La création d'un tenant est réservée
+  au Super Admin (`super-admin.onboarding.tsx`). L'IA propose une première
+  version à partir d'un brief (`generate-tenant`) ; chaque champ reste
+  modifiable par le Super Admin avant la soumission finale, qui crée le
+  tenant, `site_settings`, les services et les zones en un seul bloc,
+  **actif immédiatement** (`is_active: true`) sur une adresse SUPORDO
+  native (`{slug}.supordo.com`, créée avec le tenant). L'invitation de
+  l'artisan (accès à son espace) est une action **séparée et manuelle**,
+  jamais automatique (`invite-tenant-admin`, `tenant-provisioning.ts`).
+  Formulation retenue : **« SUPORDO prépare votre site à partir des
+  informations de votre entreprise, avec l'aide de l'IA. »** Ne jamais
+  écrire « vérifié avant mise en ligne » comme procédure qualité distincte
+  — cette étape n'existe pas séparément de la relecture par le Super Admin
+  pendant l'assistant. Ne jamais promettre de délai chiffré, ni un accès ou
+  une création autonome par l'artisan.
+- **Question 10 — Publication.** Comportement réel par contenu, jamais une
+  règle unique :
+  - services, réalisations, partenaires, coordonnées : contrôle de
+    visibilité ou effet public réel et immédiat, à la main du client
+    (`ServicesManager.tsx`, `PortfolioManager.tsx`, `PartnersManager.tsx`) ;
+  - zones d'intervention : publiques dès l'ajout, sans bascule
+    (`service_areas` ne porte aucune colonne de publication) ;
+  - équipe : membres gérés par le client, mais l'affichage général de la
+    section reste conditionné par `site_settings.team_presentation_mode`,
+    verrouillé au `super_admin`/`service_role` ;
+  - marques : saisie possible côté client, **aucun rendu public
+    aujourd'hui** (aucun composant équivalent à `PartnersSection.tsx`
+    n'existe pour les marques) — ne rien promettre publiquement ;
+  - photos : « remplacent automatiquement les illustrations » reste vrai
+    service par service, jamais une promesse transverse.
+- **Question 11 — Demandes reçues.** Le formulaire du site artisan insère
+  directement dans `contacts`, consultable dans `/admin/contacts`
+  (marquage lu/non lu). Une notification e-mail est tentée en
+  fire-and-forget vers l'adresse du tenant si elle est configurée ; sans
+  adresse configurée, l'envoi est ignoré proprement ; un échec d'envoi est
+  silencieux côté visiteur mais la demande reste enregistrée. Le Super
+  Admin ne dispose que d'un compteur agrégé, pas d'un écran de détail sans
+  impersonation. Ne jamais promettre une notification garantie ni un suivi
+  humain assuré par SUPORDO.
+
+### Questions fermées par ce gate
+
+9, 10, 11.
+
+### Questions encore ouvertes, inchangées
+
+1, 2, 5, 6, 7, 8, 13 — aucune ne bloque l'Acte 5 tel que construit.
