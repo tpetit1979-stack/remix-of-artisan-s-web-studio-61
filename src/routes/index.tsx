@@ -20,6 +20,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { HeroSection } from "@/components/public/HeroSection";
+import { SupordoLanding } from "@/components/marketing/SupordoLanding";
+
 
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { HowItWorks } from "@/components/public/HowItWorks";
@@ -110,10 +112,24 @@ export const Route = createFileRoute("/")({
       ],
     };
   },
-  component: HomePage,
+  component: HomeRoute,
 });
 
-function HomePage() {
+/**
+ * "/" serves two different products depending on the hostname:
+ * - the platform host (supordo.com) → the SUPORDO brand landing;
+ * - any tenant hostname → that artisan's public site, unchanged.
+ * The switch lives here (not inside TenantHomePage) so the artisan site's
+ * component and all its tenant hooks are untouched.
+ */
+function HomeRoute() {
+  const data = Route.useLoaderData();
+  if (data?.platformLanding) return <SupordoLanding />;
+  return <TenantHomePage />;
+}
+
+function TenantHomePage() {
+
   const { tenant, settings, isLoading, error } = useTenant();
   const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();
