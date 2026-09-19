@@ -2,9 +2,9 @@
 
 Source de vérité unique avant les prompts d'exécution. Aucun fichier du produit n'a été modifié.
 
-**Où conserver ce document** : chemin recommandé `docs/product/plan-directeur-supordo-com.md`, à créer lors du Lot 1, aux côtés de la constitution et du backlog d'exécution. Aucun autre fichier de documentation n'est nécessaire. Ce plan n'existe aujourd'hui que dans `.lovable/plan.md`.
+**Où conserver ce document** : chemin recommandé `docs/product/plan-directeur-supordo-com.md`, à créer lors du Lot 1. Ce plan n'existe aujourd'hui que dans `.lovable/plan.md`.
 
-**Statuts utilisés** — `[FAIT]` vérifié dans le dépôt · `[RETENU]` décidé, à ne pas rouvrir · `[À FIGER]` recommandation issue de cette analyse, à valider une fois puis à traiter comme règle · `[OUVERT]` décision humaine requise · `[REPOUSSÉ]` volontairement différé.
+**Statuts** — `[FAIT]` vérifié dans le dépôt · `[RETENU]` décidé, à ne pas rouvrir · `[À FIGER]` recommandation issue de l'analyse, à valider une fois puis à traiter comme règle · `[OUVERT]` décision humaine requise · `[REPOUSSÉ]` volontairement différé.
 
 ---
 
@@ -26,48 +26,51 @@ Source de vérité unique avant les prompts d'exécution. Aucun fichier du produ
 
 ### Séparation des trois couches — conforme
 
-Les tokens `--supordo-*` et Manrope sont portés par la seule classe `.supordo-brand`, appliquée uniquement aux composants marketing. Aucun site artisan, aucune page `/admin` ou `/super-admin` ne porte cette classe. La non-contamination est garantie techniquement, pas seulement par convention. **Rien à modifier.**
+Les tokens `--supordo-*` et Manrope sont portés par la seule classe `.supordo-brand`, appliquée uniquement aux composants marketing. Aucun site artisan, aucune page `/admin` ou `/super-admin` ne porte cette classe. Non-contamination garantie techniquement. **Rien à modifier.**
 
-### Contrainte de routage (découverte de l'audit)
+### Contrainte de routage
 
-Sur supordo.com, **seule l'adresse `/` est réservée à SUPORDO**. Les noms `/contact`, `/services`, `/realisations`, `/mentions-legales` appartiennent déjà au vocabulaire des sites artisans et renvoient une erreur sur supordo.com faute d'artisan à résoudre. Toute page commerciale portant l'un de ces noms devrait embarquer une double logique selon le domaine. Architecture conservée telle quelle.
+Sur supordo.com, **seule l'adresse `/` est réservée à SUPORDO**. Les noms `/contact`, `/services`, `/realisations`, `/mentions-legales` appartiennent déjà au vocabulaire des sites artisans et renvoient une erreur sur supordo.com faute d'artisan à résoudre. Architecture conservée telle quelle.
 
 ### Capacités réelles du produit
 
 | Capacité | Statut | Promesse autorisée |
 |---|---|---|
-| Services, zones d'intervention, équipe, marques, logos partenaires | PROUVÉ | oui |
-| Réalisations : photo, titre, ville, service, publication au cas par cas | PROUVÉ | oui, cœur de la démonstration |
-| Demandes reçues via le formulaire du site | PROUVÉ | oui |
+| Services : nom, description, photo, marques associées, ordre géré automatiquement | PROUVÉ — le client édite ; les champs techniques (adresse de page, modèles de référencement) sont réservés à SUPORDO | oui — **objet retenu pour l'Acte 3** |
+| Zones d'intervention | PROUVÉ | oui |
+| Réalisations : photo, titre, ville, service, publication au cas par cas | PROUVÉ | oui — objet de l'Acte 4 |
+| Équipe, marques, logos partenaires | PROUVÉ | oui |
+| Demandes reçues via le formulaire du site artisan | PROUVÉ qu'un écran « Demandes reçues » existe ; le circuit exact reste à clarifier (question 11) | ne pas décrire le circuit avant clarification |
 | Connexion et redirection selon le rôle | PROUVÉ | oui |
 | Informations d'entreprise | PARTIEL : téléphone, email, texte d'accueil, couleurs, référencement. Pas d'adresse ni de mentions administratives | formuler prudemment |
 | Logo de l'entreprise | NON DISPONIBLE côté client, géré par SUPORDO | ne pas promettre |
-| Certifications et qualifications | NON DISPONIBLE côté client, saisi par SUPORDO | présentable comme pris en charge par SUPORDO |
+| Certifications et qualifications | Capacité technique existante, **mais saisie exclusivement par SUPORDO** | promesse suspendue jusqu'à la question 6 |
 | Aperçu ou brouillon avant mise en ligne | PARTIEL : un lien ouvre le site réel ; publication au cas par cas pour les réalisations seulement | ne jamais promettre un aperçu |
-| Espace client sur téléphone | PARTIEL : menu adapté, formulaires longs non vérifiés | ne pas le montrer avant vérification |
+| Espace client sur téléphone | PARTIEL : menu adapté, formulaires longs non vérifiés | vérification obligatoire avant le Lot 3 (question 8) |
 
-### Incohérences constatées, non corrigées
+### Anomalies constatées, non corrigées
 
 1. Le menu affiche quatre entrées sans destination, dont un produit inexistant.
 2. Les deux boutons du Hero sont inertes.
 3. Aucun pied de page, donc aucune mention légale accessible.
-4. `supordo.com/sitemap.xml` renvoie un plan de site vide ; `supordo.com/llms.txt` renvoie une erreur.
-5. Le contraste de la palette n'a jamais été vérifié formellement (noté dans les documents de marque).
-6. Un guide média porte encore l'ancien nom du projet.
+4. `supordo.com/sitemap.xml` renvoie un plan de site vide.
+5. `supordo.com/llms.txt` renvoie une erreur — **anomalie technique secondaire, aucune priorité marketing** : traitée en fin de Lot 5 ou en maintenance, après les sujets de référencement qui comptent (adresse canonique, plan de site, métadonnées, aperçus sociaux, liens internes, bon fonctionnement des pages).
+6. Le contraste de la palette n'a jamais été vérifié formellement.
+7. Un guide média porte encore l'ancien nom du projet.
 
 ---
 
 ## 2. Décisions retenues, à ne pas rouvrir `[RETENU]`
 
-**Marque et produit** : SUPORDO est la marque mère · SUPORDO Sites est le seul produit commercialisé · le futur second produit n'apparaît ni dans la navigation, ni dans le récit commercial, ni dans le pied de page.
+**Marque et produit** : SUPORDO est la marque mère · SUPORDO Sites est le seul produit commercialisé · le futur second produit n'apparaît ni dans la navigation, ni dans le récit, ni dans le pied de page.
 
-**Adresses** : `/` vend SUPORDO Sites aujourd'hui · pas de `/sites` · pas de `/crm` · pas d'entrée « Ressources » · `/demarrer` est le parcours commercial unique · `/contact` n'est pas utilisée côté SUPORDO à cause du routage artisan · `/exemples` seulement avec de vrais sites et les accords écrits · `/tarifs` autonome seulement si la complexité de l'offre le justifie · pages métier plus tard, une page pilote avant toute industrialisation.
+**Adresses** : `/` vend SUPORDO Sites · pas de `/sites` · pas de `/crm` · pas d'entrée « Ressources » · `/demarrer` est le parcours commercial unique · `/contact` n'est pas utilisée côté SUPORDO · `/exemples` seulement avec de vrais sites et les accords écrits · `/tarifs` autonome seulement si la complexité de l'offre le justifie · pages métier plus tard, une page pilote d'abord.
 
-**Récit** : Hero puis Métiers conservés, non redessinés · Acte 3 avant Acte 4 · l'Acte 3 montre la même information dans le site public et dans l'espace SUPORDO · le site public reste visuellement dominant · l'Acte 4 est une démonstration, pas la définition du produit · réassurance et action finale fusionnées en un seul acte.
+**Récit** : Hero puis Métiers conservés, non redessinés · Acte 3 avant Acte 4 · **l'Acte 3 et l'Acte 4 portent sur la même entreprise de démonstration et le même univers métier, mais sur deux objets différents** · le site public reste visuellement dominant · l'Acte 4 est une démonstration, pas la définition du produit · réassurance et action finale fusionnées.
 
 **Intégrité** : aucune preuve, statistique, interface, réalisation ni témoignage inventé · aucune grille artificielle de forfaits ou de fonctionnalités.
 
-**Fondations visuelles** : Manrope · Brand Green `#00875A`, Forest `#10291C`, Forest Dark `#07140D`, Warm `#FAF8F4`, Mint clair `#EAF4EE`, Mint bordure `#CFE8D8`, Graphite `#3A403B` · tokens scopés à la classe de marque · rayons faibles · aucun gradient, effet de verre, blob, écran incliné, ombre décorative · « SUPORDO ne décore pas le réel. Il l'organise. »
+**Fondations visuelles** : Manrope · Brand Green `#00875A`, Forest `#10291C`, Forest Dark `#07140D`, Warm `#FAF8F4`, Mint clair `#EAF4EE`, Mint bordure `#CFE8D8`, Graphite `#3A403B` · tokens scopés · rayons faibles · aucun gradient, effet de verre, blob, écran incliné, ombre décorative · « SUPORDO ne décore pas le réel. Il l'organise. »
 
 ---
 
@@ -77,7 +80,7 @@ Sur supordo.com, **seule l'adresse `/` est réservée à SUPORDO**. Les noms `/c
 supordo.com
 ├── /                            LOT 1-4  page commerciale unique
 ├── /demarrer                    LOT 1    parcours de prise de contact
-├── /demarrer/confirmation       LOT 1    accusé de réception
+├── /demarrer/confirmation       LOT 1    accusé de réception, non indexée
 ├── /legal/mentions-legales      LOT 1    légal plateforme
 ├── /legal/confidentialite       LOT 1    légal plateforme
 ├── /exemples                    LOT 5    vrais sites clients, avec accord
@@ -86,13 +89,11 @@ supordo.com
 └── /login                       existant, inchangé
 ```
 
-**Pages légales — route retenue : le préfixe `/legal/`.** `[À FIGER]`
+**Pages légales — préfixe retenu : `/legal/`** `[À FIGER]`. Aucune route artisan ni plateforme ne commence par `/legal`, alors que `/mentions-legales` est déjà la page légale des sites artisans ; le préfixe isole durablement tout le légal de la plateforme. **Le nom exact reste une convention technique proposée**, renommable au Lot 1 sans conséquence tant que le préfixe reste distinct du vocabulaire artisan.
 
-Pourquoi il n'y a pas de collision : aucune route artisan ni plateforme ne commence par `/legal`, alors que `/mentions-legales` est déjà la page légale des sites artisans. Le préfixe isole durablement tout le légal de la plateforme, quel que soit le nombre de documents ajoutés ensuite.
+**Cookies et traceurs** : la nécessité d'un mécanisme de consentement dépend uniquement de la présence effective de traceurs non essentiels — jamais d'un paiement. Un **inventaire des traceurs** est donc à faire avant le lancement : mesure d'audience, pixels publicitaires, outils marketing, contenus tiers intégrés, vidéos externes, messagerie en ligne, autres scripts tiers. Sans traceur soumis à consentement, aucun bandeau n'est créé par principe. Avec traceurs, le mécanisme adapté est prévu.
 
-**Le nom exact reste une convention technique proposée, pas une décision de marque** : `/legal/mentions-legales` et `/legal/confidentialite` peuvent être renommés au Lot 1 sans conséquence, tant que le préfixe reste distinct du vocabulaire artisan. Ce point n'est pas une question ouverte bloquante.
-
-`[REPOUSSÉ]` : conditions générales de vente et page cookies — seulement si un paiement en ligne ou un traceur non essentiel apparaît.
+**Conditions générales de vente** `[REPOUSSÉ]` : sujet distinct, lié au mode réel de commercialisation et de contractualisation.
 
 ---
 
@@ -100,50 +101,63 @@ Pourquoi il n'y a pas de collision : aucune route artisan ni plateforme ne comme
 
 ### Acte 1 — Hero `[FAIT]`
 
-Question : « Qu'est-ce que c'est ? » · Message : un vrai site professionnel · Desktop : deux colonnes, image à droite, hauteur du premier écran · Mobile : texte puis image, boutons empilés · Action : Démarrer + Voir un exemple · Manque : la photographie et les destinations des boutons.
+Question : « Qu'est-ce que c'est ? » · Message : un vrai site professionnel · Desktop : deux colonnes, image à droite, hauteur du premier écran · Mobile : texte puis image, boutons empilés · Manque : la photographie éditoriale et les destinations des boutons · Une correction éditoriale minimale est intégrée au Lot 1, voir 1.6.
 
 ### Acte 2 — Métiers `[FAIT]`
 
-Question : « Est-ce fait pour une entreprise comme la mienne ? » · Message : un site adapté à votre activité · Preuve : dix métiers reconnaissables · Desktop : 4 cartes et amorce de la 5ᵉ · Mobile : une carte dominante et ~22 % de la suivante · Action : aucune, délibérément.
+Question : « Est-ce fait pour une entreprise comme la mienne ? » · Preuve : dix métiers reconnaissables · Desktop : 4 cartes et amorce de la 5ᵉ · Mobile : une carte dominante et ~22 % de la suivante · Aucune action, délibérément.
 
 ### Acte 3 — Ce que vos clients voient, ce que vous renseignez
 
 Question : « Qu'est-ce que j'obtiens réellement, et qu'est-ce qui est différent ? »
 
-Message : votre entreprise évolue, votre site suit. Ce que vous renseignez est présenté proprement à vos clients.
+Message : ce que vous renseignez est présenté proprement à vos clients.
 
-Preuve : **une seule et même réalisation, montrée deux fois.** Même photo, même titre, même commune — par exemple « Installation d'un poêle à bois — Aubagne ». D'un côté la page publique, de l'autre la fiche telle qu'elle est renseignée dans l'espace.
+**Objet retenu : un service, éventuellement accompagné de sa zone d'intervention — pas une réalisation photographique.** Le service est l'objet le plus adapté : le client le saisit réellement (nom, description, photo), et il produit une page publique complète. Ce choix évite de dépenser la démonstration photo dès l'Acte 3 et prouve d'emblée que SUPORDO ne concerne pas seulement les photos.
 
-Desktop : composition asymétrique, le site public occupe environ deux tiers du poids visuel, la capture de l'espace un tiers, sur fond blanc. Aucune flèche, aucune numérotation, aucun cadre de navigateur : le lien est le contenu identique, rien d'autre.
+Preuve : un même service — par exemple « Installation de poêle à bois » — d'un côté tel qu'il est renseigné dans l'espace, de l'autre tel qu'il est présenté sur le site public. Même libellé, même information, même entreprise de démonstration que l'Acte 4.
 
-Mobile : **jamais deux interfaces côte à côte.** Résultat public d'abord, pleine largeur ; fiche renseignée ensuite, recadrée sur photo, titre, ville, service.
+Desktop : composition asymétrique, le site public occupe environ deux tiers du poids visuel, la capture de l'espace un tiers, sur fond blanc. Aucune flèche, aucune numérotation, aucun cadre de navigateur : le lien est le contenu identique.
+
+Mobile : **jamais deux interfaces côte à côte.** Résultat public d'abord, pleine largeur ; fiche renseignée ensuite, recadrée sur les seuls champs utiles.
 
 Action : aucune, ou un lien discret vers l'acte suivant.
 
-Éléments réels nécessaires : capture de l'écran des réalisations recadrée sur une fiche, et capture de la page publique correspondante — question ouverte 5.
-
-### Acte 4 — Démonstration signature
+### Acte 4 — Démonstration signature, la réalisation
 
 Question : « Est-ce vraiment simple dans mon quotidien ? »
 
-Message : votre travail devient une preuve visible. Puis, discrètement : « Vos réalisations. Mais aussi vos services, vos zones et votre équipe. » **Cette phrase de généralisation est obligatoire** : sans elle, SUPORDO passe pour une application photo.
+Message : votre travail devient une preuve visible. La phrase de généralisation reste utile mais **peut désormais être discrète**, puisque l'Acte 3 a déjà démontré un autre type de contenu.
 
-Preuve : trois états — chantier terminé, fiche renseignée, résultat en ligne — sur la même réalisation que l'acte 3.
+Preuve : chantier terminé → photo → fiche réalisation → résultat public. Même entreprise de démonstration que l'Acte 3, **objet différent**.
 
-Desktop : trois états côte à côte, largeurs égales, légende factuelle sous chacun. Mobile : trois états empilés, pleine largeur. Action : secondaire.
+Desktop : trois états côte à côte, largeurs égales, légende factuelle sous chacun. Mobile : trois états empilés. Action : secondaire.
+
+**Dépendance bloquante** : la représentation de l'étape « fiche réalisation » dépend de la vérification d'ergonomie mobile (question 8). Le scénario « chantier terminé » suggère naturellement une action sur le terrain, donc sur téléphone. Si l'expérience mobile n'est pas suffisamment exploitable, **aucune scène mobile fictive ne sera fabriquée** : la représentation sera honnêtement adaptée, par exemple en montrant l'étape sur ordinateur.
 
 ### Acte 5 — Qui fait quoi
 
 Question : « Concrètement, qui fait quoi ? » · Message : SUPORDO s'occupe de la présentation du site, vous renseignez votre entreprise.
 
-- **SUPORDO** : crée et met en ligne le site, héberge, sécurise, maintient, organise la présentation, fait évoluer le socle commun, saisit les qualifications professionnelles.
-- **Vous** : vos services, vos zones d'intervention, vos réalisations et leurs photos, votre équipe, vos marques et partenaires, vos coordonnées.
+**Chaque formulation doit passer par ce tableau avant d'être écrite** ; aucun verbe large n'est autorisé tel quel.
 
-Preuve : l'exactitude de la liste, strictement limitée aux capacités PROUVÉES du bloc 1. Aucun visuel. Desktop : deux colonnes. Mobile : deux blocs empilés, titres distincts. Action : aucune.
+| Formulation | Preuve technique | Limite à énoncer ou à vérifier |
+|---|---|---|
+| Crée et met en ligne le site | dépend de la question 9 (création initiale) | ne rien écrire avant cette réponse |
+| Héberge le site | infrastructure gérée par SUPORDO | pas de promesse de disponibilité chiffrée sans engagement défini |
+| Chiffre les échanges (à la place de « sécurise ») | certificat et connexion chiffrée | **ne jamais laisser entendre une garantie générale de cybersécurité** |
+| Assure la maintenance technique | mises à jour du socle commun | **distinguer explicitement maintenance technique et modification de contenu** : la seconde appartient au client |
+| Organise la présentation du site | mise en page produite par le produit | — |
+| Fait évoluer le socle commun | améliorations communes à tous les sites | ne promettre aucune fonctionnalité future nommée |
+| Saisit les qualifications professionnelles | capacité réelle côté SUPORDO | **retirée de l'Acte 5 tant que la question 6 n'est pas tranchée** |
+
+Côté client : vos services, vos zones d'intervention, vos réalisations et leurs photos, votre équipe, vos marques et partenaires, vos coordonnées. La formulation exacte de ce qui est publié immédiatement dépend de la question 10.
+
+Aucun visuel. Desktop : deux colonnes. Mobile : deux blocs empilés. Action : aucune.
 
 ### Acte 6 — Offre
 
-Question : « Combien et qu'est-ce qui est compris ? » · Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions. **Aucune grille de forfaits.** Action : Démarrer. Bloqué par les questions ouvertes 1 et 2.
+Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions. **Aucune grille de forfaits.** Bloqué par les questions 1, 2 et 9.
 
 ### Acte 7 — Réassurance et décision
 
@@ -153,11 +167,12 @@ Question : « Combien et qu'est-ce qui est compris ? » · Un seul bloc centré 
 | Dois-je savoir utiliser un logiciel ? | RÉPONSE CONNUE : non, saisie de champs simples |
 | Puis-je modifier mes informations ? | RÉPONSE CONNUE : oui, celles listées à l'acte 5 |
 | Le site fonctionne-t-il sur téléphone ? | RÉPONSE CONNUE : oui |
-| Qui s'occupe de la maintenance ? | RÉPONSE CONNUE : SUPORDO |
-| Que se passe-t-il si je ne publie jamais rien ? | RÉPONSE CONNUE : le site reste en ligne et complet |
+| Qui s'occupe de la maintenance ? | RÉPONSE CONNUE : SUPORDO, pour la maintenance technique |
+| Que se passe-t-il si je ne publie jamais rien ? | RÉPONSE CONNUE, formulation factuelle imposée : « Le site reste en ligne avec les informations déjà renseignées. » Le mot « complet » est interdit. |
+| Mes contenus apparaissent-ils tout de suite ? | DÉPEND DE LA QUESTION 10 |
+| Combien de temps pour être en ligne ? | DÉPEND DE LA QUESTION 9 |
 | J'ai déjà un nom de domaine, que se passe-t-il ? | DÉCISION À PRENDRE, question 2 |
 | Puis-je partir, et que deviennent mon domaine et mes contenus ? | DÉCISION À PRENDRE, question 2 |
-| Combien de temps pour être en ligne ? | DÉCISION À PRENDRE, question 2 |
 
 Aucune réponse rédigée avant d'être tranchée. Desktop : colonne de 760 px. Mobile : accordéon, zones tactiles de 48 px. Action finale identique à celle du Hero.
 
@@ -169,17 +184,19 @@ Voir bloc 7.
 
 ## 5. Pages secondaires
 
-**`/demarrer` — Lot 1.** Recueillir une demande qualifiée. Sections : titre court · formulaire (entreprise, métier, ville, téléphone, email, message) · ce qui se passe ensuite, en trois étapes factuelles · rappel de ce qui est pris en charge. Aucun visuel, ou une seule illustration métier. Action unique : envoyer. H1 : « Parlons de votre site. » Dépend de la question 4.
+**`/demarrer` — Lot 1.** Recueillir une demande qualifiée. Sections : titre court · formulaire (entreprise, métier, ville, téléphone, email, message) · ce qui se passe ensuite, en trois étapes factuelles · rappel de ce qui est pris en charge. Aucun visuel, ou une seule illustration métier. Action unique : envoyer. H1 : « Parlons de votre site. »
+
+**Points à définir avant de construire le formulaire** (question 4 élargie) : destination des demandes · notification et destinataire · stockage éventuel · personnes ayant accès · durée de conservation en cas de stockage · message de succès · comportement en cas d'erreur · protection anti-spam · mention d'information sur les données personnelles. **Aucune table n'est créée automatiquement** : le choix entre email, base de données ou autre est tranché avant l'implémentation, et un stockage en base doit être justifié par un besoin réel.
 
 **`/demarrer/confirmation` — Lot 1.** Accusé de réception, non indexée, sans action.
 
-**`/legal/mentions-legales` et `/legal/confidentialite` — Lot 1.** Contenu fourni par SUPORDO, jamais inventé. Sans action.
+**`/legal/mentions-legales` et `/legal/confidentialite` — Lot 1.** Contenu fourni par SUPORDO, jamais inventé. **Ces pages sont publiques, facilement accessibles depuis le pied de page et correctement renseignées.** Le choix d'indexation relève d'une décision de référencement après rédaction et vérification du contenu : ni l'indexation ni son inverse ne constituent une obligation légale.
 
-**`/exemples` — Lot 5.** Introduction courte · grille de sites réels (nom, métier, commune, lien) · action finale. **Condition bloquante : accord écrit de chaque artisan.** H1 : « Des sites déjà en ligne. » En attendant, le bouton « Voir un exemple » du Hero peut pointer vers un site client réel avec accord — question 3.
+**`/exemples` — Lot 5.** Introduction courte · grille de sites réels (nom, métier, commune, lien) · action finale. **Condition bloquante : accord écrit de chaque artisan.** H1 : « Des sites déjà en ligne. »
 
-**`/tarifs` — Lot 5, conditionnelle.** N'existe que si l'offre comporte plusieurs niveaux de lecture ou des conditions trop longues pour une section. Avec une offre unique, le prix reste dans l'acte 6, et cette page n'est pas créée. H1 : « Une offre, tout compris. »
+**`/tarifs` — Lot 5, conditionnelle.** N'existe que si l'offre comporte plusieurs niveaux de lecture ou des conditions trop longues pour une section. Avec une offre unique, le prix reste dans l'acte 6.
 
-**`/metiers/<metier>` — `[REPOUSSÉ]`, hors lots.** Justifiée seulement si trois conditions sont réunies : contenu propre au métier, exemple réel de ce métier, aucune phrase recopiée d'une autre page métier. Une seule page pilote, chauffagiste, mesurée avant toute extension.
+**`/metiers/<metier>` — `[REPOUSSÉ]`, hors lots.** Justifiée seulement si : contenu propre au métier, exemple réel de ce métier, aucune phrase recopiée. Une page pilote, chauffagiste, mesurée avant toute extension.
 
 ---
 
@@ -190,45 +207,46 @@ Voir bloc 7.
 `[À FIGER]` :
 
 - Marque SUPORDO à gauche, lien vers l'accueil.
-- Liens au centre, desktop uniquement : **Exemples · Tarifs**, chacun seulement quand sa page existe. « CRM » et « Ressources » supprimés `[RETENU]`.
-- À droite : bouton principal « Démarrer », puis lien « Se connecter » vers `/login`, visuellement plus discret. Les deux populations — prospect et client — sont servies sans ambiguïté.
-- Téléphone : marque et « Démarrer » uniquement ; « Se connecter » descend dans le pied de page.
-- Au défilement : une bordure basse apparaît. Aucun rétrécissement, aucune ombre, aucun changement de couleur.
-- Aucun grand menu déroulant.
-- Évolution future, quand un second produit existera : une entrée « Produits » ouvrant une liste de deux lignes. Rien à préparer aujourd'hui.
+- Liens au centre, desktop uniquement : **Exemples · Tarifs**, chacun seulement quand sa page existe `[RETENU]`. « CRM » et « Ressources » supprimés `[RETENU]`.
+- À droite sur desktop : bouton principal, puis lien « Se connecter » vers `/login`, visuellement plus discret.
+- **Téléphone** : marque · bouton principal · **et un accès compact à « Se connecter », visible dans l'en-tête ou dans un menu minimal ouvert depuis l'en-tête**. Un client existant ne doit jamais avoir à parcourir toute la page pour atteindre sa connexion. Présentation discrète pour ne pas concurrencer le bouton prospect. Aucun grand menu déroulant.
+- Au défilement : une bordure basse apparaît. Aucun rétrécissement, aucune ombre.
+- Évolution future : une entrée « Produits » quand un second produit existera. Rien à préparer aujourd'hui.
+
+### Libellé de l'action principale `[OUVERT]` — micro-décision 12
+
+L'adresse `/demarrer` est retenue, mais le libellé du bouton doit décrire ce qui se passe réellement. Si la page est un formulaire de prise de contact et non une mise en route immédiate, « Démarrer » peut surpromettre. À trancher une fois, puis **le même libellé partout** : en-tête, Hero, offre, action finale. Pistes : « Démarrer », « Demander mon site », « Parler de mon projet ».
+
+Action secondaire : « Voir un exemple », **uniquement quand une destination réelle et crédible existe**. Jamais de `/exemples` vide, jamais de bouton inerte, jamais de faux client. À défaut, le bouton secondaire est temporairement masqué.
 
 ---
 
 ## 7. Pied de page `[À FIGER]`
 
-Fond Forest, quatre groupes, pas un de plus :
+Fond Forest, quatre groupes :
 
 1. **Marque** : « SUPORDO développe des produits simples pour les entreprises de terrain. »
 2. **Produit** : SUPORDO Sites, Exemples, Tarifs — selon existence.
 3. **Légal** : mentions légales, confidentialité.
 4. **Accès client** : Se connecter.
 
-Aucune mention du futur produit `[RETENU]`. Aucun réseau social sans compte réel. Aucun faux plan de site.
+Aucune mention du futur produit `[RETENU]`. Aucun réseau social sans compte réel.
 
 ---
 
 ## 8. Design system marketing — statut de chaque règle
 
-### Statut des sept points signalés
-
 | Règle | Statut | Précision |
 |---|---|---|
-| Photographie réelle dans le Hero | `[RETENU]` — l'emplacement et l'intention existent déjà dans le code, et les documents de marque notent l'absence de la photo | seul l'asset manque |
-| Alternance des fonds | `[À FIGER]` — recommandation de cette analyse | deux sections voisines ne partagent jamais le même fond |
-| Forest réservé au pied de page | `[À FIGER]` — recommandation de cette analyse | Forest reste la couleur des titres partout ; c'est son usage **en fond** qui est limité à une seule occurrence par page |
-| Bordure Mint systématique en remplacement des ombres | `[À FIGER]`, mais fondé sur un constat `[FAIT]` : aucune ombre n'existe dans les trois composants actuels, et toutes les bordures sont déjà Mint | formalise une pratique existante |
-| Tailles typographiques exactes | `[À FIGER]` — les valeurs du Hero et des Métiers sont `[FAIT]`, l'échelle complète (H3, corps, légende) est une extrapolation | à valider une fois, puis figée |
-| Rayons exacts 6 px et 10 px | `[FAIT]` — déjà les seules valeurs présentes dans le code | formalisation |
-| Animations autorisées | `[À FIGER]` — seul le rail Métiers existe `[FAIT]` ; l'apparition au défilement et la transition de contenu sont des propositions | la transition fiche → site est à valider au Lot 2 ou 3 |
+| Photographie éditoriale dans le Hero | `[RETENU]` — emplacement et intention déjà dans le code | seul l'asset manque |
+| Alternance des fonds | `[À FIGER]` | deux sections voisines ne partagent jamais le même fond |
+| Forest en fond : une seule occurrence par page | `[À FIGER]` | Forest reste la couleur des titres partout |
+| Bordure Mint systématique en remplacement des ombres | `[À FIGER]`, fondé sur un constat `[FAIT]` | formalise une pratique existante |
+| Tailles typographiques exactes | `[À FIGER]` — Hero et Métiers sont `[FAIT]`, l'échelle complète est une extrapolation | à valider une fois |
+| Rayons 6 px et 10 px | `[FAIT]` | formalisation |
+| Animations autorisées | `[À FIGER]` — seul le rail Métiers existe `[FAIT]` | la transition contenu → site est à valider au Lot 2 |
 
 ### A — Typographie `[À FIGER]`
-
-Manrope, sous la classe de marque uniquement.
 
 | Rôle | Mobile | Tablette | Desktop | Interligne |
 |---|---|---|---|---|
@@ -239,11 +257,11 @@ Manrope, sous la classe de marque uniquement.
 | Petit label | 12 px | 12 px | 14 px | gras, majuscules, interlettrage 0,14em, en vert |
 | Légende | 13 px | 13 px | 14 px | graphite |
 
-Un seul H1 par page. Un seul petit label par section. Poids : 400, 500, 600, 800 — rien d'autre.
+Un seul H1 par page. Un seul petit label par section. Poids : 400, 500, 600, 800.
 
-### B — Grille `[À FIGER]`, largeur de contenu `[FAIT]`
+### B — Grille
 
-Contenu 1200 px `[FAIT]`. Texte 650 à 760 px maximum. Marges latérales 20 px téléphone, 32 px à partir de la tablette `[FAIT]`. Douze colonnes desktop, gouttière 32 px ; six sur tablette ; une sur téléphone. Rythme vertical entre sections : 64 / 80 / 96 px. Points de rupture : uniquement `sm`, `md`, `lg` `[FAIT]`.
+Contenu 1200 px `[FAIT]`. Texte 650 à 760 px maximum `[À FIGER]`. Marges 20 px / 32 px `[FAIT]`. Douze colonnes desktop, gouttière 32 px ; six tablette ; une téléphone. Rythme vertical 64 / 80 / 96 px. Points de rupture `sm`, `md`, `lg` `[FAIT]`.
 
 ### C — Couleurs `[À FIGER]` sur la fonction, `[RETENU]` sur les valeurs
 
@@ -251,37 +269,38 @@ Contenu 1200 px `[FAIT]`. Texte 650 à 760 px maximum. Marges latérales 20 px t
 |---|---|---|
 | Warm | fond de marque, respiration | ~40 % des sections |
 | Blanc | fond de preuve | ~40 % |
-| Forest | texte de titre partout ; fond une seule fois par page | — |
+| Forest | titres partout ; fond une fois par page | — |
 | Forest Dark | contraste sur fond Forest | rare |
-| Brand Green | accent, bouton principal, petits labels, contour de focus | ~10 % de la surface, jamais en grande surface |
+| Brand Green | accent, bouton principal, petits labels, focus | ~10 %, jamais en grande surface |
 | Mint clair | surface fonctionnelle, réserve d'image | ponctuel |
-| Mint bordure | toutes les bordures, en remplacement des ombres | systématique |
+| Mint bordure | toutes les bordures | systématique |
 | Graphite | texte courant | partout |
 
-### D — Boutons : trois, pas plus `[FAIT]` pour les deux premiers
+### D — Boutons : trois, pas plus
 
-1. **Principal** : vert plein, texte blanc, rayon 6 px, hauteur 48 px (52 px desktop).
-2. **Secondaire** : blanc, bordure Mint, texte Forest ; au survol, bordure et texte passent au vert.
-3. **Lien textuel** `[À FIGER]` : Forest, souligné au survol, pour les actions mineures et le pied de page.
+1. **Principal** `[FAIT]` : vert plein, texte blanc, rayon 6 px, 48 px (52 px desktop).
+2. **Secondaire** `[FAIT]` : blanc, bordure Mint, texte Forest ; survol vert.
+3. **Lien textuel** `[À FIGER]` : Forest, souligné au survol.
 
-Contour de focus visible obligatoire sur les trois `[FAIT]`. Aucune autre variante, aucun bouton à icône seule, aucun bouton fantôme.
+Contour de focus obligatoire `[FAIT]`. Aucune autre variante, aucun bouton à icône seule, aucun bouton fantôme.
 
-### E — Images : quatre catégories, jamais interchangeables `[RETENU]`
+### E — Cinq catégories d'images, jamais interchangeables `[RETENU]`
 
 | Catégorie | Rôle | Où | Interdit |
 |---|---|---|---|
 | Illustration 3D SUPORDO | univers métier, reconnaissance | Métiers, éventuellement `/demarrer` | jamais présentée comme une réalisation client |
-| Photographie réelle | preuve, travail réalisé | Hero, acte 4 | jamais une banque d'images générique |
-| Capture produit réelle | montrer comment l'information est organisée | actes 3 et 4 | jamais une interface inventée |
-| Site public réel | le résultat acheté | actes 3 et 4, `/exemples` | jamais un faux site |
+| **Photo éditoriale de marque** | incarner le métier et la marque | **Hero uniquement** | **n'est pas une réalisation client et ne doit jamais être présentée comme telle** |
+| **Photo de preuve / réalisation** | montrer un vrai travail réalisé | Acte 4, éventuellement `/exemples` | doit être réelle et autorisée par écrit |
+| Capture produit réelle | montrer comment l'information est organisée | Actes 3 et 4 | jamais une interface inventée |
+| Site public réel | le résultat acheté | Actes 3 et 4, `/exemples` | jamais un faux site |
 
 ### F — Captures produit `[À FIGER]`
 
-Recadrage sur une seule tâche, jamais un écran entier réduit · bordure 1 px Mint, rayon 10 px, aucun cadre de navigateur ni faux bouton de fenêtre · aucune ombre, au maximum une ombre presque invisible si la capture se confond avec le fond blanc · aucune perspective, toujours de face · données réelles ou explicitement de démonstration · au maximum une légende sous l'image, aucune bulle, aucune flèche · le lien avec le résultat public se fait par le contenu identique, jamais par un connecteur graphique · l'espace client sur téléphone ne se montre qu'après la question 8.
+Recadrage sur une seule tâche · bordure 1 px Mint, rayon 10 px, aucun cadre de navigateur · aucune ombre, au maximum une ombre presque invisible · aucune perspective · données réelles ou explicitement de démonstration · au maximum une légende sous l'image · le lien avec le résultat public se fait par le contenu identique · l'espace client sur téléphone ne se montre qu'après la question 8.
 
 ### G — Mouvement `[À FIGER]`
 
-Trois mouvements autorisés : le rail Métiers `[FAIT]` · une apparition douce des sections au défilement · aux actes 3 ou 4 uniquement, **une seule** transition faisant apparaître le même contenu de la fiche vers la page publique, déclenchée une fois, courte, jamais en boucle, jamais suggérant une publication automatique. Le réglage de réduction des animations désactive les deux derniers. Toute information reste compréhensible sans aucun mouvement.
+Trois mouvements autorisés : le rail Métiers `[FAIT]` · une apparition douce au défilement · aux actes 3 ou 4 uniquement, **une seule** transition faisant apparaître le même contenu de la fiche vers la page publique, déclenchée une fois, jamais en boucle, jamais suggérant une publication automatique. Le réglage de réduction des animations désactive les deux derniers.
 
 ---
 
@@ -296,7 +315,7 @@ Trois mouvements autorisés : le rail Métiers `[FAIT]` · une apparition douce 
 | Acte 5 | deux colonnes | deux colonnes | deux blocs empilés |
 | Offre | bloc centré 640 px | idem | pleine largeur, prix en premier |
 | Réassurance | colonne 760 px | idem | accordéon |
-| En-tête | liens visibles | liens visibles | marque + Démarrer |
+| En-tête | liens + connexion discrète | idem | marque, action principale, accès connexion compact |
 | Pied de page | 4 colonnes | 2 colonnes | 1 colonne |
 
 Non négociable : aucun texte de capture illisible, aucun débordement horizontal, zones tactiles de 44 px minimum, respect de la zone sûre en bas d'écran.
@@ -305,13 +324,13 @@ Non négociable : aucun texte de capture illisible, aucun débordement horizonta
 
 ## 10. Matrice visuelle
 
-| Section | Illustration | Photo réelle | Capture produit | Site public réel | À produire |
-|---|---|---|---|---|---|
-| Hero | non | **oui** | non | non | photographie horizontale d'un professionnel au travail, lumière naturelle, propriété SUPORDO |
-| Métiers | **oui** | non | non | non | rien, les dix illustrations existent |
-| Acte 3 | non | non | **oui** | **oui** | capture de l'écran des réalisations recadrée sur une fiche ; capture de la page publique correspondante |
-| Acte 4 | non | **oui** | **oui** | **oui** | une photo de chantier, la même fiche, la même réalisation en ligne — même photo, même titre, même ville |
-| Actes 5, 6, 7, pied de page | non | non | non | non | aucun visuel |
+| Section | Illustration 3D | Photo éditoriale | Photo de preuve | Capture produit | Site public réel | À produire |
+|---|---|---|---|---|---|---|
+| Hero | non | **oui** | non | non | non | photographie horizontale d'un professionnel au travail, propriété SUPORDO |
+| Métiers | **oui** | non | non | non | non | rien |
+| Acte 3 | non | non | non | **oui** | **oui** | capture d'un service dans l'espace ; capture de la page publique du même service |
+| Acte 4 | non | non | **oui** | **oui** | **oui** | photo de chantier autorisée ; fiche réalisation ; réalisation en ligne |
+| Actes 5, 6, 7, pied de page | non | non | non | non | non | aucun visuel |
 
 ---
 
@@ -319,175 +338,183 @@ Non négociable : aucun texte de capture illisible, aucun débordement horizonta
 
 | Famille | Objectif | Densité | Visuel | Mobile | Ne pas utiliser |
 |---|---|---|---|---|---|
-| Ouverture éditoriale | poser la promesse | faible | photo réelle | texte puis image | jamais deux fois par page |
+| Ouverture éditoriale | poser la promesse | faible | photo éditoriale | texte puis image | jamais deux fois par page |
 | Reconnaissance | « c'est pour moi » | moyenne | illustrations | rail au doigt | jamais pour présenter une fonction |
 | Preuve appariée | montrer l'entrée et le résultat | moyenne | capture + site réel | empilée, résultat d'abord | jamais sans contenu réel identique ; jamais ailleurs qu'aux actes 3 et 4 |
 | Partage typographique | clarifier qui fait quoi | faible | aucun | deux blocs | jamais pour une liste de fonctions |
 | Bloc de décision | prix, ou action finale | très faible | aucun | pleine largeur | jamais sous forme de grille de forfaits |
 | Questions-réponses | lever les objections | forte en texte | aucun | accordéon | jamais au milieu du récit |
 
-Règle anti-monotonie : deux familles identiques ne se suivent jamais, et le fond change à chaque section. Explicitement refusé : toute famille « trois ou quatre cartes avec une icône dans un carré ».
+Deux familles identiques ne se suivent jamais, et le fond change à chaque section. Refusé : toute famille « trois ou quatre cartes avec une icône dans un carré ».
 
 ---
 
 ## 12. Système sémantique
 
-**Recommandé** : entreprise · métier · chantier · réalisation · client · commune · zone d'intervention · site · photo · travail réalisé · renseigner · mettre à jour · en ligne · pris en charge.
+**Recommandé** : entreprise · métier · chantier · réalisation · client · commune · zone d'intervention · service · site · photo · travail réalisé · renseigner · mettre à jour · en ligne · pris en charge.
 
-**Interdit** : digital · solution · plateforme · booster · présence en ligne · expérience digitale · révolutionner · tout-en-un · puissant · innovant · en quelques clics · sur-mesure · clé en main · visibilité · sans effort. Et, parce qu'ils décrivent le logiciel plutôt que le métier : CMS · back-office · tableau de bord · éditeur · constructeur de site · module · fonctionnalité.
-
-**Audit des formulations actuelles** — corrections à traiter dans une passe ultérieure, hors des cinq lots :
+**Interdit** : digital · solution · plateforme · booster · présence en ligne · expérience digitale · révolutionner · tout-en-un · puissant · innovant · en quelques clics · sur-mesure · clé en main · visibilité · sans effort · complet. Et, parce qu'ils décrivent le logiciel plutôt que le métier : CMS · back-office · tableau de bord · éditeur · constructeur de site · module · fonctionnalité.
 
 | Formulation | Verdict |
 |---|---|
-| « site pro » | à conserver : c'est l'objet acheté, dans les mots du client |
-| « pensé pour votre métier » | à conserver, parce que les dix illustrations le prouvent immédiatement |
-| « espace SUPORDO » | à conserver, mais à prouver visuellement à l'acte 3 avant d'y attacher la valeur |
-| « faire vivre » | à remplacer à terme : compréhensible mais générique. Pistes : « mettre à jour », « tenir à jour » |
-| « simple » | à employer avec parcimonie, jamais comme différenciation : la simplicité se démontre à l'acte 4 |
-| « sans avoir à gérer votre site » | à corriger : ambigu, le client renseigne bien ses contenus. Piste : « sans avoir à construire ni mettre en page votre site » |
+| « site pro » | à conserver |
+| « pensé pour votre métier » | à conserver, prouvé par les dix illustrations |
+| « espace SUPORDO » | à conserver, prouvé visuellement à l'Acte 3 |
+| « faire vivre » | à remplacer à terme. Pistes : « mettre à jour », « tenir à jour ». Hors Lot 1 |
+| « simple » | avec parcimonie, jamais comme différenciation |
+| « sans avoir à gérer votre site » | **à corriger dans le Lot 1**, sous-tâche 1.6 |
 
-**Ton** : phrases courtes, voix active. « Renseigner » du côté du client, « présenter » du côté de SUPORDO. Aucun superlatif, aucun point d'exclamation. Le conditionnel uniquement quand une chose dépend d'une validation réelle.
+**Ton** : phrases courtes, voix active. « Renseigner » du côté du client, « présenter » du côté de SUPORDO. Aucun superlatif, aucun point d'exclamation. Le conditionnel dès qu'une chose dépend d'une validation réelle.
 
 ---
 
 ## 13. Référencement structurel
 
-### Doctrine d'indexation — unique
+**Accueil ou page produit** `[RETENU]` : l'accueil vend SUPORDO Sites, `/sites` n'est pas créée. Deux règles d'écriture préparent la suite : le pied de page porte la phrase de marque mère, et chaque acte reste un composant autonome, déplaçable tel quel le jour où un second produit existera.
 
-**Les deux pages légales sont indexées ; seule la page de confirmation de `/demarrer` est non indexée.** Une mention légale est une information publique qu'un prospect a le droit de trouver, alors qu'une page de confirmation n'a aucun sens hors de son parcours.
+**Priorités, dans cet ordre** : adresse canonique · plan de site · métadonnées · aperçus sociaux · liens internes · bon fonctionnement des pages · puis seulement les fichiers secondaires comme `llms.txt`.
 
-### Accueil ou page produit
+À créer côté supordo.com : un plan de site propre au domaine — aujourd'hui vide · une adresse canonique par page et un choix unique entre `supordo.com` et `www.supordo.com` (question 7) · une image d'aperçu social réelle pour l'accueil · un seul H1 par page.
 
-`[RETENU]` : l'accueil vend SUPORDO Sites aujourd'hui, et `/sites` n'est pas créée — une page identique à l'accueil serait une duplication pénalisée et sans intérêt pour le visiteur. Deux règles d'écriture préparent la suite sans rien coûter : le pied de page porte la phrase de marque mère, et chaque acte reste un composant autonome, déplaçable tel quel vers `/sites` le jour où un second produit existera.
-
-### À créer côté supordo.com
-
-Un plan de site propre au domaine SUPORDO — aujourd'hui vide · une adresse canonique par page, et un choix unique entre `supordo.com` et `www.supordo.com` (question 7) · une image d'aperçu social réelle pour l'accueil — absente aujourd'hui · un seul H1 par page.
-
-| Page | Intention de recherche | H1 | Risque de cannibalisation |
+| Page | Intention de recherche | H1 | Cannibalisation |
 |---|---|---|---|
-| `/` | site internet pour artisan, agence web artisan | « Un vrai site pro… » | avec `/tarifs` si elle est créée |
-| `/demarrer` | aucune, page de conversion | « Parlons de votre site. » | aucun |
-| `/exemples` | exemple de site artisan | « Des sites déjà en ligne. » | aucun |
-| `/tarifs` | prix site internet artisan | « Une offre, tout compris. » | avec l'acte 6 : la section devra alors se réduire à un résumé |
-| `/metiers/<metier>` | site internet pour <métier> | « Un site pour votre activité de <métier>. » | fort entre pages métier si le texte est recopié |
+| `/` | « site internet artisan », « site internet pour artisan » — descriptif et neutre. **« agence web artisan » est retirée** : aucune recherche n'a démontré l'intérêt de ce positionnement, et le produit ne doit pas être enfermé sémantiquement dans « agence web » | « Un vrai site pro… » | avec `/tarifs` si elle est créée |
+| `/demarrer` | aucune, page de conversion | « Parlons de votre site. » | aucune |
+| `/exemples` | exemple de site artisan | « Des sites déjà en ligne. » | aucune |
+| `/tarifs` | prix site internet artisan | « Une offre, tout compris. » | avec l'acte 6 : la section se réduirait alors à un résumé |
+| `/metiers/<metier>` | site internet pour <métier> | « Un site pour votre activité de <métier>. » | forte entre pages métier si le texte est recopié |
 
-Données structurées : uniquement l'identité de l'entreprise SUPORDO, et seulement quand les mentions légales existent.
+Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand les mentions légales existent.
 
 ---
 
 ## 14. Risques
 
-1. **Le plus probable** : construire les actes 3 et 4 sans capture réelle ni accord client, et fabriquer une interface de démonstration. SUPORDO devient alors exactement ce qu'il refuse d'être.
-2. La famille « preuve appariée » répétée à chaque section : le geste devient un tic.
-3. L'acte 4 sans sa phrase de généralisation : SUPORDO passe pour une application photo.
-4. L'acte 5 qui dérive vers une liste de fonctions : la page devient de la documentation.
-5. Publier une offre dont les conditions ne sont pas tranchées : perte de confiance au moment décisif.
-6. Une transition animée qui laisse croire à une publication automatique : promesse fausse.
-7. Dix pages métier au contenu proche : dilution.
-8. Une phrase de marque mère trop appuyée avant qu'un second produit existe : le visiteur ne sait plus ce qui est vendu.
-9. Montrer l'espace client sur téléphone sans avoir vérifié son ergonomie.
-10. Laisser un seul bouton inerte : le visiteur conclut que le produit n'existe pas.
+1. **Le plus probable** : construire les actes 3 et 4 sans capture réelle ni accord, et fabriquer une interface de démonstration.
+2. La famille « preuve appariée » répétée partout : le geste devient un tic.
+3. Les actes 3 et 4 centrés sur le même objet : la preuve est dépensée deux fois et SUPORDO passe pour une application photo.
+4. L'acte 5 qui dérive vers une liste de fonctions, ou qui emploie un verbe large non prouvé.
+5. Publier une offre dont les conditions ne sont pas tranchées.
+6. Une transition animée qui laisse croire à une publication automatique.
+7. Dix pages métier au contenu proche.
+8. Une phrase de marque mère trop appuyée avant qu'un second produit existe.
+9. Fabriquer une scène mobile de l'espace client sans avoir vérifié son ergonomie.
+10. Laisser un seul bouton inerte, ou un libellé d'action qui surpromet.
 
 ---
 
 ## 15. Questions ouvertes `[OUVERT]`
 
 1. **Tarif** : publie-t-on 49 € HT/mois et les 0 € de création, ou l'acte 6 reste-t-il sans chiffre au lancement ?
-2. **Conditions de l'offre** : engagement, propriété du nom de domaine, cas d'un domaine déjà détenu, résiliation, récupération des contenus, support inclus, modifications comprises, suppléments facturés, délai de mise en ligne.
-3. **« Voir un exemple »** : quel site client réel, avec quel accord écrit ?
-4. **Destination des demandes `/demarrer`** : boîte email SUPORDO, ou enregistrement en base ? Aucune table commerciale n'existe aujourd'hui.
+2. **Conditions de l'offre** : engagement, propriété du nom de domaine, cas d'un domaine déjà détenu, résiliation, récupération des contenus, support inclus, modifications comprises, suppléments facturés.
+3. **« Voir un exemple »** : quel site client réel, avec quel accord écrit ? À défaut, masquer temporairement le bouton.
+4. **Traitement de `/demarrer`** : destination, notification, stockage éventuel, accès, durée de conservation, message de succès, comportement en erreur, anti-spam, mention sur les données personnelles.
 5. **Captures produit** : compte de démonstration dédié, ou capture d'un client réel avec accord ?
-6. **Certifications** : assume-t-on publiquement qu'elles sont saisies par SUPORDO, ou reste-t-on silencieux ?
+6. **Certifications** : assume-t-on publiquement qu'elles sont saisies par SUPORDO ? Tant que non tranché, elles sont retirées de l'Acte 5.
 7. **Adresse canonique** : `supordo.com` ou `www.supordo.com` ?
-8. **Espace client sur téléphone** : peut-on le montrer, ou attend-on une vérification d'ergonomie ?
+8. **Ergonomie mobile de l'espace client** — devenue un point de contrôle du Lot 3, plus une simple question. À vérifier réellement : création et modification d'une réalisation, ajout d'une photo, titre, ville, service, publication. Si l'expérience n'est pas exploitable, la représentation de l'Acte 4 est adaptée honnêtement.
+9. **Création initiale du site** : intervention SUPORDO, automatisation, génération assistée, validation humaine, nombre d'allers-retours, délai. Cette réponse conditionne l'Acte 5, l'offre et `/demarrer`.
+10. **Publication** : pour chaque contenu modifiable — saisie par le client, validation éventuelle, publication immédiate ou non, intervention SUPORDO éventuelle. **Aucune formulation ne doit laisser croire à une publication automatique si ce n'est pas le comportement réel.**
+11. **Demandes reçues du site artisan** : où elles arrivent, qui les reçoit, si elles sont conservées, où elles sont consultables. **Ne jamais présenter cela comme un outil de gestion de clientèle si le produit ne le fait pas.**
+12. **Libellé de l'action principale** : à figer avant l'activation des boutons, et identique partout.
+13. **Inventaire des traceurs** : mesure d'audience, pixels, outils marketing, contenus tiers, vidéos, messagerie, autres scripts — détermine s'il faut un mécanisme de consentement.
 
 ---
 
 ## 16. Backlog d'exécution — un seul ordre, cinq lots
 
+### GATE AVANT EXEC — à fournir ou trancher
+
+| À trancher | Bloque |
+|---|---|
+| Traitement complet de `/demarrer` (question 4) | 1.2, 1.3 |
+| Vrai exemple disponible, ou décision de masquer le bouton secondaire (question 3) | 1.6 |
+| Textes légaux fournis | 1.4 |
+| Inventaire initial des traceurs (question 13) | 1.4 pour la page confidentialité |
+| Libellé de l'action principale (question 12) | 1.1, 1.6 |
+
+Les sous-tâches réellement indépendantes commencent sans attendre les autres. Aucun sixième lot n'est créé.
+
 ### LOT 1 — Rendre la page honnête et actionnable
 
-Objectif : plus aucune promesse sans destination, et un parcours de contact qui fonctionne.
-
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 1.1 Nettoyer l'en-tête : retirer CRM et Ressources, ajouter le bouton « Démarrer » | `SupordoHeader.tsx` | — |
+| 1.1 Nettoyer l'en-tête : retirer CRM et Ressources, ajouter l'action principale, rendre « Se connecter » atteignable sur téléphone | `SupordoHeader.tsx` | question 12 |
 | 1.2 Créer `/demarrer` et son formulaire | nouvelle route, nouveau composant | question 4 |
 | 1.3 Créer `/demarrer/confirmation`, non indexée | nouvelle route | 1.2 |
-| 1.4 Créer les deux pages sous `/legal/` | 2 nouvelles routes | textes fournis |
+| 1.4 Créer les deux pages sous `/legal/` | 2 nouvelles routes | textes fournis, question 13 |
 | 1.5 Créer le pied de page de marque | nouveau composant, `SupordoLanding.tsx` | 1.4 |
-| 1.6 Rendre les boutons du Hero actifs | `SupordoHero.tsx` | 1.2, question 3 |
+| 1.6 Activer les boutons du Hero et corriger « sans avoir à gérer votre site » en « sans avoir à construire ni mettre en page votre site » ou équivalent vérifié en contexte. **Le H1 n'est pas touché.** | `SupordoHero.tsx` | 1.2, questions 3 et 12 |
 | 1.7 Déposer ce plan dans `docs/product/plan-directeur-supordo-com.md` | documentation | — |
 
-Validation : aucun élément de menu ni bouton sans destination · une demande réelle arrive à destination · les mentions légales sont accessibles depuis l'accueil · les sites artisans et `/login` strictement inchangés.
+Validation : aucun élément de menu ni bouton sans destination · une demande réelle arrive à destination · les mentions légales sont accessibles depuis le pied de page · un client existant atteint `/login` en un geste sur téléphone · les sites artisans et `/login` strictement inchangés.
 
-### LOT 2 — La preuve appariée (acte 3)
-
-Objectif : montrer la différence SUPORDO sans un mot de jargon.
+### LOT 2 — La preuve appariée, Acte 3, sur un service
 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 2.1 Produire les deux captures sur une même réalisation | médias | questions 5 et 8 |
-| 2.2 Construire l'acte 3 | nouveau composant, `SupordoLanding.tsx` | 2.1, Lot 1 |
+| 2.1 Choisir l'entreprise de démonstration et le service, produire les deux captures | médias | question 5 |
+| 2.2 Construire l'Acte 3 | nouveau composant, `SupordoLanding.tsx` | 2.1, Lot 1 |
 | 2.3 Valider ou écarter la transition de contenu animée | même composant | 2.2 |
 
-Validation : à froid, une personne comprend sans lire que ce qu'elle renseigne apparaît présenté sur son site · aucune interface inventée · sur téléphone, jamais deux interfaces côte à côte.
+Validation : à froid, une personne comprend sans lire que ce qu'elle renseigne est présenté sur son site · l'objet montré est un service, pas une réalisation · aucune interface inventée · sur téléphone, jamais deux interfaces côte à côte.
 
-### LOT 3 — Démonstration signature et partage des rôles (actes 4 et 5)
-
-| Sous-tâche | Concerne | Dépend de |
-|---|---|---|
-| 3.1 Produire la photographie de chantier réelle | médias | Lot 2 |
-| 3.2 Construire l'acte 4, trois états, avec la phrase de généralisation | nouveau composant | 3.1 |
-| 3.3 Construire l'acte 5, deux colonnes | nouveau composant | question 6 |
-
-Validation : trois états et pas cinq · la phrase de généralisation est présente · chaque ligne de l'acte 5 correspond à une capacité PROUVÉE du bloc 1 · aucune automatisation suggérée.
-
-### LOT 4 — Offre et décision (actes 6 et 7)
-
-**Lot bloqué tant que les questions 1 et 2 ne sont pas tranchées.**
+### LOT 3 — Démonstration signature et partage des rôles, Actes 4 et 5
 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 4.1 Construire l'acte 6, offre unique | nouveau composant | questions 1 et 2 |
-| 4.2 Construire l'acte 7, questions-réponses et action finale | nouveau composant | question 2 |
+| 3.0 **Vérifier l'ergonomie mobile de la création de réalisation** : ajout de photo, titre, ville, service, publication | vérification, aucune modification | — |
+| 3.1 Obtenir la photo de chantier réelle et autorisée | médias | accord client |
+| 3.2 Construire l'Acte 4, trois états, même entreprise que l'Acte 3, objet différent | nouveau composant | 3.0, 3.1 |
+| 3.3 Construire l'Acte 5 après validation du tableau formulation → preuve → limite | nouveau composant | questions 6, 9, 10 |
 
-Validation : une seule offre, aucun prix barré, aucune réponse inventée.
+Validation : trois états et pas cinq · aucune scène mobile fictive · la phrase de généralisation présente mais discrète · chaque ligne de l'Acte 5 adossée à une preuve technique et à sa limite · les qualifications absentes tant que la question 6 n'est pas tranchée.
+
+### LOT 4 — Offre et décision, Actes 6 et 7
+
+**Bloqué tant que les questions 1, 2 et 9 ne sont pas tranchées.**
+
+| Sous-tâche | Concerne | Dépend de |
+|---|---|---|
+| 4.1 Construire l'Acte 6, offre unique | nouveau composant | questions 1, 2, 9 |
+| 4.2 Construire l'Acte 7, questions-réponses et action finale | nouveau composant | questions 2, 9, 10 |
+
+Validation : une seule offre, aucun prix barré, aucune réponse inventée, aucun emploi du mot « complet ».
 
 ### LOT 5 — Référencement du domaine SUPORDO et pages secondaires
 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 5.1 Plan de site et adresse canonique du domaine SUPORDO | fichiers de référencement existants | question 7 |
+| 5.1 Adresse canonique et plan de site du domaine SUPORDO | fichiers de référencement existants | question 7 |
 | 5.2 Image d'aperçu social réelle pour l'accueil | médias, en-tête de page | Lot 3 |
-| 5.3 Créer `/exemples` | nouvelle route | accords clients, question 3 |
+| 5.3 Créer `/exemples` | nouvelle route | accords clients |
 | 5.4 Créer `/tarifs` uniquement si l'offre le justifie | nouvelle route | Lot 4 |
+| 5.5 Corriger l'anomalie `llms.txt` sur le domaine SUPORDO — dernière priorité | fichier existant | 5.1 |
 
-Validation : un plan de site propre à SUPORDO · une image d'aperçu réelle · **un site artisan strictement inchangé** · zéro exemple fabriqué.
+Validation : plan de site propre à SUPORDO · aperçu social réel · **un site artisan strictement inchangé** · zéro exemple fabriqué.
 
 ### Hors lots `[REPOUSSÉ]`
 
-La page métier pilote, la correction des formulations du bloc 12, la vérification de contraste de la palette, et le renommage du guide média. Chacune nécessitera son propre feu vert.
+Page métier pilote · remplacement de « faire vivre » · vérification de contraste de la palette · renommage du guide média · conditions générales de vente. Chacun nécessitera son propre feu vert.
 
 ---
 
-## Contradictions résolues
+## Patch appliqué
 
-1. **Indexation des pages légales** — les deux affirmations contradictoires sont supprimées. Doctrine unique : les pages légales sont indexées, seule la page de confirmation est non indexée.
-2. **Deux ordres d'exécution parallèles** — le système P0/P1/P2 est supprimé. Les anciennes références sont devenues les sous-tâches numérotées des cinq lots.
-3. **Adresse des mentions légales SUPORDO** — le nom isolé `/supordo-mentions-legales` est remplacé par le préfixe `/legal/`, qui règle aussi le cas de la confidentialité et de tout document légal ultérieur.
-4. **Forest « réservé au pied de page »** — formulation ambiguë corrigée : Forest reste la couleur des titres partout ; c'est son usage en fond qui est limité à une occurrence par page.
-5. **Statut des règles de design** — les propositions issues de cette analyse ne sont plus présentées au même niveau que les fondations réellement présentes dans le code.
-6. **Page de confirmation** — elle n'était mentionnée qu'en passant ; elle devient une adresse explicite du sitemap.
+Sections modifiées : capacités du produit (service qualifié d'objet de l'Acte 3, qualifications et demandes reçues requalifiées) · anomalies (llms.txt déclassé) · décisions retenues (deux objets distincts pour les Actes 3 et 4) · sitemap (traceurs découplés du paiement, inventaire ajouté) · Acte 3 (objet = service) · Acte 4 (réalisation réservée, point de contrôle mobile) · Acte 5 (tableau formulation → preuve → limite, qualifications retirées) · Acte 7 (« complet » supprimé, deux questions ajoutées) · `/demarrer` (neuf points à définir) · pages légales (accessibilité distinguée de l'indexation) · en-tête (connexion mobile, libellé de l'action) · matrice d'images (cinq catégories, photo éditoriale distinguée de la photo de preuve) · sémantique (« complet » interdit, correction du Hero rapatriée dans le Lot 1) · référencement (« agence web artisan » retirée, ordre de priorité) · risques · questions ouvertes (13 au lieu de 8) · backlog (point de contrôle avant exec, 3.0 ajoutée, 5.5 ajoutée).
 
----
+## Décisions qui restent ouvertes
+
+Tarif · conditions de l'offre · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client · création initiale du site · règles de publication · circuit des demandes reçues · libellé de l'action principale · inventaire des traceurs.
+
+## Impact sur les cinq lots
+
+Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dans le lot. Lot 2 : porte désormais sur un service, plus sur une réalisation. Lot 3 : gagne un point de contrôle bloquant, la vérification mobile, et dépend des questions 9 et 10 pour l'Acte 5. Lot 4 : dépend aussi de la question 9. Lot 5 : accueille la correction `llms.txt` en dernière priorité.
 
 ## Prêt pour EXEC ?
 
-**OUI.** Le Lot 1 peut démarrer.
+**OUI.**
 
-Deux questions doivent être tranchées pendant le Lot 1, sans le bloquer au démarrage : la destination des demandes (question 4) avant la sous-tâche 1.2, et le site utilisé par « Voir un exemple » (question 3) avant la sous-tâche 1.6. Les textes légaux doivent être fournis avant la sous-tâche 1.4. Les sous-tâches 1.1, 1.5 et 1.7 ne dépendent d'aucune décision.
+Peuvent commencer immédiatement : **1.7** (déposer le plan dans le dépôt) et **1.5** dans sa structure, en attendant les adresses légales. **3.0**, la vérification d'ergonomie mobile, peut également être menée dès maintenant en parallèle, puisqu'elle n'exige aucune décision.
 
-Les questions 1 et 2 bloquent uniquement le Lot 4.
+Attendent une décision : 1.1 et 1.6 (libellé de l'action, et disponibilité d'un exemple) · 1.2 et 1.3 (traitement des demandes) · 1.4 (textes légaux et inventaire des traceurs).
