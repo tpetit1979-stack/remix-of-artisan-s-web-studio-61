@@ -22,7 +22,7 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 export const Route = createFileRoute("/demarrer/")({
   loader: async () => {
     const input = await resolveTenantInputForRoute().catch(() => null);
-    if (!input || !isPlatformHost(input.hostname)) throw notFound();
+    if (!input || !isMarketingHost(input.hostname)) throw notFound();
     const { configured } = await getLeadIntakeStatus();
     return { configured };
   },
