@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { resolveTenantInputForRoute, isPlatformHost } from "@/lib/tenant";
+import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
@@ -10,7 +10,7 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 export const Route = createFileRoute("/demarrer/confirmation")({
   loader: async () => {
     const input = await resolveTenantInputForRoute().catch(() => null);
-    if (!input || !isPlatformHost(input.hostname)) throw notFound();
+    if (!input || !isMarketingHost(input.hostname)) throw notFound();
     return null;
   },
   head: () => ({

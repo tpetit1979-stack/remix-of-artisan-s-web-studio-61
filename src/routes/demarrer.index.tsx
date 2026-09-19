@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { resolveTenantInputForRoute, isPlatformHost } from "@/lib/tenant";
+import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
 import { getLeadIntakeStatus, submitSupordoLead } from "@/lib/supordo-lead.functions";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
@@ -22,7 +22,7 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 export const Route = createFileRoute("/demarrer/")({
   loader: async () => {
     const input = await resolveTenantInputForRoute().catch(() => null);
-    if (!input || !isPlatformHost(input.hostname)) throw notFound();
+    if (!input || !isMarketingHost(input.hostname)) throw notFound();
     const { configured } = await getLeadIntakeStatus();
     return { configured };
   },
