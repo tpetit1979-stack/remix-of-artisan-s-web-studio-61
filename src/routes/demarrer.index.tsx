@@ -39,7 +39,7 @@ export const Route = createFileRoute("/demarrer/")({
       ],
     };
   },
-  component: DemarrerPage;
+  component: DemarrerPage,
 });
 
 interface FormState {
