@@ -1,91 +1,57 @@
-# SUPORDO Sites — contre-audit décisionnel V1
+# SUPORDO — 4 territoires créatifs (exploration, aucun build)
 
-Aucun fichier de code modifié, aucun build. Lecture seule.
+Mission : recherche d'identité créative pour la marque SUPORDO. Pas de landing finale, pas de design system, pas de logo, pas de palette définitive. Même contenu de base partout (hero « Un vrai site professionnel pour votre entreprise », CTA « Être rappelé », boucle photo chantier → espace → site, preuves services/zones/réalisations/certifications, « Se connecter » discret). Seule la direction créative change.
 
-## 1. Offre V1 — formulation en une phrase
+Rappel de contexte vérifié : aucune identité SUPORDO n'existe aujourd'hui (login par défaut sans marque ; racine publiée en 404). Les sites artisans gardent leur propre identité par tenant — aucun territoire ne doit les polluer.
 
-> **Un vrai site professionnel pour votre entreprise, plus votre espace SUPORDO pour le faire vivre : vos services, vos zones, vos réalisations et vos photos de chantier.**
+---
 
-Ce que la phrase ne dit pas volontairement : CMS, IA, SEO, plateforme, dashboard.
+## T1 — Document d'atelier
 
-## 2. Matrice de vérité
+- **IDÉE** : la page est un beau document de reportage. La photographie de travail réel est la colonne vertébrale ; le texte se met au service de l'image comme des légendes et annotations de carnet de terrain.
+- **SIGNATURE** : la photo réelle annotée — fines lignes de renvoi, références numérotées (Fig. 01), typographie de légende en retrait. La « preuve documentée » comme geste graphique.
+- **BRAND** : supordo.com comme un magazine de métier : couvertures photo, marges généreuses, asymétrie, aucune grille de cartes.
+- **PRODUCT** : l'espace SUPORDO garde la même encre et les mêmes filets, mais disparaît derrière la fonction ; les annotations deviennent des aides discrètes.
+- **TENANT** : neutre par construction — c'est la photo de l'artisan qui porte la couleur ; le système graphique SUPORDO reste un cadre, pas une teinte imposée.
+- **TEST SANS LOGO** : le couple photo-reportage + annotation fine est un réflexe reconnaissable après quelques expositions, y compris en campagne.
+- **RISQUE** : basculer dans le « beau livre » trop précieux, qui intimide ou semble lent ; exige un stock constant de vraies bonnes photos — un média faible casse tout le territoire.
 
-| Brique | État | Preuve |
-|---|---|---|
-| Site public multi-pages, SSR | **EXISTE** [PROUVÉ REPO] | `src/routes/index.tsx`, `$slug.tsx`, `services.index.tsx`, `services.$serviceSlug.tsx`, `realisations.tsx`, `contact.tsx`, rendu par loader serveur |
-| Espace SUPORDO client | **EXISTE** [PROUVÉ REPO] | `AdminSidebar` : tableau de bord, services, zones, réalisations, équipe, marques, logos partenaires, « Mon site », demandes reçues |
-| Certifications administrables par le client | **MANQUANT** [PROUVÉ REPO] | aucune entrée dans `navItems`; édition uniquement dans `super-admin.tenants.$tenantId.tsx` |
-| Photos → réalisation → site | **EXISTE** [PROUVÉ REPO] | `PortfolioManager` : upload, ville choisie dans les zones déclarées, bascule publier, `content_kind` illustration → `real_project` dès remplacement de l'image ; `isAuthenticPublicPortfolioItem` filtre le public |
-| Le client ne construit pas de pages | **EXISTE** (par conception) | aucun éditeur de blocs/sections dans `src/components/admin/**` |
-| Modifications autonomes | **PARTIEL** | tout est administrable sauf certifications, textes éditoriaux de sections et SEO fin (empilés dans `admin.settings.tsx`) |
-| Production IA du tenant | **PARTIEL** [PROUVÉ REPO] | `super-admin.onboarding.tsx` (6 étapes) + `supabase/functions/generate-tenant` (brief texte → nom, ville, tél, email, hero) ; `CompanySearch` / `google-places` pour les données réelles. L'IA part d'un **brief libre**, pas d'un SIRET : rien ne garantit aujourd'hui qu'un fait non confirmé ne soit pas rédigé |
-| SEO technique | **PARTIEL** | voir §7 |
-| GEO / lisibilité IA | **PARTIEL** | `llms.txt` par tenant (`src/routes/llms[.]txt.ts`) : entreprise, services, zones, certifications, contact. Bénéfice GEO **non démontré** — à traiter comme hygiène, jamais comme argument |
-| Analytics site (visiteurs, clics) | **MANQUANT** [PROUVÉ REPO] | table `analytics_monthly` (visitors, phone_clicks, form_submissions, monthly_score) existe mais **aucune écriture ni lecture** : seule occurrence applicative = `supabase.from("analytics_monthly").delete()` à la suppression d'un tenant. Aucun traçage de clic Appeler / WhatsApp / email |
-| Demandes reçues | **EXISTE** | table `contacts` + écran `/admin/contacts` + `notify-contact` |
-| Google Business Profile | **FUTUR** | `google-places` sert à récupérer des infos/avis, pas de statistiques GBP |
-| Search Console | **FUTUR** | aucune intégration |
+## T2 — Registre
 
-## 3. Les 5 manques réellement importants
+- **IDÉE** : le monde structuré assumé comme esthétique. Les faits réels de l'entreprise (ville, date, service) sont présentés comme des entrées d'un registre tenu avec soin — la donnée métier devient belle.
+- **SIGNATURE** : l'entrée numérotée — lignes réglées, métadonnées tabulaires en monospace, tampon d'accent unique, photos en petites « planches de preuve » légendées.
+- **BRAND** : supordo.com comme un index consultable ; chaque section est un folio. Très distinctif face à n'importe quel SaaS.
+- **PRODUCT** : traduction naturelle et calme — l'espace SUPORDO EST déjà un registre (services, zones, réalisations datées) ; le territoire lui donne une cohérence sans effort.
+- **TENANT** : sans risque de pollution — le registre est la couche SUPORDO ; le site artisan reste libre.
+- **TEST SANS LOGO** : la ligne réglée + numérotation + tampon forment un système propriétaire identifiable même sur un simple devis ou un e-mail.
+- **RISQUE** : la caricature administrative (formulaire d'État, paperasse) ; danger de froideur si la photographie n'apporte pas la chaleur. Aussi le plus difficile à rendre chaleureux sur mobile.
 
-1. **Aucune collecte de résultats.** « Mes résultats » n'a aucune donnée source : ni visiteurs, ni clics Appeler/WhatsApp. Seules les demandes du formulaire existent.
-2. **`canonical` absent partout sauf `/contact`.** En multi-tenant (domaine client + hôte plateforme + `?tenant=slug`), c'est le trou SEO le plus coûteux.
-3. **Certifications non administrables par le client** alors qu'elles sont une preuve centrale du discours.
-4. **Dettes connues bloquantes** : bug SSR dans `$slug.tsx`, `FeaturedServices` qui n'affiche qu'une carte, RLS à corriger sur `tenant_members` / portfolio / Storage média.
-5. **Texte alternatif des images non piloté côté client** et absence de `BreadcrumbList` / `Organization` : les images et l'architecture restent en dessous du niveau « excellent ».
+## T3 — La même photo
 
-## 4. Modèle économique — challenge
+- **IDÉE** : la transformation elle-même est la marque. Une seule photo réelle traverse la page en trois états : chantier → espace SUPORDO → site public. Le dispositif EST le message.
+- **SIGNATURE** : le continuum en trois états — la même image recadrée, reliée par des lignes fines et des numéros d'étape. Mécanique comprise presque sans texte.
+- **BRAND** : supordo.com construit chaque section autour de ce voyage ; campagnes déclinables immédiatement (une photo, trois vies).
+- **PRODUCT** : l'espace devient l'étape 2 visible du dispositif — l'utilisateur reconnaît « l'endroit du milieu » qu'il a vu sur le site.
+- **TENANT** : parfaitement sûr — le dispositif montre les sites artisans sans jamais imposer leur style.
+- **TEST SANS LOGO** : le triptyque « même photo, trois mondes » est un réflexe de marque fort et imitable-difficilement sans le produit derrière.
+- **RISQUE** : le gimmick — si la démonstration visuelle est fausse ou surjouée, la promesse s'effondre ; exige des captures produit réelles et honnêtes. Moins porteur d'émotion seul, il a besoin d'une chaleur typographique ou photo d'appoint.
 
-0 € de création + 49 € HT/mois tient **si et seulement si** le travail humain résiduel par nouveau site descend sous ~2 h.
+## T4 — Signal de chantier
 
-Aujourd'hui, le résiduel réel est : brief à rédiger, contrôle des contenus IA, DNS chez le registrar, connexion du domaine côté hébergement, attente du certificat, saisie des certifications à la place du client (non administrable), premières réalisations (le client n'a pas encore de photos).
+- **IDÉE** : emprunter le langage graphique du marquage de chantier et le rendre élégant — typographie condensée façon pochoir, filets longs comme des traits de marquage, photo duotone contrastée, un accent vif fonctionnel (peinture de traçage) sur neutres calmes.
+- **SIGNATURE** : le filet de marquage + le mot condensé massif ; l'accent vif n'apparaît que pour les repères utiles (étape, CTA), jamais en décoration.
+- **BRAND** : supordo.com à haute tension visuelle — le plus mémorisable et le plus « vu nulle part » des quatre.
+- **PRODUCT** : à diluer fortement — l'espace garde seulement le filet et l'accent fonctionnels ; la typographie reste lisible et calme.
+- **TENANT** : séparation nette car le langage « marqueur » est identifié SUPORDO et n'entre pas dans les thèmes artisans.
+- **TEST SANS LOGO** : la combinaison condensé + filet + accent unique est reconnaissable immédiatement, y compris en affichage ou véhicule.
+- **RISQUE** : la caricature BTP (rubalise, casque, orange partout) que le cadrage interdit explicitement ; peut aussi sembler agressif ou masculin-industriel si la photo et le ton ne contrebalancent pas.
 
-Conséquences : 49 €/mois n'est soutenable qu'avec une rétention longue (amortissement de la mise en route sur 12 mois au moins) ; le poste le plus rentable à automatiser n'est pas le contenu, c'est **le domaine et la mise en ligne**, aujourd'hui entièrement manuels. Si l'installation reste manuelle, préférer 0 € de création **affichée** tout en gardant un engagement de 12 mois plutôt qu'une création à 0 € résiliable au mois.
+---
 
-## 5. Politique de modifications (version artisan, 20 secondes)
+## Prototypes
 
-> **Ce que vous faites vous-même est illimité** : réalisations, photos, services, zones, équipe, informations.
-> **Les petites corrections, on les fait pour vous** : une faute, un numéro, une phrase, une image à remplacer.
-> **Une nouveauté sur mesure fait l'objet d'un devis** avant d'être réalisée — et si elle est utile à tous, elle devient une amélioration de SUPORDO, incluse pour tout le monde.
+Quatre vagues générées (3 variantes par territoire) via l'exploration Design Directions, sans toucher au projet. La comparaison se fait dans les cartes de sélection affichées en conversation.
 
-Jamais le mot « illimité » sur la catégorie B.
+## Après la sélection (hors mission actuelle)
 
-## 6. « Mes résultats » V1 — 5 métriques maximum
-
-| Métrique | Source technique probable | Disponible ? |
-|---|---|---|
-| Demandes reçues | table `contacts` | **maintenant, sans rien ajouter** |
-| Clics pour appeler | événement enregistré côté site au clic sur le lien `tel:` | à construire |
-| Clics WhatsApp | même mécanique sur le bouton WhatsApp | à construire |
-| Visiteurs (visites, pas sessions) | comptage serveur au rendu SSR, sans cookie | à construire |
-| Apparitions sur Google | connexion Google (GBP puis Search Console), OAuth | plus tard |
-
-Règles de présentation : un clic sur « Appeler » se dit **« clics pour appeler »**, jamais « appels ». Un comptage serveur sans cookie ni identifiant évite la bannière de consentement ; toute connexion Google relève du consentement du client, pas du visiteur.
-
-## 7. SEO / GEO — solide vs P0
-
-Déjà solide : rendu serveur réel, URLs propres (`/services/{slug}`, `/{service}-{ville}`), `title` et `meta description` par page issus des données du tenant, `sitemap.xml` / `robots.txt` / `llms.txt` par tenant avec le bon domaine, JSON-LD LocalBusiness enrichi (horaires, zones, certifications) + FAQ + PublicService, pages service × ville adossées aux zones réellement déclarées (pas de génération artificielle), réalisations publiques filtrées sur la preuve réelle.
-
-Lacunes P0 qui empêchent honnêtement de dire « excellent » :
-
-1. `canonical` manquant sur toutes les pages sauf `/contact`.
-2. Aucun `BreadcrumbList`, aucun `Organization`.
-3. `alt` des images non piloté ni exigé côté client (`tenant_media.alt_text` existe mais reste optionnel).
-4. Performance et poids des images non mesurés (aucune conversion WebP/AVIF systématique constatée).
-5. Cohérence NAP non vérifiée entre le site et Google Business Profile.
-6. Bug SSR `$slug.tsx` : tant qu'il existe, l'indexabilité des pages locales n'est pas prouvée.
-
-GEO : la seule stratégie tenable est celle déjà en place — faits réels, entités claires, structuré cohérent avec le visible. Ne rien promettre sur la visibilité dans les IA.
-
-## 8. Landing — 6 séquences maximum
-
-1. **Le site.** « Un vrai site professionnel pour votre entreprise. » — Preuve : un site artisan réel sur un téléphone.
-2. **La différence.** « Et votre espace SUPORDO pour le faire vivre. » — Preuve : espace SUPORDO à côté du site, même contenu des deux côtés.
-3. **La boucle photo (séquence signature).** Presque sans texte. — Preuve : la même photo en 4 temps — chantier, ajoutée dans l'espace, devenue réalisation, visible sur le site.
-4. **Ce que vous renseignez.** « Vous ne construisez pas des pages. » — Preuve : les vraies rubriques de l'espace (services, zones, réalisations, équipe, informations).
-5. **Mes résultats.** « Savoir si votre site sert à quelque chose. » — Preuve : bloc de résultats simple. **À ne montrer que lorsque la collecte existe** ; sinon, s'en tenir aux demandes reçues.
-6. **Passer à l'action.** Un seul CTA de contact, « Se connecter » discret en en-tête.
-
-## Ce que je n'ai pas vérifié
-
-RLS et grants réels en base, performances mesurées, rendu navigateur connecté, données réelles des tenants. Les états ci-dessus reposent sur le repo et les migrations, pas sur une exécution.
+Affiner le ou les territoires retenus, puis seulement : landing, primitives réutilisables, déclinaison Product. « Modern Corporate Precision » reste une hypothèse antérieure, ni validée ni détruite.
