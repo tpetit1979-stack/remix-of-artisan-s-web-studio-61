@@ -522,7 +522,7 @@ Sections modifiées : capacités du produit (service qualifié d'objet de l'Acte
 
 ## Décisions qui restent ouvertes
 
-Tarif · conditions de l'offre · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client · libellé de l'action principale · inventaire des traceurs. (Création initiale du site, règles de publication et circuit des demandes reçues : fermées, voir §18.)
+Tarif · conditions de l'offre · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client. (Libellé de l'action principale et inventaire des traceurs : fermés, voir §17. Création initiale du site, règles de publication et circuit des demandes reçues : fermées, voir §18.)
 
 ## Impact sur les cinq lots
 
