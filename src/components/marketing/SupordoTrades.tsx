@@ -3,6 +3,10 @@
  *
  * Illustrations are SUPORDO-owned brand assets served from the CDN through
  * `.asset.json` pointers. No tenant media is used here.
+ *
+ * Fond Mint-100 ("Warm très léger") : casse l'adjacence de deux fonds blancs
+ * consécutifs avec l'Acte 3 juste après, dans le rythme de page Hero(Warm) →
+ * Métiers(Mint-100) → Acte 3(blanc) → Acte 5(Warm) → Acte 6(blanc) → Acte 7(Warm).
  */
 import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json";
 import plombier from "@/assets/marketing/trades/plombier.webp.asset.json";
@@ -35,7 +39,7 @@ const TRADES = [
 export function SupordoTrades() {
   return (
     <section
-      className="overflow-hidden border-t border-[var(--supordo-mint-200)] bg-white py-16 md:py-20 lg:py-24"
+      className="overflow-hidden border-t border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] py-16 md:py-20 lg:py-24"
       aria-labelledby="supordo-trades-title"
     >
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
@@ -50,9 +54,9 @@ export function SupordoTrades() {
             Un site professionnel adapté à votre activité.
           </h2>
           <p className="mt-5 max-w-[650px] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Votre métier, vos services, vos réalisations.
+            Votre métier, vos prestations, vos réalisations.
             <br />
-            SUPORDO vous donne une base professionnelle que vous pouvez faire vivre simplement.
+            SUPORDO vous donne une base professionnelle que vous pouvez tenir à jour simplement.
           </p>
         </div>
 

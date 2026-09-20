@@ -5,6 +5,8 @@
  * Famille "Partage typographique" (plan §11) : densité faible, aucun visuel,
  * jamais présentée comme une liste de fonctions à cocher — deux colonnes de
  * phrases courtes et factuelles, pas une grille de features avec icônes.
+ * Petits marqueurs ronds (pas des icônes, pas des cases à cocher) pour
+ * alléger la lecture par rapport à une liste à puces classique.
  *
  * H2 : "Vous êtes sur le terrain. Nous nous occupons du site." — formulation
  * transversale (couvreur, plombier, ramoneur, technicien PAC, paysagiste,
@@ -67,17 +69,18 @@ export function SupordoActFive() {
           </h2>
         </div>
 
-        <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-2 lg:gap-16">
+        <div className="mt-10 grid gap-12 lg:mt-14 lg:grid-cols-2 lg:gap-20">
           <div>
-            <h3 className="text-lg font-bold text-[var(--supordo-forest)]">
+            <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-green)]">
               SUPORDO s'occupe de…
             </h3>
-            <ul className="mt-5 space-y-4">
+            <ul className="mt-5 space-y-3.5">
               {SUPORDO_ITEMS.map((item) => (
                 <li
                   key={item}
-                  className="border-t border-[var(--supordo-mint-200)] pt-4 text-base leading-relaxed text-[var(--supordo-graphite)] first:border-t-0 first:pt-0"
+                  className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
                 >
+                  <span aria-hidden="true" className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-green)]" />
                   {item}
                 </li>
               ))}
@@ -85,15 +88,16 @@ export function SupordoActFive() {
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-[var(--supordo-forest)]">
+            <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-forest)]/70">
               Vous gardez la main sur…
             </h3>
-            <ul className="mt-5 space-y-4">
+            <ul className="mt-5 space-y-3.5">
               {ARTISAN_ITEMS.map((item) => (
                 <li
                   key={item}
-                  className="border-t border-[var(--supordo-mint-200)] pt-4 text-base leading-relaxed text-[var(--supordo-graphite)] first:border-t-0 first:pt-0"
+                  className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
                 >
+                  <span aria-hidden="true" className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-forest)]/40" />
                   {item}
                 </li>
               ))}

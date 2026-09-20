@@ -12,9 +12,11 @@
  *
  * Ni capture de l'espace ni capture de la page publique n'ont pu être
  * produites depuis cet environnement (réseau sortant vers Supabase bloqué
- * par la politique de sandbox — vérifié, pas supposé). Les deux emplacements
- * réservent leur ratio et leur rayon final, sur le même principe que le
- * slot photo du Hero : jamais une interface fictive dessinée à la place.
+ * par la politique de sandbox — vérifié, pas supposé). En attendant ces
+ * vraies captures, les deux blocs montrent le même contenu réel deux fois,
+ * dans deux traitements typographiques distincts (extrait de page publique
+ * vs fiche structurée) — jamais une interface reconstituée qui imiterait
+ * le vrai produit ou un faux navigateur.
  *
  * Le nom du client (EASYDEP) n'est délibérément pas affiché : la question
  * du consentement à afficher un client réel reste ouverte (plan-directeur
@@ -57,34 +59,48 @@ export function SupordoActThree({
             recadrée. Desktop : asymétrie 2/3 (site public) / 1/3 (espace),
             jamais côte à côte à égalité — le site public reste dominant. */}
         <div className="mt-10 flex flex-col gap-6 lg:mt-12 lg:flex-row lg:items-start lg:gap-8">
-          {/* Site public réel — deux tiers du poids visuel */}
+          {/* Extrait du site public — deux tiers du poids visuel, typographie
+              de page réelle : jamais un cadre de navigateur, jamais une UI. */}
           <div className="order-1 lg:w-2/3">
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:aspect-[16/10]">
-              <div className="flex h-full w-full flex-col justify-end p-5 md:p-6">
-                <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                  Page publique du service — capture à fournir
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                  {serviceName}
-                </p>
-              </div>
+            <div className="flex h-full min-h-[280px] w-full flex-col justify-center overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-white p-8 md:p-10 lg:min-h-[360px] lg:p-12">
+              <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+                Extrait de votre site public
+              </p>
+              <h3 className="mt-3 text-xl font-extrabold leading-snug text-[var(--supordo-forest)] sm:text-2xl lg:text-[1.75rem]">
+                {serviceName}
+              </h3>
+              <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-[var(--supordo-graphite)] lg:text-base">
+                {serviceDescription}
+              </p>
             </div>
           </div>
 
-          {/* Fiche dans l'espace SUPORDO — un tiers, recadrée sur les champs utiles */}
+          {/* Fiche dans l'espace SUPORDO — un tiers, présentée comme une
+              information structurée (label / valeur), jamais un widget
+              d'interface reconstitué. */}
           <div className="order-2 lg:w-1/3">
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)] lg:aspect-square">
-              <div className="flex h-full w-full flex-col justify-end p-5 md:p-6">
-                <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                  Fiche du service dans l'espace — capture à fournir
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                  {serviceName}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-[var(--supordo-graphite)]">
-                  {serviceDescription}
-                </p>
-              </div>
+            <div className="flex h-full min-h-[280px] w-full flex-col justify-center overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)] p-6 md:p-8 lg:min-h-[360px]">
+              <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+                Dans votre espace SUPORDO
+              </p>
+              <dl className="mt-4 space-y-3">
+                <div className="border-t border-[var(--supordo-mint-200)] pt-3 first:border-t-0 first:pt-0">
+                  <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+                    Prestation
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
+                    {serviceName}
+                  </dd>
+                </div>
+                <div className="border-t border-[var(--supordo-mint-200)] pt-3">
+                  <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+                    Description
+                  </dt>
+                  <dd className="mt-1 text-sm leading-relaxed text-[var(--supordo-graphite)]">
+                    {serviceDescription}
+                  </dd>
+                </div>
+              </dl>
             </div>
           </div>
         </div>

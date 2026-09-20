@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json";
 
 /**
  * SUPORDO Sites hero — marketing surface only (supordo.com).
@@ -9,11 +10,13 @@ import { Link } from "@tanstack/react-router";
  * Le sous-titre actuel est aligné avec la doctrine V1 (§20-§21) : aucune IA,
  * vocabulaire métier (prestations, secteur, chantiers), verbe "indiquer".
  *
- * The right-hand column is a photography slot, not decoration: SUPORDO owns
- * no definitive trade photograph yet, and an artisan tenant's own photo is
- * their asset, never SUPORDO marketing material. The slot keeps the final
- * image's footprint (same column, same aspect ratio, same radius) so dropping
- * the real photograph in later needs no change to this composition.
+ * Image de droite : visuel TEMPORAIRE. Aucune photographie éditoriale de
+ * marque n'existe encore pour le Hero (matrice visuelle du plan) ; en
+ * attendant, l'illustration "chauffagiste" — normalement réservée à la
+ * section Métiers — est réutilisée ici pour remplacer le rectangle vide,
+ * uniquement le temps qu'une vraie photographie éditoriale soit produite.
+ * Remplacer par une vraie photo dès qu'elle existe ; ne pas la présenter
+ * comme une réalisation client.
  *
  * One action only: "Demander mon site", and only when a request can really be
  * sent. "Voir un exemple" stays absent until a real example site exists — no
@@ -49,14 +52,16 @@ export function SupordoHero({ leadIntakeReady = false }: { leadIntakeReady?: boo
           )}
         </div>
 
-        {/* Photography slot — asset still to be supplied */}
+        {/* Visuel temporaire — voir commentaire de tête */}
         <div>
           <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:max-h-[560px] lg:min-h-[420px]">
-            <div className="flex h-full w-full items-end p-5 md:p-6">
-              <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                Photographie métier SUPORDO — à fournir
-              </p>
-            </div>
+            <img
+              src={chauffagiste.url}
+              alt="Chauffagiste installant une pompe à chaleur"
+              loading="eager"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </div>
