@@ -76,10 +76,10 @@ export function SupordoActSeven({ leadIntakeReady = false }: { leadIntakeReady?:
         </dl>
 
         {leadIntakeReady && (
-          <div className="mt-10 lg:mt-12">
+          <div className="mt-12 border-t border-[var(--supordo-mint-200)] pt-10 lg:mt-14 lg:pt-12">
             <Link
               to="/demarrer"
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
             >
               Demander mon site
             </Link>

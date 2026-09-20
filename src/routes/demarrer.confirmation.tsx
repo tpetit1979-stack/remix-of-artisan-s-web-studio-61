@@ -40,7 +40,7 @@ function ConfirmationPage() {
           </p>
           <Link
             to="/"
-            className="mt-8 inline-flex min-h-12 items-center justify-center rounded-[6px] border border-[var(--supordo-mint-200)] bg-white px-5 text-sm font-semibold text-[var(--supordo-forest)] transition-colors hover:border-[var(--supordo-green)] hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+            className="mt-8 inline-flex min-h-12 items-center justify-center rounded-[6px] border border-[var(--supordo-mint-200)] bg-white px-5 text-sm font-semibold text-[var(--supordo-forest)] transition-colors hover:border-[var(--supordo-green)] hover:text-[var(--supordo-green)] active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
           >
             Retour à l'accueil
           </Link>

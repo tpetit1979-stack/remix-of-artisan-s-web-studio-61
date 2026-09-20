@@ -284,7 +284,7 @@ function DemarrerPage() {
               <button
                 type="submit"
                 disabled={sending}
-                className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] disabled:opacity-60 sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] disabled:opacity-60 sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
               >
                 {sending ? "Envoi en cours…" : "Envoyer ma demande"}
               </button>

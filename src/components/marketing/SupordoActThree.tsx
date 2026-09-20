@@ -49,7 +49,7 @@ export function SupordoActThree({
           >
             Ce que vous indiquez dans SUPORDO se retrouve sur votre site.
           </h2>
-          <p className="mt-5 max-w-[650px] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
+          <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
             Par exemple, vous indiquez la prestation « {serviceName} » dans
             votre espace ; elle est ensuite présentée sur votre site public.
           </p>
@@ -58,7 +58,7 @@ export function SupordoActThree({
         {/* Mobile : résultat public d'abord, pleine largeur ; fiche ensuite,
             recadrée. Desktop : asymétrie 2/3 (site public) / 1/3 (espace),
             jamais côte à côte à égalité — le site public reste dominant. */}
-        <div className="mt-10 flex flex-col gap-6 lg:mt-12 lg:flex-row lg:items-start lg:gap-8">
+        <div className="mt-10 flex flex-col gap-6 lg:mt-14 lg:flex-row lg:items-start lg:gap-10">
           {/* Extrait du site public — deux tiers du poids visuel, typographie
               de page réelle : jamais un cadre de navigateur, jamais une UI. */}
           <div className="order-1 lg:w-2/3">

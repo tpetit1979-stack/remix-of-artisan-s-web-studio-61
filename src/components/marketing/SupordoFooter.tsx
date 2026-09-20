@@ -28,7 +28,7 @@ export function SupordoFooter() {
             <li>
               <Link
                 to="/"
-                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline active:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
               >
                 SUPORDO Sites
               </Link>
@@ -42,7 +42,7 @@ export function SupordoFooter() {
             <li>
               <Link
                 to="/legal/mentions-legales"
-                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline active:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
               >
                 Mentions légales
               </Link>
@@ -50,7 +50,7 @@ export function SupordoFooter() {
             <li>
               <Link
                 to="/legal/confidentialite"
-                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline active:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
               >
                 Confidentialité
               </Link>
@@ -67,7 +67,7 @@ export function SupordoFooter() {
               <Link
                 to="/login"
                 search={{ redirect: "" }}
-                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline active:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
               >
                 Se connecter
               </Link>

@@ -69,7 +69,7 @@ export function SupordoActFive() {
           </h2>
         </div>
 
-        <div className="mt-10 grid gap-12 lg:mt-14 lg:grid-cols-2 lg:gap-20">
+        <div className="mt-10 grid gap-12 lg:mt-14 lg:grid-cols-2 lg:gap-16">
           <div>
             <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-green)]">
               SUPORDO s'occupe de…
@@ -87,7 +87,7 @@ export function SupordoActFive() {
             </ul>
           </div>
 
-          <div>
+          <div className="lg:border-l lg:border-[var(--supordo-mint-200)] lg:pl-16">
             <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-forest)]/70">
               Vous gardez la main sur…
             </h3>

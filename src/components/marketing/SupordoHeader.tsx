@@ -31,7 +31,7 @@ export function SupordoHeader({ leadIntakeReady = false }: { leadIntakeReady?: b
           {leadIntakeReady && (
             <Link
               to="/demarrer"
-              className="inline-flex min-h-11 items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-4 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] md:min-h-12 md:px-5 md:text-[15px]"
+              className="inline-flex min-h-11 items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-4 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] md:min-h-12 md:px-5 md:text-[15px]"
             >
               Demander mon site
             </Link>
@@ -39,7 +39,7 @@ export function SupordoHeader({ leadIntakeReady = false }: { leadIntakeReady?: b
           <Link
             to="/login"
             search={{ redirect: "" }}
-            className="inline-flex min-h-11 items-center justify-center rounded-[6px] px-3 text-sm font-medium text-[var(--supordo-graphite)] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] md:min-h-12 md:px-4 md:text-[15px]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[6px] px-3 text-sm font-medium text-[var(--supordo-graphite)] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] hover:underline active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] md:min-h-12 md:px-4 md:text-[15px]"
           >
             Se connecter
           </Link>
