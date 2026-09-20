@@ -18,10 +18,12 @@
  * ligne de cet acte (elles ne sont plus une promesse centrale de l'Acte 5).
  *
  * Côté artisan : prestations, secteur d'intervention, réalisations,
- * partenaires, coordonnées ont un effet public réel et immédiat une fois
- * publiés par le client. Équipe formulée prudemment : l'affichage général
- * reste conditionné par `site_settings.team_presentation_mode`, verrouillé
- * au super_admin — d'où "lorsque son affichage est activé sur le site".
+ * partenaires et coordonnées ont un rendu public ou un effet public réel
+ * selon leur comportement propre — pas tous immédiats de la même façon
+ * (voir plan-directeur §1 et §4, Acte 5, question 10 fermée). Équipe
+ * formulée prudemment : l'affichage général reste conditionné par
+ * `site_settings.team_presentation_mode`, verrouillé au super_admin —
+ * d'où "lorsque son affichage est activé sur le site".
  *
  * Volontairement absents : marques (aucun rendu public n'existe aujourd'hui),
  * certifications (décision produit non tranchée), toute mention de délai ou

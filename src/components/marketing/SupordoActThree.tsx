@@ -1,6 +1,6 @@
 /**
- * Acte 3 — "Ce que vos clients voient, ce que vous renseignez"
- * (plan-directeur-supordo-com.md §4, Acte 3).
+ * Acte 3 — "Ce que vous indiquez dans SUPORDO se retrouve sur votre site."
+ * (plan-directeur-supordo-com.md §4, Acte 3, doctrine vocabulaire §20-§21).
  *
  * Preuve appariée : un même service, réellement enregistré dans SUPORDO,
  * réellement présenté sur le site public du client. Vérifié en base

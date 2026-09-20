@@ -22,7 +22,7 @@ Source de vérité unique avant les prompts d'exécution. Aucun fichier du produ
 
 ### Composants marketing
 
-`SupordoLanding` assemble `SupordoHeader` → `SupordoHero` → `SupordoTrades`. Rien d'autre. Aucun pied de page.
+`SupordoLanding` assemble `SupordoHeader` → `SupordoHero` → `SupordoTrades` → `SupordoActThree` → `SupordoActFive` → `SupordoFooter`.
 
 ### Séparation des trois couches — conforme
 

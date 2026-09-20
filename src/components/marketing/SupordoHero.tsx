@@ -3,10 +3,11 @@ import { Link } from "@tanstack/react-router";
 /**
  * SUPORDO Sites hero — marketing surface only (supordo.com).
  *
- * Copy is fixed by the brand and must not be rephrased here; the H1 is
- * untouched. Only the ambiguous line about "gérer votre site" was corrected,
- * since SUPORDO does not run the business's site content for them — it spares
- * them building and laying it out.
+ * H1 actuellement implémenté : "Un vrai site pro pour votre entreprise."
+ * Reste [À FIGER] dans le plan directeur (plan-directeur-supordo-com.md) —
+ * c'est la cible retenue pour cette branche, pas une décision définitive.
+ * Le sous-titre actuel est aligné avec la doctrine V1 (§20-§21) : aucune IA,
+ * vocabulaire métier (prestations, secteur, chantiers), verbe "indiquer".
  *
  * The right-hand column is a photography slot, not decoration: SUPORDO owns
  * no definitive trade photograph yet, and an artisan tenant's own photo is
