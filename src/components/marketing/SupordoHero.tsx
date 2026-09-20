@@ -28,11 +28,12 @@ export function SupordoHero({ leadIntakeReady = false }: { leadIntakeReady?: boo
             SUPORDO SITES
           </p>
           <h1 className="mt-5 max-w-[17ch] text-[2.25rem] font-extrabold leading-[1.08] tracking-[-0.02em] text-[var(--supordo-forest)] sm:text-[2.75rem] lg:mt-6 lg:text-[3.5rem]">
-            Un vrai site pro. Un espace simple pour le faire vivre.
+            Un vrai site pro pour votre entreprise.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--supordo-graphite)] lg:mt-7 lg:text-lg">
-            Ajoutez vos services, vos zones et vos réalisations. Publiez vos photos
-            de chantier sans avoir à construire ni mettre en page votre site.
+            SUPORDO prépare votre site et s'occupe de la partie technique. Vous
+            indiquez vos prestations, votre secteur et les chantiers que vous
+            souhaitez montrer.
           </p>
 
           {leadIntakeReady && (

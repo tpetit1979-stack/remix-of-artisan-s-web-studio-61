@@ -45,11 +45,11 @@ export function SupordoActThree({
             id="supordo-act3-title"
             className="mt-4 text-[2rem] font-extrabold leading-[1.12] text-[var(--supordo-forest)] sm:text-[2.5rem] lg:text-[3rem]"
           >
-            Ce que vous renseignez est présenté proprement à vos clients.
+            Ce que vous indiquez dans SUPORDO se retrouve sur votre site.
           </h2>
           <p className="mt-5 max-w-[650px] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Un exemple réel : le service « {serviceName} », renseigné une fois
-            dans l'espace, apparaît identique sur le site.
+            Par exemple, vous indiquez la prestation « {serviceName} » dans
+            votre espace ; elle est ensuite présentée sur votre site public.
           </p>
         </div>
 
