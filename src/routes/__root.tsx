@@ -188,7 +188,9 @@ function RootComponent() {
   // they are SUPORDO's own pages, so a tenant theme or a tenant "demander un
   // devis" bar has nothing to do there. Artisan routes are untouched.
   const onMarketingRoute =
-    location.pathname === "/demarrer" || location.pathname.startsWith("/demarrer/");
+    location.pathname === "/demarrer" ||
+    location.pathname.startsWith("/demarrer/") ||
+    location.pathname.startsWith("/legal/");
   const withoutTenantChrome = onAdminRoute || isPlatformLanding || onMarketingRoute;
   return (
     <QueryClientProvider client={queryClient}>

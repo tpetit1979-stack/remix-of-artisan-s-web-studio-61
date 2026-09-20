@@ -3,15 +3,18 @@ import { Link } from "@tanstack/react-router";
 /**
  * SUPORDO brand footer — marketing surfaces only (supordo.com).
  *
- * Every entry here has a real destination. "Exemples", "Tarifs", the legal
- * pages and any future product are deliberately absent: their routes do not
- * exist yet, and a footer link without a page is exactly the dishonesty this
- * lot removes. They are added in the lot that creates their page.
+ * Every entry here has a real destination. "Exemples", "Tarifs" and any
+ * future product are deliberately absent: their routes do not exist yet
+ * (Exemples needs real, authorized client sites ; Tarifs has no content
+ * that isn't already on the home Acte 6), and a footer link without a page
+ * is exactly the dishonesty this lot removes. Legal pages are real routes
+ * (/legal/mentions-legales, /legal/confidentialite), added here now that
+ * they exist.
  */
 export function SupordoFooter() {
   return (
     <footer className="bg-[var(--supordo-forest)] text-white/80">
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-12 md:grid-cols-3 md:px-8 md:py-16">
+      <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-12 md:grid-cols-4 md:px-8 md:py-16">
         <div className="md:col-span-1">
           <p className="text-lg font-extrabold tracking-[-0.02em] text-white">SUPORDO</p>
           <p className="mt-3 max-w-xs text-sm leading-relaxed">
@@ -25,9 +28,31 @@ export function SupordoFooter() {
             <li>
               <Link
                 to="/"
-                className="inline-flex min-h-11 items-center rounded-[6px] transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
               >
                 SUPORDO Sites
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/60">Légal</p>
+          <ul className="mt-4 space-y-3 text-sm">
+            <li>
+              <Link
+                to="/legal/mentions-legales"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+              >
+                Mentions légales
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/legal/confidentialite"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+              >
+                Confidentialité
               </Link>
             </li>
           </ul>
@@ -42,7 +67,7 @@ export function SupordoFooter() {
               <Link
                 to="/login"
                 search={{ redirect: "" }}
-                className="inline-flex min-h-11 items-center rounded-[6px] transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
               >
                 Se connecter
               </Link>

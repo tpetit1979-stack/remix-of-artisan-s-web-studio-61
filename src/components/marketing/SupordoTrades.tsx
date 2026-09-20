@@ -70,7 +70,7 @@ export function SupordoTrades() {
                 key={trade.name}
                 className="w-[70vw] max-w-[300px] shrink-0 snap-start md:w-[300px] lg:w-[268px]"
               >
-                <article className="overflow-hidden rounded-[6px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)]">
+                <article className="overflow-hidden rounded-[6px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)] transition-colors duration-200 hover:border-[var(--supordo-green)]/40">
                   <div className="aspect-[4/5] bg-[var(--supordo-mint-100)]">
                     <img
                       src={trade.image}
