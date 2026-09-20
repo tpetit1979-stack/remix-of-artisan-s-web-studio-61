@@ -144,6 +144,8 @@ Preuve : un même service — par exemple « Installation de poêle à bois » �
 
 **Dépendance obligatoire avant production des captures** : vérifier dans le produit réel que le service choisi alimente effectivement une présentation publique identifiable — on doit retrouver côté public le même nom de service, le contenu correspondant, et une structure reconnaissable comme issue de ce service. Si cette correspondance n'existe pas réellement, **ne fabriquer aucune relation artificielle « fiche → page »** : réévaluer l'objet de l'Acte 3 à partir d'une autre capacité réellement branchée au site public.
 
+Les futures captures définitives de l'Acte 3 devront provenir du même tenant EASYDEP (voir §22) et être sélectionnées / recadrées proprement — jamais une capture pleine page du site EASYDEP.
+
 Fonction de l'acte : expliquer la correspondance entre une donnée renseignée et sa présentation publique. Ton : produit, compréhension.
 
 Desktop : composition asymétrique, le site public occupe environ deux tiers du poids visuel, la capture de l'espace un tiers, sur fond blanc. Aucune flèche, aucune numérotation, aucun cadre de navigateur : le lien est le contenu identique.
@@ -167,6 +169,8 @@ Fonction de l'acte : raconter une situation de terrain et sa transformation en p
 **Règle Acte 3 ≠ Acte 4** : les deux actes ne se distinguent pas seulement par l'objet montré, mais par leur fonction et leur composition. Ne pas réutiliser la même composition, le même rythme, le même type de titre ni la même mise en scène.
 
 **Dépendance bloquante** : la représentation de l'étape « fiche réalisation » dépend de la vérification d'ergonomie mobile (question 8). Le scénario « chantier terminé » suggère naturellement une action sur le terrain, donc sur téléphone. Si l'expérience mobile n'est pas suffisamment exploitable, **aucune scène mobile fictive ne sera fabriquée** : la représentation sera honnêtement adaptée, par exemple en montrant l'étape sur ordinateur.
+
+**Statut technique** : `SupordoActFour.tsx` `[FAIT — STRUCTURE TECHNIQUE]` — le composant existe, sans donnée fictive, sans EASYDEP en dur, alimenté uniquement par des props requises. Il reste volontairement **non monté** dans `SupordoLanding.tsx` : aucun asset définitif n'est branché, aucune réalisation n'est encore sélectionnée, et le montage reste bloqué tant que la sélection éditoriale, la production des captures et l'autorisation publique (voir §22) ne sont pas réunies.
 
 ### Acte 5 — Qui fait quoi
 
@@ -479,7 +483,9 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 2. **Conditions de l'offre** : engagement, propriété du nom de domaine, cas d'un domaine déjà détenu, résiliation, récupération des contenus, support inclus, modifications comprises, suppléments facturés. Direction non tranchée, à titre indicatif : le nom de domaine devrait idéalement rester la propriété de l'entreprise cliente — préférence énoncée, pas une décision.
 3. **« Voir un exemple »** : quel site client réel, avec quel accord écrit ? Sans réponse, le bouton reste masqué en V1 — ne bloque plus le Lot 1.
 4. **Traitement de `/demarrer` — partiellement tranché.** *Architecture RETENUE* : envoi par e-mail, aucune nouvelle table marketing, réutilisation de l'infrastructure d'envoi existante via une fonction serveur adaptée. **L'absence de stockage en base ne signifie pas absence de traitement ni de conservation : les informations du formulaire sont transmises et temporairement conservées dans la messagerie de destination, selon une règle documentée.** *Paramètres opérationnels encore à fournir* : destinataire, expéditeur, personnes ayant accès, durée ou règle de conservation, information sur les données personnelles, anti-spam, comportement en erreur.
-5. **Captures produit** : compte de démonstration dédié, ou capture d'un client réel avec accord ?
+5. **Captures produit** — question désormais scindée en deux parts distinctes :
+   - **Tenant de démonstration** — **fermée, voir §22.** EASYDEP reste l'entreprise de démonstration commune aux Actes 3 et 4 ; aucun tenant de démonstration séparé n'est créé.
+   - **Autorisation publique des éléments EASYDEP** `[OUVERT]` : toute utilisation publique de photos, identité, données ou captures EASYDEP sur supordo.com reste conditionnée à l'accord explicite du propriétaire concerné, jusqu'à confirmation.
 6. **Certifications** : assume-t-on publiquement qu'elles sont saisies par SUPORDO ? Tant que non tranché, elles sont retirées de l'Acte 5.
 7. **Adresse canonique** : `supordo.com` ou `www.supordo.com` ?
 8. **Ergonomie mobile de l'espace client** — devenue un point de contrôle du Lot 3, plus une simple question. À vérifier réellement : création et modification d'une réalisation, ajout d'une photo, titre, ville, service, publication. Si l'expérience n'est pas exploitable, la représentation de l'Acte 4 est adaptée honnêtement.
@@ -520,7 +526,7 @@ Validation : aucun élément de menu ni bouton sans destination · une demande r
 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 2.1 Choisir l'entreprise de démonstration et le service, produire les deux captures | médias | question 5 |
+| 2.1 Choisir le service EASYDEP et produire les deux captures (tenant déjà décidé, voir §22) | médias | autorisation de la question 5 |
 | 2.2 Construire l'Acte 3 | nouveau composant, `SupordoLanding.tsx` | 2.1, Lot 1 |
 | 2.3 Valider ou écarter la transition de contenu animée | même composant | 2.2 |
 
@@ -531,8 +537,8 @@ Validation : à froid, une personne comprend sans lire que ce qu'elle renseigne 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
 | 3.0 **Vérifier l'ergonomie mobile de la création de réalisation** : ajout de photo, titre, ville, service, publication | vérification, aucune modification | — |
-| 3.1 Obtenir la photo de chantier réelle et autorisée | médias | accord client |
-| 3.2 Construire l'Acte 4, trois états, même entreprise que l'Acte 3, objet différent | nouveau composant | 3.0, 3.1 |
+| 3.1 Sélectionner la réalisation EASYDEP (hors contenus de test) et obtenir l'autorisation, puis produire la photo/les captures | médias | autorisation de la question 5 (voir §22) |
+| 3.2 Monter l'Acte 4 dans `SupordoLanding.tsx` — composant déjà construit (`SupordoActFour.tsx`, `[FAIT — STRUCTURE TECHNIQUE]`) | `SupordoLanding.tsx` | 3.0, 3.1 |
 | 3.3 Construire l'Acte 5 après validation du tableau formulation → preuve → limite | nouveau composant | question 6 (questions 9, 10 fermées, voir §18) |
 
 Validation : trois états et pas cinq · aucune scène mobile fictive · la phrase de généralisation présente mais discrète · chaque ligne de l'Acte 5 adossée à une preuve technique et à sa limite · les qualifications absentes tant que la question 6 n'est pas tranchée.
@@ -781,3 +787,47 @@ Précise et corrige le Gate Doctrine commerciale et sémantique V1 (§20) sur tr
 ### Portée
 
 Ce gate ne ferme aucune question numérotée du §15. Il ne transforme aucune copy `[À FIGER]` en `[RETENU]` — même réserve que le §20.
+
+---
+
+## 22. Gate Preuve EASYDEP — fermé le 20/09/2026
+
+Décision humaine `[RETENU]`, non technique — `[ACTÉ CONTEXTE]`. Ferme la partie « tenant » de la question 5 (§15) ; sa partie « autorisation » reste ouverte.
+
+### Décision
+
+EASYDEP reste l'entreprise de démonstration commune aux Actes 3 et 4 de la landing SUPORDO. Aucun tenant de démonstration séparé n'est créé pour produire les preuves marketing. EASYDEP permet déjà de démontrer la relation réelle entre l'espace d'administration SUPORDO, les informations saisies par l'entreprise, et le site public réellement généré par SUPORDO Sites — exactement ce que les Actes 3 et 4 doivent montrer.
+
+### Trois couches à ne jamais confondre
+
+- **SUPORDO.com** : la landing commerciale de SUPORDO. Elle explique le produit et sélectionne des preuves visuelles ciblées — elle ne montre jamais une page entière d'un tenant.
+- **SUPORDO Sites** : le produit lui-même — back-office artisan (espace client) et rendu public multi-tenant.
+- **EASYDEP** : une entreprise/tenant réelle utilisée comme cas de démonstration du fonctionnement réel de SUPORDO Sites. EASYDEP n'est pas la landing SUPORDO, et la landing SUPORDO n'est pas le site EASYDEP. Les captures EASYDEP servent uniquement à prouver le mécanisme du produit, jamais à présenter EASYDEP comme un client de référence nommé publiquement.
+
+### Doctrine des captures
+
+La landing n'a pas besoin de montrer des captures pleine page du site EASYDEP. Les preuves marketing peuvent et doivent être recadrées sur les seuls éléments nécessaires à la démonstration :
+- **Acte 3** : information/prestation dans SUPORDO → même prestation sur le site EASYDEP.
+- **Acte 4** : travail/réalisation réelle → fiche réalisation dans SUPORDO → même réalisation sur le site EASYDEP.
+
+Le cadrage élimine les éléments sans rapport avec la preuve démontrée. Ce n'est pas une falsification : le contenu et le rendu montrés doivent rester réels et issus du produit réel. Interdit : reconstruire une fausse UI, retoucher le contenu pour faire croire à une fonction inexistante, présenter une capture fictive comme réelle.
+
+### Maturité du générateur
+
+Le fait que certaines parties du site généré EASYDEP soient encore imparfaites ne bloque pas l'utilisation de preuves ciblées si la mécanique montrée est réelle et fonctionnelle. La landing vend le fonctionnement réel du produit, pas la perfection de chaque page du tenant de démonstration. En revanche, les anomalies manifestes, contenus de test ou éléments graphiques non maîtrisés ne doivent jamais apparaître dans les captures marketing.
+
+### Sélection des contenus — non figée par ce gate
+
+Une sélection éditoriale des services/réalisations EASYDEP sera effectuée avant production des captures. Les contenus manifestement de test doivent être exclus des preuves marketing. Le choix définitif de la réalisation de l'Acte 4 reste à faire après un audit ciblé — ce gate ne fige aucune réalisation précise.
+
+### Autorisation — reste ouverte
+
+Le choix du tenant de démonstration est fermé (EASYDEP). L'autorisation publique des éléments EASYDEP sélectionnés (photos, identité, données, captures) reste conditionnée à l'accord explicite du propriétaire concerné — voir question 5 (§15), partie autorisation.
+
+### Questions fermées par ce gate
+
+Partie « tenant » de la question 5 uniquement.
+
+### Questions encore ouvertes, inchangées
+
+Partie « autorisation » de la question 5 ; 2, 6, 7, 8, 13, 14.
