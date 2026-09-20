@@ -77,6 +77,16 @@ Trois contextes distincts coexistent :
 
 **Récit** : logique Marque → Produit → Résultat — je reconnais mon métier (Acte 2), je vois ce que SUPORDO organise (Acte 3), je vois ce que mon client final verra (Acte 4) · Hero puis Métiers conservés, non redessinés · Acte 3 avant Acte 4 · **l'Acte 3 et l'Acte 4 portent sur la même entreprise de démonstration et le même univers métier, mais sur deux objets différents** · le site public reste visuellement dominant · l'Acte 4 est une démonstration, pas la définition du produit · réassurance et action finale fusionnées · la page ne vend pas d'abord un abonnement logiciel : résultat visible (Actes 3-4), puis fonctionnement crédible (Acte 5), puis prise en charge claire (Acte 5), puis abonnement compréhensible (Acte 6) — l'ordre des actes l'incarne déjà, ce principe le rend explicite.
 
+**Positionnement (doctrine interne)** : SUPORDO prépare le site de l'entreprise et prend en charge sa partie technique. L'entreprise indique et actualise ce qu'elle souhaite montrer : ses travaux, son secteur, ses réalisations, ses photos et son équipe, sans avoir à construire elle-même ses pages. Pour les métiers de service ou de dépannage, « ses travaux » peut devenir « ses travaux ou interventions » ou « ses spécialités » — à choisir selon le métier, pas remplacé mécaniquement. Cette phrase est une doctrine interne ; la copy publique peut être plus courte et plus métier. Distingue SUPORDO d'un builder DIY, d'une agence web classique, d'un CMS et d'un futur CRM.
+
+**Correspondance avec les objets produit** (vérifiée dans le repo, pas un jugement éditorial sur le meilleur mot marketing) : « ses travaux » = objet `services` (Acte 3) · « son secteur » = objet `service_areas` · « ses réalisations » = objet `portfolio` (Acte 4) · « ses photos » = champ présent à la fois sur `services` et sur `portfolio`, pas exclusif aux réalisations (§1) · « son équipe » = objet `team_members` (`TeamManager.tsx`, `src/lib/team.ts`).
+
+Formulations explicitement écartées de cette doctrine : « sans jamais avoir à toucher à l'informatique » (le client utilise réellement son espace SUPORDO) et « SUPORDO s'occupe de toute la technique » (« toute » élargit implicitement le périmètre).
+
+**Intelligence artificielle** `[RETENU]` : l'IA reste un outil interne de production SUPORDO ; elle est exclue de toute copy publique ou commerciale de SUPORDO Sites, y compris l'Acte 5. Formulation active de responsabilité SUPORDO : « SUPORDO prépare votre site pour votre métier. » L'ancienne formulation du gate §18 (« avec l'aide de l'IA ») documente un fait technique réel mais n'est plus une doctrine de copy — voir §20.
+
+**Maintenance** `[RETENU]` : ne jamais écrire « maintient votre site » seul dans une phrase adressée au client ; préférer « s'occupe de la partie technique » ou « assure la maintenance technique », pour ne jamais laisser entendre que SUPORDO actualise les contenus du client.
+
 **Intégrité** : aucune preuve, statistique, interface, réalisation ni témoignage inventé · aucune grille artificielle de forfaits ou de fonctionnalités.
 
 **Fondations visuelles** : Manrope · Brand Green `#00875A`, Forest `#10291C`, Forest Dark `#07140D`, Warm `#FAF8F4`, Mint clair `#EAF4EE`, Mint bordure `#CFE8D8`, Graphite `#3A403B` · tokens scopés · rayons faibles · aucun gradient, effet de verre, blob, écran incliné, ombre décorative · « SUPORDO ne décore pas le réel. Il l'organise. »
@@ -130,6 +140,8 @@ Message : ce que vous renseignez est présenté proprement à vos clients.
 
 Preuve : un même service — par exemple « Installation de poêle à bois » — d'un côté tel qu'il est renseigné dans l'espace, de l'autre tel qu'il est présenté sur le site public. Même libellé, même information, même entreprise de démonstration que l'Acte 4.
 
+**Correspondance terminologique** `[RETENU]` : « service » désigne l'objet technique (base de données, formulaires admin, `ServicesManager.tsx`) ; « prestation » est le mot marketing utilisable côté landing lorsqu'il est plus naturel pour l'artisan. Les deux mots désignent le même objet, jamais deux objets distincts — à ne jamais laisser croire le contraire dans une future copy. Cette distinction ne s'applique pas aux parties techniques ou de preuve du présent document (tableaux de capacités, code cité), qui conservent « service ».
+
 **Dépendance obligatoire avant production des captures** : vérifier dans le produit réel que le service choisi alimente effectivement une présentation publique identifiable — on doit retrouver côté public le même nom de service, le contenu correspondant, et une structure reconnaissable comme issue de ce service. Si cette correspondance n'existe pas réellement, **ne fabriquer aucune relation artificielle « fiche → page »** : réévaluer l'objet de l'Acte 3 à partir d'une autre capacité réellement branchée au site public.
 
 Fonction de l'acte : expliquer la correspondance entre une donnée renseignée et sa présentation publique. Ton : produit, compréhension.
@@ -158,13 +170,15 @@ Fonction de l'acte : raconter une situation de terrain et sa transformation en p
 
 ### Acte 5 — Qui fait quoi
 
-Question : « Concrètement, qui fait quoi ? » · Message : SUPORDO s'occupe de la présentation du site, vous renseignez votre entreprise.
+Question : « Concrètement, qui fait quoi ? »
+
+Message `[À FIGER]` : « Vous faites les travaux. Nous nous occupons du site. » — remplace la formulation précédente comme cible principale. « Vous ne devenez pas webmaster. » reste une piste secondaire documentée en §20, non retenue comme H2. « Travaux » est un choix adapté à la V1 bâtiment, pas une règle globale : selon le métier, le mot pourra devenir chantiers, interventions, installations, prestations ou réalisations (voir §12).
 
 **Chaque formulation doit passer par ce tableau avant d'être écrite** ; aucun verbe large n'est autorisé tel quel.
 
 | Formulation | Preuve technique | Limite à énoncer ou à vérifier |
 |---|---|---|
-| « SUPORDO prépare votre site à partir des informations de votre entreprise, avec l'aide de l'IA » | question 9 fermée (voir §18) — `super-admin.onboarding.tsx`, `generate-tenant`, domaine natif `{slug}.supordo.com` créé avec le tenant | ne jamais écrire « vérifié avant mise en ligne » comme procédure qualité distincte ; ne promettre aucun délai ; ne jamais laisser entendre une création ou un accès autonome de l'artisan — l'invitation de l'artisan est une étape séparée |
+| « SUPORDO prépare votre site pour votre métier » | question 9 fermée (voir §18) ; formulation de copy mise à jour par le Gate Doctrine commerciale et sémantique V1 (voir §20) — `super-admin.onboarding.tsx`, `generate-tenant`, domaine natif `{slug}.supordo.com` créé avec le tenant | ne jamais écrire « vérifié avant mise en ligne » comme procédure qualité distincte ; ne promettre aucun délai ; ne jamais laisser entendre une création ou un accès autonome de l'artisan — l'invitation de l'artisan est une étape séparée ; ne jamais mentionner l'IA dans la copy (voir §20) |
 | Héberge le site | infrastructure gérée par SUPORDO | pas de promesse de disponibilité chiffrée sans engagement défini |
 | Chiffre les échanges (à la place de « sécurise ») | certificat et connexion chiffrée | **ne jamais laisser entendre une garantie générale de cybersécurité** |
 | Assure la maintenance technique | mises à jour du socle commun | **distinguer explicitement maintenance technique et modification de contenu** : la seconde appartient au client |
@@ -172,13 +186,17 @@ Question : « Concrètement, qui fait quoi ? » · Message : SUPORDO s'occupe de
 | Fait évoluer le socle commun | améliorations communes à tous les sites | ne promettre aucune fonctionnalité future nommée |
 | Saisit les qualifications professionnelles | capacité réelle côté SUPORDO | **retirée de l'Acte 5 tant que la question 6 n'est pas tranchée** |
 
+**Portée narrative de l'Acte 5** `[RETENU]` : l'acte explique uniquement la répartition des rôles entre l'entreprise et SUPORDO. La capacité « demandes reçues consultables dans l'espace SUPORDO » reste `[PROUVÉ PRODUIT]`, documentée au tableau des capacités (§1), mais n'est plus une promesse centrale de cet acte — elle peut vivre dans l'Acte 6 ou la FAQ, avec la formulation autorisée : « Les demandes envoyées depuis votre site restent consultables dans votre espace SUPORDO. »
+
 Côté client, question 10 fermée (voir §18) : services, réalisations, partenaires et coordonnées ont un contrôle de visibilité ou un effet public réel et immédiat (`ServicesManager.tsx`, `PortfolioManager.tsx`, `PartnersManager.tsx`) ; les zones d'intervention sont publiques dès l'ajout, sans bascule (aucune colonne de publication sur `service_areas`) ; l'équipe reste gérée par le client mais son affichage général dépend d'un réglage réservé à SUPORDO (`site_settings.team_presentation_mode`) ; les marques peuvent être saisies mais **n'ont aujourd'hui aucun rendu public** — ne jamais les citer comme visibles sur le site. Ne jamais généraliser « vos photos remplacent automatiquement les illustrations » comme promesse transverse — c'est vrai service par service, pas une promesse globale.
 
 Aucun visuel. Desktop : deux colonnes. Mobile : deux blocs empilés. Action : aucune.
 
 ### Acte 6 — Offre
 
-Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions. **Aucune grille de forfaits.** Bloqué par les questions 1 et 2 (question 9 fermée, voir §18).
+Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions. **Aucune grille de forfaits.**
+
+**Prix V1** `[RETENU]`, voir §19 : 49 € HT/mois + 99 € HT de mise en place initiale. Bloqué par la question 2 (questions 1 et 9 fermées, voir §19 et §18) et par le périmètre exact des 99 € (question 14, voir §15 et §19). Vocabulaire du bloc prix : préférer « mise en place initiale » à « frais de dossier », « pack de démarrage », « création offerte » ou « activation ». Ne pas promettre : sans engagement, domaine inclus, tout compris, support illimité, modifications illimitées, aucun frais caché — tant que la question 2 et la question 14 ne sont pas tranchées.
 
 ### Acte 7 — Réassurance et décision
 
@@ -372,7 +390,38 @@ Deux familles identiques ne se suivent jamais, et le fond change à chaque secti
 
 ## 12. Système sémantique
 
-**Recommandé** : entreprise · métier · chantier · réalisation · client · commune · zone d'intervention · service · site · photo · travail réalisé · renseigner · mettre à jour · en ligne · pris en charge.
+**Recommandé** : entreprise · métier · travaux · chantier · intervention · installation · dépannage · rénovation · spécialité · prestation · réalisation · client · commune · secteur · zone d'intervention · service · site · photo · équipe · demandes · téléphone · travail réalisé · renseigner · mettre à jour · en ligne · pris en charge.
+
+**Précision sur « renseigner »** : non banni. Reste acceptable comme terme générique interne/documentaire (tableaux de capacités, ce document). Sur la landing, préférer un verbe précis selon le comportement réel :
+- **indiquer** = fournir une information ;
+- **actualiser** = modifier une information existante ;
+- **ajouter** = créer réellement un nouvel objet — vérifié pour les services (`ServicesManager.tsx`, insertion réelle en base, bouton « Ajouter ») `[PROUVÉ REPO]` ;
+- **publier** = seulement si le parcours produit prouve une publication (réalisations et services : bascule de publication ; zones d'intervention : aucune bascule, publiques dès l'ajout — ne jamais écrire « publier » à leur sujet).
+
+**Table de conversion, à appliquer selon le métier et le comportement réel, jamais mécaniquement** :
+- renseigner → indiquer / actualiser / ajouter selon le comportement réel ;
+- services → prestations / travaux selon le métier ;
+- réalisations → chantiers lorsque naturel ;
+- **secteur** et **zone d'intervention** sont tous deux autorisés, sans hiérarchie : « secteur » est plus direct, « zone d'intervention » plus explicite pour un prospect qui découvre le produit — choisir selon le registre de la phrase, jamais remplacer systématiquement l'un par l'autre ;
+- contenus → photos / prestations / chantiers selon le cas ;
+- données d'entreprise → informations.
+
+**Précisions** : « chantier » est préféré à « réalisation » lorsqu'il rend la phrase plus concrète et correspond réellement au métier ; « réalisation » reste pleinement autorisé, notamment comme mot transversal (Acte 4). « prestations » n'est pas banni : terme professionnel transversal conservé.
+
+**Vocabulaire par métier** (à privilégier selon le contexte, jamais figé sur le seul mot « chantier ») :
+
+| Métier | Mots à privilégier |
+|---|---|
+| Plomberie | interventions, dépannages, installations, rénovations |
+| Chauffage / PAC / poêles | installations, mises en service, entretien, remplacement, dépannage |
+| Électricité | installations, dépannages, mises aux normes, rénovations |
+| Couverture | chantiers, toitures, réparations, rénovations |
+| Maçonnerie | ouvrages, constructions, extensions, rénovations |
+| Menuiserie | poses, agencements, projets, réalisations |
+| Paysage | aménagements, créations, entretien, projets |
+| Peinture | travaux, rénovations, finitions |
+
+**À faire reculer sur la landing** (registre à réduire quand un mot plus concret existe — distinct de la liste « Interdit » ci-dessous, qui reste une interdiction stricte) : données · contenus · renseigner, lorsqu'un verbe plus précis existe · interface · paramètre · gestion · infrastructure · structure technique · présentation, lorsqu'une formulation concrète existe.
 
 **Interdit** : digital · solution · plateforme · booster · présence en ligne · expérience digitale · révolutionner · tout-en-un · puissant · innovant · en quelques clics · sur-mesure · clé en main · visibilité · sans effort · complet. Et, parce qu'ils décrivent le logiciel plutôt que le métier : CMS · back-office · tableau de bord · éditeur · constructeur de site · module · fonctionnalité.
 
@@ -385,7 +434,7 @@ Deux familles identiques ne se suivent jamais, et le fond change à chaque secti
 | « simple » | avec parcimonie, jamais comme différenciation |
 | « sans avoir à gérer votre site » | **à corriger dans le Lot 1**, sous-tâche 1.6 |
 
-**Ton** : phrases courtes, voix active. « Renseigner » du côté du client, « présenter » du côté de SUPORDO. Aucun superlatif, aucun point d'exclamation. Le conditionnel dès qu'une chose dépend d'une validation réelle.
+**Ton** : phrases courtes, voix active. Sobre, professionnelle, concrète, terrain, B2B, moderne — ni agence web, ni SaaS, ni caricature d'artisan. Éviter les expressions artificiellement familières (« où on tourne », « où on bosse », « prendre la tête avec l'informatique », « passer ses soirées à bidouiller ») dans la copy principale ; elles peuvent aider à comprendre le problème du client, pas à écrire la marque. Aucun superlatif, aucun point d'exclamation. Le conditionnel dès qu'une chose dépend d'une validation réelle.
 
 ---
 
@@ -402,7 +451,7 @@ Deux familles identiques ne se suivent jamais, et le fond change à chaque secti
 | `/` | « site internet artisan », « site internet pour artisan » — descriptif et neutre. **« agence web artisan » est retirée** : aucune recherche n'a démontré l'intérêt de ce positionnement, et le produit ne doit pas être enfermé sémantiquement dans « agence web » | « Un vrai site pro… » | avec `/tarifs` si elle est créée |
 | `/demarrer` | aucune, page de conversion | « Parlons de votre site. » | aucune |
 | `/exemples` | exemple de site artisan | « Des sites déjà en ligne. » | aucune |
-| `/tarifs` | prix site internet artisan | « Une offre, tout compris. » | avec l'acte 6 : la section se réduirait alors à un résumé |
+| `/tarifs` | prix site internet artisan | `[À FIGER, non définitif]` « Une offre simple et lisible pour votre site. » — ne pas figer avant la clôture de l'Acte 6 (question 2) | avec l'acte 6 : la section se réduirait alors à un résumé |
 | `/metiers/<metier>` | site internet pour <métier> | « Un site pour votre activité de <métier>. » | forte entre pages métier si le texte est recopié |
 
 Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand les mentions légales existent.
@@ -426,8 +475,8 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 
 ## 15. Questions ouvertes `[OUVERT]`
 
-1. **Tarif** : publie-t-on 49 € HT/mois et les 0 € de création, ou l'acte 6 reste-t-il sans chiffre au lancement ?
-2. **Conditions de l'offre** : engagement, propriété du nom de domaine, cas d'un domaine déjà détenu, résiliation, récupération des contenus, support inclus, modifications comprises, suppléments facturés.
+1. **Tarif** : publie-t-on 49 € HT/mois et les 0 € de création, ou l'acte 6 reste-t-il sans chiffre au lancement ? — **fermée, voir §19.**
+2. **Conditions de l'offre** : engagement, propriété du nom de domaine, cas d'un domaine déjà détenu, résiliation, récupération des contenus, support inclus, modifications comprises, suppléments facturés. Direction non tranchée, à titre indicatif : le nom de domaine devrait idéalement rester la propriété de l'entreprise cliente — préférence énoncée, pas une décision.
 3. **« Voir un exemple »** : quel site client réel, avec quel accord écrit ? Sans réponse, le bouton reste masqué en V1 — ne bloque plus le Lot 1.
 4. **Traitement de `/demarrer` — partiellement tranché.** *Architecture RETENUE* : envoi par e-mail, aucune nouvelle table marketing, réutilisation de l'infrastructure d'envoi existante via une fonction serveur adaptée. **L'absence de stockage en base ne signifie pas absence de traitement ni de conservation : les informations du formulaire sont transmises et temporairement conservées dans la messagerie de destination, selon une règle documentée.** *Paramètres opérationnels encore à fournir* : destinataire, expéditeur, personnes ayant accès, durée ou règle de conservation, information sur les données personnelles, anti-spam, comportement en erreur.
 5. **Captures produit** : compte de démonstration dédié, ou capture d'un client réel avec accord ?
@@ -438,6 +487,7 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 10. **Publication** : pour chaque contenu modifiable — saisie par le client, validation éventuelle, publication immédiate ou non, intervention SUPORDO éventuelle. **Aucune formulation ne doit laisser croire à une publication automatique si ce n'est pas le comportement réel.** — **fermée, voir §18.**
 11. **Demandes reçues du site artisan** : où elles arrivent, qui les reçoit, si elles sont conservées, où elles sont consultables. **Ne jamais présenter cela comme un outil de gestion de clientèle si le produit ne le fait pas.** — **fermée, voir §18.**
 13. **Inventaire des traceurs** : mesure d'audience, pixels, outils marketing, contenus tiers, vidéos, messagerie, autres scripts — détermine s'il faut un mécanisme de consentement.
+14. **Périmètre exact des 99 € de mise en place initiale** : préparation, configuration, mise en forme, premiers contenus, photos, domaine éventuel, validation, délai, nombre d'allers-retours. Ne jamais utiliser de terme technique (configuration DNS, initialisation du socle) dans le copywriting commercial.
 
 ---
 
@@ -489,11 +539,11 @@ Validation : trois états et pas cinq · aucune scène mobile fictive · la phra
 
 ### LOT 4 — Offre et décision, Actes 6 et 7
 
-**Bloqué tant que les questions 1 et 2 ne sont pas tranchées** (question 9 fermée, voir §18).
+**Bloqué tant que la question 2 n'est pas tranchée** (questions 1 et 9 fermées, voir §19 et §18) ; le périmètre exact de la mise en place (question 14) doit aussi être tranché avant d'écrire l'Acte 6.
 
 | Sous-tâche | Concerne | Dépend de |
 |---|---|---|
-| 4.1 Construire l'Acte 6, offre unique | nouveau composant | questions 1, 2 |
+| 4.1 Construire l'Acte 6, offre unique | nouveau composant | question 2 (question 1 fermée, voir §19) ; question 14 |
 | 4.2 Construire l'Acte 7, questions-réponses et action finale | nouveau composant | question 2 |
 
 Validation : une seule offre, aucun prix barré, aucune réponse inventée, aucun emploi du mot « complet ».
@@ -522,11 +572,11 @@ Sections modifiées : capacités du produit (service qualifié d'objet de l'Acte
 
 ## Décisions qui restent ouvertes
 
-Tarif · conditions de l'offre · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client. (Libellé de l'action principale et inventaire des traceurs : fermés, voir §17. Création initiale du site, règles de publication et circuit des demandes reçues : fermées, voir §18.)
+Conditions de l'offre · périmètre exact des 99 € · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client. (Libellé de l'action principale et inventaire des traceurs : fermés, voir §17. Création initiale du site, règles de publication et circuit des demandes reçues : fermées, voir §18. Tarif : fermé, voir §19.)
 
 ## Impact sur les cinq lots
 
-Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dans le lot. Lot 2 : porte désormais sur un service, plus sur une réalisation. Lot 3 : gagne un point de contrôle bloquant, la vérification mobile ; les questions 9 et 10 pour l'Acte 5 sont fermées (§18), seule la question 6 le bloque encore. Lot 4 : n'est plus bloqué par la question 9. Lot 5 : accueille la correction `llms.txt` en dernière priorité.
+Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dans le lot. Lot 2 : porte désormais sur un service, plus sur une réalisation. Lot 3 : gagne un point de contrôle bloquant, la vérification mobile ; les questions 9 et 10 pour l'Acte 5 sont fermées (§18), seule la question 6 le bloque encore. Lot 4 : n'est plus bloqué par les questions 9 et 1 ; reste bloqué par la question 2 et par le périmètre des 99 € (question 14). Lot 5 : accueille la correction `llms.txt` en dernière priorité.
 
 ## Prêt pour EXEC ?
 
@@ -663,3 +713,71 @@ produire ce gate.
 ### Questions encore ouvertes, inchangées
 
 1, 2, 5, 6, 7, 8, 13 — aucune ne bloque l'Acte 5 tel que construit.
+
+---
+
+## 19. Gate Prix V1 — fermé le 20/09/2026
+
+Décision humaine `[RETENU]`, non technique — `[ACTÉ CONTEXTE]`.
+
+### Décision
+
+**49 € HT / mois + 99 € HT de mise en place initiale.** Remplace l'hypothèse antérieure « 49 € + 0 € de création ». Le montant n'est pas rediscuté par ce gate.
+
+Vocabulaire du bloc prix : « mise en place initiale », jamais « frais de dossier », « pack de démarrage », « création offerte » ou « activation ». Aucune promesse de « sans engagement », « domaine inclus », « tout compris », « support illimité », « modifications illimitées » ou « aucun frais caché » tant que les questions 2 et 14 ne sont pas tranchées.
+
+### Questions fermées par ce gate
+
+1.
+
+### Questions ouvertes créées ou maintenues
+
+14 (nouvelle — périmètre exact des 99 €), 2, 5, 6, 7, 8, 13 — inchangées, voir §15.
+
+---
+
+## 20. Gate Doctrine commerciale et sémantique V1 — fermé le 20/09/2026
+
+Révision documentaire de la doctrine de copy de la landing, à partir d'une mission de cadrage éditorial. Aucun fichier produit modifié. Ne ferme aucune question numérotée du §15 : ce gate fixe une doctrine de copy, pas un fait produit.
+
+Ce gate ferme les principes de positionnement, de vocabulaire et de preuve. Il ne ferme pas les formulations exactes encore marquées `[À FIGER]`, notamment H1, sous-titre Hero et H2 d'Acte 5. Le statut « gate fermé » ne transforme donc jamais automatiquement une copy `[À FIGER]` en copy `[RETENU]`.
+
+### Décisions actées `[RETENU]`
+
+- **Intelligence artificielle** : exclue de toute copy publique ou commerciale de SUPORDO Sites, y compris l'Acte 5. L'IA reste un outil interne de production SUPORDO. Formulation active de responsabilité SUPORDO : « SUPORDO prépare votre site pour votre métier. » La formulation du gate §18 (« avec l'aide de l'IA ») documente un fait technique réel constaté à la fermeture de la question 9 et reste valide comme preuve technique — elle n'est plus une doctrine de copy.
+- **Portée narrative de l'Acte 5** : limitée à la répartition des rôles. La capacité « demandes reçues consultables dans l'espace SUPORDO » reste `[PROUVÉ PRODUIT]` (§1), mais n'est plus une promesse centrale de cet acte — destination possible : Acte 6 ou FAQ.
+- **Titre de l'Acte 5** : nouvelle cible `[À FIGER]` « Vous faites les travaux. Nous nous occupons du site. », qui remplace « Vous ne devenez pas webmaster. » comme cible principale. Cette dernière reste une piste secondaire documentée, non retenue. « Travaux » est un choix V1 bâtiment, pas une règle globale (voir §12, vocabulaire par métier).
+- **Vocabulaire** : table de conversion et vocabulaire par métier adoptés (voir §12, mis à jour par ce gate), avec réserve explicite de non-application mécanique — le mot doit correspondre au métier, au comportement réel du produit et au niveau de langage de la page.
+- **Positionnement / maintenance** : ne jamais écrire « maintient votre site » seul ; préférer « s'occupe de la partie technique » ou « assure la maintenance technique ».
+- **Acte 3** : confirmation de l'objet retenu (service = objet technique, prestation = mot marketing équivalent, jamais deux objets distincts). Cette distinction ne s'applique pas aux parties techniques ou de preuve du présent document, qui conservent « service ».
+
+### Vérifications en lecture seule menées pour ce gate
+
+- `ServicesManager.tsx` (ligne 169) : `supabase.from("services").insert(...)` déclenché par un bouton « Ajouter » ouvrant un formulaire de nouveau service — le client crée réellement un nouveau service. Le verbe « ajouter » est donc justifié pour les services `[PROUVÉ REPO]`.
+- `SupordoHero.tsx` (`[FAIT]`, texte réellement en ligne aujourd'hui) : H1 = « Un vrai site pro. Un espace simple pour le faire vivre. » ; sous-titre = « Ajoutez vos services, vos zones et vos réalisations. Publiez vos photos de chantier sans avoir à construire ni mettre en page votre site. » — distinct de la cible `[À FIGER]` proposée (« Un vrai site pro pour votre entreprise. » / nouveau sous-titre métier). « Faire vivre » déjà identifié comme à remplacer, hors Lot 1 (§12, non modifié par ce gate).
+
+### Écarts entre le code déjà livré et cette doctrine — non corrigés ici
+
+`SupordoActThree.tsx` (H2 : « Ce que vous renseignez est présenté proprement à vos clients. ») et `SupordoActFive.tsx` (H2 : « SUPORDO s'occupe de la présentation. Vous renseignez votre entreprise. », et liste `SUPORDO_ITEMS` incluant « Organise la présentation du site » et « Rend consultables les demandes reçues » comme promesse affichée) utilisent une copy antérieure à ce gate. **Non modifiés dans cette mission**, strictement documentaire — à harmoniser lors de la revue de l'acte correspondant, sur GO séparé et explicite.
+
+---
+
+## 21. Gate Vocabulaire métier et ton — fermé le 20/09/2026
+
+Précise et corrige le Gate Doctrine commerciale et sémantique V1 (§20) sur trois points : la parité secteur / zone d'intervention, le statut non binaire de « renseigner » et « présentation » (liste « à faire reculer », pas une interdiction), et une règle de ton explicite. §20 reste inchangé comme trace historique de sa propre décision ; ce gate ne le réécrit pas, il l'affine.
+
+### Décisions actées `[RETENU]`
+
+- Le vocabulaire métier doit dominer le vocabulaire logiciel, sans remplacement mécanique : le mot choisi dépend du métier, du comportement réel du produit et du registre de la phrase (voir §12, mis à jour).
+- « secteur » et « zone d'intervention » sont tous deux autorisés, à égalité — pas une hiérarchie ni un remplacement.
+- « prestations » n'est pas banni : terme professionnel transversal conservé.
+- « chantier » est préféré à « réalisation » lorsqu'il rend la phrase plus concrète et correspond réellement au métier ; « réalisation » reste pleinement autorisé.
+- Une liste « à faire reculer » (données, contenus, renseigner quand un verbe plus précis existe, interface, paramètre, gestion, infrastructure, structure technique, présentation quand une formulation concrète existe) est distincte de la liste « Interdit » existante : un registre à réduire, pas une interdiction stricte.
+- Ton de marque `[RETENU]` : sobre, professionnelle, concrète, terrain, B2B, moderne — jamais une caricature d'artisan, jamais un ton agence web ou SaaS. Les expressions artificiellement familières (« où on tourne », « où on bosse », « prendre la tête avec l'informatique », « passer ses soirées à bidouiller ») sont écartées de la copy principale ; elles restent utiles pour comprendre le problème du client, pas pour écrire la marque.
+- Positionnement interne (§2) reformulé : « SUPORDO prépare le site de l'entreprise et prend en charge sa partie technique. L'entreprise indique et actualise ce qu'elle souhaite montrer : ses travaux, son secteur, ses réalisations, ses photos et son équipe, sans avoir à construire elle-même ses pages. » Pour les métiers de service ou de dépannage, « ses travaux » peut devenir « ses travaux ou interventions » ou « ses spécialités ». — remplace la version du §20, dont la trace reste dans l'historique Git du document, pas dupliquée ici.
+- Correspondance avec les objets produit vérifiés dans le repo pour ce gate — pas une preuve que ces mots sont le meilleur choix marketing, seulement que les objets existent : « ses travaux » = objet `services` (Acte 3) ; « son secteur » = objet `service_areas` ; « ses réalisations » = objet `portfolio` (Acte 4) ; « ses photos » = champ présent à la fois sur `services` et sur `portfolio`, pas exclusif aux réalisations (§1) ; « son équipe » = objet `team_members` (`TeamManager.tsx`, `src/lib/team.ts`).
+- Deux formulations explicitement écartées de la doctrine active : « sans jamais avoir à toucher à l'informatique » (le client utilise réellement son espace SUPORDO) et « SUPORDO s'occupe de toute la technique » (« toute » élargit implicitement le périmètre).
+
+### Portée
+
+Ce gate ne ferme aucune question numérotée du §15. Il ne transforme aucune copy `[À FIGER]` en `[RETENU]` — même réserve que le §20.
