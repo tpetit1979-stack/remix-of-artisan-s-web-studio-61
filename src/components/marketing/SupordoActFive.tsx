@@ -57,7 +57,7 @@ export function SupordoActFive() {
       aria-labelledby="supordo-act5-title"
     >
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-        <div className="max-w-[760px]">
+        <div className="max-w-[600px]">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
             QUI FAIT QUOI
           </p>

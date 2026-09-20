@@ -21,7 +21,7 @@ import { Link } from "@tanstack/react-router";
 export function SupordoActSix({ leadIntakeReady = false }: { leadIntakeReady?: boolean }) {
   return (
     <section
-      className="border-t border-[var(--supordo-mint-200)] bg-white py-16 md:py-20 lg:py-24"
+      className="border-t border-[var(--supordo-mint-200)] bg-white py-24 md:py-28 lg:py-32"
       aria-labelledby="supordo-act6-title"
     >
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">

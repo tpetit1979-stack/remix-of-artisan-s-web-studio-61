@@ -39,7 +39,7 @@ const TRADES = [
 export function SupordoTrades() {
   return (
     <section
-      className="overflow-hidden border-t border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] py-16 md:py-20 lg:py-24"
+      className="overflow-hidden border-t border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] py-24 md:py-28 lg:py-32"
       aria-labelledby="supordo-trades-title"
     >
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">

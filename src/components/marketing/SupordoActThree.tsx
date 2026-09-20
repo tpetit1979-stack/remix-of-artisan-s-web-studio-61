@@ -39,7 +39,7 @@ export function SupordoActThree({
       aria-labelledby="supordo-act3-title"
     >
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-        <div className="max-w-[760px]">
+        <div className="max-w-[600px]">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
             CE QUE VOS CLIENTS VOIENT
           </p>
