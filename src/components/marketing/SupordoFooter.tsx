@@ -7,8 +7,8 @@ import { Link } from "@tanstack/react-router";
  * product are deliberately absent: their routes do not exist yet (Exemples
  * needs real, authorized client sites), and a footer link without a page is
  * exactly the dishonesty this lot removes. Legal pages
- * (/legal/mentions-legales, /legal/confidentialite) and /tarifs are real
- * routes, added here now that they exist.
+ * (/legal/mentions-legales, /legal/confidentialite), /comment-ca-marche and
+ * /tarifs are real routes, added here now that they exist.
  */
 export function SupordoFooter() {
   return (
@@ -30,6 +30,14 @@ export function SupordoFooter() {
                 className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline active:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
               >
                 SUPORDO Sites
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/comment-ca-marche"
+                className="inline-flex min-h-11 items-center rounded-[6px] underline-offset-4 transition-colors hover:text-white hover:underline active:text-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)]"
+              >
+                Comment ça marche
               </Link>
             </li>
             <li>

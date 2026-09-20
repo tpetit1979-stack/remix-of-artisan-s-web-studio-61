@@ -8,17 +8,20 @@ import { Link, useLocation } from "@tanstack/react-router";
  *
  * `NAV_LINKS` is a short explicit list so a future destination (Exemples)
  * slots in without restructuring the header — no dropdown, no mega-menu.
- * Desktop-only (`hidden md:flex`): on a 390px viewport, wordmark + Tarifs +
- * "Demander mon site" + "Se connecter" would not fit without shrinking a tap
- * target below 44px. The footer already lists Tarifs, so mobile loses
- * nothing — a hamburger menu isn't built for one extra link.
+ * Desktop-only (`hidden md:flex`): on a 390px viewport, wordmark + Comment ça
+ * marche + Tarifs + "Demander mon site" + "Se connecter" would not fit
+ * without shrinking a tap target below 44px. The footer already lists both,
+ * so mobile loses nothing — a hamburger menu isn't built for two extra links.
  *
  * "Demander mon site" appears only when a request can really be sent
  * (leadIntakeReady) — a call to action whose page cannot deliver is exactly
  * what this lot removes. "Se connecter" is visually secondary and reachable
  * on phones without scrolling the page.
  */
-const NAV_LINKS = [{ to: "/tarifs", label: "Tarifs" }] as const;
+const NAV_LINKS = [
+  { to: "/comment-ca-marche", label: "Comment ça marche" },
+  { to: "/tarifs", label: "Tarifs" },
+] as const;
 
 export function SupordoHeader({ leadIntakeReady = false }: { leadIntakeReady?: boolean }) {
   const { pathname } = useLocation();
