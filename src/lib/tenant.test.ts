@@ -21,7 +21,8 @@ const getPlatformOrigin = vi.fn();
 
 vi.mock("./platform-url", () => ({ getPlatformOrigin }));
 
-const { fetchSiteSettings, fetchTenantByHostname, isPlatformHost } = await import("./tenant");
+const { fetchSiteSettings, fetchTenantByHostname, isPlatformHost, canonicalizeDomainInput } =
+  await import("./tenant");
 
 describe("fetchSiteSettings", () => {
   it("returns the row when the tenant has site_settings — existing behavior preserved", async () => {
@@ -84,6 +85,80 @@ describe("isPlatformHost", () => {
       throw new Error("VITE_PLATFORM_URL n'est pas configuré");
     });
     expect(isPlatformHost("supordo.com")).toBe(false);
+  });
+});
+
+describe("canonicalizeDomainInput", () => {
+  it("lowercases the hostname", () => {
+    expect(canonicalizeDomainInput("DUPONT.FR")).toEqual({ ok: true, value: "dupont.fr" });
+  });
+
+  it("strips a leading www.", () => {
+    expect(canonicalizeDomainInput("www.dupont-chauffage.fr")).toEqual({
+      ok: true,
+      value: "dupont-chauffage.fr",
+    });
+  });
+
+  it("strips the protocol", () => {
+    expect(canonicalizeDomainInput("https://dupont.fr")).toEqual({ ok: true, value: "dupont.fr" });
+  });
+
+  it("strips a trailing slash / path", () => {
+    expect(canonicalizeDomainInput("dupont-chauffage.fr/")).toEqual({
+      ok: true,
+      value: "dupont-chauffage.fr",
+    });
+    expect(canonicalizeDomainInput("https://dupont.fr/path?x=1")).toEqual({
+      ok: true,
+      value: "dupont.fr",
+    });
+  });
+
+  it("strips an explicit port", () => {
+    expect(canonicalizeDomainInput("dupont.fr:443")).toEqual({ ok: true, value: "dupont.fr" });
+  });
+
+  it("strips a trailing DNS root dot", () => {
+    expect(canonicalizeDomainInput("DUPONT.FR.")).toEqual({ ok: true, value: "dupont.fr" });
+  });
+
+  it("combines protocol, www, case and path in a single input", () => {
+    expect(canonicalizeDomainInput("HTTPS://WWW.Dupont-Chauffage.fr/")).toEqual({
+      ok: true,
+      value: "dupont-chauffage.fr",
+    });
+  });
+
+  it("converts an accented (IDN) domain to its punycode form instead of rejecting it", () => {
+    const result = canonicalizeDomainInput("café-menuisier.fr");
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value).toMatch(/^xn--/);
+  });
+
+  it("is idempotent on an already-canonical value", () => {
+    expect(canonicalizeDomainInput("dupont.fr")).toEqual({ ok: true, value: "dupont.fr" });
+  });
+
+  it("leaves an already-canonical SUPORDO subdomain unchanged — no regression", () => {
+    expect(canonicalizeDomainInput("dupont-chauffage.supordo.com")).toEqual({
+      ok: true,
+      value: "dupont-chauffage.supordo.com",
+    });
+  });
+
+  it("treats an empty or whitespace-only input as a reset signal, not an error", () => {
+    expect(canonicalizeDomainInput("")).toEqual({ ok: true, value: null });
+    expect(canonicalizeDomainInput("   ")).toEqual({ ok: true, value: null });
+  });
+
+  it("rejects a string with no TLD", () => {
+    expect(canonicalizeDomainInput("localhost").ok).toBe(false);
+    expect(canonicalizeDomainInput("dupont").ok).toBe(false);
+  });
+
+  it("rejects an unparseable string", () => {
+    expect(canonicalizeDomainInput("not a domain!!").ok).toBe(false);
   });
 });
 

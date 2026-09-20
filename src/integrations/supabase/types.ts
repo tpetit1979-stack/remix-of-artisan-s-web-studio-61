@@ -963,7 +963,7 @@ export type Database = {
           city: string | null
           company_name: string
           created_at: string | null
-          domain: string | null
+          domain: string
           email: string | null
           google_place_id: string | null
           google_rating: number | null
@@ -985,7 +985,7 @@ export type Database = {
           city?: string | null
           company_name: string
           created_at?: string | null
-          domain?: string | null
+          domain: string
           email?: string | null
           google_place_id?: string | null
           google_rating?: number | null
@@ -1007,7 +1007,7 @@ export type Database = {
           city?: string | null
           company_name?: string
           created_at?: string | null
-          domain?: string | null
+          domain?: string
           email?: string | null
           google_place_id?: string | null
           google_rating?: number | null

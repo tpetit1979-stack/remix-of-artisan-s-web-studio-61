@@ -134,6 +134,47 @@ export function normalizeHostname(host: string): string {
   return host.trim().toLowerCase().split(":")[0].replace(/^www\./, "");
 }
 
+export type DomainCanonicalizationResult =
+  | { ok: true; value: string | null }
+  | { ok: false; error: string };
+
+/**
+ * Canonicalizes free-text domain input from the Super Admin "Domaine" field
+ * into the exact form stored in `tenants.domain` and matched by
+ * `fetchTenantByHostname()`. Uses the native `URL` parser rather than a
+ * hand-rolled regex chain: it strips protocol/port/path/query/fragment in
+ * one pass and converts accented (IDN) hostnames to their punycode form
+ * automatically, instead of rejecting them.
+ *
+ * Empty input is a deliberate "reset to the default" signal, not an error —
+ * `value: null` here. The caller (the Super Admin save handler, which knows
+ * the tenant's slug) is responsible for turning that into
+ * `{slug}.supordo.com` before writing, so `tenants.domain` is never left
+ * null. This function stays pure and slug-agnostic on purpose.
+ */
+export function canonicalizeDomainInput(raw: string): DomainCanonicalizationResult {
+  const trimmed = raw.trim();
+  if (!trimmed) return { ok: true, value: null };
+
+  const hasProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed);
+  const withProtocol = hasProtocol ? trimmed : `https://${trimmed}`;
+
+  let hostname: string;
+  try {
+    hostname = new URL(withProtocol).hostname;
+  } catch {
+    return { ok: false, error: "Ce nom de domaine ne semble pas valide." };
+  }
+
+  const value = normalizeHostname(hostname).replace(/\.$/, "");
+  const HOSTNAME_RE =
+    /^(xn--)?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.(xn--)?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/;
+  if (!value || !HOSTNAME_RE.test(value)) {
+    return { ok: false, error: "Ce nom de domaine ne semble pas valide." };
+  }
+  return { ok: true, value };
+}
+
 export function isDevOrPreviewHost(host: string): boolean {
   return (
     !host ||

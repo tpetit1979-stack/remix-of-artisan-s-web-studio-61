@@ -24,7 +24,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { fetchRgeBySiret, type RgeCertification } from "@/lib/rge-api.functions";
 import { detectCommercialPromiseIssues } from "@/lib/commercial-promises";
-import { buildPublicSiteUrl, fetchAllServices, fetchServiceAreas } from "@/lib/tenant";
+import { buildPublicSiteUrl, canonicalizeDomainInput, fetchAllServices, fetchServiceAreas } from "@/lib/tenant";
 import { checkTenantProvisioningStatus, inviteTenantAdmin } from "@/lib/tenant-provisioning";
 import { useImpersonation } from "@/stores/impersonation";
 import { TeamManager } from "@/components/admin/TeamManager";
@@ -541,9 +541,17 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
 
   const save = useMutation({
     mutationFn: async () => {
+      // A tenant always needs a real public address: an empty domain field
+      // means "reset to the default SUPORDO subdomain", never `domain =
+      // null`. canonicalizeDomainInput() stays slug-agnostic on purpose —
+      // this is the one call site that knows the tenant's slug.
+      const canon = canonicalizeDomainInput(form.domain ?? "");
+      if (!canon.ok) throw new Error(canon.error);
+      const domain = canon.value ?? `${form.slug}.supordo.com`;
+
       const { error } = await supabase.from("tenants").update({
         company_name: form.company_name, slug: form.slug,
-        domain: form.domain || null, siret: form.siret || null,
+        domain, siret: form.siret || null,
         phone: form.phone || null, email: form.email || null,
         city: form.city || null, address: form.address || null,
         tagline: form.tagline || null,
@@ -551,7 +559,14 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
         seo_boost_text: form.seo_boost_text || null,
         is_active: form.is_active,
       } as any).eq("id", tenantId);
-      if (error) throw error;
+      if (error) {
+        // 23505 = unique_violation — tenants_domain_canonical_key. Never
+        // surface the raw Postgres message in the UI.
+        if ((error as { code?: string }).code === "23505") {
+          throw new Error("Ce domaine est déjà utilisé par un autre client.");
+        }
+        throw error;
+      }
     },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["sa-tenant", tenantId] }); toast.success("Entreprise mise à jour"); },
     onError: (e: Error) => toast.error(e.message),
@@ -569,7 +584,7 @@ function TenantTab({ tenantId, tenant }: { tenantId: string; tenant: any }) {
             <Field label="Slug" hint="Le slug identifie techniquement le site. Il ne doit plus être modifié après la création du client."><Input value={form.slug ?? ""} readOnly disabled className="bg-muted cursor-not-allowed" /></Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Domaine"><Input value={form.domain ?? ""} onChange={e => set("domain", e.target.value)} placeholder="monsite.fr" /></Field>
+            <Field label="Domaine" hint="Laisser vide pour revenir à l'adresse SUPORDO par défaut."><Input value={form.domain ?? ""} onChange={e => set("domain", e.target.value)} placeholder="monsite.fr" /></Field>
             <Field label="SIRET"><Input value={form.siret ?? ""} onChange={e => set("siret", e.target.value)} /></Field>
           </div>
           <Field label="Tagline"><Input value={form.tagline ?? ""} onChange={e => set("tagline", e.target.value)} placeholder="Votre expert en..." /></Field>
