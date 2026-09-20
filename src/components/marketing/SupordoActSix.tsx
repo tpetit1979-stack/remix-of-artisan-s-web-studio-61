@@ -5,9 +5,10 @@ import { Link } from "@tanstack/react-router";
  *
  * Seuls le prix (49 € HT/mois + 99 € HT de mise en place initiale) et le
  * vocabulaire « mise en place initiale » sont des décisions humaines actées
- * (§19). Aucune autre condition commerciale (engagement, domaine,
- * résiliation, support, allers-retours) n'est encore décidée — volontairement
- * absente de cette copy, à traiter plus tard en FAQ une fois tranchée.
+ * (§19). Les autres conditions commerciales (engagement, domaine,
+ * résiliation, support, périmètre exact des 99 €/49 €) sont désormais
+ * tranchées mais volontairement absentes d'ici : leur détail vit sur
+ * `/tarifs`, pas sur la home — cet acte garde son rôle, « voici le prix ».
  *
  * Composition asymétrique : explication à gauche, prix dominant à droite —
  * direction éditoriale de cette itération visuelle, distincte du « bloc
@@ -54,6 +55,12 @@ export function SupordoActSix({ leadIntakeReady = false }: { leadIntakeReady?: b
             <p className="mt-3 text-sm font-medium text-[var(--supordo-graphite)] lg:text-base">
               + 99 € HT de mise en place initiale
             </p>
+            <Link
+              to="/tarifs"
+              className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-[var(--supordo-graphite)] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] hover:underline active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+            >
+              Voir le détail de l'offre →
+            </Link>
 
             {leadIntakeReady && (
               <div className="mt-8">

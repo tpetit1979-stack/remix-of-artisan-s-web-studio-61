@@ -184,13 +184,15 @@ function RootComponent() {
   // the SUPORDO brand landing either: that page is not an artisan site, so a
   // tenant-owned theme or "demander un devis" bar has nothing to do there.
   const onAdminRoute = isAdminRoute(location.pathname);
-  // Same reasoning for the SUPORDO marketing routes (/demarrer, /legal/...):
-  // they are SUPORDO's own pages, so a tenant theme or a tenant "demander un
-  // devis" bar has nothing to do there. Artisan routes are untouched.
+  // Same reasoning for the SUPORDO marketing routes (/demarrer, /legal/...,
+  // /tarifs): they are SUPORDO's own pages, so a tenant theme or a tenant
+  // "demander un devis" bar has nothing to do there. Artisan routes are
+  // untouched.
   const onMarketingRoute =
     location.pathname === "/demarrer" ||
     location.pathname.startsWith("/demarrer/") ||
-    location.pathname.startsWith("/legal/");
+    location.pathname.startsWith("/legal/") ||
+    location.pathname === "/tarifs";
   const withoutTenantChrome = onAdminRoute || isPlatformLanding || onMarketingRoute;
   return (
     <QueryClientProvider client={queryClient}>
