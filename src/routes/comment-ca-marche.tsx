@@ -87,7 +87,7 @@ function StepNumber({ n }: { n: string }) {
   return (
     <span
       aria-hidden="true"
-      className="block text-[2rem] font-extrabold leading-none text-[var(--supordo-mint-200)] lg:text-[3rem]"
+      className="block text-[2rem] font-extrabold leading-none text-[var(--supordo-forest)]/15 lg:text-[3rem]"
     >
       {n}
     </span>
@@ -143,19 +143,24 @@ function CommentCaMarchePage() {
           <div className="mx-auto max-w-[1200px] px-5 md:px-8">
             <div className="grid grid-cols-[auto_1fr] items-start gap-5 sm:gap-6 lg:grid-cols-[96px_1fr] lg:gap-10">
               <StepNumber n="01" />
-              <div className="max-w-[600px]">
-                <h2
-                  id="ccm-step1-title"
-                  className="text-[1.75rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[2rem]"
-                >
-                  Vous gardez vos informations à jour
-                </h2>
-                <p className="mt-3 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                  Quand quelque chose change dans votre entreprise, vous
-                  mettez à jour l'information concernée, depuis votre espace
-                  SUPORDO.
-                </p>
-                <ul className="mt-6 space-y-3.5">
+              <div>
+                <div className="max-w-[600px]">
+                  <h2
+                    id="ccm-step1-title"
+                    className="text-[1.75rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[2rem]"
+                  >
+                    Vous gardez vos informations à jour
+                  </h2>
+                  <p className="mt-3 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
+                    Quand quelque chose change dans votre entreprise, vous
+                    mettez à jour l'information concernée, depuis votre espace
+                    SUPORDO.
+                  </p>
+                </div>
+                {/* Deux colonnes à partir de lg : utilise l'espace que la
+                    colonne 1fr laisse à droite du texte plutôt que d'ajouter
+                    un élément décoratif pour le combler. */}
+                <ul className="mt-6 grid gap-x-10 gap-y-3.5 lg:max-w-[900px] lg:grid-cols-2">
                   {INFORMATIONS_A_JOUR.map((item) => (
                     <li
                       key={item}
