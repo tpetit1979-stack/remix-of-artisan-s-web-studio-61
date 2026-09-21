@@ -172,6 +172,63 @@ export type Database = {
           },
         ]
       }
+      marketing_leads: {
+        Row: {
+          city: string | null
+          company: string | null
+          created_at: string
+          current_website: string | null
+          email: string | null
+          first_name: string
+          id: string
+          intent: string
+          last_name: string
+          message: string | null
+          notified_at: string | null
+          phone: string
+          source: string
+          status: string
+          trade: string | null
+          trade_other: string | null
+        }
+        Insert: {
+          city?: string | null
+          company?: string | null
+          created_at?: string
+          current_website?: string | null
+          email?: string | null
+          first_name: string
+          id?: string
+          intent: string
+          last_name: string
+          message?: string | null
+          notified_at?: string | null
+          phone: string
+          source: string
+          status?: string
+          trade?: string | null
+          trade_other?: string | null
+        }
+        Update: {
+          city?: string | null
+          company?: string | null
+          created_at?: string
+          current_website?: string | null
+          email?: string | null
+          first_name?: string
+          id?: string
+          intent?: string
+          last_name?: string
+          message?: string | null
+          notified_at?: string | null
+          phone?: string
+          source?: string
+          status?: string
+          trade?: string | null
+          trade_other?: string | null
+        }
+        Relationships: []
+      }
       portfolio: {
         Row: {
           city: string | null
