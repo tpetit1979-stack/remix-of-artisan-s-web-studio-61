@@ -1,104 +1,79 @@
 /**
- * SUPORDO commercial lead intake — marketing surface only (/demarrer).
+ * SUPORDO — prise en charge des demandes commerciales du site marketing.
  *
- * Doctrine (plan canonique, Lot 1):
- *  - no new marketing table, no CRM persistence: the request is validated
- *    server-side and sent by email, nothing is written to the database;
- *  - the existing tenant function `notify-contact` is NOT reused: it is bound
- *    to a row of the artisan `contacts` table (it "claims" an existing row to
- *    guarantee a single send). A SUPORDO commercial request has no such row.
- *  - no secret ever reaches the browser: the Resend key and both addresses are
- *    read from process.env inside the handler only.
+ * Flux, dans cet ordre strict :
+ *   validation → anti-spam → persistance `marketing_leads` → notification email
  *
- * Known limitation, deliberately not faked: there is no reliable per-IP rate
- * limit here. The server runs as short-lived edge isolates with no shared
- * memory or store, so an in-memory counter would reset constantly and give a
- * false sense of protection. Anti-spam is therefore limited to a honeypot
- * field and a minimum time-on-page, both re-checked server-side. If real rate
- * limiting becomes necessary it needs a shared store, which is out of scope
- * for this lot (it would mean the persistence the doctrine excludes).
+ * La persistance passe avant la notification, et c'est le point important :
+ * un échec d'envoi Resend ne fait plus disparaître la demande. La ligne reste
+ * en base avec `notified_at` à null, ce qui suffit à retrouver les prospects
+ * non signalés (index partiel dédié).
+ *
+ * Deux formulaires, un seul mécanisme serveur :
+ *   - `callback`     — rappel express : prénom, nom, téléphone.
+ *   - `site_request` — demande de site : + entreprise, métier, ville, email.
+ * `source` dit d'où vient la demande. Le futur chatbot utilisera la même
+ * fonction avec une source supplémentaire, sans second point d'entrée.
+ *
+ * Écriture via le client service_role : `marketing_leads` n'a aucune policy
+ * d'insertion publique, donc rien ne peut y être inséré depuis un navigateur.
+ * Aucun secret ne quitte le serveur.
+ *
+ * Limite connue, toujours non simulée : il n'y a pas de limitation par IP.
+ * Le serveur tourne en isolats de courte durée sans mémoire partagée, où un
+ * compteur en mémoire donnerait une fausse impression de protection.
+ * L'anti-spam reste le piège à bots et le temps minimum de saisie, tous deux
+ * revérifiés côté serveur. La persistance rendrait désormais une vraie
+ * limitation possible (comptage en base) — hors périmètre de ce lot.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
-
-/** A real human needs at least this long to fill the form. */
-const MIN_ELAPSED_MS = 3000;
-
-const leadSchema = z.object({
-  company: z
-    .string()
-    .trim()
-    .min(2, { message: "Indiquez le nom de votre entreprise." })
-    .max(120, { message: "Le nom de l'entreprise est trop long." }),
-  trade: z
-    .string()
-    .trim()
-    .min(2, { message: "Indiquez votre métier." })
-    .max(80, { message: "Le métier est trop long." }),
-  city: z
-    .string()
-    .trim()
-    .min(2, { message: "Indiquez votre ville." })
-    .max(80, { message: "La ville est trop longue." }),
-  email: z
-    .string()
-    .trim()
-    .email({ message: "Cette adresse email n'est pas valide." })
-    .max(255, { message: "L'adresse email est trop longue." }),
-  // Optional: useful, but a request is actionable with an email alone.
-  phone: z
-    .string()
-    .trim()
-    .max(30, { message: "Le numéro de téléphone est trop long." })
-    .regex(/^[0-9+().\s-]*$/, { message: "Ce numéro de téléphone n'est pas valide." })
-    .optional()
-    .default(""),
-  message: z
-    .string()
-    .trim()
-    .max(2000, { message: "Le message est trop long." })
-    .optional()
-    .default(""),
-  /** Honeypot: hidden in the UI, must stay empty. */
-  trap: z.string().max(0).optional().default(""),
-  /** Milliseconds between page render and submit. */
-  elapsedMs: z.number().int().nonnegative(),
-});
-
-export type LeadInput = z.input<typeof leadSchema>;
-
-export type LeadResult =
-  | { ok: true }
-  | { ok: false; reason: "invalid"; message: string }
-  | { ok: false; reason: "not_configured" }
-  | { ok: false; reason: "send_failed" };
-
-interface LeadConfig {
-  apiKey: string;
-  to: string;
-  from: string;
-}
+import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import {
+  isLeadIntakeReady,
+  isLeadPersistenceConfigured,
+  readLeadDeliveryConfig,
+} from "@/lib/marketing-config";
+import {
+  buildNotification,
+  escapeHtml,
+  leadSchema,
+  MIN_ELAPSED_MS,
+  toRow,
+  TRADE_OTHER,
+  type LeadInput,
+  type LeadResult,
+} from "@/lib/supordo-lead";
 
 /**
- * The three operational parameters. Missing any of them means the form cannot
- * really send, so it is never offered to visitors (see /demarrer) — no address
- * is ever invented here.
- */
-function readConfig(): LeadConfig | null {
-  const apiKey = process.env["RESEND_API_KEY"]?.trim();
-  const to = process.env["SUPORDO_LEAD_TO_EMAIL"]?.trim();
-  const from = process.env["SUPORDO_LEAD_FROM_EMAIL"]?.trim();
-  if (!apiKey || !to || !from) return null;
-  return { apiKey, to, from };
-}
-
-/**
- * Public, read-only: tells the marketing pages whether a request can really be
- * sent today. Returns a boolean only — never an address, never a key.
+ * Indique aux pages marketing si une demande peut réellement être prise en
+ * charge aujourd'hui — c'est-à-dire conservée ET signalée. Ne renvoie qu'un
+ * booléen : jamais une adresse, jamais une clé.
  */
 export const getLeadIntakeStatus = createServerFn({ method: "GET" }).handler(async () => ({
-  configured: readConfig() !== null,
+  configured: isLeadIntakeReady(),
 }));
+
+/**
+ * Vérifie que le métier envoyé appartient bien à la taxonomie réelle.
+ * La colonne `trade` n'a pas de clé étrangère — le slug est figé au moment de
+ * la demande — donc la cohérence se vérifie ici, sinon `/exemples` filtrerait
+ * plus tard sur des valeurs inventées. Lecture publique (`trade_templates`
+ * est lisible par tous), pas besoin du client privilégié.
+ */
+async function isKnownTrade(slug: string): Promise<boolean> {
+  if (slug === TRADE_OTHER) return true;
+  const { data, error } = await supabase
+    .from("trade_templates")
+    .select("slug")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error) {
+    console.error("submitSupordoLead: lecture trade_templates impossible", error);
+    return false;
+  }
+  return data !== null;
+}
 
 export const submitSupordoLead = createServerFn({ method: "POST" })
   .inputValidator((data: LeadInput) => data)
@@ -114,59 +89,85 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
     }
     const lead = parsed.data;
 
-    // Anti-spam, re-checked server-side. Silent success on purpose: a bot
-    // gets no signal about which check rejected it, and no email is sent.
+    // Anti-spam, revérifié côté serveur. Succès silencieux volontaire : un bot
+    // n'apprend pas quel contrôle l'a rejeté, rien n'est écrit, rien n'est envoyé.
     if (lead.trap.length > 0 || lead.elapsedMs < MIN_ELAPSED_MS) {
       return { ok: true };
     }
 
-    const config = readConfig();
-    if (!config) {
-      console.error("submitSupordoLead: envoi non configuré (destinataire, expéditeur ou clé absente)");
+    if (lead.trade && !(await isKnownTrade(lead.trade))) {
+      return { ok: false, reason: "invalid", message: "Ce métier n'est pas reconnu." };
+    }
+
+    // Sans persistance, la demande serait suspendue au seul envoi d'email :
+    // on préfère le dire plutôt que de risquer de la perdre.
+    if (!isLeadPersistenceConfigured()) {
+      console.error("submitSupordoLead: persistance non configurée (SUPABASE_SERVICE_ROLE_KEY)");
       return { ok: false, reason: "not_configured" };
     }
 
-    const lines = [
-      `Entreprise : ${lead.company}`,
-      `Métier : ${lead.trade}`,
-      `Ville : ${lead.city}`,
-      `Email : ${lead.email}`,
-      `Téléphone : ${lead.phone || "non renseigné"}`,
-      "",
-      "Message :",
-      lead.message || "(aucun message)",
-    ];
+    const { data: saved, error: saveError } = await supabaseAdmin
+      .from("marketing_leads")
+      .insert(toRow(lead))
+      .select("id")
+      .single();
+
+    if (saveError || !saved) {
+      console.error("submitSupordoLead: enregistrement impossible", saveError);
+      return { ok: false, reason: "save_failed" };
+    }
+
+    // À partir d'ici la demande est conservée : plus rien ne peut la perdre.
+    // Un échec de notification laisse `notified_at` à null, ce qui la rend
+    // retrouvable, et le visiteur reçoit une confirmation légitime.
+    const delivery = readLeadDeliveryConfig();
+    if (!delivery) {
+      console.error(`submitSupordoLead: envoi non configuré, demande ${saved.id} à relever`);
+      return { ok: true };
+    }
+
+    const { subject, lines } = buildNotification(lead);
     const text = lines.join("\n");
-    const html = `<div style="font-family:sans-serif;font-size:14px;line-height:1.6">${text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/\n/g, "<br>")}</div>`;
+    const html = `<div style="font-family:sans-serif;font-size:14px;line-height:1.6">${escapeHtml(
+      text,
+    ).replace(/\n/g, "<br>")}</div>`;
 
     try {
       const response = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${config.apiKey}`,
+          Authorization: `Bearer ${delivery.apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: config.from,
-          to: config.to,
-          reply_to: lead.email,
-          subject: `Demande de site — ${lead.company} (${lead.city})`,
+          from: delivery.from,
+          to: delivery.to,
+          // Un rappel ne porte pas d'email : rien à quoi répondre.
+          ...(lead.intent === "site_request" ? { reply_to: lead.email } : {}),
+          subject,
           text,
           html,
         }),
       });
       if (!response.ok) {
         console.error(
-          `submitSupordoLead: échec Resend [${response.status}]: ${await response.text()}`,
+          `submitSupordoLead: échec Resend [${response.status}] sur la demande ${saved.id}: ${await response.text()}`,
         );
-        return { ok: false, reason: "send_failed" };
+        return { ok: true };
       }
-      return { ok: true };
     } catch (error) {
-      console.error("submitSupordoLead: erreur réseau", error);
-      return { ok: false, reason: "send_failed" };
+      console.error(`submitSupordoLead: erreur réseau sur la demande ${saved.id}`, error);
+      return { ok: true };
     }
+
+    const { error: markError } = await supabaseAdmin
+      .from("marketing_leads")
+      .update({ notified_at: new Date().toISOString() })
+      .eq("id", saved.id);
+    if (markError) {
+      // L'email est parti : la demande est traitée, seule la trace manque.
+      console.error(`submitSupordoLead: notified_at non enregistré (${saved.id})`, markError);
+    }
+
+    return { ok: true };
   });
