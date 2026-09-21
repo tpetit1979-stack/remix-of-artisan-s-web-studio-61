@@ -37,8 +37,8 @@ import {
 import {
   buildNotification,
   escapeHtml,
+  isLikelyBot,
   leadSchema,
-  MIN_ELAPSED_MS,
   toRow,
   TRADE_OTHER,
   type LeadInput,
@@ -89,9 +89,9 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
     }
     const lead = parsed.data;
 
-    // Anti-spam, revérifié côté serveur. Succès silencieux volontaire : un bot
-    // n'apprend pas quel contrôle l'a rejeté, rien n'est écrit, rien n'est envoyé.
-    if (lead.trap.length > 0 || lead.elapsedMs < MIN_ELAPSED_MS) {
+    // Succès silencieux volontaire : un robot n'apprend pas ce qui l'a trahi.
+    // Rien n'est écrit en base, aucune notification ne part.
+    if (isLikelyBot(lead)) {
       return { ok: true };
     }
 

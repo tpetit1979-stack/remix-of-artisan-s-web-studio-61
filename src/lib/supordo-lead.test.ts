@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { buildNotification, escapeHtml, leadSchema, toRow, TRADE_OTHER } from "./supordo-lead";
+import {
+  buildNotification,
+  escapeHtml,
+  isLikelyBot,
+  leadSchema,
+  toRow,
+  TRADE_OTHER,
+} from "./supordo-lead";
 
 const callback = {
   intent: "callback" as const,
@@ -111,13 +118,44 @@ describe("leadSchema — source", () => {
   });
 });
 
-describe("leadSchema — anti-spam", () => {
-  it("refuse un piège à bots rempli", () => {
-    expect(leadSchema.safeParse({ ...callback, trap: "rempli" }).success).toBe(false);
+describe("anti-bot — piège et délai", () => {
+  // Le point clé : la validation ne doit PAS rejeter une soumission piégée.
+  // Un rejet renverrait une erreur au robot, donc l'information qu'il a été
+  // repéré. Le schéma accepte, puis isLikelyBot tranche, et l'appelant répond
+  // un succès ordinaire sans rien écrire ni envoyer.
+  it("accepte à la validation une soumission dont le piège est rempli", () => {
+    const parsed = leadSchema.safeParse({ ...callback, trap: "http://spam.example" });
+    expect(parsed.success).toBe(true);
   });
 
-  it("laisse passer un délai court au schéma — c'est le handler qui tranche", () => {
-    expect(leadSchema.safeParse({ ...callback, elapsedMs: 0 }).success).toBe(true);
+  it("identifie ensuite cette soumission comme automatisée", () => {
+    const lead = leadSchema.parse({ ...callback, trap: "http://spam.example" });
+    expect(isLikelyBot(lead)).toBe(true);
+  });
+
+  it("détecte le piège même rempli d'espaces seuls sans le confondre avec vide", () => {
+    expect(isLikelyBot(leadSchema.parse({ ...callback, trap: "   x   " }))).toBe(true);
+    expect(isLikelyBot(leadSchema.parse({ ...callback, trap: "   " }))).toBe(false);
+  });
+
+  it("accepte à la validation un envoi trop rapide, puis le juge automatisé", () => {
+    const parsed = leadSchema.safeParse({ ...callback, elapsedMs: 0 });
+    expect(parsed.success).toBe(true);
+    expect(isLikelyBot(leadSchema.parse({ ...callback, elapsedMs: 0 }))).toBe(true);
+  });
+
+  it("laisse passer une soumission humaine : piège vide et délai suffisant", () => {
+    expect(isLikelyBot(leadSchema.parse(callback))).toBe(false);
+  });
+
+  it("juge automatisé un envoi juste sous le seuil, humain juste au-dessus", () => {
+    expect(isLikelyBot(leadSchema.parse({ ...callback, elapsedMs: 2999 }))).toBe(true);
+    expect(isLikelyBot(leadSchema.parse({ ...callback, elapsedMs: 3000 }))).toBe(false);
+  });
+
+  it("borne la taille du piège sans le rejeter pour autant", () => {
+    expect(leadSchema.safeParse({ ...callback, trap: "x".repeat(200) }).success).toBe(true);
+    expect(leadSchema.safeParse({ ...callback, trap: "x".repeat(201) }).success).toBe(false);
   });
 });
 

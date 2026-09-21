@@ -47,8 +47,17 @@ const baseFields = {
   trade: z.string().trim().max(80).optional().default(""),
   /** Texte libre, seulement quand `trade` vaut "autre". */
   tradeOther: z.string().trim().max(80).optional().default(""),
-  /** Piège à bots : masqué dans l'interface, doit rester vide. */
-  trap: z.string().max(0).optional().default(""),
+  /**
+   * Piège à bots : masqué dans l'interface, un visiteur ne le remplit jamais.
+   *
+   * Le schéma accepte volontairement une valeur ici. Le rejeter dès la
+   * validation renverrait une erreur au robot, donc l'information qu'il a été
+   * repéré et quel champ l'a trahi. La détection se fait plus loin, dans
+   * `isLikelyBot`, pour répondre un succès ordinaire sans rien écrire ni
+   * envoyer. La borne haute ne sert qu'à ne pas transporter une charge utile
+   * démesurée.
+   */
+  trap: z.string().max(200).optional().default(""),
   /** Millisecondes entre l'affichage de la page et l'envoi. */
   elapsedMs: z.number().int().nonnegative(),
 };
@@ -122,6 +131,18 @@ export type LeadResult =
   | { ok: false; reason: "save_failed" };
 
 /** Colonnes de `marketing_leads`, dans la forme attendue par la table. */
+/**
+ * Décide si une soumission valide est en réalité automatisée.
+ *
+ * Deux signaux, tous deux revérifiés côté serveur : le piège rempli, et un
+ * formulaire envoyé plus vite qu'un humain ne peut le remplir. L'appelant
+ * répond alors un succès ordinaire : rien n'est enregistré, rien n'est
+ * envoyé, et le robot n'apprend pas ce qui l'a trahi.
+ */
+export function isLikelyBot(lead: ParsedLead): boolean {
+  return lead.trap.trim().length > 0 || lead.elapsedMs < MIN_ELAPSED_MS;
+}
+
 export function toRow(lead: ParsedLead) {
   const site = lead.intent === "site_request" ? lead : null;
   return {
