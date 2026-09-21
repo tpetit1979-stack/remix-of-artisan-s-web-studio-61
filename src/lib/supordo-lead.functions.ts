@@ -15,9 +15,10 @@
  * `source` dit d'où vient la demande. Le futur chatbot utilisera la même
  * fonction avec une source supplémentaire, sans second point d'entrée.
  *
- * Écriture via le client service_role : `marketing_leads` n'a aucune policy
- * d'insertion publique, donc rien ne peut y être inséré depuis un navigateur.
- * Aucun secret ne quitte le serveur.
+ * Écriture via le client privilégié de `@/lib/supabase-admin.server`, qui
+ * appartient au code marketing et contourne RLS : `marketing_leads` n'a aucune
+ * policy d'insertion publique, donc rien ne peut y être inséré depuis un
+ * navigateur. Aucun secret ne quitte le serveur.
  *
  * Limite connue, toujours non simulée : il n'y a pas de limitation par IP.
  * Le serveur tourne en isolats de courte durée sans mémoire partagée, où un
@@ -28,7 +29,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getSupabaseMarketingAdmin } from "@/lib/supabase-admin.server";
 import {
   isLeadIntakeReady,
   isLeadPersistenceConfigured,
@@ -102,11 +103,13 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
     // Sans persistance, la demande serait suspendue au seul envoi d'email :
     // on préfère le dire plutôt que de risquer de la perdre.
     if (!isLeadPersistenceConfigured()) {
-      console.error("submitSupordoLead: persistance non configurée (SUPABASE_SERVICE_ROLE_KEY)");
+      console.error("submitSupordoLead: persistance non configurée (SUPABASE_SECRET_KEY)");
       return { ok: false, reason: "not_configured" };
     }
 
-    const { data: saved, error: saveError } = await supabaseAdmin
+    const supabaseMarketing = getSupabaseMarketingAdmin();
+
+    const { data: saved, error: saveError } = await supabaseMarketing
       .from("marketing_leads")
       .insert(toRow(lead))
       .select("id")
@@ -160,7 +163,7 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
       return { ok: true };
     }
 
-    const { error: markError } = await supabaseAdmin
+    const { error: markError } = await supabaseMarketing
       .from("marketing_leads")
       .update({ notified_at: new Date().toISOString() })
       .eq("id", saved.id);

@@ -969,11 +969,18 @@ rejoindront `marketing-config.ts` quand une interface les affichera. Aucun écra
 de relecture des demandes n'existe : `marketing_leads` se consulte en base.
 
 ### Risques connus
-`SUPABASE_SERVICE_ROLE_KEY` est un prérequis de déploiement. Sans elle, aucune
-demande ne peut être conservée et les formulaires ne s'affichent pas du tout.
-C'est un choix assumé : la seule autre façon d'écrire depuis un navigateur
-serait une policy d'insertion publique, qui laisserait n'importe qui écrire dans
-la table.
+`SUPABASE_SECRET_KEY` est un prérequis de déploiement, à renseigner comme
+secret serveur de l'environnement de déploiement — son emplacement exact reste
+à confirmer. Sans elle, aucune demande ne peut être conservée et les
+formulaires ne s'affichent pas du tout. C'est un choix assumé : la seule autre
+façon d'écrire depuis un navigateur serait une policy d'insertion publique, qui
+laisserait n'importe qui écrire dans la table.
+
+Le client Supabase privilégié du marketing vit dans
+`src/lib/supabase-admin.server.ts`, hors de `src/integrations/supabase/` dont
+les fichiers portent l'en-tête « automatically generated » : la persistance des
+demandes ne dépend d'aucune modification durable d'un fichier que la plateforme
+peut réécrire.
 
 Il n'y a toujours pas de limitation par IP. La persistance rendrait désormais un
 comptage en base possible, mais le rappel express — trois champs — abaisse le

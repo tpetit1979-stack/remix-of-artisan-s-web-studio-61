@@ -10,6 +10,7 @@ const CLES = [
   "SUPORDO_LEAD_TO_EMAIL",
   "SUPORDO_LEAD_FROM_EMAIL",
   "SUPABASE_URL",
+  "SUPABASE_SECRET_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
 ] as const;
 
@@ -35,7 +36,7 @@ function configurerEnvoi() {
 
 function configurerPersistance() {
   process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
-  process.env["SUPABASE_SERVICE_ROLE_KEY"] = "cle-service";
+  process.env["SUPABASE_SECRET_KEY"] = "sb_secret_exemple";
 }
 
 describe("readLeadDeliveryConfig", () => {
@@ -62,12 +63,41 @@ describe("readLeadDeliveryConfig", () => {
 });
 
 describe("isLeadPersistenceConfigured", () => {
-  it("exige l'URL et la clé service_role", () => {
-    expect(isLeadPersistenceConfigured()).toBe(false);
-    process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
-    expect(isLeadPersistenceConfigured()).toBe(false);
+  it("est vrai avec l'URL et la clé secrète", () => {
     configurerPersistance();
     expect(isLeadPersistenceConfigured()).toBe(true);
+  });
+
+  it("est faux sans clé secrète", () => {
+    process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
+    expect(isLeadPersistenceConfigured()).toBe(false);
+  });
+
+  it("est faux sans URL", () => {
+    process.env["SUPABASE_SECRET_KEY"] = "sb_secret_exemple";
+    expect(isLeadPersistenceConfigured()).toBe(false);
+  });
+
+  it("est faux quand rien n'est configuré", () => {
+    expect(isLeadPersistenceConfigured()).toBe(false);
+  });
+
+  // Bascule nette : l'ancienne variable ne doit plus avoir aucun effet.
+  it("ignore SUPABASE_SERVICE_ROLE_KEY, qui n'est plus un repli", () => {
+    process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
+    process.env["SUPABASE_SERVICE_ROLE_KEY"] = "ancienne-cle-legacy";
+    expect(isLeadPersistenceConfigured()).toBe(false);
+  });
+
+  it("reste vrai avec la clé secrète même si l'ancienne variable est absente", () => {
+    configurerPersistance();
+    delete process.env["SUPABASE_SERVICE_ROLE_KEY"];
+    expect(isLeadPersistenceConfigured()).toBe(true);
+  });
+
+  it("ne renvoie jamais la clé elle-même, seulement un booléen", () => {
+    configurerPersistance();
+    expect(typeof isLeadPersistenceConfigured()).toBe("boolean");
   });
 });
 

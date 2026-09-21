@@ -12,6 +12,8 @@
  * importé depuis un composant rendu côté navigateur.
  */
 
+import { hasSupabaseServerCredentials } from "@/lib/supabase-server-credentials";
+
 /** Envoi de la notification email (Resend). */
 export interface LeadDeliveryConfig {
   apiKey: string;
@@ -32,20 +34,18 @@ export function readLeadDeliveryConfig(): LeadDeliveryConfig | null {
 }
 
 /**
- * La demande est écrite en base avec le client service_role, qui contourne
+ * La demande est écrite en base avec la clé secrète Supabase, qui contourne
  * RLS : `marketing_leads` n'a volontairement aucune policy d'insertion
  * publique, donc rien ne peut être inséré depuis un navigateur.
  *
- * PRÉREQUIS DE DÉPLOIEMENT : `SUPABASE_SERVICE_ROLE_KEY` et `SUPABASE_URL`
- * doivent exister dans l'environnement serveur. Sans elles, aucune demande ne
- * peut être conservée, et le formulaire n'est pas proposé du tout — on ne
- * remplace pas la persistance par une policy publique, qui laisserait
- * n'importe qui écrire dans la table.
+ * PRÉREQUIS DE DÉPLOIEMENT : `SUPABASE_URL` et `SUPABASE_SECRET_KEY` doivent
+ * exister dans l'environnement serveur. Sans elles, aucune demande ne peut
+ * être conservée, et le formulaire n'est pas proposé du tout — on ne remplace
+ * pas la persistance par une policy publique, qui laisserait n'importe qui
+ * écrire dans la table.
  */
 export function isLeadPersistenceConfigured(): boolean {
-  return Boolean(
-    process.env["SUPABASE_URL"]?.trim() && process.env["SUPABASE_SERVICE_ROLE_KEY"]?.trim(),
-  );
+  return hasSupabaseServerCredentials();
 }
 
 /**
