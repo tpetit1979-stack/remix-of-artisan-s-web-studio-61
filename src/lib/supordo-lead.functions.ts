@@ -103,7 +103,7 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
     // Sans persistance, la demande serait suspendue au seul envoi d'email :
     // on préfère le dire plutôt que de risquer de la perdre.
     if (!isLeadPersistenceConfigured()) {
-      console.error("submitSupordoLead: persistance non configurée (SUPABASE_SECRET_KEY)");
+      console.error("submitSupordoLead: persistance non configurée (SUPORDO_SUPABASE_SECRET_KEY)");
       return { ok: false, reason: "not_configured" };
     }
 

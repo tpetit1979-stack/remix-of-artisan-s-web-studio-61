@@ -38,7 +38,8 @@ export function readLeadDeliveryConfig(): LeadDeliveryConfig | null {
  * RLS : `marketing_leads` n'a volontairement aucune policy d'insertion
  * publique, donc rien ne peut être inséré depuis un navigateur.
  *
- * PRÉREQUIS DE DÉPLOIEMENT : `SUPABASE_URL` et `SUPABASE_SECRET_KEY` doivent
+ * PRÉREQUIS DE DÉPLOIEMENT : `SUPABASE_URL` et `SUPORDO_SUPABASE_SECRET_KEY`
+ * doivent
  * exister dans l'environnement serveur. Sans elles, aucune demande ne peut
  * être conservée, et le formulaire n'est pas proposé du tout — on ne remplace
  * pas la persistance par une policy publique, qui laisserait n'importe qui

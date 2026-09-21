@@ -969,9 +969,12 @@ rejoindront `marketing-config.ts` quand une interface les affichera. Aucun écra
 de relecture des demandes n'existe : `marketing_leads` se consulte en base.
 
 ### Risques connus
-`SUPABASE_SECRET_KEY` est un prérequis de déploiement, à renseigner comme
-secret serveur de l'environnement de déploiement — son emplacement exact reste
-à confirmer. Sans elle, aucune demande ne peut être conservée et les
+`SUPORDO_SUPABASE_SECRET_KEY` est un prérequis de déploiement, à renseigner
+comme secret serveur de l'environnement de déploiement. Le préfixe `SUPORDO_`
+est imposé : la plateforme réserve `SUPABASE_` à ses propres secrets et refuse
+la création d'un secret de projet portant ce préfixe. `SUPABASE_URL` reste lue
+sous son nom d'origine, la plateforme la fournissant vraisemblablement
+elle-même — ce qui reste à confirmer en conditions réelles. Sans elle, aucune demande ne peut être conservée et les
 formulaires ne s'affichent pas du tout. C'est un choix assumé : la seule autre
 façon d'écrire depuis un navigateur serait une policy d'insertion publique, qui
 laisserait n'importe qui écrire dans la table.

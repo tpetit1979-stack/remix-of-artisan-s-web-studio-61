@@ -10,7 +10,7 @@ const CLES = [
   "SUPORDO_LEAD_TO_EMAIL",
   "SUPORDO_LEAD_FROM_EMAIL",
   "SUPABASE_URL",
-  "SUPABASE_SECRET_KEY",
+  "SUPORDO_SUPABASE_SECRET_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
 ] as const;
 
@@ -36,7 +36,7 @@ function configurerEnvoi() {
 
 function configurerPersistance() {
   process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
-  process.env["SUPABASE_SECRET_KEY"] = "sb_secret_exemple";
+  process.env["SUPORDO_SUPABASE_SECRET_KEY"] = "sb_secret_exemple";
 }
 
 describe("readLeadDeliveryConfig", () => {
@@ -74,7 +74,7 @@ describe("isLeadPersistenceConfigured", () => {
   });
 
   it("est faux sans URL", () => {
-    process.env["SUPABASE_SECRET_KEY"] = "sb_secret_exemple";
+    process.env["SUPORDO_SUPABASE_SECRET_KEY"] = "sb_secret_exemple";
     expect(isLeadPersistenceConfigured()).toBe(false);
   });
 

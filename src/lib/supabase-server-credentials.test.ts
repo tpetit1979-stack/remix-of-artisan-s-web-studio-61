@@ -6,7 +6,7 @@ import {
   SUPABASE_SECRET_KEY_ENV,
 } from "./supabase-server-credentials";
 
-const CLES = ["SUPABASE_URL", "SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY"] as const;
+const CLES = ["SUPABASE_URL", "SUPORDO_SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY"] as const;
 const CLE_SECRETE = "sb_secret_valeur_de_test";
 
 let initial: Record<string, string | undefined>;
@@ -25,7 +25,7 @@ afterEach(() => {
 
 function configurer() {
   process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
-  process.env["SUPABASE_SECRET_KEY"] = CLE_SECRETE;
+  process.env["SUPORDO_SUPABASE_SECRET_KEY"] = CLE_SECRETE;
 }
 
 describe("readSupabaseServerCredentials", () => {
@@ -43,14 +43,22 @@ describe("readSupabaseServerCredentials", () => {
   });
 
   it("renvoie null si l'URL manque", () => {
-    process.env["SUPABASE_SECRET_KEY"] = CLE_SECRETE;
+    process.env["SUPORDO_SUPABASE_SECRET_KEY"] = CLE_SECRETE;
     expect(readSupabaseServerCredentials()).toBeNull();
   });
 
   it("ignore une valeur faite d'espaces", () => {
     process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
-    process.env["SUPABASE_SECRET_KEY"] = "   ";
+    process.env["SUPORDO_SUPABASE_SECRET_KEY"] = "   ";
     expect(readSupabaseServerCredentials()).toBeNull();
+  });
+
+  it("ignore l'ancien nom SUPABASE_SECRET_KEY, refusé par Lovable (préfixe réservé)", () => {
+    process.env["SUPABASE_URL"] = "https://exemple.supabase.co";
+    process.env["SUPABASE_SECRET_KEY"] = "ancien-nom-reserve";
+    expect(readSupabaseServerCredentials()).toBeNull();
+    expect(hasSupabaseServerCredentials()).toBe(false);
+    delete process.env["SUPABASE_SECRET_KEY"];
   });
 
   it("n'utilise pas SUPABASE_SERVICE_ROLE_KEY comme repli", () => {

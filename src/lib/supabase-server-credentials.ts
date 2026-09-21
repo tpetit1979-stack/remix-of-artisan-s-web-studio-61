@@ -8,7 +8,10 @@
  * (`@/lib/supabase-admin.server`), sans dépendre du dossier généré.
  *
  * La clé utilisée est la clé secrète Supabase moderne (`sb_secret_…`), lue
- * dans `SUPABASE_SECRET_KEY`. Le SDK ne décode jamais cette valeur : il la
+ * dans `SUPORDO_SUPABASE_SECRET_KEY`. Le préfixe `SUPORDO_` n'est pas
+ * décoratif : Lovable réserve `SUPABASE_` à ses propres secrets et refuse la
+ * création d'un secret de projet portant ce préfixe. Le SDK ne décode jamais
+ * cette valeur : il la
  * transmet dans l'en-tête `apikey` et c'est le serveur qui lui associe ses
  * privilèges. Le format de la clé n'a donc aucune incidence sur les policies
  * ni sur la RLS.
@@ -21,7 +24,7 @@
  */
 
 /** Nom de la variable attendue, pour les messages d'erreur et de diagnostic. */
-export const SUPABASE_SECRET_KEY_ENV = "SUPABASE_SECRET_KEY";
+export const SUPABASE_SECRET_KEY_ENV = "SUPORDO_SUPABASE_SECRET_KEY";
 export const SUPABASE_URL_ENV = "SUPABASE_URL";
 
 export interface SupabaseServerCredentials {
