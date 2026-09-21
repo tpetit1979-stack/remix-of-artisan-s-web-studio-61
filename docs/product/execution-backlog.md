@@ -928,3 +928,61 @@ Sites / CRM / Tarifs / Ressources ; page métier pilote Chauffagiste.
 Les cartes restent sans destination : aucune route métier n'existe. Les illustrations sont
 recadrées en `object-cover` centré ; un futur remplacement d'illustration au cadrage très
 différent peut demander un `object-position` dédié.
+
+## Lot 1A — Socle backend de conversion (persistance des demandes)
+
+### Ce que ce lot simplifie
+Une demande commerciale est d'abord conservée, puis signalée. `submitSupordoLead`
+valide, écrit la ligne dans `marketing_leads`, envoie la notification, puis
+inscrit `notified_at`. Un échec d'envoi Resend ne fait plus disparaître la
+demande : la ligne reste, `notified_at` à null, et un index partiel dédié
+permet de retrouver exactement les demandes non signalées.
+
+Un seul mécanisme serveur porte les deux formulaires. `intent` vaut
+`site_request` ou `callback`, `source` dit depuis quelle page la demande part.
+Le rappel express n'exige que prénom, nom et téléphone ; la demande de site y
+ajoute entreprise, métier, commune, email. Les deux règles vivent dans la même
+union discriminée, et la table porte les mêmes contraintes en `CHECK` : ce que
+le serveur refuse, la base le refuse aussi.
+
+Le métier référence la taxonomie réelle `trade_templates` par son slug, vérifié
+côté serveur avant écriture, avec `autre` et un texte libre pour ce qui n'y
+figure pas. `/demarrer` propose cette liste plutôt qu'un champ libre.
+
+Les paramètres opérationnels se lisent dans `src/lib/marketing-config.ts` et
+nulle part ailleurs. Une demande n'est proposée au visiteur que si elle peut
+être à la fois conservée et signalée.
+
+### Ce que ce lot supprime
+L'écriture unique par email comme seul destin d'un prospect, et le champ métier
+en texte libre de `/demarrer`, qui ne permettait aucun filtrage. La page de
+confidentialité et `/demarrer` n'affirment plus que les demandes ne sont
+enregistrées dans aucune base de données — c'était devenu faux.
+
+### Ce qui reste à migrer
+Le mini-formulaire « Être rappelé » et les composants de contact (lot 1B) : le
+serveur accepte déjà `intent: callback`, aucune interface ne l'émet encore. Les
+sources `home`, `pricing`, `how_it_works`, `examples` et `confirmation` sont
+acceptées mais seules `start` est émise. Les coordonnées publiques
+(téléphone, email, WhatsApp, calendrier) ne sont pas encore centralisées : elles
+rejoindront `marketing-config.ts` quand une interface les affichera. Aucun écran
+de relecture des demandes n'existe : `marketing_leads` se consulte en base.
+
+### Risques connus
+`SUPABASE_SERVICE_ROLE_KEY` est un prérequis de déploiement. Sans elle, aucune
+demande ne peut être conservée et les formulaires ne s'affichent pas du tout.
+C'est un choix assumé : la seule autre façon d'écrire depuis un navigateur
+serait une policy d'insertion publique, qui laisserait n'importe qui écrire dans
+la table.
+
+Il n'y a toujours pas de limitation par IP. La persistance rendrait désormais un
+comptage en base possible, mais le rappel express — trois champs — abaisse le
+coût d'une soumission automatisée. À surveiller dès que le formulaire est en
+ligne.
+
+`marketing_leads.trade` n'a pas de clé étrangère : le slug est figé au moment de
+la demande et survit à une évolution de la taxonomie. En contrepartie, un slug
+supprimé de `trade_templates` reste présent dans les demandes anciennes.
+
+La suppression d'une demande sur requête d'une personne se fait en base, sans
+écran : praticable tant que le volume est faible, à revoir ensuite.

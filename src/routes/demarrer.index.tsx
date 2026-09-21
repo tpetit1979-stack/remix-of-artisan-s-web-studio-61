@@ -1,8 +1,10 @@
-import { createFileRoute, notFound, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
 import { getLeadIntakeStatus, submitSupordoLead } from "@/lib/supordo-lead.functions";
+import { TRADE_OTHER } from "@/lib/supordo-lead";
+import { supabase } from "@/integrations/supabase/client";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
@@ -24,7 +26,13 @@ export const Route = createFileRoute("/demarrer/")({
     const input = await resolveTenantInputForRoute().catch(() => null);
     if (!input || !isMarketingHost(input.hostname)) throw notFound();
     const { configured } = await getLeadIntakeStatus();
-    return { configured };
+    // Taxonomie métier réelle (public.trade_templates, lecture publique).
+    // Aucune seconde liste n'est maintenue ici.
+    const { data: trades } = await supabase
+      .from("trade_templates")
+      .select("slug, name")
+      .order("name", { ascending: true });
+    return { configured, trades: trades ?? [] };
   },
   head: () => {
     const title = "Demander mon site — SUPORDO Sites";
@@ -43,32 +51,39 @@ export const Route = createFileRoute("/demarrer/")({
 });
 
 interface FormState {
+  firstName: string;
+  lastName: string;
   company: string;
   trade: string;
+  tradeOther: string;
   city: string;
   email: string;
   phone: string;
+  currentWebsite: string;
   message: string;
   trap: string;
 }
 
 const EMPTY: FormState = {
+  firstName: "",
+  lastName: "",
   company: "",
   trade: "",
+  tradeOther: "",
   city: "",
   email: "",
   phone: "",
+  currentWebsite: "",
   message: "",
   trap: "",
 };
 
-const labelClass =
-  "block text-sm font-semibold text-[var(--supordo-forest)]";
+const labelClass = "block text-sm font-semibold text-[var(--supordo-forest)]";
 const inputClass =
   "mt-2 block w-full min-h-12 rounded-[6px] border border-[var(--supordo-mint-200)] bg-white px-4 text-base text-[var(--supordo-forest)] outline-none placeholder:text-[var(--supordo-graphite)]/50 focus-visible:border-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]";
 
 function DemarrerPage() {
-  const { configured } = Route.useLoaderData();
+  const { configured, trades } = Route.useLoaderData();
   const navigate = useNavigate();
   const submit = useServerFn(submitSupordoLead);
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -80,19 +95,31 @@ function DemarrerPage() {
     mountedAt.current = Date.now();
   }, []);
 
-  const update = (field: keyof FormState) => (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setForm((prev) => ({ ...prev, [field]: event.target.value }));
-  };
+  const update =
+    (field: keyof FormState) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      setForm((prev) => ({ ...prev, [field]: event.target.value }));
+    };
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
 
-    // Client-side validation, mirrored server-side — never trusted alone.
-    if (!form.company.trim() || !form.trade.trim() || !form.city.trim() || !form.email.trim()) {
-      setError("Entreprise, métier, ville et email sont nécessaires pour vous répondre.");
+    // Validation côté navigateur, rejouée côté serveur — jamais seule.
+    if (
+      !form.firstName.trim() ||
+      !form.lastName.trim() ||
+      !form.company.trim() ||
+      !form.trade.trim() ||
+      !form.city.trim() ||
+      !form.phone.trim() ||
+      !form.email.trim()
+    ) {
+      setError("Tous les champs marqués comme nécessaires doivent être remplis.");
+      return;
+    }
+    if (form.trade === TRADE_OTHER && !form.tradeOther.trim()) {
+      setError("Précisez votre métier.");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email.trim())) {
@@ -104,11 +131,17 @@ function DemarrerPage() {
     try {
       const result = await submit({
         data: {
+          intent: "site_request",
+          source: "start",
+          firstName: form.firstName,
+          lastName: form.lastName,
           company: form.company,
           trade: form.trade,
+          tradeOther: form.trade === TRADE_OTHER ? form.tradeOther : "",
           city: form.city,
           email: form.email,
           phone: form.phone,
+          currentWebsite: form.currentWebsite,
           message: form.message,
           trap: form.trap,
           elapsedMs: Date.now() - mountedAt.current,
@@ -122,7 +155,7 @@ function DemarrerPage() {
       if (result.reason === "invalid") setError(result.message);
       else if (result.reason === "not_configured")
         setError(
-          "Votre demande n'a pas pu être envoyée : l'envoi n'est pas encore configuré. Réessayez plus tard.",
+          "Votre demande n'a pas pu être enregistrée : la réception n'est pas encore en place. Réessayez plus tard.",
         );
       else
         setError(
@@ -146,9 +179,8 @@ function DemarrerPage() {
             Parlons de votre site.
           </h1>
           <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Dites-nous qui vous êtes et ce que vous faites. Nous revenons vers vous par
-            email pour comprendre votre besoin et vous expliquer comment SUPORDO Sites
-            fonctionne.
+            Dites-nous qui vous êtes et ce que vous faites. Nous revenons vers vous par email pour
+            comprendre votre besoin et vous expliquer comment SUPORDO Sites fonctionne.
           </p>
 
           {!configured ? (
@@ -157,15 +189,44 @@ function DemarrerPage() {
                 Le formulaire n'est pas encore ouvert.
               </p>
               <p className="mt-3 text-sm leading-relaxed text-[var(--supordo-graphite)]">
-                L'adresse de réception des demandes n'est pas encore en place. Plutôt
-                qu'un formulaire qui perdrait votre message sans rien dire, cette page
-                reste volontairement sans envoi jusqu'à ce que la réception fonctionne
-                réellement.
+                L'enregistrement et la réception des demandes ne sont pas encore en place. Plutôt
+                qu'un formulaire qui perdrait votre message sans rien dire, cette page reste
+                volontairement sans envoi jusqu'à ce que la prise en charge fonctionne réellement.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-8 space-y-6" noValidate>
               <div className="grid gap-6 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="firstName" className={labelClass}>
+                    Prénom
+                  </label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    className={inputClass}
+                    value={form.firstName}
+                    onChange={update("firstName")}
+                    required
+                    maxLength={80}
+                    autoComplete="given-name"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="lastName" className={labelClass}>
+                    Nom
+                  </label>
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    className={inputClass}
+                    value={form.lastName}
+                    onChange={update("lastName")}
+                    required
+                    maxLength={80}
+                    autoComplete="family-name"
+                  />
+                </div>
                 <div>
                   <label htmlFor="company" className={labelClass}>
                     Entreprise
@@ -185,20 +246,42 @@ function DemarrerPage() {
                   <label htmlFor="trade" className={labelClass}>
                     Métier
                   </label>
-                  <input
+                  <select
                     id="trade"
                     name="trade"
                     className={inputClass}
                     value={form.trade}
                     onChange={update("trade")}
                     required
-                    maxLength={80}
-                    placeholder="Plombier, couvreur, électricien…"
-                  />
+                  >
+                    <option value="">Choisissez votre métier</option>
+                    {trades.map((t) => (
+                      <option key={t.slug} value={t.slug}>
+                        {t.name}
+                      </option>
+                    ))}
+                    <option value={TRADE_OTHER}>Autre</option>
+                  </select>
                 </div>
+                {form.trade === TRADE_OTHER && (
+                  <div>
+                    <label htmlFor="tradeOther" className={labelClass}>
+                      Précisez votre métier
+                    </label>
+                    <input
+                      id="tradeOther"
+                      name="tradeOther"
+                      className={inputClass}
+                      value={form.tradeOther}
+                      onChange={update("tradeOther")}
+                      required
+                      maxLength={80}
+                    />
+                  </div>
+                )}
                 <div>
                   <label htmlFor="city" className={labelClass}>
-                    Ville
+                    Commune
                   </label>
                   <input
                     id="city"
@@ -227,9 +310,9 @@ function DemarrerPage() {
                     autoComplete="email"
                   />
                 </div>
-                <div className="sm:col-span-2">
+                <div>
                   <label htmlFor="phone" className={labelClass}>
-                    Téléphone <span className="font-normal text-[var(--supordo-graphite)]">(facultatif)</span>
+                    Téléphone
                   </label>
                   <input
                     id="phone"
@@ -238,15 +321,32 @@ function DemarrerPage() {
                     className={inputClass}
                     value={form.phone}
                     onChange={update("phone")}
+                    required
                     maxLength={30}
                     autoComplete="tel"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="currentWebsite" className={labelClass}>
+                    Site internet actuel{" "}
+                    <span className="font-normal text-[var(--supordo-graphite)]">(facultatif)</span>
+                  </label>
+                  <input
+                    id="currentWebsite"
+                    name="currentWebsite"
+                    className={inputClass}
+                    value={form.currentWebsite}
+                    onChange={update("currentWebsite")}
+                    maxLength={255}
+                    autoComplete="url"
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="message" className={labelClass}>
-                  Votre message <span className="font-normal text-[var(--supordo-graphite)]">(facultatif)</span>
+                  Votre message{" "}
+                  <span className="font-normal text-[var(--supordo-graphite)]">(facultatif)</span>
                 </label>
                 <textarea
                   id="message"
@@ -294,16 +394,20 @@ function DemarrerPage() {
                   Ce qui se passe ensuite
                 </p>
                 <p className="mt-2">
-                  Votre demande est envoyée par email à SUPORDO. Elle n'est pas
-                  enregistrée dans une base de données. Une personne de SUPORDO vous
-                  répond à l'adresse que vous avez indiquée.
+                  Votre demande est enregistrée par SUPORDO, puis signalée par email à notre équipe.
+                  Une personne de SUPORDO vous répond à l'adresse ou au numéro que vous avez
+                  indiqués.
                 </p>
                 <p className="mt-3">
-                  Vos informations servent uniquement à répondre à cette demande. Elles
-                  sont transmises et conservées dans la messagerie de SUPORDO. Vous
-                  pouvez demander leur suppression en répondant à notre email. La durée
-                  de conservation et la politique de confidentialité complète seront
-                  précisées sur cette page dès leur publication.
+                  Vos informations servent uniquement à traiter cette demande. Vous pouvez demander
+                  leur suppression à tout moment. Le détail figure dans notre{" "}
+                  <Link
+                    to="/legal/confidentialite"
+                    className="font-semibold text-[var(--supordo-forest)] underline underline-offset-4"
+                  >
+                    politique de confidentialité
+                  </Link>
+                  .
                 </p>
               </div>
             </form>

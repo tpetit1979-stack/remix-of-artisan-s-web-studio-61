@@ -44,9 +44,19 @@ function ConfidentialitePage() {
                 Données collectées
               </h2>
               <p className="mt-2">
-                Les seules données personnelles collectées sur ce site sont celles que vous
-                indiquez volontairement dans le formulaire « Demander mon site » : entreprise,
-                métier, ville, email, téléphone (facultatif) et message (facultatif).
+                Les seules données personnelles collectées sur ce site sont celles que vous indiquez
+                volontairement dans nos formulaires de contact.
+              </p>
+              <p className="mt-2">
+                « Demander mon site » : prénom, nom, entreprise, métier, commune, téléphone, email,
+                ainsi que votre site internet actuel et votre message si vous les renseignez.
+              </p>
+              <p className="mt-2">
+                « Être rappelé » : prénom, nom, téléphone, et votre métier si vous l'indiquez.
+              </p>
+              <p className="mt-2">
+                Nous conservons également la page depuis laquelle votre demande a été envoyée, afin
+                de savoir à quoi elle se rapporte.
               </p>
             </div>
 
@@ -55,10 +65,15 @@ function ConfidentialitePage() {
                 Finalité et conservation
               </h2>
               <p className="mt-2">
-                Ces informations servent uniquement à vous répondre. Elles ne sont enregistrées
-                dans aucune base de données : elles sont transmises par email et conservées dans
-                la messagerie de SUPORDO. Vous pouvez demander leur suppression en répondant à
-                l'email reçu.
+                Ces informations servent uniquement à vous répondre. Elles sont enregistrées dans la
+                base de données de SUPORDO, afin qu'une demande ne soit pas perdue si l'email de
+                notification échoue, puis signalées par email à notre équipe. Elles ne sont ni
+                revendues, ni transmises à des tiers à des fins commerciales, et ne sont jamais
+                visibles depuis les sites des artisans clients de SUPORDO.
+              </p>
+              <p className="mt-2">
+                Vous pouvez demander leur suppression à tout moment, en répondant à l'email reçu ou
+                en nous écrivant.
               </p>
               <p className="mt-2 italic text-[var(--supordo-graphite)]/70">
                 Durée de conservation précise et adresse dédiée à l'exercice de vos droits :{" "}
@@ -71,8 +86,8 @@ function ConfidentialitePage() {
                 Sous-traitants techniques
               </h2>
               <p className="mt-2">
-                Resend (envoi de l'email de votre demande), Supabase (hébergement de la base de
-                données et des fichiers) et Cloudflare (hébergement).
+                Resend (envoi de l'email signalant votre demande), Supabase (hébergement de la base
+                de données et des fichiers) et Cloudflare (hébergement).
               </p>
             </div>
 
