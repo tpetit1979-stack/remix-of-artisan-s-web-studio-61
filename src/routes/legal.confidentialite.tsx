@@ -72,8 +72,9 @@ function ConfidentialitePage() {
                 visibles depuis les sites des artisans clients de SUPORDO.
               </p>
               <p className="mt-2">
-                Vous pouvez demander leur suppression à tout moment, en répondant à l'email reçu ou
-                en nous écrivant.
+                Vous pouvez demander leur suppression à tout moment. Aucun email automatique ne vous
+                est envoyé lorsque vous remplissez un formulaire : votre demande est signalée à
+                SUPORDO, et c'est une personne qui vous recontacte.
               </p>
               <p className="mt-2 italic text-[var(--supordo-graphite)]/70">
                 Durée de conservation précise et adresse dédiée à l'exercice de vos droits :{" "}
