@@ -1,0 +1,12 @@
+{
+  "source_images_detected": 63,
+  "unique_binary_images": 62,
+  "families": {
+    "brand-supordo-legacy-3d": 23,
+    "demo-martin-confort": 13,
+    "demo-atelier-du-feu": 11,
+    "demo-toitures-durand": 5,
+    "demo-berger-electricite": 11
+  },
+  "note": "This summary is authoritative for counts. The committed manifest is a curated handoff subset; the complete local package contains the full manifest."
+}
