@@ -996,3 +996,58 @@ supprimé de `trade_templates` reste présent dans les demandes anciennes.
 
 La suppression d'une demande sur requête d'une personne se fait en base, sans
 écran : praticable tant que le volume est faible, à revoir ensuite.
+
+## Lot — Site marketing V1 (landing complète)
+
+### Ce que ce lot simplifie
+La home raconte le produit en neuf actes : reconnaissance du métier, une
+prestation qui devient une page, un chantier qui devient une réalisation, le
+contenu réel du site, le partage des rôles, le prix, les questions, l'action.
+Montrer avant d'expliquer, expliquer avant de vendre.
+
+Les appels à l'action marketing ne dépendent plus de la capacité de réception
+des demandes. « Demander mon site » est visible en permanence — dans
+l'en-tête, le Hero, l'offre et la fermeture — parce que sa destination existe
+et que `/demarrer` dit lui-même quand une demande ne peut pas encore être
+reçue. La garde `leadIntakeReady` protège la soumission du formulaire, pas
+l'existence commerciale d'un bouton.
+
+La navigation ne disparaît plus sur téléphone : « Comment ça marche » et
+« Tarifs » passent sur une seconde ligne sous l'en-tête, à pleine hauteur
+tactile, plutôt que d'être masqués sous 768 px.
+
+L'offre est la seule rupture Forest de la home : le prix est le moment où la
+lecture s'arrête.
+
+### Ce que ce lot supprime
+Le prix faux : 99 € de mise en place n'existe plus nulle part, ni sur la home,
+ni sur `/tarifs`, ni dans le plan directeur. La mention « Sans engagement » de
+`/tarifs`, tant que les règles d'engagement et de résiliation ne sont pas
+arrêtées. Le domaine personnalisé listé comme « non proposé » alors qu'il est
+proposé en option. Le mot « plateforme » de la copy visible.
+
+L'appel à l'action de la FAQ : la page se ferme désormais sur son propre acte,
+deux boutons à quelques centaines de pixels d'écart se neutralisaient.
+
+### Ce qui reste à migrer
+L'acte « Démonstration SUPORDO » n'est pas monté : il attend un site de
+démonstration réel et ses captures. Le lien « Voir un exemple » du Hero suit
+cet état et reste absent — pas d'ancre vers une section qui n'existe pas.
+
+Le Hero réutilise encore l'illustration « chauffagiste » de la section
+Métiers, faute de photographie éditoriale de marque.
+
+`/comment-ca-marche` garde sa structure actuelle : les six étapes de la
+spécification n'y sont pas encore toutes écrites.
+
+### Risques connus
+La démonstration absente est le seul trou structurel de la narration : la page
+montre comment une information devient une page, mais jamais un site entier
+fini. C'est la preuve la plus convaincante, et c'est celle qui manque.
+
+Le rendu n'a été vérifié qu'en HTML rendu côté serveur — sections présentes,
+un seul H1 par page, nombre d'appels à l'action conforme, aucun terme de
+vocabulaire interdit. Aucune vérification visuelle n'a pu être faite : le
+navigateur disponible dans l'environnement ne produit pas de capture. Les
+jugements de densité, de rythme, de contraste sur fond Forest et de rendu à
+390 px restent à valider à l'œil.

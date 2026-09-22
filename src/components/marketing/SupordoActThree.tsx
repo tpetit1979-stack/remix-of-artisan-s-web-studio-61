@@ -41,17 +41,17 @@ export function SupordoActThree({
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <div className="max-w-[600px]">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
-            CE QUE VOS CLIENTS VOIENT
+            VOS PRESTATIONS
           </p>
           <h2
             id="supordo-act3-title"
             className="mt-4 text-[2rem] font-extrabold leading-[1.12] text-[var(--supordo-forest)] sm:text-[2.5rem] lg:text-[3rem]"
           >
-            Ce que vous indiquez dans SUPORDO se retrouve sur votre site.
+            Ce que vous ajoutez dans SUPORDO se retrouve sur votre site.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Par exemple, vous indiquez la prestation « {serviceName} » dans
-            votre espace ; elle est ensuite présentée sur votre site public.
+            Vous ajoutez une prestation et les informations utiles qui l'accompagnent. SUPORDO les
+            présente dans la structure prévue pour votre site.
           </p>
         </div>
 

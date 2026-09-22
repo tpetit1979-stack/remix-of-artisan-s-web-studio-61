@@ -1,5 +1,3 @@
-import { Link } from "@tanstack/react-router";
-
 /**
  * Acte 7 — Réassurance, FAQ et action finale (plan-directeur-supordo-com.md
  * §4, Acte 7). Ferme la landing avant le pied de page.
@@ -12,9 +10,8 @@ import { Link } from "@tanstack/react-router";
  * (engagement, domaine, résiliation, support) sont volontairement absents,
  * pas éludés par une réponse vague.
  *
- * Même CTA, même route, même garde `leadIntakeReady` que le Hero et
- * l'Acte 6 — jamais un bouton qui mènerait vers une prise de contact non
- * fonctionnelle.
+ * Aucun appel à l'action ici : la page se ferme sur l'Acte 9, juste après.
+ * Deux gros boutons à quelques centaines de pixels d'écart se neutralisent.
  */
 const FAQ_ITEMS = [
   {
@@ -23,27 +20,32 @@ const FAQ_ITEMS = [
       "Non. SUPORDO prépare les pages du site. L'entreprise renseigne et actualise les informations qu'elle souhaite montrer.",
   },
   {
-    question: "Est-ce que je peux modifier mes prestations et mes informations ?",
+    question: "Que puis-je modifier moi-même ?",
     answer:
-      "Oui. Les informations de l'entreprise peuvent être actualisées depuis l'espace SUPORDO selon les fonctions disponibles.",
+      "Vous actualisez les informations prises en charge dans votre espace SUPORDO, notamment vos prestations, vos zones d'intervention et vos réalisations.",
   },
   {
-    question: "Que se passe-t-il côté technique ?",
-    answer: "SUPORDO s'occupe de la partie technique du site.",
+    question: "Qui s'occupe de la partie technique ?",
+    answer:
+      "SUPORDO prend en charge le périmètre technique prévu dans l'offre, notamment l'hébergement et la maintenance technique.",
+  },
+  {
+    question: "Mon site fonctionne-t-il sur téléphone ?",
+    answer: "Oui. Votre site s'adapte au téléphone, à la tablette et à l'ordinateur.",
+  },
+  {
+    question: "Quelle adresse aura mon site ?",
+    answer:
+      "Une adresse SUPORDO est comprise dans l'offre. Un nom de domaine personnalisé peut être proposé en option.",
   },
   {
     question: "Les demandes envoyées depuis mon site sont-elles accessibles ?",
     answer:
       "Les demandes envoyées depuis votre site restent consultables dans votre espace SUPORDO.",
   },
-  {
-    question: "Mon site est-il vraiment en ligne, ou est-ce un exemple ?",
-    answer:
-      "Votre site est mis en ligne sur une adresse SUPORDO dès sa création — ce n'est pas une simple démonstration.",
-  },
 ] as const;
 
-export function SupordoActSeven({ leadIntakeReady = false }: { leadIntakeReady?: boolean }) {
+export function SupordoActSeven() {
   return (
     <section
       className="border-t border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)] py-16 md:py-20 lg:py-24"
@@ -58,7 +60,7 @@ export function SupordoActSeven({ leadIntakeReady = false }: { leadIntakeReady?:
             id="supordo-act7-title"
             className="mt-4 text-[2rem] font-extrabold leading-[1.12] text-[var(--supordo-forest)] sm:text-[2.5rem] lg:text-[3rem]"
           >
-            Les questions que vous vous posez sûrement.
+            Les questions que vous vous posez avant de commencer.
           </h2>
         </div>
 
@@ -74,17 +76,6 @@ export function SupordoActSeven({ leadIntakeReady = false }: { leadIntakeReady?:
             </div>
           ))}
         </dl>
-
-        {leadIntakeReady && (
-          <div className="mt-12 border-t border-[var(--supordo-mint-200)] pt-10 lg:mt-14 lg:pt-12">
-            <Link
-              to="/demarrer"
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
-            >
-              Demander mon site
-            </Link>
-          </div>
-        )}
       </div>
     </section>
   );

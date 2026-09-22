@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatePasswordRouteImport } from './routes/update-password'
+import { Route as TarifsRouteImport } from './routes/tarifs'
 import { Route as SuperAdminRouteImport } from './routes/super-admin'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
@@ -20,6 +21,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CommentCaMarcheRouteImport } from './routes/comment-ca-marche'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
 import { Route as SlugRouteImport } from './routes/$slug'
@@ -33,6 +35,8 @@ import { Route as SuperAdminOnboardingRouteImport } from './routes/super-admin.o
 import { Route as SuperAdminMediaLibraryRouteImport } from './routes/super-admin.media-library'
 import { Route as SuperAdminBrandsRouteImport } from './routes/super-admin.brands'
 import { Route as ServicesServiceSlugRouteImport } from './routes/services.$serviceSlug'
+import { Route as LegalMentionsLegalesRouteImport } from './routes/legal.mentions-legales'
+import { Route as LegalConfidentialiteRouteImport } from './routes/legal.confidentialite'
 import { Route as DemarrerConfirmationRouteImport } from './routes/demarrer.confirmation'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -49,6 +53,11 @@ import { Route as SuperAdminTenantsTenantIdMediaRouteImport } from './routes/sup
 const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
   id: '/update-password',
   path: '/update-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TarifsRoute = TarifsRouteImport.update({
+  id: '/tarifs',
+  path: '/tarifs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SuperAdminRoute = SuperAdminRouteImport.update({
@@ -99,6 +108,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommentCaMarcheRoute = CommentCaMarcheRouteImport.update({
+  id: '/comment-ca-marche',
+  path: '/comment-ca-marche',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -165,6 +179,16 @@ const ServicesServiceSlugRoute = ServicesServiceSlugRouteImport.update({
   id: '/$serviceSlug',
   path: '/$serviceSlug',
   getParentRoute: () => ServicesRoute,
+} as any)
+const LegalMentionsLegalesRoute = LegalMentionsLegalesRouteImport.update({
+  id: '/legal/mentions-legales',
+  path: '/legal/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalConfidentialiteRoute = LegalConfidentialiteRouteImport.update({
+  id: '/legal/confidentialite',
+  path: '/legal/confidentialite',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DemarrerConfirmationRoute = DemarrerConfirmationRouteImport.update({
   id: '/demarrer/confirmation',
@@ -234,6 +258,7 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/accept-invite': typeof AcceptInviteRoute
   '/admin': typeof AdminRouteWithChildren
+  '/comment-ca-marche': typeof CommentCaMarcheRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/llms.txt': typeof LlmsDottxtRoute
@@ -244,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
+  '/tarifs': typeof TarifsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -254,6 +280,8 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/demarrer/confirmation': typeof DemarrerConfirmationRoute
+  '/legal/confidentialite': typeof LegalConfidentialiteRoute
+  '/legal/mentions-legales': typeof LegalMentionsLegalesRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -271,6 +299,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/accept-invite': typeof AcceptInviteRoute
+  '/comment-ca-marche': typeof CommentCaMarcheRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/llms.txt': typeof LlmsDottxtRoute
@@ -279,6 +308,7 @@ export interface FileRoutesByTo {
   '/realisations': typeof RealisationsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tarifs': typeof TarifsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -289,6 +319,8 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/demarrer/confirmation': typeof DemarrerConfirmationRoute
+  '/legal/confidentialite': typeof LegalConfidentialiteRoute
+  '/legal/mentions-legales': typeof LegalMentionsLegalesRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -307,6 +339,7 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/accept-invite': typeof AcceptInviteRoute
   '/admin': typeof AdminRouteWithChildren
+  '/comment-ca-marche': typeof CommentCaMarcheRoute
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/llms.txt': typeof LlmsDottxtRoute
@@ -317,6 +350,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/super-admin': typeof SuperAdminRouteWithChildren
+  '/tarifs': typeof TarifsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/admin/brands': typeof AdminBrandsRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -327,6 +361,8 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/demarrer/confirmation': typeof DemarrerConfirmationRoute
+  '/legal/confidentialite': typeof LegalConfidentialiteRoute
+  '/legal/mentions-legales': typeof LegalMentionsLegalesRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -347,6 +383,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/accept-invite'
     | '/admin'
+    | '/comment-ca-marche'
     | '/contact'
     | '/forgot-password'
     | '/llms.txt'
@@ -357,6 +394,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/super-admin'
+    | '/tarifs'
     | '/update-password'
     | '/admin/brands'
     | '/admin/contacts'
@@ -367,6 +405,8 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/demarrer/confirmation'
+    | '/legal/confidentialite'
+    | '/legal/mentions-legales'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
@@ -384,6 +424,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/accept-invite'
+    | '/comment-ca-marche'
     | '/contact'
     | '/forgot-password'
     | '/llms.txt'
@@ -392,6 +433,7 @@ export interface FileRouteTypes {
     | '/realisations'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/tarifs'
     | '/update-password'
     | '/admin/brands'
     | '/admin/contacts'
@@ -402,6 +444,8 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/demarrer/confirmation'
+    | '/legal/confidentialite'
+    | '/legal/mentions-legales'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
@@ -419,6 +463,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/accept-invite'
     | '/admin'
+    | '/comment-ca-marche'
     | '/contact'
     | '/forgot-password'
     | '/llms.txt'
@@ -429,6 +474,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/super-admin'
+    | '/tarifs'
     | '/update-password'
     | '/admin/brands'
     | '/admin/contacts'
@@ -439,6 +485,8 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/demarrer/confirmation'
+    | '/legal/confidentialite'
+    | '/legal/mentions-legales'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
@@ -458,6 +506,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   AcceptInviteRoute: typeof AcceptInviteRoute
   AdminRoute: typeof AdminRouteWithChildren
+  CommentCaMarcheRoute: typeof CommentCaMarcheRoute
   ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
@@ -468,8 +517,11 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuperAdminRoute: typeof SuperAdminRouteWithChildren
+  TarifsRoute: typeof TarifsRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
   DemarrerConfirmationRoute: typeof DemarrerConfirmationRoute
+  LegalConfidentialiteRoute: typeof LegalConfidentialiteRoute
+  LegalMentionsLegalesRoute: typeof LegalMentionsLegalesRoute
   DemarrerIndexRoute: typeof DemarrerIndexRoute
 }
 
@@ -480,6 +532,13 @@ declare module '@tanstack/react-router' {
       path: '/update-password'
       fullPath: '/update-password'
       preLoaderRoute: typeof UpdatePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tarifs': {
+      id: '/tarifs'
+      path: '/tarifs'
+      fullPath: '/tarifs'
+      preLoaderRoute: typeof TarifsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/super-admin': {
@@ -550,6 +609,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comment-ca-marche': {
+      id: '/comment-ca-marche'
+      path: '/comment-ca-marche'
+      fullPath: '/comment-ca-marche'
+      preLoaderRoute: typeof CommentCaMarcheRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -642,6 +708,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/services/$serviceSlug'
       preLoaderRoute: typeof ServicesServiceSlugRouteImport
       parentRoute: typeof ServicesRoute
+    }
+    '/legal/mentions-legales': {
+      id: '/legal/mentions-legales'
+      path: '/legal/mentions-legales'
+      fullPath: '/legal/mentions-legales'
+      preLoaderRoute: typeof LegalMentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/confidentialite': {
+      id: '/legal/confidentialite'
+      path: '/legal/confidentialite'
+      fullPath: '/legal/confidentialite'
+      preLoaderRoute: typeof LegalConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/demarrer/confirmation': {
       id: '/demarrer/confirmation'
@@ -822,6 +902,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   AcceptInviteRoute: AcceptInviteRoute,
   AdminRoute: AdminRouteWithChildren,
+  CommentCaMarcheRoute: CommentCaMarcheRoute,
   ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
@@ -832,8 +913,11 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuperAdminRoute: SuperAdminRouteWithChildren,
+  TarifsRoute: TarifsRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
   DemarrerConfirmationRoute: DemarrerConfirmationRoute,
+  LegalConfidentialiteRoute: LegalConfidentialiteRoute,
+  LegalMentionsLegalesRoute: LegalMentionsLegalesRoute,
   DemarrerIndexRoute: DemarrerIndexRoute,
 }
 export const routeTree = rootRouteImport

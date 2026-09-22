@@ -1,13 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
-import { getLeadIntakeStatus } from "@/lib/supordo-lead.functions";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
 /**
  * SUPORDO Sites "comment ça marche" page — marketing surface only
  * (supordo.com). Same route pattern as /tarifs: marketing-host guard,
- * `leadIntakeReady` from `getLeadIntakeStatus()`, no default data.
+ * Les appels à l'action marketing y sont visibles en permanence.
  *
  * Every capability named below is verified in the current code (services
  * is_active, portfolio is_published + content_kind='real_project' via
@@ -43,13 +42,12 @@ export const Route = createFileRoute("/comment-ca-marche")({
   loader: async () => {
     const input = await resolveTenantInputForRoute().catch(() => null);
     if (!input || !isMarketingHost(input.hostname)) throw notFound();
-    const { configured } = await getLeadIntakeStatus();
-    return { leadIntakeReady: configured };
+    return null;
   },
   head: () => {
-    const title = "Comment ça marche — SUPORDO Sites";
+    const title = "Comment fonctionne SUPORDO Sites ?";
     const description =
-      "SUPORDO prépare votre site. Vous gardez vos informations à jour — prestations, zones d'intervention, réalisations, coordonnées — et votre site les reprend.";
+      "Découvrez comment SUPORDO prépare votre site, ce que vous fournissez et les informations que vous pouvez actualiser pour votre entreprise.";
     return {
       meta: [
         { title },
@@ -80,8 +78,7 @@ const INFORMATIONS_A_JOUR = [
  * aurait couplé deux récits différents pour un gain nul.
  */
 const DEMO_SERVICE_NAME = "Installation poêle à bois";
-const DEMO_SERVICE_DESCRIPTION =
-  "Installation de poêles à bois avec contrôle du conduit.";
+const DEMO_SERVICE_DESCRIPTION = "Installation de poêles à bois avec contrôle du conduit.";
 
 function StepNumber({ n }: { n: string }) {
   return (
@@ -95,11 +92,9 @@ function StepNumber({ n }: { n: string }) {
 }
 
 function CommentCaMarchePage() {
-  const { leadIntakeReady } = Route.useLoaderData();
-
   return (
     <div className="supordo-brand flex min-h-screen flex-col bg-[var(--supordo-warm)] antialiased">
-      <SupordoHeader leadIntakeReady={leadIntakeReady} />
+      <SupordoHeader />
       <main className="flex-1">
         {/* Ouverture — porte le H1 et la promesse d'ensemble, y compris ce
             qui se passe au départ (transmission → préparation → mise en
@@ -124,10 +119,9 @@ function CommentCaMarchePage() {
                 SUPORDO prépare votre site. Vous le gardez à jour.
               </h1>
               <p className="mt-5 max-w-[650px] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                Vous transmettez les informations de départ de votre
-                entreprise — vos prestations, votre secteur, vos coordonnées.
-                SUPORDO prépare la première version de votre site et sa mise
-                en ligne. Ensuite, c'est vous qui la gardez à jour.
+                Vous transmettez les informations de départ de votre entreprise — vos prestations,
+                votre secteur, vos coordonnées. SUPORDO prépare la première version de votre site et
+                sa mise en ligne. Ensuite, c'est vous qui la gardez à jour.
               </p>
             </div>
           </div>
@@ -152,9 +146,8 @@ function CommentCaMarchePage() {
                     Vous gardez vos informations à jour
                   </h2>
                   <p className="mt-3 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                    Quand quelque chose change dans votre entreprise, vous
-                    mettez à jour l'information concernée, depuis votre espace
-                    SUPORDO.
+                    Quand quelque chose change dans votre entreprise, vous mettez à jour
+                    l'information concernée, depuis votre espace SUPORDO.
                   </p>
                 </div>
                 {/* Deux colonnes à partir de lg : utilise l'espace que la
@@ -203,8 +196,8 @@ function CommentCaMarchePage() {
                     Ce que vous changez se retrouve sur votre site
                   </h2>
                   <p className="mt-3 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                    Vous changez une information dans votre espace SUPORDO.
-                    Elle apparaît au même endroit sur votre site.
+                    Vous changez une information dans votre espace SUPORDO. Elle apparaît au même
+                    endroit sur votre site.
                   </p>
                 </div>
 
@@ -259,8 +252,8 @@ function CommentCaMarchePage() {
                 </div>
 
                 <p className="mt-6 max-w-[600px] text-sm leading-relaxed text-[var(--supordo-graphite)]/80 lg:text-base">
-                  Il en va de même pour vos communes d'intervention, vos
-                  chantiers publiés et vos coordonnées.
+                  Il en va de même pour vos communes d'intervention, vos chantiers publiés et vos
+                  coordonnées.
                 </p>
               </div>
             </div>
@@ -282,8 +275,7 @@ function CommentCaMarchePage() {
               id="ccm-evolve-title"
               className="max-w-[820px] text-[1.5rem] font-extrabold leading-[1.25] text-white sm:text-[1.875rem] lg:text-[2.25rem]"
             >
-              Votre entreprise évolue. Votre site évolue avec elle — sans
-              reconstruire ses pages.
+              Votre entreprise évolue. Votre site évolue avec elle — sans reconstruire ses pages.
             </h2>
           </div>
         </section>
@@ -305,26 +297,28 @@ function CommentCaMarchePage() {
                 Les demandes arrivent dans votre espace
               </h2>
               <p className="mt-3 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                Les demandes envoyées depuis votre site sont enregistrées
-                dans votre espace SUPORDO. Vous pouvez les consulter et les
-                marquer comme lues.
+                Les demandes envoyées depuis votre site sont enregistrées dans votre espace SUPORDO.
+                Vous pouvez les consulter et les marquer comme lues.
               </p>
 
               <p className="mt-10 border-t border-[var(--supordo-mint-200)] pt-8 text-lg font-semibold leading-snug text-[var(--supordo-forest)] lg:text-xl">
-                Vous gardez vos informations à jour. SUPORDO garde la
-                partie technique.
+                Vous gardez vos informations à jour. SUPORDO garde la partie technique.
               </p>
 
-              {leadIntakeReady && (
-                <div className="mt-8">
-                  <Link
-                    to="/demarrer"
-                    className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
-                  >
-                    Demander mon site
-                  </Link>
-                </div>
-              )}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+                <Link
+                  to="/demarrer"
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
+                >
+                  Demander mon site
+                </Link>
+                <Link
+                  to="/tarifs"
+                  className="inline-flex min-h-12 items-center justify-center rounded-[6px] text-sm font-medium text-[var(--supordo-graphite)] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] lg:text-base"
+                >
+                  Voir les tarifs →
+                </Link>
+              </div>
             </div>
           </div>
         </section>

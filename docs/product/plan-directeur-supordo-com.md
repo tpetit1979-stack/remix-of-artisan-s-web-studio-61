@@ -200,7 +200,7 @@ Aucun visuel. Desktop : deux colonnes. Mobile : deux blocs empilés. Action : au
 
 Un seul bloc centré de 640 px maximum : prix, puis périmètre, puis conditions. **Aucune grille de forfaits.**
 
-**Prix V1** `[RETENU]`, voir §19 : 49 € HT/mois + 99 € HT de mise en place initiale. Bloqué par la question 2 (questions 1 et 9 fermées, voir §19 et §18) et par le périmètre exact des 99 € (question 14, voir §15 et §19). Vocabulaire du bloc prix : préférer « mise en place initiale » à « frais de dossier », « pack de démarrage », « création offerte » ou « activation ». Ne pas promettre : sans engagement, domaine inclus, tout compris, support illimité, modifications illimitées, aucun frais caché — tant que la question 2 et la question 14 ne sont pas tranchées.
+**Prix V1** `[RETENU]`, voir §19 : 49 € HT/mois + 199 € HT de mise en place initiale. Bloqué par la question 2 (questions 1 et 9 fermées, voir §19 et §18) et par le périmètre exact des 199 € (question 14, voir §15 et §19). Vocabulaire du bloc prix : préférer « mise en place initiale » à « frais de dossier », « pack de démarrage », « création offerte » ou « activation ». Ne pas promettre : sans engagement, domaine inclus, tout compris, support illimité, modifications illimitées, aucun frais caché — tant que la question 2 et la question 14 ne sont pas tranchées.
 
 ### Acte 7 — Réassurance et décision
 
@@ -455,7 +455,7 @@ Deux familles identiques ne se suivent jamais, et le fond change à chaque secti
 | `/` | « site internet artisan », « site internet pour artisan » — descriptif et neutre. **« agence web artisan » est retirée** : aucune recherche n'a démontré l'intérêt de ce positionnement, et le produit ne doit pas être enfermé sémantiquement dans « agence web » | « Un vrai site pro… » | avec `/tarifs` si elle est créée |
 | `/demarrer` | aucune, page de conversion | « Parlons de votre site. » | aucune |
 | `/exemples` | exemple de site artisan | « Des sites déjà en ligne. » | aucune |
-| `/tarifs` | prix site internet artisan | `[À FIGER, non définitif]` « Une offre simple et lisible pour votre site. » — ne pas figer avant la clôture de l'Acte 6 (question 2) | avec l'acte 6 : la section se réduirait alors à un résumé |
+| `/tarifs` | prix site internet artisan | `[ACTÉ]` « Un site internet adapté à votre métier. » | avec l'acte 6 : la section se réduirait alors à un résumé |
 | `/metiers/<metier>` | site internet pour <métier> | « Un site pour votre activité de <métier>. » | forte entre pages métier si le texte est recopié |
 
 Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand les mentions légales existent.
@@ -486,6 +486,7 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 5. **Captures produit** — question désormais scindée en deux parts distinctes :
    - **Tenant de démonstration** — **fermée, voir §22.** EASYDEP reste l'entreprise de démonstration commune aux Actes 3 et 4 ; aucun tenant de démonstration séparé n'est créé.
    - **Autorisation publique des éléments EASYDEP** `[OUVERT]` : toute utilisation publique de photos, identité, données ou captures EASYDEP sur supordo.com reste conditionnée à l'accord explicite du propriétaire concerné, jusqu'à confirmation.
+   - **Démonstration SUPORDO** `[ACTÉ, 2026-09-22]` : une démonstration préparée par SUPORDO et **explicitement étiquetée « Démonstration SUPORDO »** peut être publiée sans attendre cet accord. Elle n'est jamais présentée comme un client, un témoignage ou un résultat commercial. L'acte de démonstration n'est donc plus bloqué par EASYDEP — il attend un site de démonstration réel et ses captures.
 6. **Certifications** : assume-t-on publiquement qu'elles sont saisies par SUPORDO ? Tant que non tranché, elles sont retirées de l'Acte 5.
 7. **Adresse canonique** : `supordo.com` ou `www.supordo.com` ?
 8. **Ergonomie mobile de l'espace client** — devenue un point de contrôle du Lot 3, plus une simple question. À vérifier réellement : création et modification d'une réalisation, ajout d'une photo, titre, ville, service, publication. Si l'expérience n'est pas exploitable, la représentation de l'Acte 4 est adaptée honnêtement.
@@ -493,7 +494,7 @@ Données structurées : uniquement l'identité de l'entreprise SUPORDO, quand le
 10. **Publication** : pour chaque contenu modifiable — saisie par le client, validation éventuelle, publication immédiate ou non, intervention SUPORDO éventuelle. **Aucune formulation ne doit laisser croire à une publication automatique si ce n'est pas le comportement réel.** — **fermée, voir §18.**
 11. **Demandes reçues du site artisan** : où elles arrivent, qui les reçoit, si elles sont conservées, où elles sont consultables. **Ne jamais présenter cela comme un outil de gestion de clientèle si le produit ne le fait pas.** — **fermée, voir §18.**
 13. **Inventaire des traceurs** : mesure d'audience, pixels, outils marketing, contenus tiers, vidéos, messagerie, autres scripts — détermine s'il faut un mécanisme de consentement.
-14. **Périmètre exact des 99 € de mise en place initiale** : préparation, configuration, mise en forme, premiers contenus, photos, domaine éventuel, validation, délai, nombre d'allers-retours. Ne jamais utiliser de terme technique (configuration DNS, initialisation du socle) dans le copywriting commercial.
+14. **Périmètre exact des 199 € de mise en place initiale** : préparation, configuration, mise en forme, premiers contenus, photos, domaine éventuel, validation, délai, nombre d'allers-retours. Ne jamais utiliser de terme technique (configuration DNS, initialisation du socle) dans le copywriting commercial.
 
 ---
 
@@ -578,11 +579,11 @@ Sections modifiées : capacités du produit (service qualifié d'objet de l'Acte
 
 ## Décisions qui restent ouvertes
 
-Conditions de l'offre · périmètre exact des 99 € · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client. (Libellé de l'action principale et inventaire des traceurs : fermés, voir §17. Création initiale du site, règles de publication et circuit des demandes reçues : fermées, voir §18. Tarif : fermé, voir §19.)
+Conditions de l'offre · périmètre exact des 199 € · vrai exemple pour le bouton secondaire · traitement complet de `/demarrer` · captures produit · communication sur les qualifications · adresse canonique · ergonomie mobile de l'espace client. (Libellé de l'action principale et inventaire des traceurs : fermés, voir §17. Création initiale du site, règles de publication et circuit des demandes reçues : fermées, voir §18. Tarif : fermé, voir §19.)
 
 ## Impact sur les cinq lots
 
-Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dans le lot. Lot 2 : porte désormais sur un service, plus sur une réalisation. Lot 3 : gagne un point de contrôle bloquant, la vérification mobile ; les questions 9 et 10 pour l'Acte 5 sont fermées (§18), seule la question 6 le bloque encore. Lot 4 : n'est plus bloqué par les questions 9 et 1 ; reste bloqué par la question 2 et par le périmètre des 99 € (question 14). Lot 5 : accueille la correction `llms.txt` en dernière priorité.
+Lot 1 : le libellé de l'action et la correction éditoriale du Hero entrent dans le lot. Lot 2 : porte désormais sur un service, plus sur une réalisation. Lot 3 : gagne un point de contrôle bloquant, la vérification mobile ; les questions 9 et 10 pour l'Acte 5 sont fermées (§18), seule la question 6 le bloque encore. Lot 4 : n'est plus bloqué par les questions 9 et 1 ; reste bloqué par la question 2 et par le périmètre des 199 € (question 14). Lot 5 : accueille la correction `llms.txt` en dernière priorité.
 
 ## Prêt pour EXEC ?
 
@@ -728,7 +729,7 @@ Décision humaine `[RETENU]`, non technique — `[ACTÉ CONTEXTE]`.
 
 ### Décision
 
-**49 € HT / mois + 99 € HT de mise en place initiale.** Remplace l'hypothèse antérieure « 49 € + 0 € de création ». Le montant n'est pas rediscuté par ce gate.
+**49 € HT / mois + 199 € HT de mise en place initiale.** Remplace l'hypothèse antérieure « 49 € + 0 € de création ». Le montant n'est pas rediscuté par ce gate.
 
 Vocabulaire du bloc prix : « mise en place initiale », jamais « frais de dossier », « pack de démarrage », « création offerte » ou « activation ». Aucune promesse de « sans engagement », « domaine inclus », « tout compris », « support illimité », « modifications illimitées » ou « aucun frais caché » tant que les questions 2 et 14 ne sont pas tranchées.
 
@@ -738,7 +739,7 @@ Vocabulaire du bloc prix : « mise en place initiale », jamais « frais de doss
 
 ### Questions ouvertes créées ou maintenues
 
-14 (nouvelle — périmètre exact des 99 €), 2, 5, 6, 7, 8, 13 — inchangées, voir §15.
+14 (nouvelle — périmètre exact des 199 €), 2, 5, 6, 7, 8, 13 — inchangées, voir §15.
 
 ---
 

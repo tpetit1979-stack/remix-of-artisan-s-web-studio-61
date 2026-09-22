@@ -28,15 +28,15 @@ export const Route = createFileRoute("/demarrer/confirmation")({
 function ConfirmationPage() {
   return (
     <div className="supordo-brand flex min-h-screen flex-col bg-[var(--supordo-warm)] antialiased">
-      <SupordoHeader leadIntakeReady={false} />
+      <SupordoHeader />
       <main className="flex-1">
         <section className="mx-auto max-w-[640px] px-5 py-16 md:px-8 md:py-24">
           <h1 className="text-[1.75rem] font-extrabold leading-[1.15] tracking-[-0.02em] text-[var(--supordo-forest)] sm:text-[2.25rem]">
             Votre demande a bien été envoyée.
           </h1>
           <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)]">
-            Elle est arrivée par email chez SUPORDO. Nous vous répondons à l'adresse que
-            vous avez indiquée.
+            Elle est arrivée par email chez SUPORDO. Nous vous répondons à l'adresse que vous avez
+            indiquée.
           </p>
           <Link
             to="/"

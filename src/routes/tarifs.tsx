@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
-import { getLeadIntakeStatus } from "@/lib/supordo-lead.functions";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
@@ -8,7 +7,7 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
  * SUPORDO Sites pricing page — marketing surface only (supordo.com).
  *
  * Answers one question the home's Acte 6 deliberately doesn't: exactly what
- * the 99 € HT mise en place initiale and the 49 € HT/mois abonnement each
+ * the 199 € HT mise en place initiale and the 49 € HT/mois abonnement each
  * cover. Amounts are the closed V1 decision (plan §19) — never modified
  * here. Every inclusion/exclusion below is the commercial arbitration
  * closed for V1 (plan §15, questions 2 and 14) — nothing on this page is a
@@ -21,21 +20,20 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
  * without a working mechanism behind it is not published as a commercial
  * promise, so this page says nothing about recovering data on departure.
  *
- * Same CTA, same route, same `leadIntakeReady` guard as the rest of the
- * marketing surface — never a button that would lead to a non-functional
- * contact flow.
+ * Les appels à l'action marketing sont visibles en permanence : leur
+ * destination existe, et /demarrer dit lui-même quand une demande ne peut pas
+ * encore être reçue. Seule la soumission du formulaire reste gardée.
  */
 export const Route = createFileRoute("/tarifs")({
   loader: async () => {
     const input = await resolveTenantInputForRoute().catch(() => null);
     if (!input || !isMarketingHost(input.hostname)) throw notFound();
-    const { configured } = await getLeadIntakeStatus();
-    return { leadIntakeReady: configured };
+    return null;
   },
   head: () => {
-    const title = "Tarifs — SUPORDO Sites";
+    const title = "Tarif d'un site internet pour artisan | SUPORDO";
     const description =
-      "49 € HT par mois, 99 € HT de mise en place initiale, sans engagement. Ce que couvre exactement chaque partie de l'offre SUPORDO Sites.";
+      "Découvrez le tarif de SUPORDO Sites, ce que couvre la mise en place initiale et ce que comprend l'abonnement mensuel.";
     return {
       meta: [
         { title },
@@ -70,14 +68,13 @@ const MISE_EN_PLACE_NON_INCLUS = [
   "Du contenu inventé pour combler un vide",
   "De nouvelles pages ou sections spécifiques",
   "Un travail éditorial important sur mesure",
-  "Un domaine personnalisé, non proposé pour l'instant",
 ] as const;
 
 const ABONNEMENT_COUVRE = [
   "Votre site maintenu en ligne",
   "L'hébergement",
   "La maintenance technique",
-  "Les évolutions de la plateforme commune à tous les sites SUPORDO",
+  "Les évolutions communes à tous les sites SUPORDO",
   "L'accès à votre espace SUPORDO",
   "L'actualisation autonome des informations disponibles dans votre espace",
   "La réception et la consultation des demandes envoyées depuis votre site, lorsque cette fonction est active",
@@ -96,11 +93,9 @@ const ABONNEMENT_NE_COUVRE_PAS = [
 ] as const;
 
 function TarifsPage() {
-  const { leadIntakeReady } = Route.useLoaderData();
-
   return (
     <div className="supordo-brand flex min-h-screen flex-col bg-[var(--supordo-warm)] antialiased">
-      <SupordoHeader leadIntakeReady={leadIntakeReady} />
+      <SupordoHeader />
       <main className="flex-1">
         {/* Entrée + prix — un seul moment de respiration majeure sur cette
             page, réservé à la seule information qui doit s'imposer avant
@@ -121,8 +116,8 @@ function TarifsPage() {
                 Un tarif clair, expliqué en détail.
               </h1>
               <p className="mt-5 max-w-[650px] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                SUPORDO Sites tient sur une mise en place initiale et un
-                abonnement mensuel. Voici précisément ce que chacun couvre.
+                SUPORDO Sites tient sur une mise en place initiale et un abonnement mensuel. Voici
+                précisément ce que chacun couvre.
               </p>
             </div>
 
@@ -133,7 +128,7 @@ function TarifsPage() {
                 </p>
                 <p className="mt-3 flex items-baseline gap-2">
                   <span className="text-[3rem] font-extrabold leading-none tracking-[-0.02em] text-[var(--supordo-forest)] sm:text-[3.5rem] lg:text-[4rem]">
-                    99 €
+                    199 €
                   </span>
                   <span className="text-base font-medium text-[var(--supordo-graphite)] lg:text-lg">
                     HT
@@ -156,10 +151,6 @@ function TarifsPage() {
                     HT / mois
                   </span>
                 </p>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--supordo-graphite)] lg:text-base">
-                  Sans engagement. Résiliation possible à tout moment, avec
-                  effet à la fin de la période déjà payée.
-                </p>
               </div>
             </div>
           </div>
@@ -180,7 +171,7 @@ function TarifsPage() {
                 id="tarifs-mise-en-place-title"
                 className="mt-4 text-[2rem] font-extrabold leading-[1.12] text-[var(--supordo-forest)] sm:text-[2.5rem] lg:text-[3rem]"
               >
-                Ce que couvrent les 99 € HT de mise en place.
+                Ce que couvrent les 199 € HT de mise en place.
               </h2>
             </div>
 
@@ -310,12 +301,10 @@ function TarifsPage() {
                 Qui s'occupe de quoi, une fois votre site en ligne ?
               </h2>
               <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                Les informations disponibles dans votre espace — vos
-                prestations, votre secteur, vos réalisations, vos coordonnées
-                — sont actualisées directement par vous. Un besoin
-                structurel ou spécifique, en dehors de ce que votre espace
-                permet, peut être étudié au cas par cas, sur proposition
-                préalable.
+                Les informations disponibles dans votre espace — vos prestations, votre secteur, vos
+                réalisations, vos coordonnées — sont actualisées directement par vous. Un besoin
+                structurel ou spécifique, en dehors de ce que votre espace permet, peut être étudié
+                au cas par cas, sur proposition préalable.
               </p>
             </div>
           </div>
@@ -335,21 +324,24 @@ function TarifsPage() {
                 Prêt à démarrer ?
               </h2>
               <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                SUPORDO prépare votre site et s'occupe de sa partie
-                technique. Vous gardez la main sur les informations de votre
-                entreprise.
+                SUPORDO prépare votre site et s'occupe de sa partie technique. Vous gardez la main
+                sur les informations de votre entreprise.
               </p>
 
-              {leadIntakeReady && (
-                <div className="mt-8">
-                  <Link
-                    to="/demarrer"
-                    className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
-                  >
-                    Demander mon site
-                  </Link>
-                </div>
-              )}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+                <Link
+                  to="/demarrer"
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
+                >
+                  Demander mon site
+                </Link>
+                <Link
+                  to="/comment-ca-marche"
+                  className="inline-flex min-h-12 items-center justify-center rounded-[6px] text-sm font-medium text-[var(--supordo-graphite)] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] lg:text-base"
+                >
+                  Comment ça marche →
+                </Link>
+              </div>
             </div>
           </div>
         </section>

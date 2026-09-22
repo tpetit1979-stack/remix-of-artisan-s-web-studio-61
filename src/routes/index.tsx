@@ -21,8 +21,6 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { HeroSection } from "@/components/public/HeroSection";
 import { SupordoLanding } from "@/components/marketing/SupordoLanding";
-import { getLeadIntakeStatus } from "@/lib/supordo-lead.functions";
-
 
 import { WhyChooseUs } from "@/components/public/WhyChooseUs";
 import { HowItWorks } from "@/components/public/HowItWorks";
@@ -44,11 +42,10 @@ export const Route = createFileRoute("/")({
     // __root's beforeLoad. No tenant is resolved and no tenant data is
     // fetched here — a tenant hostname takes the branch below, unchanged.
     if (context.isPlatformLanding) {
-      // The brand calls to action are only shown when a request sent from
-      // /demarrer really reaches SUPORDO (recipient, sender and Resend key
-      // configured server-side).
-      const { configured } = await getLeadIntakeStatus();
-      return { platformLanding: true as const, leadIntakeReady: configured };
+      // La landing de marque n'interroge plus la capacité de réception : ses
+      // appels à l'action mènent à /demarrer, qui dit lui-même si une demande
+      // peut être reçue aujourd'hui. Aucune donnée de tenant n'est chargée.
+      return { platformLanding: true as const };
     }
     const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
@@ -75,9 +72,9 @@ export const Route = createFileRoute("/")({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     if (loaderData.platformLanding) {
-      const title = "SUPORDO — Un vrai site pro pour les artisans et entreprises locales";
+      const title = "Site internet professionnel pour artisans | SUPORDO";
       const description =
-        "SUPORDO Sites : un vrai site professionnel et un espace simple pour le faire vivre. Ajoutez vos services, vos zones et vos réalisations.";
+        "SUPORDO prépare des sites internet professionnels pour les artisans et entreprises de terrain. Présentez vos prestations, vos zones d'intervention et vos réalisations.";
       return {
         meta: [
           { title },
@@ -108,7 +105,9 @@ export const Route = createFileRoute("/")({
       scripts: [
         {
           type: "application/ld+json",
-          children: JSON.stringify(buildSiteJsonLd(tenant, settings, services, areas, certifications, baseUrl)),
+          children: JSON.stringify(
+            buildSiteJsonLd(tenant, settings, services, areas, certifications, baseUrl),
+          ),
         },
         {
           type: "application/ld+json",
@@ -129,12 +128,11 @@ export const Route = createFileRoute("/")({
  */
 function HomeRoute() {
   const data = Route.useLoaderData();
-  if (data?.platformLanding) return <SupordoLanding leadIntakeReady={data.leadIntakeReady} />;
+  if (data?.platformLanding) return <SupordoLanding />;
   return <TenantHomePage />;
 }
 
 function TenantHomePage() {
-
   const { tenant, settings, isLoading, error } = useTenant();
   const previewTenant = usePreviewTenantSearch();
   const { responseTimeNote } = useCommercialPromises();
@@ -172,7 +170,8 @@ function TenantHomePage() {
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-4 text-center">
         <p className="text-lg font-medium text-foreground">Impossible de charger ce site</p>
         <p className="max-w-sm text-sm text-muted-foreground">
-          Une erreur est survenue lors du chargement des informations. Veuillez réessayer dans quelques instants.
+          Une erreur est survenue lors du chargement des informations. Veuillez réessayer dans
+          quelques instants.
         </p>
         <a href="/" className="text-sm font-medium text-primary hover:underline">
           Retour à l'accueil
@@ -250,7 +249,9 @@ function TenantHomePage() {
               {publishedPortfolio.length > 6 && (
                 <div className="mt-8 text-center">
                   <Link to="/realisations" search={previewTenant}>
-                    <Button variant="outline" size="lg">Voir toutes nos réalisations</Button>
+                    <Button variant="outline" size="lg">
+                      Voir toutes nos réalisations
+                    </Button>
                   </Link>
                 </div>
               )}
@@ -305,7 +306,12 @@ function TenantHomePage() {
 
         <FaqSection />
 
-        <SeoLongText tenant={tenant} services={services} cities={uniqueCities} settings={settings} />
+        <SeoLongText
+          tenant={tenant}
+          services={services}
+          cities={uniqueCities}
+          settings={settings}
+        />
 
         <CTABanner
           title={`Besoin d'un professionnel à ${tenant.city ?? "proximité"} ?`}

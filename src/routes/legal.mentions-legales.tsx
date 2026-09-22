@@ -32,7 +32,7 @@ const missing = "à compléter avant publication";
 function MentionsLegalesPage() {
   return (
     <div className="supordo-brand flex min-h-screen flex-col bg-[var(--supordo-warm)] antialiased">
-      <SupordoHeader leadIntakeReady={false} />
+      <SupordoHeader />
       <main className="flex-1">
         <section className="mx-auto max-w-[680px] px-5 py-16 md:px-8 md:py-20">
           <h1 className="text-[1.75rem] font-extrabold leading-[1.15] tracking-[-0.02em] text-[var(--supordo-forest)] sm:text-[2.25rem]">

@@ -35,9 +35,9 @@ export const Route = createFileRoute("/demarrer/")({
     return { configured, trades: trades ?? [] };
   },
   head: () => {
-    const title = "Demander mon site — SUPORDO Sites";
+    const title = "Demander un site internet pour votre entreprise | SUPORDO";
     const description =
-      "Parlons de votre site : décrivez votre entreprise, votre métier et votre ville, SUPORDO vous répond par email.";
+      "Présentez votre entreprise, votre métier et votre secteur d'intervention pour demander votre site SUPORDO.";
     return {
       meta: [
         { title },
@@ -172,7 +172,7 @@ function DemarrerPage() {
 
   return (
     <div className="supordo-brand flex min-h-screen flex-col bg-[var(--supordo-warm)] antialiased">
-      <SupordoHeader leadIntakeReady={configured} />
+      <SupordoHeader />
       <main className="flex-1">
         <section className="mx-auto max-w-[720px] px-5 py-12 md:px-8 md:py-16">
           <h1 className="text-[2rem] font-extrabold leading-[1.1] tracking-[-0.02em] text-[var(--supordo-forest)] sm:text-[2.5rem]">

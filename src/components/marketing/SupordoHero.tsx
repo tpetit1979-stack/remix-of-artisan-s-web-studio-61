@@ -2,31 +2,29 @@ import { Link } from "@tanstack/react-router";
 import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json";
 
 /**
- * SUPORDO Sites hero — marketing surface only (supordo.com).
+ * Acte 1 — Hero.
  *
- * H1 actuellement implémenté : "Un vrai site pro pour votre entreprise."
- * Reste [À FIGER] dans le plan directeur (plan-directeur-supordo-com.md) —
- * c'est la cible retenue pour cette branche, pas une décision définitive.
- * Le sous-titre actuel est aligné avec la doctrine V1 (§20-§21) : aucune IA,
- * vocabulaire métier (prestations, secteur, chantiers), verbe "indiquer".
+ * H1 `[ACTÉ]`, conservé mot pour mot. Le sous-titre explique le partage des
+ * rôles dès le premier écran, sans nommer aucun logiciel.
  *
- * Image de droite : visuel TEMPORAIRE. Aucune photographie éditoriale de
- * marque n'existe encore pour le Hero (matrice visuelle du plan) ; en
- * attendant, l'illustration "chauffagiste" — normalement réservée à la
- * section Métiers — est réutilisée ici pour remplacer le rectangle vide,
- * uniquement le temps qu'une vraie photographie éditoriale soit produite.
- * Remplacer par une vraie photo dès qu'elle existe ; ne pas la présenter
- * comme une réalisation client.
+ * Les appels à l'action marketing ne dépendent plus de `leadIntakeReady` :
+ * leur destination `/demarrer` existe et reste honnête même quand la
+ * réception d'une demande n'est pas encore ouverte — la page le dit alors
+ * elle-même. Seule la soumission du formulaire reste gardée.
  *
- * One action only: "Demander mon site", and only when a request can really be
- * sent. "Voir un exemple" stays absent until a real example site exists — no
- * disabled button, no empty slot, no invented client.
+ * `showExampleLink` suit la présence réelle de la démonstration : pas de lien
+ * vers une ancre qui ne serait pas montée.
+ *
+ * Image : visuel TEMPORAIRE. Aucune photographie éditoriale de marque
+ * n'existe encore ; l'illustration « chauffagiste » de la section Métiers est
+ * réutilisée en attendant. Elle ne représente aucun client et n'est jamais
+ * présentée comme une réalisation.
  */
-export function SupordoHero({ leadIntakeReady = false }: { leadIntakeReady?: boolean }) {
+export function SupordoHero({ showExampleLink = false }: { showExampleLink?: boolean }) {
   return (
     <section className="bg-[var(--supordo-warm)]">
-      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-12 md:px-8 md:py-16 lg:grid-cols-2 lg:gap-20 lg:py-24 lg:min-h-[calc(100dvh-72px)]">
-        {/* Text first in the DOM: also the mobile order */}
+      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-12 md:px-8 md:py-16 lg:grid-cols-2 lg:gap-20 lg:py-24">
+        {/* Texte d'abord dans le DOM : c'est aussi l'ordre mobile. */}
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
             SUPORDO SITES
@@ -35,26 +33,31 @@ export function SupordoHero({ leadIntakeReady = false }: { leadIntakeReady?: boo
             Un vrai site pro pour votre entreprise.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--supordo-graphite)] lg:mt-7 lg:text-lg">
-            SUPORDO prépare votre site et s'occupe de la partie technique. Vous
-            indiquez vos prestations, votre secteur et les chantiers que vous
-            souhaitez montrer.
+            SUPORDO prépare votre site et s'occupe de sa partie technique. Vous ajoutez vos
+            prestations, votre secteur d'intervention et les chantiers que vous souhaitez montrer.
           </p>
 
-          {leadIntakeReady && (
-            <div className="mt-8 lg:mt-10">
-              <Link
-                to="/demarrer"
-                className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5 lg:mt-10">
+            <Link
+              to="/demarrer"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
+            >
+              Demander mon site
+            </Link>
+            {showExampleLink && (
+              <a
+                href="#demonstration"
+                className="inline-flex min-h-12 items-center justify-center rounded-[6px] text-sm font-semibold text-[var(--supordo-forest)] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] hover:underline active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] lg:text-base"
               >
-                Demander mon site
-              </Link>
-            </div>
-          )}
+                Voir un exemple
+              </a>
+            )}
+          </div>
         </div>
 
-        {/* Visuel temporaire — voir commentaire de tête */}
+        {/* Visuel temporaire — voir commentaire de tête. */}
         <div>
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:max-h-[560px] lg:min-h-[420px]">
+          <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:max-h-[520px] lg:min-h-[400px]">
             <img
               src={chauffagiste.url}
               alt="Chauffagiste installant une pompe à chaleur"

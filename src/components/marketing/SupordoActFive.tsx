@@ -59,7 +59,7 @@ export function SupordoActFive() {
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <div className="max-w-[600px]">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
-            QUI FAIT QUOI
+            CHACUN SON MÉTIER
           </p>
           <h2
             id="supordo-act5-title"
@@ -67,12 +67,16 @@ export function SupordoActFive() {
           >
             Vous êtes sur le terrain. Nous nous occupons du site.
           </h2>
+          <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
+            SUPORDO prépare la structure et la présentation de votre site. Vous actualisez les
+            informations que vos clients doivent voir.
+          </p>
         </div>
 
         <div className="mt-10 grid gap-12 lg:mt-14 lg:grid-cols-2 lg:gap-16">
           <div>
             <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-green)]">
-              SUPORDO s'occupe de…
+              SUPORDO S'OCCUPE DU SITE
             </h3>
             <ul className="mt-5 space-y-3.5">
               {SUPORDO_ITEMS.map((item) => (
@@ -80,7 +84,10 @@ export function SupordoActFive() {
                   key={item}
                   className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
                 >
-                  <span aria-hidden="true" className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-green)]" />
+                  <span
+                    aria-hidden="true"
+                    className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-green)]"
+                  />
                   {item}
                 </li>
               ))}
@@ -89,7 +96,7 @@ export function SupordoActFive() {
 
           <div className="lg:border-l lg:border-[var(--supordo-mint-200)] lg:pl-16">
             <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-forest)]/70">
-              Vous gardez la main sur…
+              VOUS CONNAISSEZ VOTRE ENTREPRISE
             </h3>
             <ul className="mt-5 space-y-3.5">
               {ARTISAN_ITEMS.map((item) => (
@@ -97,13 +104,23 @@ export function SupordoActFive() {
                   key={item}
                   className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
                 >
-                  <span aria-hidden="true" className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-forest)]/40" />
+                  <span
+                    aria-hidden="true"
+                    className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-forest)]/40"
+                  />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
         </div>
+
+        {/* Phrase de différenciation : elle porte ce qui distingue SUPORDO
+            d'une agence et d'un constructeur de site. Poids typographique
+            assumé, sur toute la largeur de lecture. */}
+        <p className="mt-12 max-w-[760px] border-t border-[var(--supordo-mint-200)] pt-8 text-xl font-extrabold leading-snug text-[var(--supordo-forest)] sm:text-2xl lg:mt-16 lg:pt-10 lg:text-[1.75rem]">
+          Un seul site. Une seule offre. SUPORDO s'occupe de la technique.
+        </p>
       </div>
     </section>
   );
