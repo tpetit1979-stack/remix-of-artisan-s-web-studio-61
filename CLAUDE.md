@@ -113,6 +113,12 @@ Architecture/principes : `docs/product/constitution.md` · état par lot :
 `docs/product/objects/*.md` · état Git/déploiement :
 `docs/runtime/STATE.md`.
 
+Avant toute modification touchant emails, SMS, domaines, automatisations ou
+communications : lire `docs/product/communications-architecture-hypotheses.md`.
+Ce document est une exploration, pas une décision — les fournisseurs qu'il cite
+(Resend inclus) sont des candidats, jamais un choix acté. Il ne justifie à lui
+seul ni nouvelle table, ni nouvelle abstraction, ni nouveau fournisseur.
+
 ### Workflow en deux temps, STOP obligatoire entre les deux
 Lecture seule d'abord : EXPLORE → PROVE → REFUTE → CONCLUDE → RECOMMEND → STOP.
 Implémentation ensuite, uniquement après autorisation explicite :
