@@ -12,15 +12,16 @@ import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json
  * réception d'une demande n'est pas encore ouverte — la page le dit alors
  * elle-même. Seule la soumission du formulaire reste gardée.
  *
- * `showExampleLink` suit la présence réelle de la démonstration : pas de lien
- * vers une ancre qui ne serait pas montée.
+ * `showExampleLink` suit la présence réelle de la démonstration. Elle existe
+ * désormais (Acte 3), donc « Voir un exemple » descend vers #demonstration.
  *
+ * TODO: remplacer par une photographie éditoriale Hero.
  * Image : visuel TEMPORAIRE. Aucune photographie éditoriale de marque
  * n'existe encore ; l'illustration « chauffagiste » de la section Métiers est
  * réutilisée en attendant. Elle ne représente aucun client et n'est jamais
  * présentée comme une réalisation.
  */
-export function SupordoHero({ showExampleLink = false }: { showExampleLink?: boolean }) {
+export function SupordoHero({ showExampleLink = true }: { showExampleLink?: boolean }) {
   return (
     <section className="bg-[var(--supordo-warm)]">
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-12 md:px-8 md:py-16 lg:grid-cols-2 lg:gap-20 lg:py-24">

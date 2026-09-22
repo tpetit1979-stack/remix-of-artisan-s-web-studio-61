@@ -1,6 +1,7 @@
 import { SupordoHeader } from "./SupordoHeader";
 import { SupordoHero } from "./SupordoHero";
 import { SupordoTrades } from "./SupordoTrades";
+import { SupordoActDemo } from "./SupordoActDemo";
 import { SupordoActThree } from "./SupordoActThree";
 import { SupordoActRealisation } from "./SupordoActRealisation";
 import { SupordoActContenu } from "./SupordoActContenu";
@@ -27,11 +28,12 @@ import { SupordoFooter } from "./SupordoFooter";
  * leur destination existe, et `/demarrer` dit honnêtement quand une demande
  * ne peut pas encore être reçue. Seule la soumission du formulaire est gardée.
  *
- * Acte 3 « Démonstration SUPORDO » : volontairement non monté. Il exige un
- * site de démonstration réel et ses captures, qui n'existent pas encore dans
- * le dépôt. Une composition fabriquée — faux navigateur, entreprise fictive
- * présentée comme cliente — est exclue. Le lien « Voir un exemple » du Hero
- * suit cet état : pas d'ancre vers une section absente.
+ * Acte 3 « Démonstration SUPORDO » : le site montré est une démonstration
+ * construite par SUPORDO, avec une entreprise fictive — fixtures dans
+ * `src/data/marketing/supordo-demo-site.ts`, rendu en HTML/CSS par
+ * `SupordoSiteDemo`. Il est étiqueté comme tel partout où il apparaît, et
+ * n'est jamais présenté comme un client, un témoignage ou un résultat. Le
+ * jour où un vrai site client autorisé existe, seules les fixtures changent.
  */
 export function SupordoLanding() {
   return (
@@ -39,10 +41,11 @@ export function SupordoLanding() {
       <SupordoHeader />
       <main>
         {/* Acte 1 */}
-        <SupordoHero showExampleLink={false} />
+        <SupordoHero />
         {/* Acte 2 */}
         <SupordoTrades />
-        {/* Acte 3 — Démonstration : en attente des captures réelles. */}
+        {/* Acte 3 */}
+        <SupordoActDemo />
         {/* Acte 4A */}
         <SupordoActThree />
         {/* Acte 4B */}

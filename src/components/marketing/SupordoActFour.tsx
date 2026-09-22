@@ -64,8 +64,8 @@ export function SupordoActFour({
             Montrez le travail que vous faites vraiment.
           </h2>
           <p className="mt-5 max-w-[650px] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Une réalisation, une photo, quelques informations : votre travail
-            est présenté sur votre site.
+            Une réalisation, une photo, quelques informations : votre travail est présenté sur votre
+            site.
           </p>
         </div>
 
@@ -131,9 +131,7 @@ export function SupordoActFour({
               <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
                 La réalisation sur votre site.
               </p>
-              <p className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                {workTitle}
-              </p>
+              <p className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">{workTitle}</p>
             </figcaption>
           </figure>
         </div>

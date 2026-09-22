@@ -1,54 +1,65 @@
 /**
- * Acte 5 — "Qui fait quoi" (plan-directeur-supordo-com.md §4, Acte 5,
- * doctrine vocabulaire et ton §20-§21).
+ * Acte 6 — Qui fait quoi.
  *
- * Famille "Partage typographique" (plan §11) : densité faible, aucun visuel,
- * jamais présentée comme une liste de fonctions à cocher — deux colonnes de
- * phrases courtes et factuelles, pas une grille de features avec icônes.
- * Petits marqueurs ronds (pas des icônes, pas des cases à cocher) pour
- * alléger la lecture par rapport à une liste à puces classique.
+ * Deux territoires typographiques, pas deux listes à puces perdues dans du
+ * blanc : ce qui appartient à l'entreprise, ce qui appartient à SUPORDO. Les
+ * notions ont déjà été expliquées par les actes précédents — ici, des mots
+ * suffisent.
  *
- * H2 : "Vous êtes sur le terrain. Nous nous occupons du site." — formulation
- * transversale (couvreur, plombier, ramoneur, technicien PAC, paysagiste,
- * dépanneur...), pas ancrée sur le seul mot "travaux".
+ * La phrase signature ferme le chapitre : elle porte la différenciation
+ * (ni agence, ni constructeur de site) et prend toute la largeur de lecture.
  *
- * Côté SUPORDO : préparation de la première version du site, préparation des
- * pages (le client n'a aucune page à construire), mise en ligne, maintenance
- * technique — distincte des informations de l'entreprise, qui restent sous
- * la main du client. Aucune mention de l'IA dans cette copy publique
- * (doctrine §20) ; les demandes reçues, capacité réelle, ne sont plus une
- * ligne de cet acte (elles ne sont plus une promesse centrale de l'Acte 5).
- *
- * Côté artisan : prestations, secteur d'intervention, réalisations,
- * partenaires et coordonnées ont un rendu public ou un effet public réel
- * selon leur comportement propre — pas tous immédiats de la même façon
- * (voir plan-directeur §1 et §4, Acte 5, question 10 fermée). Équipe
- * formulée prudemment : l'affichage général reste conditionné par
- * `site_settings.team_presentation_mode`, verrouillé au super_admin —
- * d'où "lorsque son affichage est activé sur le site".
- *
- * Volontairement absents : marques (aucun rendu public n'existe aujourd'hui),
- * certifications (décision produit non tranchée), toute mention de délai ou
- * de "publication automatique" globale.
- *
- * Aucune icône, aucune carte, aucun média — texte seul, sur le même
- * vocabulaire de tokens que le reste de la landing.
+ * Périmètre SUPORDO limité à ce qui est confirmé par l'offre : structure,
+ * présentation, mise en ligne, hébergement, maintenance technique. Jamais
+ * « maintient votre site » seul, qui laisserait entendre que SUPORDO
+ * actualise les contenus du client.
  */
-const SUPORDO_ITEMS = [
-  "Prépare la première version de votre site à partir des informations de votre entreprise.",
-  "Prépare les pages de votre site — vous n'avez pas à les construire vous-même.",
-  "Met votre site en ligne.",
-  "Assure la maintenance technique du site — vous gardez la main sur les informations de votre entreprise.",
+const VOUS = [
+  "Vos prestations",
+  "Vos chantiers",
+  "Vos photos",
+  "Vos zones d'intervention",
+  "Vos coordonnées",
 ] as const;
 
-const ARTISAN_ITEMS = [
-  "Vos prestations.",
-  "Votre secteur d'intervention.",
-  "Vos réalisations.",
-  "Vos partenaires.",
-  "Vos coordonnées.",
-  "Votre équipe, lorsque son affichage est activé sur le site.",
+const SUPORDO = [
+  "La structure",
+  "La présentation",
+  "La mise en ligne",
+  "L'hébergement",
+  "La maintenance technique",
 ] as const;
+
+function Territoire({
+  eyebrow,
+  titre,
+  items,
+  accent,
+}: {
+  eyebrow: string;
+  titre: string;
+  items: readonly string[];
+  accent: string;
+}) {
+  return (
+    <div>
+      <p className={`text-xs font-bold uppercase tracking-[0.14em] ${accent}`}>{eyebrow}</p>
+      <p className="mt-3 text-2xl font-extrabold leading-tight text-[var(--supordo-forest)] lg:text-[2rem]">
+        {titre}
+      </p>
+      <ul className="mt-6 space-y-2.5">
+        {items.map((item) => (
+          <li
+            key={item}
+            className="text-lg font-semibold leading-snug text-[var(--supordo-graphite)] lg:text-xl"
+          >
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function SupordoActFive() {
   return (
@@ -57,7 +68,7 @@ export function SupordoActFive() {
       aria-labelledby="supordo-act5-title"
     >
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-        <div className="max-w-[600px]">
+        <div className="max-w-[640px]">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
             CHACUN SON MÉTIER
           </p>
@@ -68,57 +79,31 @@ export function SupordoActFive() {
             Vous êtes sur le terrain. Nous nous occupons du site.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            SUPORDO prépare la structure et la présentation de votre site. Vous actualisez les
-            informations que vos clients doivent voir.
+            Vous nous donnez les informations de votre entreprise. SUPORDO s'occupe de leur donner
+            une place claire sur votre site et de sa partie technique.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-12 lg:mt-14 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-green)]">
-              SUPORDO S'OCCUPE DU SITE
-            </h3>
-            <ul className="mt-5 space-y-3.5">
-              {SUPORDO_ITEMS.map((item) => (
-                <li
-                  key={item}
-                  className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-green)]"
-                  />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
+        <div className="mt-10 grid gap-10 lg:mt-14 lg:grid-cols-2 lg:gap-16">
+          <Territoire
+            eyebrow="VOUS"
+            titre="Votre entreprise."
+            items={VOUS}
+            accent="text-[var(--supordo-forest)]/60"
+          />
           <div className="lg:border-l lg:border-[var(--supordo-mint-200)] lg:pl-16">
-            <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-[var(--supordo-forest)]/70">
-              VOUS CONNAISSEZ VOTRE ENTREPRISE
-            </h3>
-            <ul className="mt-5 space-y-3.5">
-              {ARTISAN_ITEMS.map((item) => (
-                <li
-                  key={item}
-                  className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-forest)]/40"
-                  />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <Territoire
+              eyebrow="SUPORDO"
+              titre="Votre site."
+              items={SUPORDO}
+              accent="text-[var(--supordo-green)]"
+            />
           </div>
         </div>
 
-        {/* Phrase de différenciation : elle porte ce qui distingue SUPORDO
-            d'une agence et d'un constructeur de site. Poids typographique
-            assumé, sur toute la largeur de lecture. */}
-        <p className="mt-12 max-w-[760px] border-t border-[var(--supordo-mint-200)] pt-8 text-xl font-extrabold leading-snug text-[var(--supordo-forest)] sm:text-2xl lg:mt-16 lg:pt-10 lg:text-[1.75rem]">
+        {/* Conclusion du chapitre : pleine largeur, poids typographique
+            assumé, mais pas un slogan de Hero. */}
+        <p className="mt-14 border-t border-[var(--supordo-mint-200)] pt-10 text-2xl font-extrabold leading-snug tracking-[-0.01em] text-[var(--supordo-forest)] sm:text-[1.75rem] lg:mt-20 lg:pt-12 lg:text-[2.25rem]">
           Un seul site. Une seule offre. SUPORDO s'occupe de la technique.
         </p>
       </div>

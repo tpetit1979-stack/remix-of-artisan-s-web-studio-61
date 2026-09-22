@@ -20,15 +20,31 @@ import paysagiste from "@/assets/marketing/trades/paysagiste.webp.asset.json";
 import peintre from "@/assets/marketing/trades/peintre.webp.asset.json";
 
 const TRADES = [
-  { name: "Chauffagiste", image: chauffagiste.url, alt: "Chauffagiste installant une pompe à chaleur" },
-  { name: "Plombier", image: plombier.url, alt: "Plombier intervenant sous un meuble de salle de bain" },
-  { name: "Électricien", image: electricien.url, alt: "Électricien travaillant sur un tableau électrique" },
+  {
+    name: "Chauffagiste",
+    image: chauffagiste.url,
+    alt: "Chauffagiste installant une pompe à chaleur",
+  },
+  {
+    name: "Plombier",
+    image: plombier.url,
+    alt: "Plombier intervenant sous un meuble de salle de bain",
+  },
+  {
+    name: "Électricien",
+    image: electricien.url,
+    alt: "Électricien travaillant sur un tableau électrique",
+  },
   {
     name: "Ramoneur · Professionnel de la cheminée",
     image: ramoneurCheminee.url,
     alt: "Ramoneur entretenant un conduit de poêle à bois",
   },
-  { name: "Climaticien", image: climaticien.url, alt: "Climaticien posant une unité intérieure de climatisation" },
+  {
+    name: "Climaticien",
+    image: climaticien.url,
+    alt: "Climaticien posant une unité intérieure de climatisation",
+  },
   { name: "Couvreur", image: couvreur.url, alt: "Couvreur travaillant sur une toiture" },
   { name: "Menuisier", image: menuisier.url, alt: "Menuisier travaillant le bois en atelier" },
   { name: "Maçon", image: macon.url, alt: "Maçon réalisant un ouvrage de maçonnerie" },
@@ -45,18 +61,17 @@ export function SupordoTrades() {
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <div className="max-w-[760px]">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
-            PENSÉ POUR VOTRE MÉTIER
+            DES SITES POUR LES ENTREPRISES DE TERRAIN
           </p>
           <h2
             id="supordo-trades-title"
             className="mt-4 text-[2rem] font-extrabold leading-[1.12] text-[var(--supordo-forest)] sm:text-[2.5rem] lg:text-[3rem]"
           >
-            Un site professionnel adapté à votre activité.
+            Votre métier doit se reconnaître dans votre site.
           </h2>
           <p className="mt-5 max-w-[650px] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Votre métier, vos prestations, vos réalisations.
-            <br />
-            SUPORDO vous donne une base professionnelle que vous pouvez tenir à jour simplement.
+            Chauffage, plomberie, électricité, couverture ou autres métiers de terrain : le contenu
+            part de ce que fait réellement votre entreprise.
           </p>
         </div>
 

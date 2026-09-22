@@ -1,3 +1,10 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 /**
  * Acte 7 — Réassurance, FAQ et action finale (plan-directeur-supordo-com.md
  * §4, Acte 7). Ferme la landing avant le pied de page.
@@ -12,6 +19,11 @@
  *
  * Aucun appel à l'action ici : la page se ferme sur l'Acte 9, juste après.
  * Deux gros boutons à quelques centaines de pixels d'écart se neutralisent.
+ *
+ * Accordéon : six réponses dépliées allongeaient la page d'un écran entier
+ * juste avant la conversion. Toutes fermées au départ — le visiteur ouvre la
+ * question qui le concerne. Composant Radix déjà présent dans le projet :
+ * clavier, `aria-expanded` et focus visibles sans dépendance nouvelle.
  */
 const FAQ_ITEMS = [
   {
@@ -54,7 +66,7 @@ export function SupordoActSeven() {
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <div className="max-w-[760px]">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
-            AVANT DE VOUS DÉCIDER
+            AVANT DE COMMENCER
           </p>
           <h2
             id="supordo-act7-title"
@@ -64,18 +76,22 @@ export function SupordoActSeven() {
           </h2>
         </div>
 
-        <dl className="mt-10 max-w-[760px] divide-y divide-[var(--supordo-mint-200)] lg:mt-12">
-          {FAQ_ITEMS.map((item) => (
-            <div key={item.question} className="py-5 first:pt-0">
-              <dt className="text-base font-bold text-[var(--supordo-forest)] lg:text-lg">
+        <Accordion type="single" collapsible className="mt-10 max-w-[760px] lg:mt-12">
+          {FAQ_ITEMS.map((item, index) => (
+            <AccordionItem
+              key={item.question}
+              value={`q${index}`}
+              className="border-b border-[var(--supordo-mint-200)]"
+            >
+              <AccordionTrigger className="py-5 text-left text-base font-bold text-[var(--supordo-forest)] hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] lg:text-lg">
                 {item.question}
-              </dt>
-              <dd className="mt-2 text-sm leading-relaxed text-[var(--supordo-graphite)] lg:text-base">
+              </AccordionTrigger>
+              <AccordionContent className="pb-5 text-sm leading-relaxed text-[var(--supordo-graphite)] lg:text-base">
                 {item.answer}
-              </dd>
-            </div>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </dl>
+        </Accordion>
       </div>
     </section>
   );

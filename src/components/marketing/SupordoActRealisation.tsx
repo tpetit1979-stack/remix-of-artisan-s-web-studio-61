@@ -1,26 +1,22 @@
-import couvreur from "@/assets/marketing/trades/couvreur.webp.asset.json";
+import { SupordoDemoProject } from "./SupordoSiteDemo";
+import { SUPORDO_DEMO_SITE } from "@/data/marketing/supordo-demo-site";
 
 /**
- * Acte 4B — Une réalisation.
+ * Acte 4B — Un chantier.
  *
- * Deuxième preuve du même chapitre que l'Acte 4A : après une prestation,
- * un chantier. La lecture est une transformation en trois temps — le travail
- * réalisé, la réalisation ajoutée, le rendu public — et non trois cartes
- * numérotées d'onboarding.
+ * Deuxième preuve du même chapitre : après une prestation, un travail réalisé.
+ * La photographie du chantier est la matière première et domine la
+ * composition ; la fiche reste petite ; le rendu public appartient
+ * visuellement au site de démonstration, pas à l'interface SUPORDO.
  *
- * Les champs cités (photo, titre, commune, prestation) sont ceux du modèle
- * réel `portfolio` `[PROUVÉ PRODUIT]`. Rien n'est promis sur la publication
- * automatique : le produit publie au cas par cas, la copy dit « que vous
- * choisissez de montrer ».
+ * Les champs (titre, commune, prestation, photo) sont ceux du modèle réel
+ * `portfolio`. Le verbe reste prudent : le produit publie au cas par cas,
+ * donc « pour le présenter parmi les réalisations », jamais « il devient
+ * automatiquement ».
  *
- * L'image est une illustration de marque SUPORDO, jamais présentée comme le
- * chantier d'un client. Aucune capture d'interface n'est reconstituée.
+ * Chantier, entreprise et commune sont fictifs.
  */
-const EXEMPLE = {
-  titre: "Réfection de toiture",
-  commune: "Aubagne",
-  prestation: "Couverture",
-} as const;
+const project = SUPORDO_DEMO_SITE.projects[0]!;
 
 export function SupordoActRealisation() {
   return (
@@ -40,77 +36,79 @@ export function SupordoActRealisation() {
             Montrez le travail que vous faites vraiment.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Un chantier terminé, quelques photos et les informations utiles : vos futurs clients
-            découvrent votre travail avant de vous contacter.
+            Ajoutez une photo et quelques informations sur un chantier pour le présenter parmi les
+            réalisations de votre site.
           </p>
         </div>
 
-        {/* Desktop : trois temps en ligne, la photo porte le poids visuel.
-            Mobile : empilés, la photo d'abord — c'est elle qui fait comprendre
-            de quoi on parle avant toute explication. */}
-        <div className="mt-10 grid gap-5 lg:mt-14 lg:grid-cols-[1.4fr_1fr_1fr] lg:items-stretch lg:gap-6">
-          <figure className="overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)]">
-            <div className="aspect-[4/3] w-full lg:aspect-auto lg:h-full lg:min-h-[320px]">
-              <img
-                src={couvreur.url}
-                alt="Couvreur travaillant sur une toiture"
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
+        {/* Desktop : la photo occupe la moitié gauche, la fiche est petite,
+            le rendu public est plus grand qu'elle. Mobile : photo, fiche,
+            rendu — dans l'ordre de la transformation. */}
+        <div className="mt-10 grid gap-6 lg:mt-14 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,0.9fr)_minmax(0,1.3fr)] lg:items-center lg:gap-8">
+          <figure>
+            <figcaption className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/70">
+              Le chantier
+            </figcaption>
+            <div className="mt-3 overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)]">
+              <div className="aspect-[4/3]">
+                <img
+                  src={project.image}
+                  alt={project.imageAlt}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
             </div>
           </figure>
 
-          <div className="flex flex-col justify-center rounded-[10px] border border-[var(--supordo-mint-200)] bg-white p-6 md:p-8">
-            <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-              La réalisation que vous ajoutez
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/70">
+              Dans SUPORDO
             </p>
-            <dl className="mt-4 space-y-3">
-              <div>
-                <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                  Titre
-                </dt>
-                <dd className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                  {EXEMPLE.titre}
-                </dd>
-              </div>
-              <div className="border-t border-[var(--supordo-mint-200)] pt-3">
-                <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                  Commune
-                </dt>
-                <dd className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                  {EXEMPLE.commune}
-                </dd>
-              </div>
-              <div className="border-t border-[var(--supordo-mint-200)] pt-3">
-                <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                  Prestation
-                </dt>
-                <dd className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                  {EXEMPLE.prestation}
-                </dd>
-              </div>
-            </dl>
+            <div className="mt-3 rounded-[10px] border border-[var(--supordo-mint-200)] bg-white p-5">
+              <dl className="space-y-3.5">
+                <div>
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+                    Titre
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold leading-snug text-[var(--supordo-forest)]">
+                    {project.title}
+                  </dd>
+                </div>
+                <div className="border-t border-[var(--supordo-mint-200)] pt-3.5">
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+                    Commune
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
+                    {project.city}
+                  </dd>
+                </div>
+                <div className="border-t border-[var(--supordo-mint-200)] pt-3.5">
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+                    Prestation
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold leading-snug text-[var(--supordo-forest)]">
+                    {project.service}
+                  </dd>
+                </div>
+              </dl>
+            </div>
           </div>
 
-          <div className="flex flex-col justify-center rounded-[10px] border border-[var(--supordo-mint-200)] bg-white p-6 md:p-8">
-            <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/70">
               Sur votre site
             </p>
-            <h3 className="mt-3 text-lg font-extrabold leading-snug text-[var(--supordo-forest)] lg:text-xl">
-              {EXEMPLE.titre}
-            </h3>
-            <p className="mt-2 text-sm text-[var(--supordo-graphite)]">
-              {EXEMPLE.commune} · {EXEMPLE.prestation}
-            </p>
-            <p className="mt-4 border-t border-[var(--supordo-mint-200)] pt-4 text-sm leading-relaxed text-[var(--supordo-graphite)]">
-              Vos clients voient le chantier, la commune et la prestation concernée.
-            </p>
+            <div className="mt-3">
+              <SupordoDemoProject project={project} size="lg" />
+            </div>
           </div>
         </div>
 
-        <p className="mt-6 max-w-[640px] text-sm leading-relaxed text-[var(--supordo-graphite)] lg:mt-8">
-          Vous choisissez les réalisations que vous montrez.
+        <p className="mt-6 text-sm text-[var(--supordo-graphite)]/70 lg:mt-8">
+          Démonstration SUPORDO — chantier et entreprise fictifs. Vous choisissez les réalisations
+          que vous montrez.
         </p>
       </div>
     </section>
