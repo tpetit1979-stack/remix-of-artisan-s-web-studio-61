@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { SupordoDemoProject } from "./SupordoSiteDemo";
-import { SUPORDO_DEMO_SITE } from "@/data/marketing/supordo-demo-site";
+import { DEMO_SITES } from "@/data/marketing/supordo-demo-site";
 
 /**
  * Acte 9 — Fermeture de la page.
@@ -15,7 +15,8 @@ import { SUPORDO_DEMO_SITE } from "@/data/marketing/supordo-demo-site";
  *
  * Un seul appel à l'action.
  */
-const project = SUPORDO_DEMO_SITE.projects[1] ?? SUPORDO_DEMO_SITE.projects[0]!;
+const site = DEMO_SITES.heating;
+const project = site.projects[1] ?? site.projects[0]!;
 
 export function SupordoActFinal() {
   return (
@@ -50,7 +51,7 @@ export function SupordoActFinal() {
           {/* Un seul fragment du site de démonstration : il rappelle
               visuellement ce qu'on vient de décrire, sans réexpliquer. */}
           <div className="hidden lg:block">
-            <SupordoDemoProject project={project} />
+            <SupordoDemoProject project={project} site={site} />
             <p className="mt-3 text-xs text-[var(--supordo-graphite)]/70">
               Démonstration SUPORDO — entreprise fictive.
             </p>

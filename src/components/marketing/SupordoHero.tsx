@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json";
+import paysagiste from "@/assets/marketing/trades/paysagiste.webp.asset.json";
 
 /**
  * Acte 1 — Hero.
@@ -16,10 +16,11 @@ import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json
  * désormais (Acte 3), donc « Voir un exemple » descend vers #demonstration.
  *
  * TODO: remplacer par une photographie éditoriale Hero.
- * Image : visuel TEMPORAIRE. Aucune photographie éditoriale de marque
- * n'existe encore ; l'illustration « chauffagiste » de la section Métiers est
- * réutilisée en attendant. Elle ne représente aucun client et n'est jamais
- * présentée comme une réalisation.
+ * Image : visuel TEMPORAIRE, tiré des illustrations métier. Le métier montré
+ * ici n'est volontairement aucun de ceux des quatre démonstrations : le
+ * premier écran ne doit pas laisser croire que SUPORDO s'adresse surtout aux
+ * chauffagistes. Elle ne représente aucun client et n'est jamais présentée
+ * comme une réalisation.
  */
 export function SupordoHero({ showExampleLink = true }: { showExampleLink?: boolean }) {
   return (
@@ -60,8 +61,8 @@ export function SupordoHero({ showExampleLink = true }: { showExampleLink?: bool
         <div>
           <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:max-h-[520px] lg:min-h-[400px]">
             <img
-              src={chauffagiste.url}
-              alt="Chauffagiste installant une pompe à chaleur"
+              src={paysagiste.url}
+              alt="Paysagiste taillant une haie"
               loading="eager"
               decoding="async"
               className="h-full w-full object-cover"

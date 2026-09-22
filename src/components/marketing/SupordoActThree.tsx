@@ -1,5 +1,5 @@
 import { SupordoDemoService } from "./SupordoSiteDemo";
-import { SUPORDO_DEMO_SITE } from "@/data/marketing/supordo-demo-site";
+import { DEMO_SITES } from "@/data/marketing/supordo-demo-site";
 
 /**
  * Acte 4A — Une prestation.
@@ -12,11 +12,15 @@ import { SUPORDO_DEMO_SITE } from "@/data/marketing/supordo-demo-site";
  * garantit pas une synchronisation instantanée, et le verbe ne doit pas la
  * suggérer.
  *
- * L'entreprise, la prestation et la commune sont fictives — mêmes données que
- * la démonstration de l'Acte 3, pour que le visiteur comprenne qu'il regarde
- * le même site.
+ * Métier choisi : la couverture. Chaque acte de preuve s'appuie sur une
+ * entreprise de démonstration différente — le mécanisme est le même quel que
+ * soit le métier, et la page cesse de ressembler à une vitrine de
+ * chauffagistes.
+ *
+ * Entreprise, prestation et commune fictives.
  */
-const service = SUPORDO_DEMO_SITE.services[0]!;
+const site = DEMO_SITES.roofing;
+const service = site.services[0]!;
 
 export function SupordoActThree() {
   return (
@@ -72,7 +76,7 @@ export function SupordoActThree() {
                     Zone d'intervention
                   </dt>
                   <dd className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                    {SUPORDO_DEMO_SITE.city}
+                    {site.city}
                   </dd>
                 </div>
                 <div className="border-t border-[var(--supordo-mint-200)] pt-4">
@@ -90,7 +94,7 @@ export function SupordoActThree() {
               Sur votre site
             </p>
             <div className="mt-3">
-              <SupordoDemoService service={service} size="lg" />
+              <SupordoDemoService service={service} site={site} size="lg" />
             </div>
           </div>
         </div>

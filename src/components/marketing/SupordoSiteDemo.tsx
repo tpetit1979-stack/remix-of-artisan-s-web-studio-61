@@ -1,45 +1,59 @@
+import type { CSSProperties } from "react";
 import {
   SUPORDO_DEMO_SITE,
   type DemoProject,
   type DemoService,
+  type DemoSite,
 } from "@/data/marketing/supordo-demo-site";
 
 /**
  * Représentation d'un site artisan préparé avec SUPORDO — entièrement fictive.
  *
- * Elle est construite en HTML/CSS plutôt qu'en capture d'écran : plus légère,
- * nette à tous les zooms, et surtout modifiable en un seul endroit le jour où
- * un vrai site client autorisé la remplacera.
+ * Construite en HTML/CSS plutôt qu'en capture : plus légère, nette à tous les
+ * zooms, et modifiable en un seul endroit le jour où de vrais sites clients
+ * autorisés la remplaceront.
  *
- * Direction graphique volontairement distincte de la landing SUPORDO — barre
- * supérieure sombre avec numéro de téléphone, titre en surimpression d'une
- * photo, prestations en cartes photo, bouton de devis arrondi. Sans cela, le
- * visiteur croit regarder un composant SUPORDO de plus au lieu du site de
- * l'artisan. Les tokens restent ceux du projet : aucune couleur nouvelle.
+ * Chaque site de démonstration porte son propre thème — couleur dominante,
+ * fond, typographie, rayon des boutons — défini dans les fixtures et injecté
+ * en variables CSS locales. Ces valeurs n'entrent jamais dans le design
+ * system SUPORDO : ce sont les couleurs du client, pas celles de la marque.
+ * C'est précisément ce que la démonstration doit prouver — un socle commun,
+ * des identités différentes.
  *
- * Aucune donnée réelle, aucun client, aucun témoignage, aucun chiffre. Les
- * composants appelants affichent l'étiquette « Démonstration SUPORDO ».
+ * La typographie est volontairement une pile système, distincte de Manrope :
+ * sans cela, le site du client ressemble à un composant SUPORDO de plus.
+ *
+ * Aucune donnée réelle, aucun client, aucun témoignage, aucun chiffre.
  */
-const site = SUPORDO_DEMO_SITE;
+type WithSite = { site?: DemoSite };
+
+function themeVars(site: DemoSite): CSSProperties {
+  return {
+    ["--demo-primary" as string]: site.theme.primary,
+    ["--demo-surface" as string]: site.theme.surface,
+    ["--demo-text" as string]: site.theme.text,
+    ["--demo-radius" as string]: site.theme.radius,
+    fontFamily: site.theme.fontStack,
+  };
+}
 
 /** Barre supérieure du site fictif : identité, navigation, téléphone. */
-function DemoHeader({ compact = false }: { compact?: boolean }) {
+function DemoHeader({ site, compact }: { site: DemoSite; compact: boolean }) {
   return (
-    <div className="flex items-center justify-between gap-3 bg-[var(--supordo-forest-dark)] px-4 py-3 md:px-6">
+    <div
+      className="flex items-center justify-between gap-3 px-4 py-3 md:px-6"
+      style={{ backgroundColor: "var(--demo-text)" }}
+    >
       <div className="min-w-0">
-        <p className="truncate text-[13px] font-bold tracking-[0.02em] text-white md:text-[15px]">
+        <p className="truncate text-[13px] font-bold tracking-[0.01em] text-white md:text-[15px]">
           {site.companyName}
         </p>
         <p className="truncate text-[9px] uppercase tracking-[0.12em] text-white/50 md:text-[10px]">
           {site.trade}
         </p>
       </div>
-      {compact ? (
-        <span className="shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-semibold text-white">
-          {site.phone}
-        </span>
-      ) : (
-        <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4">
+        {!compact && (
           <nav className="hidden items-center gap-4 md:flex">
             {site.nav.map((item, i) => (
               <span
@@ -50,17 +64,20 @@ function DemoHeader({ compact = false }: { compact?: boolean }) {
               </span>
             ))}
           </nav>
-          <span className="shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white">
-            {site.phone}
-          </span>
-        </div>
-      )}
+        )}
+        <span
+          className="shrink-0 px-3 py-1.5 text-[10px] font-semibold text-white md:text-[11px]"
+          style={{ backgroundColor: "var(--demo-primary)", borderRadius: "var(--demo-radius)" }}
+        >
+          {site.phone}
+        </span>
+      </div>
     </div>
   );
 }
 
-/** Bandeau d'accueil : photo, titre en surimpression, bouton de devis. */
-function DemoHeroBand({ compact = false }: { compact?: boolean }) {
+/** Bandeau d'accueil : photo, titre du site en surimpression, bouton de devis. */
+function DemoHeroBand({ site, compact }: { site: DemoSite; compact: boolean }) {
   return (
     <div className="relative">
       <div className={compact ? "aspect-[4/3]" : "aspect-[16/7]"}>
@@ -72,15 +89,19 @@ function DemoHeroBand({ compact = false }: { compact?: boolean }) {
           className="h-full w-full object-cover"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-black/10" />
       <div className="absolute inset-x-0 bottom-0 p-4 md:p-6">
         <p
-          className={`font-bold leading-tight text-white ${compact ? "text-[15px]" : "text-[17px] md:text-[22px]"}`}
+          className={`font-bold leading-tight text-white ${
+            compact ? "text-[15px]" : "text-[17px] md:text-[22px]"
+          }`}
         >
-          {site.tagline}
+          {site.headline}
         </p>
-        <p className="mt-1 text-[11px] text-white/70">{site.city} et alentours</p>
-        <span className="mt-3 inline-flex rounded-full bg-[var(--supordo-green)] px-4 py-2 text-[11px] font-semibold text-white">
+        <span
+          className="mt-3 inline-flex px-4 py-2 text-[11px] font-semibold text-white"
+          style={{ backgroundColor: "var(--demo-primary)", borderRadius: "var(--demo-radius)" }}
+        >
           Demander un devis
         </span>
       </div>
@@ -88,20 +109,22 @@ function DemoHeroBand({ compact = false }: { compact?: boolean }) {
   );
 }
 
-/** Une prestation telle qu'elle apparaît sur le site public. */
+/** Une prestation telle qu'elle apparaît sur le site public du client. */
 export function SupordoDemoService({
-  service = site.services[0]!,
+  service,
+  site = SUPORDO_DEMO_SITE,
   size = "md",
-}: {
-  service?: DemoService;
-  size?: "md" | "lg";
-}) {
+}: WithSite & { service?: DemoService; size?: "md" | "lg" }) {
+  const item = service ?? site.services[0]!;
   return (
-    <article className="overflow-hidden rounded-[8px] border border-black/10 bg-white">
+    <article
+      className="overflow-hidden border border-black/10 bg-white"
+      style={{ ...themeVars(site), borderRadius: "8px" }}
+    >
       <div className={size === "lg" ? "aspect-[16/9]" : "aspect-[4/3]"}>
         <img
-          src={service.image}
-          alt={service.imageAlt}
+          src={item.image}
+          alt={item.imageAlt}
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover"
@@ -109,18 +132,17 @@ export function SupordoDemoService({
       </div>
       <div className={size === "lg" ? "p-5 md:p-6" : "p-3.5"}>
         <h4
-          className={`font-bold leading-snug text-[var(--supordo-forest-dark)] ${
-            size === "lg" ? "text-lg md:text-xl" : "text-[13px]"
-          }`}
+          className={`font-bold leading-snug ${size === "lg" ? "text-lg md:text-xl" : "text-[13px]"}`}
+          style={{ color: "var(--demo-text)" }}
         >
-          {service.name}
+          {item.name}
         </h4>
         <p
           className={`mt-1.5 leading-relaxed text-black/60 ${
             size === "lg" ? "text-sm md:text-base" : "text-[11px]"
           }`}
         >
-          {service.description}
+          {item.description}
         </p>
         <p
           className={`mt-3 border-t border-black/10 pt-2.5 text-black/50 ${
@@ -134,20 +156,22 @@ export function SupordoDemoService({
   );
 }
 
-/** Une réalisation telle qu'elle apparaît sur le site public. */
+/** Une réalisation telle qu'elle apparaît sur le site public du client. */
 export function SupordoDemoProject({
-  project = site.projects[0]!,
+  project,
+  site = SUPORDO_DEMO_SITE,
   size = "md",
-}: {
-  project?: DemoProject;
-  size?: "md" | "lg";
-}) {
+}: WithSite & { project?: DemoProject; size?: "md" | "lg" }) {
+  const item = project ?? site.projects[0]!;
   return (
-    <article className="overflow-hidden rounded-[8px] border border-black/10 bg-white">
+    <article
+      className="overflow-hidden border border-black/10 bg-white"
+      style={{ ...themeVars(site), borderRadius: "8px" }}
+    >
       <div className={size === "lg" ? "aspect-[16/10]" : "aspect-[4/3]"}>
         <img
-          src={project.image}
-          alt={project.imageAlt}
+          src={item.image}
+          alt={item.imageAlt}
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover"
@@ -155,21 +179,19 @@ export function SupordoDemoProject({
       </div>
       <div className={size === "lg" ? "p-5 md:p-6" : "p-3.5"}>
         <h4
-          className={`font-bold leading-snug text-[var(--supordo-forest-dark)] ${
-            size === "lg" ? "text-lg md:text-xl" : "text-[13px]"
-          }`}
+          className={`font-bold leading-snug ${size === "lg" ? "text-lg md:text-xl" : "text-[13px]"}`}
+          style={{ color: "var(--demo-text)" }}
         >
-          {project.title}
+          {item.title}
         </h4>
         <p
           className={`mt-1.5 text-black/60 ${size === "lg" ? "text-sm md:text-base" : "text-[11px]"}`}
         >
-          {project.city} · {project.service}
+          {item.city} · {item.service}
         </p>
         <span
-          className={`mt-3 inline-flex font-semibold text-[var(--supordo-green)] ${
-            size === "lg" ? "text-sm" : "text-[10px]"
-          }`}
+          className={`mt-3 inline-flex font-semibold ${size === "lg" ? "text-sm" : "text-[10px]"}`}
+          style={{ color: "var(--demo-primary)" }}
         >
           Voir la réalisation →
         </span>
@@ -179,9 +201,12 @@ export function SupordoDemoProject({
 }
 
 /** Bas de page du site fictif : zones d'intervention et coordonnées. */
-function DemoFooter() {
+function DemoFooter({ site }: { site: DemoSite }) {
   return (
-    <div className="border-t border-black/10 bg-[var(--supordo-warm)] px-4 py-4 md:px-6 md:py-5">
+    <div
+      className="border-t border-black/10 px-4 py-4 md:px-6 md:py-5"
+      style={{ backgroundColor: "var(--demo-surface)" }}
+    >
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0">
           <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
@@ -195,7 +220,7 @@ function DemoFooter() {
           <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
             Nous contacter
           </p>
-          <p className="mt-1.5 text-[11px] font-semibold text-[var(--supordo-forest-dark)]">
+          <p className="mt-1.5 text-[11px] font-semibold" style={{ color: "var(--demo-text)" }}>
             {site.phone}
           </p>
           <p className="text-[11px] text-black/60">{site.email}</p>
@@ -210,16 +235,18 @@ function DemoFooter() {
  * `variant="mobile"` pour la colonne étroite — c'est le même site, pas deux
  * démonstrations différentes.
  */
-export function SupordoSiteDemo({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) {
+export function SupordoSiteDemo({
+  site = SUPORDO_DEMO_SITE,
+  variant = "desktop",
+}: WithSite & { variant?: "desktop" | "mobile" }) {
   const compact = variant === "mobile";
   return (
     <div
-      className={`overflow-hidden rounded-[10px] border border-black/10 bg-white shadow-none ${
-        compact ? "w-full" : "w-full"
-      }`}
+      className="w-full overflow-hidden rounded-[10px] border border-black/10 bg-white"
+      style={themeVars(site)}
     >
-      <DemoHeader compact={compact} />
-      <DemoHeroBand compact={compact} />
+      <DemoHeader site={site} compact={compact} />
+      <DemoHeroBand site={site} compact={compact} />
 
       <div className={compact ? "px-4 py-5" : "px-4 py-6 md:px-6 md:py-8"}>
         <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
@@ -229,7 +256,7 @@ export function SupordoSiteDemo({ variant = "desktop" }: { variant?: "desktop" |
           className={`mt-3 grid gap-3 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-3"}`}
         >
           {(compact ? site.services.slice(0, 2) : site.services).map((service) => (
-            <SupordoDemoService key={service.name} service={service} />
+            <SupordoDemoService key={service.name} service={service} site={site} />
           ))}
         </div>
 
@@ -240,12 +267,12 @@ export function SupordoSiteDemo({ variant = "desktop" }: { variant?: "desktop" |
           className={`mt-3 grid gap-3 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}
         >
           {(compact ? site.projects.slice(0, 1) : site.projects).map((project) => (
-            <SupordoDemoProject key={project.title} project={project} />
+            <SupordoDemoProject key={project.title} project={project} site={site} />
           ))}
         </div>
       </div>
 
-      <DemoFooter />
+      <DemoFooter site={site} />
     </div>
   );
 }

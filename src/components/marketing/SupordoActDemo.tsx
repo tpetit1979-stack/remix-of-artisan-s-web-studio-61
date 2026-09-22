@@ -1,5 +1,12 @@
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SupordoSiteDemo } from "./SupordoSiteDemo";
-import { DEMO_LABEL } from "@/data/marketing/supordo-demo-site";
+import {
+  DEMO_LABEL,
+  DEMO_SITES,
+  DEMO_TRADES,
+  type DemoTrade,
+} from "@/data/marketing/supordo-demo-site";
 
 /**
  * Acte 3 — La démonstration du site fini.
@@ -7,18 +14,24 @@ import { DEMO_LABEL } from "@/data/marketing/supordo-demo-site";
  * Premier grand moment produit de la page : après s'être reconnu dans son
  * métier, le visiteur voit un site entier, pas une explication de plus.
  *
- * Le site montré est une démonstration construite par SUPORDO, avec une
- * entreprise fictive. L'étiquette est visible avant le titre, et répétée sous
- * la composition — jamais présenté comme un client, un témoignage ou un
- * résultat. Le « peut » du titre est volontaire tant que la démonstration est
- * fictive.
+ * Le sélecteur de métier fait le travail d'un paragraphe entier. En trois
+ * clics, il montre que la couleur, la typographie, les photos, l'entreprise,
+ * les prestations et les réalisations changent — pendant que la structure,
+ * elle, reste la même. C'est la preuve de « adapté à votre métier », sans
+ * l'écrire une fois de plus.
  *
- * Composition : le site occupe l'essentiel de la largeur, la copy reste
- * secondaire. Sur téléphone, la vue mobile passe en premier et la
- * représentation large disparaît — un site entier réduit à 390 px devient
- * illisible, et une capture illisible ne prouve rien.
+ * `Tabs` Radix déjà présent dans le projet : navigation clavier, `aria-*` et
+ * focus visibles sans dépendance nouvelle. Aucun défilement automatique — le
+ * visiteur choisit. Un seul `TabsContent` piloté par les données : le jour où
+ * de vrais sites clients remplacent les fixtures, rien à réécrire ici.
+ *
+ * Les entreprises montrées sont fictives et étiquetées comme telles ; jamais
+ * présentées comme des clients, des témoignages ou des résultats.
  */
 export function SupordoActDemo() {
+  const [trade, setTrade] = useState<DemoTrade>("heating");
+  const site = DEMO_SITES[trade];
+
   return (
     <section
       id="demonstration"
@@ -37,29 +50,53 @@ export function SupordoActDemo() {
             Voilà à quoi peut ressembler votre site.
           </h2>
           <p className="mt-5 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-            Prestations, réalisations, zones d'intervention, photos et contact : voici un exemple de
-            site préparé avec SUPORDO.
+            Prestations, réalisations, zones d'intervention, photos et contact : voici des exemples
+            de sites préparés avec SUPORDO. Choisissez un métier.
           </p>
         </div>
 
-        {/* Desktop : le site large porte la composition, la vue mobile vient
-            s'appuyer dessus en bas à droite — même site, deux écrans.
-            Mobile : la vue téléphone seule, en grand. */}
-        <div className="mt-10 lg:mt-14">
-          <div className="lg:hidden">
-            <SupordoSiteDemo variant="mobile" />
-          </div>
+        <Tabs
+          value={trade}
+          onValueChange={(value) => setTrade(value as DemoTrade)}
+          className="mt-8 lg:mt-10"
+        >
+          {/* Mobile : défilement horizontal maîtrisé plutôt que des libellés
+              rognés — quatre métiers ne tiennent pas à 390 px. */}
+          <TabsList className="h-auto w-full justify-start gap-2 overflow-x-auto rounded-[8px] bg-white/70 p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {DEMO_TRADES.map((id) => (
+              <TabsTrigger
+                key={id}
+                value={id}
+                className="shrink-0 rounded-[6px] px-4 py-2.5 text-sm font-semibold text-[var(--supordo-graphite)] transition-colors data-[state=active]:bg-[var(--supordo-forest)] data-[state=active]:text-white data-[state=active]:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+              >
+                {DEMO_SITES[id].tradeLabel}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-          <div className="relative hidden lg:block lg:pr-[220px]">
-            <SupordoSiteDemo variant="desktop" />
-            <div className="absolute bottom-0 right-0 w-[260px] translate-y-6">
-              <SupordoSiteDemo variant="mobile" />
+          <TabsContent
+            value={trade}
+            className="mt-8 focus-visible:outline-none lg:mt-10"
+            tabIndex={-1}
+          >
+            {/* Mobile : la vue téléphone seule, en grand — un site entier
+                réduit à 390 px ne prouve rien. Desktop : la vue large porte
+                la composition, la vue mobile s'y appuie. */}
+            <div className="lg:hidden">
+              <SupordoSiteDemo site={site} variant="mobile" />
             </div>
-          </div>
-        </div>
+
+            <div className="relative hidden lg:block lg:pr-[220px]">
+              <SupordoSiteDemo site={site} variant="desktop" />
+              <div className="absolute bottom-0 right-0 w-[260px] translate-y-6">
+                <SupordoSiteDemo site={site} variant="mobile" />
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
 
         <p className="mt-8 text-sm text-[var(--supordo-graphite)]/70 lg:mt-14">
-          Entreprise présentée à titre de démonstration.
+          {site.companyName} — entreprise présentée à titre de démonstration.
         </p>
       </div>
     </section>

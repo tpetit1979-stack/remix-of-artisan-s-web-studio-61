@@ -1,5 +1,6 @@
 import { SupordoDemoProject } from "./SupordoSiteDemo";
-import { SUPORDO_DEMO_SITE } from "@/data/marketing/supordo-demo-site";
+import { SupordoBeforeAfter } from "./SupordoBeforeAfter";
+import { DEMO_SITES } from "@/data/marketing/supordo-demo-site";
 
 /**
  * Acte 4B — Un chantier.
@@ -14,9 +15,15 @@ import { SUPORDO_DEMO_SITE } from "@/data/marketing/supordo-demo-site";
  * donc « pour le présenter parmi les réalisations », jamais « il devient
  * automatiquement ».
  *
+ * Métier choisi : la plomberie. Le chauffage porte déjà le Hero, le
+ * personnage du carrousel et la démonstration par défaut ; une rénovation de
+ * salle de bain diversifie la page et rend la transformation lisible en une
+ * demi-seconde.
+ *
  * Chantier, entreprise et commune sont fictifs.
  */
-const project = SUPORDO_DEMO_SITE.projects[0]!;
+const site = DEMO_SITES.plumbing;
+const project = site.projects[0]!;
 
 export function SupordoActRealisation() {
   return (
@@ -44,23 +51,15 @@ export function SupordoActRealisation() {
         {/* Desktop : la photo occupe la moitié gauche, la fiche est petite,
             le rendu public est plus grand qu'elle. Mobile : photo, fiche,
             rendu — dans l'ordre de la transformation. */}
-        <div className="mt-10 grid gap-6 lg:mt-14 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,0.9fr)_minmax(0,1.3fr)] lg:items-center lg:gap-8">
-          <figure>
-            <figcaption className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/70">
+        <div className="mt-10 grid gap-6 lg:mt-14 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center lg:gap-8">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/70">
               Le chantier
-            </figcaption>
-            <div className="mt-3 overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)]">
-              <div className="aspect-[4/3]">
-                <img
-                  src={project.image}
-                  alt={project.imageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                />
-              </div>
+            </p>
+            <div className="mt-3">
+              <SupordoBeforeAfter project={project} />
             </div>
-          </figure>
+          </div>
 
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/70">
@@ -101,7 +100,7 @@ export function SupordoActRealisation() {
               Sur votre site
             </p>
             <div className="mt-3">
-              <SupordoDemoProject project={project} size="lg" />
+              <SupordoDemoProject project={project} site={site} size="lg" />
             </div>
           </div>
         </div>

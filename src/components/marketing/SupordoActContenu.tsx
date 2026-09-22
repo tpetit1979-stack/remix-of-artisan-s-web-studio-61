@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { SupordoSiteDemo } from "./SupordoSiteDemo";
+import { DEMO_SITES } from "@/data/marketing/supordo-demo-site";
 
 /**
  * Acte 5 — Ce qu'un client doit comprendre avant de vous contacter.
@@ -12,7 +13,11 @@ import { SupordoSiteDemo } from "./SupordoSiteDemo";
  * Les quatre idées correspondent à des objets réels : services,
  * service_areas, portfolio et coordonnées du tenant. Les demandes reçues sont
  * mentionnées parce que le produit les conserve réellement dans l'espace.
+ *
+ * Métier choisi : l'électricité — encore un autre univers, pour que la page
+ * montre quatre entreprises différentes plutôt qu'une seule déclinée.
  */
+const site = DEMO_SITES.electrical;
 const IDEES = [
   { label: "CE QUE VOUS FAITES", titre: "Vos prestations" },
   { label: "OÙ VOUS INTERVENEZ", titre: "Vos zones d'intervention et vos communes" },
@@ -61,13 +66,13 @@ export function SupordoActContenu() {
 
           <div>
             <div className="lg:hidden">
-              <SupordoSiteDemo variant="mobile" />
+              <SupordoSiteDemo site={site} variant="mobile" />
             </div>
             <div className="hidden lg:block">
-              <SupordoSiteDemo variant="desktop" />
+              <SupordoSiteDemo site={site} variant="desktop" />
             </div>
             <p className="mt-4 text-sm text-[var(--supordo-graphite)]/70">
-              Démonstration SUPORDO — entreprise fictive.
+              {site.companyName} — démonstration SUPORDO, entreprise fictive.
             </p>
           </div>
         </div>
