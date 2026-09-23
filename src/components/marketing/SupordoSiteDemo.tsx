@@ -133,10 +133,12 @@ function DemoHeroBand({
   site,
   narrow,
   small,
+  priority,
 }: {
   site: DemoSite;
   narrow: boolean;
   small: boolean;
+  priority: boolean;
 }) {
   return (
     <div className="relative">
@@ -146,7 +148,8 @@ function DemoHeroBand({
           alt=""
           width={1600}
           height={900}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
           decoding="async"
           className="h-full w-full object-cover"
         />
@@ -385,7 +388,8 @@ export function SupordoSiteDemo({
   site = SUPORDO_DEMO_SITE,
   variant = "desktop",
   previewAspect = "3 / 4",
-}: WithSite & { variant?: DemoVariant; previewAspect?: string }) {
+  priority = false,
+}: WithSite & { variant?: DemoVariant; previewAspect?: string; priority?: boolean }) {
   const narrow = variant !== "desktop";
   const small = variant === "mobile";
   const preview = variant === "preview";
@@ -393,7 +397,7 @@ export function SupordoSiteDemo({
   const body = (
     <>
       <DemoHeader site={site} narrow={narrow} small={small} preview={preview} />
-      <DemoHeroBand site={site} narrow={narrow} small={small} />
+      <DemoHeroBand site={site} narrow={narrow} small={small} priority={priority} />
 
       <div className={narrow ? "px-4 py-5" : "px-4 py-6 md:px-6 md:py-8"}>
         <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
