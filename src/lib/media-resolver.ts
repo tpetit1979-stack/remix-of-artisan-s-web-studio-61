@@ -32,9 +32,20 @@ export type MediaCategory =
 /**
  * Tenant categories → ordered list of template `media_type` candidates.
  * The resolver tries each candidate in order until one returns an image.
- * This lets a tenant `portfolio` slot fall back to `gallery` then `proof`,
- * and a `certification` slot fall back to `proof`, while `service` cards
- * stay on the dedicated `service_card` pool.
+ * A `certification` slot falls back to `proof`, and `service` cards stay on
+ * the dedicated `service_card` pool.
+ *
+ * `portfolio` and `gallery` return NOTHING on purpose. These two slots are
+ * the ones a visitor reads as « nos réalisations », « nos chantiers » : what
+ * this company did, for a real customer. The trade library holds generic
+ * trade imagery shared by every tenant — the photothèque SUPORDO marks it
+ * `can_use_as_customer_project_proof = false`. Serving it there would make
+ * the site claim a job that never happened, so an empty réalisations section
+ * is the correct answer until the client provides their own photograph.
+ *
+ * This is not hypothetical: the library's only active rows are
+ * `service_card`, which the previous `portfolio` chain accepted as a last
+ * candidate.
  */
 function templateMediaTypesFor(category: MediaCategory): string[] {
   switch (category) {
@@ -43,11 +54,11 @@ function templateMediaTypesFor(category: MediaCategory): string[] {
     case "service":
       return ["service_card"];
     case "portfolio":
-      return ["gallery", "proof", "service_card"];
+    case "gallery":
+      // Voir le commentaire ci-dessus : jamais de média générique ici.
+      return [];
     case "certification":
       return ["proof"];
-    case "gallery":
-      return ["gallery"];
     case "proof":
       return ["proof"];
     case "logo":
