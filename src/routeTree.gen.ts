@@ -28,6 +28,8 @@ import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SuperAdminIndexRouteImport } from './routes/super-admin.index'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
+import { Route as MetiersIndexRouteImport } from './routes/metiers.index'
+import { Route as ExemplesIndexRouteImport } from './routes/exemples.index'
 import { Route as DemarrerIndexRouteImport } from './routes/demarrer.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SuperAdminTenantsRouteImport } from './routes/super-admin.tenants'
@@ -35,8 +37,10 @@ import { Route as SuperAdminOnboardingRouteImport } from './routes/super-admin.o
 import { Route as SuperAdminMediaLibraryRouteImport } from './routes/super-admin.media-library'
 import { Route as SuperAdminBrandsRouteImport } from './routes/super-admin.brands'
 import { Route as ServicesServiceSlugRouteImport } from './routes/services.$serviceSlug'
+import { Route as MetiersTradeSlugRouteImport } from './routes/metiers.$tradeSlug'
 import { Route as LegalMentionsLegalesRouteImport } from './routes/legal.mentions-legales'
 import { Route as LegalConfidentialiteRouteImport } from './routes/legal.confidentialite'
+import { Route as ExemplesDemoSlugRouteImport } from './routes/exemples.$demoSlug'
 import { Route as DemarrerConfirmationRouteImport } from './routes/demarrer.confirmation'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -145,6 +149,16 @@ const ServicesIndexRoute = ServicesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ServicesRoute,
 } as any)
+const MetiersIndexRoute = MetiersIndexRouteImport.update({
+  id: '/metiers/',
+  path: '/metiers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExemplesIndexRoute = ExemplesIndexRouteImport.update({
+  id: '/exemples/',
+  path: '/exemples/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemarrerIndexRoute = DemarrerIndexRouteImport.update({
   id: '/demarrer/',
   path: '/demarrer/',
@@ -180,6 +194,11 @@ const ServicesServiceSlugRoute = ServicesServiceSlugRouteImport.update({
   path: '/$serviceSlug',
   getParentRoute: () => ServicesRoute,
 } as any)
+const MetiersTradeSlugRoute = MetiersTradeSlugRouteImport.update({
+  id: '/metiers/$tradeSlug',
+  path: '/metiers/$tradeSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LegalMentionsLegalesRoute = LegalMentionsLegalesRouteImport.update({
   id: '/legal/mentions-legales',
   path: '/legal/mentions-legales',
@@ -188,6 +207,11 @@ const LegalMentionsLegalesRoute = LegalMentionsLegalesRouteImport.update({
 const LegalConfidentialiteRoute = LegalConfidentialiteRouteImport.update({
   id: '/legal/confidentialite',
   path: '/legal/confidentialite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExemplesDemoSlugRoute = ExemplesDemoSlugRouteImport.update({
+  id: '/exemples/$demoSlug',
+  path: '/exemples/$demoSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemarrerConfirmationRoute = DemarrerConfirmationRouteImport.update({
@@ -280,8 +304,10 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/demarrer/confirmation': typeof DemarrerConfirmationRoute
+  '/exemples/$demoSlug': typeof ExemplesDemoSlugRoute
   '/legal/confidentialite': typeof LegalConfidentialiteRoute
   '/legal/mentions-legales': typeof LegalMentionsLegalesRoute
+  '/metiers/$tradeSlug': typeof MetiersTradeSlugRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -289,6 +315,8 @@ export interface FileRoutesByFullPath {
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/demarrer/': typeof DemarrerIndexRoute
+  '/exemples/': typeof ExemplesIndexRoute
+  '/metiers/': typeof MetiersIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super-admin/': typeof SuperAdminIndexRoute
   '/super-admin/tenants/$tenantId': typeof SuperAdminTenantsTenantIdRouteWithChildren
@@ -319,14 +347,18 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/demarrer/confirmation': typeof DemarrerConfirmationRoute
+  '/exemples/$demoSlug': typeof ExemplesDemoSlugRoute
   '/legal/confidentialite': typeof LegalConfidentialiteRoute
   '/legal/mentions-legales': typeof LegalMentionsLegalesRoute
+  '/metiers/$tradeSlug': typeof MetiersTradeSlugRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/admin': typeof AdminIndexRoute
   '/demarrer': typeof DemarrerIndexRoute
+  '/exemples': typeof ExemplesIndexRoute
+  '/metiers': typeof MetiersIndexRoute
   '/services': typeof ServicesIndexRoute
   '/super-admin': typeof SuperAdminIndexRoute
   '/super-admin/tenants/$tenantId': typeof SuperAdminTenantsTenantIdRouteWithChildren
@@ -361,8 +393,10 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/team': typeof AdminTeamRoute
   '/demarrer/confirmation': typeof DemarrerConfirmationRoute
+  '/exemples/$demoSlug': typeof ExemplesDemoSlugRoute
   '/legal/confidentialite': typeof LegalConfidentialiteRoute
   '/legal/mentions-legales': typeof LegalMentionsLegalesRoute
+  '/metiers/$tradeSlug': typeof MetiersTradeSlugRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
@@ -370,6 +404,8 @@ export interface FileRoutesById {
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/demarrer/': typeof DemarrerIndexRoute
+  '/exemples/': typeof ExemplesIndexRoute
+  '/metiers/': typeof MetiersIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/super-admin/': typeof SuperAdminIndexRoute
   '/super-admin/tenants/$tenantId': typeof SuperAdminTenantsTenantIdRouteWithChildren
@@ -405,8 +441,10 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/demarrer/confirmation'
+    | '/exemples/$demoSlug'
     | '/legal/confidentialite'
     | '/legal/mentions-legales'
+    | '/metiers/$tradeSlug'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
@@ -414,6 +452,8 @@ export interface FileRouteTypes {
     | '/super-admin/tenants'
     | '/admin/'
     | '/demarrer/'
+    | '/exemples/'
+    | '/metiers/'
     | '/services/'
     | '/super-admin/'
     | '/super-admin/tenants/$tenantId'
@@ -444,14 +484,18 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/demarrer/confirmation'
+    | '/exemples/$demoSlug'
     | '/legal/confidentialite'
     | '/legal/mentions-legales'
+    | '/metiers/$tradeSlug'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/admin'
     | '/demarrer'
+    | '/exemples'
+    | '/metiers'
     | '/services'
     | '/super-admin'
     | '/super-admin/tenants/$tenantId'
@@ -485,8 +529,10 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/team'
     | '/demarrer/confirmation'
+    | '/exemples/$demoSlug'
     | '/legal/confidentialite'
     | '/legal/mentions-legales'
+    | '/metiers/$tradeSlug'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
     | '/super-admin/media-library'
@@ -494,6 +540,8 @@ export interface FileRouteTypes {
     | '/super-admin/tenants'
     | '/admin/'
     | '/demarrer/'
+    | '/exemples/'
+    | '/metiers/'
     | '/services/'
     | '/super-admin/'
     | '/super-admin/tenants/$tenantId'
@@ -520,9 +568,13 @@ export interface RootRouteChildren {
   TarifsRoute: typeof TarifsRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
   DemarrerConfirmationRoute: typeof DemarrerConfirmationRoute
+  ExemplesDemoSlugRoute: typeof ExemplesDemoSlugRoute
   LegalConfidentialiteRoute: typeof LegalConfidentialiteRoute
   LegalMentionsLegalesRoute: typeof LegalMentionsLegalesRoute
+  MetiersTradeSlugRoute: typeof MetiersTradeSlugRoute
   DemarrerIndexRoute: typeof DemarrerIndexRoute
+  ExemplesIndexRoute: typeof ExemplesIndexRoute
+  MetiersIndexRoute: typeof MetiersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -660,6 +712,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesIndexRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/metiers/': {
+      id: '/metiers/'
+      path: '/metiers'
+      fullPath: '/metiers/'
+      preLoaderRoute: typeof MetiersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exemples/': {
+      id: '/exemples/'
+      path: '/exemples'
+      fullPath: '/exemples/'
+      preLoaderRoute: typeof ExemplesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demarrer/': {
       id: '/demarrer/'
       path: '/demarrer'
@@ -709,6 +775,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesServiceSlugRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/metiers/$tradeSlug': {
+      id: '/metiers/$tradeSlug'
+      path: '/metiers/$tradeSlug'
+      fullPath: '/metiers/$tradeSlug'
+      preLoaderRoute: typeof MetiersTradeSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/mentions-legales': {
       id: '/legal/mentions-legales'
       path: '/legal/mentions-legales'
@@ -721,6 +794,13 @@ declare module '@tanstack/react-router' {
       path: '/legal/confidentialite'
       fullPath: '/legal/confidentialite'
       preLoaderRoute: typeof LegalConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exemples/$demoSlug': {
+      id: '/exemples/$demoSlug'
+      path: '/exemples/$demoSlug'
+      fullPath: '/exemples/$demoSlug'
+      preLoaderRoute: typeof ExemplesDemoSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demarrer/confirmation': {
@@ -916,9 +996,13 @@ const rootRouteChildren: RootRouteChildren = {
   TarifsRoute: TarifsRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
   DemarrerConfirmationRoute: DemarrerConfirmationRoute,
+  ExemplesDemoSlugRoute: ExemplesDemoSlugRoute,
   LegalConfidentialiteRoute: LegalConfidentialiteRoute,
   LegalMentionsLegalesRoute: LegalMentionsLegalesRoute,
+  MetiersTradeSlugRoute: MetiersTradeSlugRoute,
   DemarrerIndexRoute: DemarrerIndexRoute,
+  ExemplesIndexRoute: ExemplesIndexRoute,
+  MetiersIndexRoute: MetiersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

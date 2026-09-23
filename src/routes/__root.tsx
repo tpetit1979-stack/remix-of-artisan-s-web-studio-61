@@ -1,4 +1,11 @@
-import { Outlet, Link, useLocation, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  useLocation,
+  createRootRouteWithContext,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { TenantProvider, usePreviewTenantSearch, isAdminRoute } from "@/hooks/use-tenant";
@@ -28,7 +35,6 @@ interface RouterContext {
    */
   isPlatformLanding: boolean;
 }
-
 
 function NotFoundComponent() {
   const previewTenant = usePreviewTenantSearch();
@@ -153,7 +159,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
       },
     ],
-
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -193,7 +198,11 @@ function RootComponent() {
     location.pathname.startsWith("/demarrer/") ||
     location.pathname.startsWith("/legal/") ||
     location.pathname === "/tarifs" ||
-    location.pathname === "/comment-ca-marche";
+    location.pathname === "/comment-ca-marche" ||
+    location.pathname === "/exemples" ||
+    location.pathname.startsWith("/exemples/") ||
+    location.pathname === "/metiers" ||
+    location.pathname.startsWith("/metiers/");
   const withoutTenantChrome = onAdminRoute || isPlatformLanding || onMarketingRoute;
   return (
     <QueryClientProvider client={queryClient}>
