@@ -22,26 +22,67 @@ export type Contact = Tables<"contacts">;
  */
 export type PublicTenant = Pick<
   Tenant,
-  | "id" | "company_name" | "slug" | "domain" | "siret" | "phone" | "email"
-  | "address" | "city" | "seo_boost_text" | "tagline" | "years_experience"
-  | "trade_template_id" | "google_place_id" | "google_rating" | "google_review_count"
+  | "id"
+  | "company_name"
+  | "slug"
+  | "domain"
+  | "siret"
+  | "phone"
+  | "email"
+  | "address"
+  | "city"
+  | "seo_boost_text"
+  | "tagline"
+  | "years_experience"
+  | "trade_template_id"
+  | "google_place_id"
+  | "google_rating"
+  | "google_review_count"
 >;
 
 export type PublicSiteSettings = Pick<
   SiteSettings,
-  | "tenant_id" | "logo_url" | "favicon_url" | "primary_color" | "hero_title"
-  | "hero_subtitle" | "cta_text" | "social_links" | "seo_meta_title"
-  | "seo_meta_description" | "hero_image_url" | "border_radius" | "gradient_style"
-  | "header_style" | "font_family" | "booking_enabled" | "booking_provider"
-  | "booking_url" | "booking_button_label" | "opening_hours" | "quote_is_free"
-  | "quote_response_delay_hours" | "emergency_service_available" | "whatsapp_number"
-  | "whatsapp_enabled" | "whatsapp_message_template" | "team_presentation_mode"
+  | "tenant_id"
+  | "logo_url"
+  | "favicon_url"
+  | "primary_color"
+  | "hero_title"
+  | "hero_subtitle"
+  | "cta_text"
+  | "social_links"
+  | "seo_meta_title"
+  | "seo_meta_description"
+  | "hero_image_url"
+  | "border_radius"
+  | "gradient_style"
+  | "header_style"
+  | "font_family"
+  | "booking_enabled"
+  | "booking_provider"
+  | "booking_url"
+  | "booking_button_label"
+  | "opening_hours"
+  | "quote_is_free"
+  | "quote_response_delay_hours"
+  | "emergency_service_available"
+  | "whatsapp_number"
+  | "whatsapp_enabled"
+  | "whatsapp_message_template"
+  | "team_presentation_mode"
 >;
 
 export type PublicService = Pick<
   Service,
-  | "id" | "tenant_id" | "name" | "slug" | "description" | "is_featured" | "sort_order"
-  | "trade_service_template_id" | "seo_title_template" | "seo_description_template"
+  | "id"
+  | "tenant_id"
+  | "name"
+  | "slug"
+  | "description"
+  | "is_featured"
+  | "sort_order"
+  | "trade_service_template_id"
+  | "seo_title_template"
+  | "seo_description_template"
 >;
 
 export type PublicServiceArea = Pick<
@@ -131,7 +172,11 @@ export async function fetchTenant(): Promise<PublicTenant> {
  * tenant regardless of which form is stored in tenants.domain.
  */
 export function normalizeHostname(host: string): string {
-  return host.trim().toLowerCase().split(":")[0].replace(/^www\./, "");
+  return host
+    .trim()
+    .toLowerCase()
+    .split(":")[0]
+    .replace(/^www\./, "");
 }
 
 export type DomainCanonicalizationResult =
@@ -231,7 +276,30 @@ export function isMarketingHost(host: string): boolean {
   return isPlatformHost(normalized) || isDevOrPreviewHost(normalized);
 }
 
-
+/**
+ * Garde commune à toutes les routes marketing SUPORDO.
+ *
+ * Renvoie `null` quand la requête n'arrive pas sur un hôte SUPORDO — la route
+ * appelante lève alors `notFound()`. Le site d'un artisan ne doit jamais
+ * servir `/tarifs` ou `/metiers` : ce sont les pages de SUPORDO, pas les
+ * siennes.
+ *
+ * `canonicalOrigin` n'est renseignée que sur l'hôte de production. Sur un
+ * hôte de prévisualisation, la page reste servie mais n'annonce aucune URL
+ * canonique : elle pointerait vers une page qui n'a pas encore ce contenu.
+ */
+export async function resolveMarketingRoute(): Promise<{ canonicalOrigin: string | null } | null> {
+  const input = await resolveTenantInputForRoute().catch(() => null);
+  if (!input || !isMarketingHost(input.hostname)) return null;
+  if (!isPlatformHost(input.hostname)) return { canonicalOrigin: null };
+  let origin: string | undefined;
+  try {
+    origin = getPlatformOrigin();
+  } catch {
+    origin = undefined;
+  }
+  return { canonicalOrigin: origin ? origin.replace(/\/$/, "") : null };
+}
 
 export async function fetchTenantByHostname(host: string): Promise<PublicTenant | null> {
   const normalized = normalizeHostname(host);

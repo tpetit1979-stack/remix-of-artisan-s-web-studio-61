@@ -56,11 +56,7 @@ export function generateSeoDescription(
 /**
  * Generate dynamic H1 for a service+city page.
  */
-export function generateH1(
-  service: PublicService,
-  city: string,
-  tenant: PublicTenant,
-): string {
+export function generateH1(service: PublicService, city: string, tenant: PublicTenant): string {
   return `${service.name} à ${city}`;
 }
 
@@ -171,8 +167,7 @@ export function buildPageTitle(
 ): string {
   if (pageSuffix) return `${pageSuffix} | ${tenant.company_name}`;
   return (
-    settings?.seo_meta_title ||
-    `${tenant.company_name}${tenant.city ? ` — ${tenant.city}` : ""}`
+    settings?.seo_meta_title || `${tenant.company_name}${tenant.city ? ` — ${tenant.city}` : ""}`
   );
 }
 
@@ -318,11 +313,57 @@ export function buildSitemapXml(
     if (service) paths.push(`/${service.slug}-${a.city_slug}`);
   });
 
+  return buildSitemapXmlFromPaths(paths, baseUrl);
+}
+
+/**
+ * Rendu XML d'une liste de chemins. Extrait de `buildSitemapXml` pour que le
+ * sitemap de l'hôte SUPORDO passe par le même rendu que celui d'un tenant :
+ * un seul format, un seul endroit à corriger.
+ *
+ * Sans ça, l'hôte SUPORDO servait le sitemap « d'un tenant vide » — donc
+ * `/services` et `/contact`, deux chemins qui n'existent pas sur supordo.com.
+ */
+export function buildSitemapXmlFromPaths(paths: readonly string[], baseUrl: string): string {
   const urlEntries = paths
-    .map((path) => `  <url><loc>${baseUrl}${path}</loc></url>`)
+    .map((path) => `  <url><loc>${baseUrl}${path === "/" ? "" : path}</loc></url>`)
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries}\n</urlset>\n`;
+}
+
+/**
+ * En-tête d'une page marketing SUPORDO : titre, description, OpenGraph et
+ * canonique, au format attendu par `head()` de TanStack Router.
+ *
+ * Le canonique n'est émis que lorsque l'origine officielle est connue —
+ * c'est-à-dire sur l'hôte de la plateforme. Sur un hôte de prévisualisation,
+ * annoncer une URL canonique reviendrait à désigner une page de production
+ * qui n'a pas encore le même contenu.
+ *
+ * Capacité technique, pas promesse : ces balises rendent la page correctement
+ * indexable. Elles ne garantissent aucun positionnement, et rien dans la copy
+ * du site ne doit le laisser entendre.
+ */
+export function buildMarketingHead(input: {
+  title: string;
+  description: string;
+  path: string;
+  canonicalOrigin: string | null;
+}) {
+  const meta = [
+    { title: input.title },
+    { name: "description", content: input.description },
+    { property: "og:title", content: input.title },
+    { property: "og:description", content: input.description },
+    { property: "og:type", content: "website" },
+  ];
+  if (!input.canonicalOrigin) return { meta };
+  const href = `${input.canonicalOrigin}${input.path === "/" ? "" : input.path}`;
+  return {
+    meta: [...meta, { property: "og:url", content: href }],
+    links: [{ rel: "canonical", href }],
+  };
 }
 
 /** Build robots.txt pointing crawlers at the sitemap. */
