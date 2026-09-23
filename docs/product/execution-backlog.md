@@ -1359,3 +1359,76 @@ inspectées. Elle a trouvé trois défauts, tous corrigés puis recapturés : le
 fragment téléphone illisible, deux appels à l'action qui passaient sur deux
 lignes, et la transformation espace → site enfermée dans une demi-largeur.
 Non vérifié : le rendu sur un vrai téléphone et les largeurs intermédiaires.
+
+## Lot — Édition de la page d'accueil
+
+### Ce que ce lot simplifie
+
+La page d'accueil passe de dix actes à sept, et de 11 948 px à 7 177 px sur
+ordinateur, de 14 836 px à 7 805 px sur téléphone. La réduction vient de
+décisions éditoriales, pas d'espacements comprimés : trois sections entières
+ont été retirées parce qu'une page profonde traite désormais leur sujet.
+
+Le parcours se lit d'un bout à l'autre sans répétition : le produit, mon
+métier, à quoi ça ressemble, qui fait quoi, combien, ce qu'il reste à savoir,
+l'action. Chaque acte conservé ouvre un chemin — les métiers vers `/metiers`,
+la démonstration vers `/exemples`, le partage des rôles vers
+`/comment-ca-marche`, le prix vers `/tarifs`.
+
+La démonstration montre un aperçu cadré et lisible au lieu de quatre sites
+entiers superposés. Le sélecteur de métier reste : c'est lui qui prouve que
+quatre métiers donnent quatre sites, et la comparaison approfondie appartient
+à la page qui existe pour ça.
+
+Les deux colonnes « qui fait quoi » de la page d'accueil et celles de
+`/tarifs` viennent du même fichier. Deux registres — court pour l'accueil,
+détaillé pour le tarif — un seul endroit, donc aucune divergence possible.
+
+### Ce que ce lot supprime
+
+Trois actes et leurs composants : la prestation qui prend place sur le site,
+le chantier publié, le site entier d'un client. Ils démontraient le mécanisme,
+et `/comment-ca-marche` le démontre désormais mieux, avec le composant public
+réel. `SupordoBeforeAfter`, qui n'avait plus d'appelant, part avec eux.
+
+La phrase « Un seul site. Une seule offre. » qui fermait un chapitre au milieu
+de la page, juste avant la section qui donne le prix.
+
+L'inversion d'ordre du bloc tarifaire sur téléphone : on y lisait « 49 € »
+avant de savoir de quoi il s'agissait, ce que `/tarifs` avait précisément
+cessé de faire.
+
+L'accès client de l'en-tête sous 640 px. Les trois éléments de la première
+ligne ne tiennent pas à 390 px : l'action passait sur deux lignes, et le
+resserrement seul déplaçait le problème sur « Se connecter », rogné au bord.
+C'est le seul des trois dont l'en-tête n'est pas la place — personne n'arrive
+sur cette page pour se connecter, et le pied de page garde le lien.
+
+### Ce qui reste à migrer
+
+Rien de cette passe. Les trois lots de la campagne marketing sont faits.
+
+Restent au backlog, identifiés et volontairement séparés : l'image de partage
+(`og:image`), absente de toutes les pages et de tous les sites tenants ; la
+mesure d'audience, inexistante, qui rendra invérifiable l'effet de ces trois
+lots ; et les variantes d'images redimensionnées (`srcset`), sans lesquelles
+une fiche prestation continue d'afficher 251 px une source de 1 448 px.
+
+### Risques connus
+
+La page d'accueil charge le même poids qu'avant — 1 174 Ko sur ordinateur —
+alors qu'elle contient vingt-quatre balises `<img>` de moins : les sections
+retirées réutilisaient des images déjà chargées ailleurs. Le gain est en
+longueur et en attention, pas en octets. Toutes les images de la page ont
+désormais des dimensions explicites.
+
+Vérification visuelle sur captures Chromium 1440 px et 390 px, réellement
+inspectées. Elle a trouvé trois défauts, tous corrigés puis recapturés : le
+cadrage de la démonstration qui tranchait une photographie en son milieu,
+« Se connecter » rogné après la correction du bouton d'appel, et l'ordre du
+bloc tarifaire sur téléphone. Non vérifié : le rendu sur un vrai téléphone et
+les largeurs intermédiaires.
+
+La capture pleine page à 390 px sort à 402 px de large : c'est le conteneur
+défilant des onglets de métier, pas un débordement de la page. Mesuré :
+`document.scrollWidth` vaut 390.
