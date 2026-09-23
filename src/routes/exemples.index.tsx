@@ -10,14 +10,15 @@ import { DEMO_TRADES, DEMO_SITES, DEMO_LABEL } from "@/data/marketing/supordo-de
  * `/exemples` — la page qui répond à une seule question : à quoi ressemble
  * un site fait avec SUPORDO ?
  *
- * Quatre démonstrations côte à côte, dans leur rendu téléphone. Le format
- * n'est pas décoratif : c'est celui où la plupart des visiteurs verront ces
- * sites, et c'est celui où quatre univers différents se comparent d'un coup
- * d'œil. Une capture par entreprise, pas une galerie de fonctionnalités.
+ * Quatre aperçus, deux par rangée. La page montrait auparavant les quatre
+ * sites entiers en quatre colonnes de 300 px : à cette échelle, quatre
+ * univers réellement différents se ressemblaient tous, et la page prouvait
+ * l'inverse de ce qu'elle affirme. Un fragment lisible convainc davantage
+ * qu'un site complet illisible.
  *
  * Ce que la page ne contient pas : aucun témoignage, aucun chiffre de
  * résultat, aucun nom de client. Les quatre entreprises sont fictives et le
- * disent, sur chaque carte et dans l'introduction.
+ * disent, en introduction et sous chaque aperçu.
  */
 export const Route = createFileRoute("/exemples/")({
   loader: async () => {
@@ -55,45 +56,67 @@ function ExemplesIndexPage() {
               les photos, les prestations, les communes, la couleur et la typographie. Ce qui reste
               : la structure, la lisibilité et le comportement sur téléphone.
             </p>
-            <p className="mt-4 max-w-[60ch] text-sm leading-relaxed text-[var(--supordo-graphite)]/80">
-              Ces quatre entreprises sont fictives. Elles servent à montrer le produit, pas à
-              prétendre des résultats : aucun témoignage, aucun chiffre, aucun nom de client réel ne
-              figure sur cette page.
+            {/* Une phrase, au-dessus de la ligne de flottaison : quelqu'un qui
+                arrive ici depuis une recherche doit savoir que ce ne sont pas
+                des clients avant de faire défiler. Réduite d'un paragraphe à
+                une ligne, pas déplacée dans les cartes. */}
+            <p className="mt-5 max-w-[60ch] text-sm font-medium leading-relaxed text-[var(--supordo-graphite)]/80">
+              Ces quatre entreprises sont fictives : elles montrent le produit, jamais un client, un
+              témoignage ou un résultat.
             </p>
           </div>
         </section>
 
-        <section className="bg-[var(--supordo-mint-100)] py-16 md:py-20 lg:py-24">
+        <section className="bg-[var(--supordo-mint-100)] py-14 md:py-18 lg:py-24">
           <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-              {DEMO_TRADES.map((id) => {
+            {/* Deux colonnes, jamais quatre : à 1440 px chaque aperçu occupe
+                près de 600 px, largeur à laquelle le texte du site se lit et
+                où une identité se distingue d'une autre. Le décalage vertical
+                d'une colonne sur deux évite l'effet catalogue — quatre cadres
+                alignés au cordeau donnent l'impression de quatre variantes du
+                même gabarit, ce qui est exactement l'inverse de la
+                démonstration. */}
+            <ul className="grid gap-x-8 gap-y-14 lg:grid-cols-2 lg:gap-y-20">
+              {DEMO_TRADES.map((id, index) => {
                 const site = DEMO_SITES[id];
                 return (
-                  <article key={id} className="flex flex-col">
-                    <SupordoSiteDemo site={site} variant="mobile" />
-                    <h2 className="mt-5 text-lg font-extrabold leading-tight text-[var(--supordo-forest)]">
-                      {site.companyName}
-                    </h2>
-                    <p className="mt-1 text-sm font-medium text-[var(--supordo-green)]">
-                      {site.trade} · {site.city}
-                    </p>
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--supordo-graphite)]">
-                      {site.headline}
-                    </p>
-                    <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/60">
-                      {DEMO_LABEL} — entreprise fictive
-                    </p>
+                  <li key={id} className={index % 2 === 1 ? "lg:mt-16" : undefined}>
                     <Link
                       to="/exemples/$demoSlug"
                       params={{ demoSlug: site.slug }}
-                      className="mt-4 inline-flex min-h-11 items-center self-start rounded-[6px] px-0 text-sm font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+                      className="group block rounded-[10px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--supordo-green)]"
                     >
-                      Voir {site.companyName}
+                      <div className="transition-transform duration-200 group-hover:-translate-y-1">
+                        <SupordoSiteDemo site={site} variant="preview" />
+                      </div>
+
+                      <div className="mt-6 flex items-start justify-between gap-6">
+                        <div>
+                          <h2 className="text-xl font-extrabold leading-tight text-[var(--supordo-forest)] lg:text-2xl">
+                            {site.companyName}
+                          </h2>
+                          <p className="mt-1.5 text-[15px] font-medium text-[var(--supordo-green)]">
+                            {site.trade} · {site.city}
+                          </p>
+                          <p className="mt-2 max-w-[42ch] text-sm leading-relaxed text-[var(--supordo-graphite)]">
+                            {site.headline}
+                          </p>
+                        </div>
+                        <span
+                          aria-hidden="true"
+                          className="mt-1 shrink-0 text-2xl text-[var(--supordo-forest)]/30 transition-colors group-hover:text-[var(--supordo-green)]"
+                        >
+                          →
+                        </span>
+                      </div>
+                      <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/55">
+                        {DEMO_LABEL} — entreprise fictive
+                      </p>
                     </Link>
-                  </article>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
         </section>
 
