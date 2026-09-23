@@ -1,4 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { MARKETING_NAV } from "@/data/marketing/supordo-nav";
 
 /**
  * SUPORDO brand header — marketing surfaces only (supordo.com).
@@ -6,21 +7,20 @@ import { Link, useLocation } from "@tanstack/react-router";
  * Deliberately NOT shared with the artisan sites' PublicHeader: this one
  * carries the SUPORDO brand, the other carries the tenant's own identity.
  *
- * `NAV_LINKS` est une liste courte et explicite : ni menu déroulant, ni
- * méga-menu. Sur téléphone, ces deux liens ne tiennent pas sur la même ligne
- * que la marque, l'action principale et l'accès client sans descendre une
- * zone tactile sous 44 px — ils passent donc sur une seconde ligne, visible
- * elle aussi. Deux liens ne justifient pas un menu à ouvrir.
+ * `MARKETING_NAV` vit dans `src/data/marketing/supordo-nav.ts`, avec le pied
+ * de page et le sitemap : trois surfaces, une seule liste, donc aucune ne
+ * peut désigner une page absente ni en oublier une. Quatre liens, ni menu
+ * déroulant ni méga-menu.
+ *
+ * Sur téléphone, ces liens ne tiennent pas sur la même ligne que la marque,
+ * l'action principale et l'accès client sans descendre une zone tactile sous
+ * 44 px — ils passent donc sur une seconde ligne, visible elle aussi.
  *
  * « Demander mon site » est visible en permanence : sa destination existe, et
  * `/demarrer` dit lui-même quand une demande ne peut pas encore être reçue.
  * La garde `leadIntakeReady` protège la soumission du formulaire, pas
  * l'existence commerciale de l'action.
  */
-const NAV_LINKS = [
-  { to: "/comment-ca-marche", label: "Comment ça marche" },
-  { to: "/tarifs", label: "Tarifs" },
-] as const;
 
 export function SupordoHeader() {
   const { pathname } = useLocation();
@@ -37,7 +37,7 @@ export function SupordoHeader() {
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="Navigation principale">
-            {NAV_LINKS.map((link) => {
+            {MARKETING_NAV.map((link) => {
               const isActive = pathname === link.to;
               return (
                 <Link
@@ -78,17 +78,17 @@ export function SupordoHeader() {
           sous 768 px. Deux liens, pleine hauteur tactile, séparateur discret. */}
       <div className="border-t border-[var(--supordo-mint-200)] md:hidden">
         <nav
-          className="mx-auto flex max-w-[1200px] items-center px-2"
+          className="mx-auto flex max-w-[1200px] items-center gap-0.5 overflow-x-auto px-2"
           aria-label="Navigation principale"
         >
-          {NAV_LINKS.map((link) => {
+          {MARKETING_NAV.map((link) => {
             const isActive = pathname === link.to;
             return (
               <Link
                 key={link.to}
                 to={link.to}
                 aria-current={isActive ? "page" : undefined}
-                className={`inline-flex min-h-11 flex-1 items-center justify-center rounded-[6px] px-2 text-sm underline-offset-4 transition-colors hover:text-[var(--supordo-green)] active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] ${
+                className={`inline-flex min-h-11 flex-1 items-center justify-center whitespace-nowrap rounded-[6px] px-2 text-[13px] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] ${
                   isActive
                     ? "font-semibold text-[var(--supordo-forest)]"
                     : "font-medium text-[var(--supordo-graphite)]"

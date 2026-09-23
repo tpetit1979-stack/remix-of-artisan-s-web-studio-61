@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SupordoSiteDemo } from "./SupordoSiteDemo";
@@ -98,6 +99,24 @@ export function SupordoActDemo() {
         <p className="mt-8 text-sm text-[var(--supordo-graphite)]/70 lg:mt-14">
           {site.companyName} — entreprise présentée à titre de démonstration.
         </p>
+
+        {/* La comparaison approfondie appartient à /exemples : ici, un aperçu
+            qui donne envie d'y aller, pas quatre sites empilés. */}
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <Link
+            to="/exemples/$demoSlug"
+            params={{ demoSlug: site.slug }}
+            className="inline-flex min-h-11 items-center text-base font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+          >
+            Voir {site.companyName} en grand
+          </Link>
+          <Link
+            to="/exemples"
+            className="inline-flex min-h-11 items-center text-base font-medium text-[var(--supordo-graphite)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+          >
+            Comparer les quatre exemples
+          </Link>
+        </div>
       </div>
     </section>
   );

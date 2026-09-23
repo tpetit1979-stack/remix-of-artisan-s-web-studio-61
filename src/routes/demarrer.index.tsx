@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
+import { resolveMarketingRoute } from "@/lib/tenant";
+import { buildMarketingHead } from "@/lib/seo";
 import { getLeadIntakeStatus, submitSupordoLead } from "@/lib/supordo-lead.functions";
 import { TRADE_OTHER } from "@/lib/supordo-lead";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,8 +24,8 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
  */
 export const Route = createFileRoute("/demarrer/")({
   loader: async () => {
-    const input = await resolveTenantInputForRoute().catch(() => null);
-    if (!input || !isMarketingHost(input.hostname)) throw notFound();
+    const marketing = await resolveMarketingRoute();
+    if (!marketing) throw notFound();
     const { configured } = await getLeadIntakeStatus();
     // Taxonomie métier réelle (public.trade_templates, lecture publique).
     // Aucune seconde liste n'est maintenue ici.
@@ -32,21 +33,16 @@ export const Route = createFileRoute("/demarrer/")({
       .from("trade_templates")
       .select("slug, name")
       .order("name", { ascending: true });
-    return { configured, trades: trades ?? [] };
+    return { ...marketing, configured, trades: trades ?? [] };
   },
-  head: () => {
-    const title = "Demander un site internet pour votre entreprise | SUPORDO";
-    const description =
-      "Présentez votre entreprise, votre métier et votre secteur d'intervention pour demander votre site SUPORDO.";
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-      ],
-    };
-  },
+  head: ({ loaderData }) =>
+    buildMarketingHead({
+      title: "Demander un site internet pour votre entreprise | SUPORDO",
+      description:
+        "Présentez votre entreprise, votre métier et votre secteur d'intervention pour demander votre site SUPORDO.",
+      path: "/demarrer",
+      canonicalOrigin: loaderData?.canonicalOrigin ?? null,
+    }),
   component: DemarrerPage,
 });
 

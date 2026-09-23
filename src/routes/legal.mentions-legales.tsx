@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
+import { resolveMarketingRoute } from "@/lib/tenant";
+import { buildMarketingHead } from "@/lib/seo";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
@@ -14,16 +15,17 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
  */
 export const Route = createFileRoute("/legal/mentions-legales")({
   loader: async () => {
-    const input = await resolveTenantInputForRoute().catch(() => null);
-    if (!input || !isMarketingHost(input.hostname)) throw notFound();
-    return null;
+    const marketing = await resolveMarketingRoute();
+    if (!marketing) throw notFound();
+    return marketing;
   },
-  head: () => ({
-    meta: [
-      { title: "Mentions légales — SUPORDO" },
-      { name: "description", content: "Mentions légales du site SUPORDO." },
-    ],
-  }),
+  head: ({ loaderData }) =>
+    buildMarketingHead({
+      title: "Mentions légales — SUPORDO",
+      description: "Mentions légales du site SUPORDO.",
+      path: "/legal/mentions-legales",
+      canonicalOrigin: loaderData?.canonicalOrigin ?? null,
+    }),
   component: MentionsLegalesPage,
 });
 

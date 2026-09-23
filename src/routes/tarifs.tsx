@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
+import { resolveMarketingRoute } from "@/lib/tenant";
+import { buildMarketingHead } from "@/lib/seo";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
@@ -26,23 +27,18 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
  */
 export const Route = createFileRoute("/tarifs")({
   loader: async () => {
-    const input = await resolveTenantInputForRoute().catch(() => null);
-    if (!input || !isMarketingHost(input.hostname)) throw notFound();
-    return null;
+    const marketing = await resolveMarketingRoute();
+    if (!marketing) throw notFound();
+    return marketing;
   },
-  head: () => {
-    const title = "Tarif d'un site internet pour artisan | SUPORDO";
-    const description =
-      "Découvrez le tarif de SUPORDO Sites, ce que couvre la mise en place initiale et ce que comprend l'abonnement mensuel.";
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-      ],
-    };
-  },
+  head: ({ loaderData }) =>
+    buildMarketingHead({
+      title: "Tarif d'un site internet pour artisan | SUPORDO",
+      description:
+        "Découvrez le tarif de SUPORDO Sites, ce que couvre la mise en place initiale et ce que comprend l'abonnement mensuel.",
+      path: "/tarifs",
+      canonicalOrigin: loaderData?.canonicalOrigin ?? null,
+    }),
   component: TarifsPage,
 });
 

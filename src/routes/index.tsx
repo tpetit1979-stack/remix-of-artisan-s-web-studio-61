@@ -9,8 +9,14 @@ import {
   fetchPortfolio,
   resolveTenantInputForRoute,
   resolveTenantForSsr,
+  resolveMarketingRoute,
 } from "@/lib/tenant";
-import { buildPageTitle, buildPageDescription, buildSiteJsonLd } from "@/lib/seo";
+import {
+  buildPageTitle,
+  buildPageDescription,
+  buildSiteJsonLd,
+  buildMarketingHead,
+} from "@/lib/seo";
 import { isAuthenticPublicPortfolioItem } from "@/lib/portfolio";
 import { buildFaqItems, buildFaqJsonLd } from "@/lib/faq";
 import { resolveCommercialPromises } from "@/lib/commercial-promises";
@@ -45,7 +51,11 @@ export const Route = createFileRoute("/")({
       // La landing de marque n'interroge plus la capacité de réception : ses
       // appels à l'action mènent à /demarrer, qui dit lui-même si une demande
       // peut être reçue aujourd'hui. Aucune donnée de tenant n'est chargée.
-      return { platformLanding: true as const };
+      const marketing = await resolveMarketingRoute();
+      return {
+        platformLanding: true as const,
+        canonicalOrigin: marketing?.canonicalOrigin ?? null,
+      };
     }
     const input = await resolveTenantInputForRoute();
     const tenant = await resolveTenantForSsr(input);
@@ -72,17 +82,13 @@ export const Route = createFileRoute("/")({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     if (loaderData.platformLanding) {
-      const title = "Site internet professionnel pour artisans | SUPORDO";
-      const description =
-        "SUPORDO prépare des sites internet professionnels pour les artisans et entreprises de terrain. Présentez vos prestations, vos zones d'intervention et vos réalisations.";
-      return {
-        meta: [
-          { title },
-          { name: "description", content: description },
-          { property: "og:title", content: title },
-          { property: "og:description", content: description },
-        ],
-      };
+      return buildMarketingHead({
+        title: "Site internet professionnel pour artisans | SUPORDO",
+        description:
+          "SUPORDO prépare des sites internet professionnels pour les artisans et entreprises de terrain. Présentez vos prestations, vos zones d'intervention et vos réalisations.",
+        path: "/",
+        canonicalOrigin: loaderData.canonicalOrigin,
+      });
     }
     const { tenant, settings, services, areas, certifications } = loaderData;
 

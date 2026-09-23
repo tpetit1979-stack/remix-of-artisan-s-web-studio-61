@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { resolveTenantInputForRoute, isMarketingHost } from "@/lib/tenant";
+import { resolveMarketingRoute } from "@/lib/tenant";
+import { buildMarketingHead } from "@/lib/seo";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
@@ -40,23 +41,18 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
  */
 export const Route = createFileRoute("/comment-ca-marche")({
   loader: async () => {
-    const input = await resolveTenantInputForRoute().catch(() => null);
-    if (!input || !isMarketingHost(input.hostname)) throw notFound();
-    return null;
+    const marketing = await resolveMarketingRoute();
+    if (!marketing) throw notFound();
+    return marketing;
   },
-  head: () => {
-    const title = "Comment fonctionne SUPORDO Sites ?";
-    const description =
-      "Découvrez comment SUPORDO prépare votre site, ce que vous fournissez et les informations que vous pouvez actualiser pour votre entreprise.";
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-      ],
-    };
-  },
+  head: ({ loaderData }) =>
+    buildMarketingHead({
+      title: "Comment fonctionne SUPORDO Sites ?",
+      description:
+        "Découvrez comment SUPORDO prépare votre site, ce que vous fournissez et les informations que vous pouvez actualiser pour votre entreprise.",
+      path: "/comment-ca-marche",
+      canonicalOrigin: loaderData?.canonicalOrigin ?? null,
+    }),
   component: CommentCaMarchePage,
 });
 

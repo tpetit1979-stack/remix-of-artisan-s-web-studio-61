@@ -9,6 +9,7 @@
  * consécutifs avec l'Acte 3 juste après, dans le rythme de page Hero(Warm) →
  * Métiers(Mint-100) → Acte 3(blanc) → Acte 5(Warm) → Acte 6(blanc) → Acte 7(Warm).
  */
+import { Link } from "@tanstack/react-router";
 import chauffagiste from "@/assets/marketing/brand/trades/supordo-trade-heating.webp";
 import plombier from "@/assets/marketing/brand/trades/supordo-trade-plumbing.webp";
 import electricien from "@/assets/marketing/brand/trades/supordo-trade-electrical.webp";
@@ -86,6 +87,15 @@ export function SupordoTrades() {
             Chauffage, plomberie, électricité, couverture ou autres métiers de terrain : le contenu
             part de ce que fait réellement votre entreprise.
           </p>
+          {/* La section ne détaille plus chaque métier : /metiers le fait
+              mieux, page par page. Elle pose la reconnaissance, puis laisse
+              partir. */}
+          <Link
+            to="/metiers"
+            className="mt-6 inline-flex min-h-11 items-center text-base font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+          >
+            SUPORDO pour votre métier
+          </Link>
         </div>
 
         <div className="mt-8 md:mt-10">
