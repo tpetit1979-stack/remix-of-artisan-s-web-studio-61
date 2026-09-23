@@ -1139,3 +1139,67 @@ Les images sont générées. Elles illustrent des entreprises fictives étiquet�
 « Démonstration SUPORDO ». Le jour où elles voisineront des photographies de
 clients réels, la différence de texture se verra — c'est une hypothèse, pas
 une observation.
+
+## Lot — Architecture du site marketing
+
+### Ce que ce lot simplifie
+
+Le site marketing a une table des matières : `src/data/marketing/supordo-nav.ts`.
+L'en-tête, le pied de page et `/sitemap.xml` en dérivent tous les trois. Un
+lien vers une page absente, ou une page absente du sitemap, devient une
+divergence visible plutôt qu'un oubli — deux tests la refusent.
+
+La page d'accueil cesse d'être le seul endroit où tout est dit. Les métiers
+ont `/metiers`, les démonstrations ont `/exemples`, et les sections
+correspondantes de la home posent la reconnaissance puis laissent partir.
+
+Quatre pages métier tiennent dans une seule implémentation React :
+`/metiers/$tradeSlug` lit `supordo-trade-pages.ts`. Une cinquième page métier
+est une entrée de données, pas un composant.
+
+Les routes marketing partagent une seule garde, `resolveMarketingRoute()`.
+Chaque page en tire aussi son origine canonique, donc l'ajout d'une page ne
+peut plus oublier ni la garde ni le canonique.
+
+### Ce que ce lot supprime
+
+Le sitemap faux de l'hôte SUPORDO. Sans tenant, `/sitemap.xml` servait le
+sitemap « d'un tenant vide » : `/services` et `/contact`, deux chemins qui
+n'existent pas sur supordo.com. Il sert désormais les seize pages marketing
+réelles.
+
+Le chevauchement du pied des sites de démonstration. La vue téléphone
+utilisait des points de rupture de fenêtre (`md:`) : dans une colonne de
+300 px sur un écran de 1440 px, « Zones d'intervention » et « Nous contacter »
+se superposaient. La vue compacte n'utilise plus aucun point de rupture — elle
+est compacte parce qu'elle est étroite, pas parce que l'écran l'est.
+
+La liste de navigation dupliquée entre l'en-tête et le pied de page, et le
+commentaire du pied expliquant pourquoi « Exemples » en était absent.
+
+### Ce qui reste à migrer
+
+Les trente autres métiers de `trade_templates` n'ont pas de page. C'est
+volontaire : une page métier n'a de valeur que si elle dit quelque chose de
+vrai sur ce métier. `/metiers` le dit explicitement, pour qu'un menuisier n'en
+conclue pas qu'il n'est pas concerné.
+
+Les pages légales restent à compléter là où elles portent « à compléter ».
+
+La page d'accueil n'est pas refondue : seuls ses liens et ses sorties suivent
+la nouvelle architecture.
+
+### Risques connus
+
+Le canonique n'est émis que sur l'hôte de la plateforme. Sur un hôte de
+prévisualisation, les pages n'en annoncent aucun — vérifié en local, aucune
+balise `rel="canonical"` n'y est rendue. En contrepartie, le canonique de
+production n'a pas pu être observé : il dépend de `VITE_PLATFORM_URL`, absent
+de l'environnement local.
+
+Capacité technique, pas promesse : titres, descriptions, canoniques et sitemap
+rendent ces pages correctement indexables. Aucun positionnement n'est promis
+nulle part dans la copy, et rien ne doit l'y introduire.
+
+Sur téléphone à 390 px, le bouton « Demander mon site » de l'en-tête passe sur
+deux lignes. Le comportement précède ce lot ; il est constaté ici, pas corrigé.

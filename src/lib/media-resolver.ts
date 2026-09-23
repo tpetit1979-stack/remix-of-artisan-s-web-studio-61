@@ -47,7 +47,7 @@ export type MediaCategory =
  * `service_card`, which the previous `portfolio` chain accepted as a last
  * candidate.
  */
-function templateMediaTypesFor(category: MediaCategory): string[] {
+export function templateMediaTypesFor(category: MediaCategory): string[] {
   switch (category) {
     case "hero":
       return ["hero"];
