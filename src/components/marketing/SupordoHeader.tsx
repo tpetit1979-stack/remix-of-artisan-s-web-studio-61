@@ -12,6 +12,16 @@ import { MARKETING_NAV } from "@/data/marketing/supordo-nav";
  * peut désigner une page absente ni en oublier une. Quatre liens, ni menu
  * déroulant ni méga-menu.
  *
+ * Sur la première ligne, à 390 px, la marque, l'action principale et l'accès
+ * client ne tiennent pas : « Demander mon site » passait sur deux lignes, et
+ * le resserrement seul ne faisait que déplacer le problème sur
+ * « Se connecter », rogné au bord de l'écran.
+ *
+ * L'accès client disparaît donc de l'en-tête sous `sm`. C'est le seul des
+ * trois dont ce n'est pas la place : personne n'arrive sur cette page pour se
+ * connecter, et le pied de page en garde le lien sous « Accès client ». La
+ * marque et l'action, elles, restent visibles en permanence.
+ *
  * Sur téléphone, ces liens ne tiennent pas sur la même ligne que la marque,
  * l'action principale et l'accès client sans descendre une zone tactile sous
  * 44 px — ils passent donc sur une seconde ligne, visible elle aussi.
@@ -30,7 +40,7 @@ export function SupordoHeader() {
         <div className="flex items-center gap-1 md:gap-6">
           <Link
             to="/"
-            className="-mx-2 inline-flex min-h-11 items-center rounded-[6px] px-2 text-lg font-extrabold tracking-[-0.02em] text-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] md:text-[1.375rem]"
+            className="-mx-2 inline-flex min-h-11 items-center rounded-[6px] px-2 text-[17px] font-extrabold tracking-[-0.02em] text-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] sm:text-lg md:text-[1.375rem]"
             aria-label="SUPORDO — accueil"
           >
             SUPORDO
@@ -60,14 +70,14 @@ export function SupordoHeader() {
         <div className="flex items-center gap-2 md:gap-3">
           <Link
             to="/demarrer"
-            className="inline-flex min-h-11 items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-4 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] md:min-h-12 md:px-5 md:text-[15px]"
+            className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-[6px] bg-[var(--supordo-green)] px-3 text-[13px] font-semibold text-white transition-colors sm:px-4 sm:text-sm hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] md:min-h-12 md:px-5 md:text-[15px]"
           >
             Demander mon site
           </Link>
           <Link
             to="/login"
             search={{ redirect: "" }}
-            className="inline-flex min-h-11 items-center justify-center rounded-[6px] px-3 text-sm font-medium text-[var(--supordo-graphite)] underline-offset-4 transition-colors hover:text-[var(--supordo-green)] hover:underline active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] md:min-h-12 md:px-4 md:text-[15px]"
+            className="hidden min-h-11 items-center justify-center whitespace-nowrap rounded-[6px] px-2 text-[13px] font-medium text-[var(--supordo-graphite)] underline-offset-4 transition-colors sm:inline-flex sm:px-3 sm:text-sm hover:text-[var(--supordo-green)] hover:underline active:text-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] md:min-h-12 md:px-4 md:text-[15px]"
           >
             Se connecter
           </Link>

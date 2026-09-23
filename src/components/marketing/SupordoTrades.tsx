@@ -113,6 +113,8 @@ export function SupordoTrades() {
                     <img
                       src={trade.image}
                       alt={trade.alt}
+                      width={1024}
+                      height={1536}
                       loading="lazy"
                       decoding="async"
                       className="h-full w-full object-cover object-center"
