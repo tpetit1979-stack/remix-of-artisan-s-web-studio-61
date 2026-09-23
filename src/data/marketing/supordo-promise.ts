@@ -25,6 +25,29 @@
  * le produit ou déjà actée dans `/tarifs`. Aucune promesse nouvelle.
  */
 
+/**
+ * Forme courte, pour la page d'accueil : deux colonnes lues d'un coup d'œil,
+ * à gros caractères. La forme détaillée ci-dessous sert à `/tarifs`, où la
+ * question posée n'est plus « qui fait quoi » mais « qu'est-ce que je paie ».
+ * Les deux registres vivent dans le même fichier précisément pour qu'ils ne
+ * puissent pas se contredire.
+ */
+export const ARTISAN_KEEPS_SHORT = [
+  "Votre activité",
+  "Vos prestations",
+  "Vos photos",
+  "Vos zones d'intervention",
+  "Vos coordonnées",
+] as const;
+
+export const SUPORDO_KEEPS_SHORT = [
+  "La structure",
+  "La présentation",
+  "La mise en ligne",
+  "L'hébergement",
+  "La maintenance technique",
+] as const;
+
 /** Ce que l'artisan tient à jour, depuis son espace. */
 export const ARTISAN_KEEPS = [
   "Vos prestations, et lesquelles sont visibles",

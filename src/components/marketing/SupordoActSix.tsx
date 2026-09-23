@@ -14,6 +14,12 @@ import { Link } from "@tanstack/react-router";
  * règles correspondantes ne sont pas arrêtées.
  *
  * Aucune grille de forfaits : une offre est une offre.
+ *
+ * Sur téléphone, le montant passait avant son titre : on lisait « 49 € »
+ * sans savoir encore de quoi il s'agissait. `/tarifs` a fixé l'ordre
+ * inverse — ce que l'on obtient, puis combien — et la page d'accueil le suit
+ * désormais. L'inversion d'ordre est retirée : même lecture sur téléphone et
+ * sur ordinateur.
  */
 export function SupordoActSix() {
   return (
@@ -25,7 +31,7 @@ export function SupordoActSix() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
           {/* Mobile : le prix d'abord. Desktop : explication à gauche, prix à
               droite, le chiffre dominant la composition. */}
-          <div className="order-2 lg:order-1">
+          <div>
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-mint-200)] lg:text-sm">
               UNE OFFRE SIMPLE
             </p>
@@ -57,7 +63,7 @@ export function SupordoActSix() {
             </dl>
           </div>
 
-          <div className="order-1 lg:order-2 lg:border-l lg:border-white/15 lg:pl-16">
+          <div className="lg:border-l lg:border-white/15 lg:pl-16">
             <p className="flex items-baseline gap-2">
               <span className="text-[3.5rem] font-extrabold leading-none tracking-[-0.02em] text-white sm:text-[4.5rem] lg:text-[5.5rem]">
                 49 €

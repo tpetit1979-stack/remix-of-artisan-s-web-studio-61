@@ -1,3 +1,6 @@
+import { Link } from "@tanstack/react-router";
+import { ARTISAN_KEEPS_SHORT, SUPORDO_KEEPS_SHORT } from "@/data/marketing/supordo-promise";
+
 /**
  * Acte 6 — Qui fait quoi.
  *
@@ -13,22 +16,16 @@
  * présentation, mise en ligne, hébergement, maintenance technique. Jamais
  * « maintient votre site » seul, qui laisserait entendre que SUPORDO
  * actualise les contenus du client.
+ *
+ * Les deux listes viennent de `supordo-promise.ts`, partagé avec `/tarifs` :
+ * deux registres, un seul endroit, donc aucune divergence possible entre ce
+ * que la page d'accueil promet et ce que la page tarifaire détaille.
+ *
+ * La phrase de clôture pleine largeur a été retirée : elle annonçait « une
+ * seule offre » juste avant la section qui donne le prix, et fermait un
+ * chapitre au milieu de la page. Le lien vers `/comment-ca-marche` la
+ * remplace — c'est là que le mécanisme se démontre depuis le lot précédent.
  */
-const VOUS = [
-  "Vos prestations",
-  "Vos chantiers",
-  "Vos photos",
-  "Vos zones d'intervention",
-  "Vos coordonnées",
-] as const;
-
-const SUPORDO = [
-  "La structure",
-  "La présentation",
-  "La mise en ligne",
-  "L'hébergement",
-  "La maintenance technique",
-] as const;
 
 function Territoire({
   eyebrow,
@@ -88,24 +85,25 @@ export function SupordoActFive() {
           <Territoire
             eyebrow="VOUS"
             titre="Votre entreprise."
-            items={VOUS}
+            items={ARTISAN_KEEPS_SHORT}
             accent="text-[var(--supordo-forest)]/60"
           />
           <div className="lg:border-l lg:border-[var(--supordo-mint-200)] lg:pl-16">
             <Territoire
               eyebrow="SUPORDO"
               titre="Votre site."
-              items={SUPORDO}
+              items={SUPORDO_KEEPS_SHORT}
               accent="text-[var(--supordo-green)]"
             />
           </div>
         </div>
 
-        {/* Conclusion du chapitre : pleine largeur, poids typographique
-            assumé, mais pas un slogan de Hero. */}
-        <p className="mt-14 border-t border-[var(--supordo-mint-200)] pt-10 text-2xl font-extrabold leading-snug tracking-[-0.01em] text-[var(--supordo-forest)] sm:text-[1.75rem] lg:mt-20 lg:pt-12 lg:text-[2.25rem]">
-          Un seul site. Une seule offre. SUPORDO s'occupe de la technique.
-        </p>
+        <Link
+          to="/comment-ca-marche"
+          className="mt-12 inline-flex min-h-11 items-center border-t border-[var(--supordo-mint-200)] pt-8 text-base font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] lg:mt-14 lg:text-lg"
+        >
+          Voir comment une information devient une page →
+        </Link>
       </div>
     </section>
   );
