@@ -202,18 +202,18 @@ ponctuel pour ce tenant — chaque item est classé par le principe 11 de la
 constitution avant d'être planifié, pour ne jamais confondre un chantier
 plateforme (A/B) avec une donnée d'un seul client (C).
 
-| # | Sujet | Catégorie | Autorisation requise | Concerne |
-|---|---|---|---|---|
-| 1 | Élément "test" dépublié (jamais supprimé) | **C** | Confirmation explicite, tenant par tenant | EASYDEP uniquement |
-| 2 | Solo vs équipe | **A** | Validation du lot | Tous les tenants, dès qu'ils ont 0 ou 1 membre actif |
-| 3 | Illustrations : badge, blocage publication, filtre public | **A** | Validation du lot | Tous les tenants ; le nettoyage des 5 illustrations d'EASYDEP reste C mais n'a rien à faire — elles sont déjà correctement non publiées |
-| 4 | Peupler le catalogue de marques | **B** | Validation de la liste et des contenus | Contenu partagé — bénéficie à tout tenant du même métier, pas seulement EASYDEP |
-| 5 | Construire l'affichage public des marques | **A** | Validation du lot | Le mécanisme, pour tous les tenants |
-| 6 | Migrer Lorflex / De Dietrich / Klover | **C** | Confirmation explicite, après validation visuelle | EASYDEP uniquement |
-| 7 | Affectation en masse Villes × Services | **A** | Validation du lot | Tous les tenants |
-| 8 | Simplifier le formulaire Service | **A** | Validation du lot | Tous les tenants |
-| 9 | Catalogue de services-types (`trade_service_templates`) | **B** | Différé — gouvernance séparée (taxonomie, SEO, rattachement métier) | — |
-| 10 | Bibliothèque de médias métier (`trade_media_library`) | **B** | Différé — gouvernance séparée (provenance, licence, classification) | — |
+| #   | Sujet                                                     | Catégorie | Autorisation requise                                                | Concerne                                                                                                                                |
+| --- | --------------------------------------------------------- | --------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Élément "test" dépublié (jamais supprimé)                 | **C**     | Confirmation explicite, tenant par tenant                           | EASYDEP uniquement                                                                                                                      |
+| 2   | Solo vs équipe                                            | **A**     | Validation du lot                                                   | Tous les tenants, dès qu'ils ont 0 ou 1 membre actif                                                                                    |
+| 3   | Illustrations : badge, blocage publication, filtre public | **A**     | Validation du lot                                                   | Tous les tenants ; le nettoyage des 5 illustrations d'EASYDEP reste C mais n'a rien à faire — elles sont déjà correctement non publiées |
+| 4   | Peupler le catalogue de marques                           | **B**     | Validation de la liste et des contenus                              | Contenu partagé — bénéficie à tout tenant du même métier, pas seulement EASYDEP                                                         |
+| 5   | Construire l'affichage public des marques                 | **A**     | Validation du lot                                                   | Le mécanisme, pour tous les tenants                                                                                                     |
+| 6   | Migrer Lorflex / De Dietrich / Klover                     | **C**     | Confirmation explicite, après validation visuelle                   | EASYDEP uniquement                                                                                                                      |
+| 7   | Affectation en masse Villes × Services                    | **A**     | Validation du lot                                                   | Tous les tenants                                                                                                                        |
+| 8   | Simplifier le formulaire Service                          | **A**     | Validation du lot                                                   | Tous les tenants                                                                                                                        |
+| 9   | Catalogue de services-types (`trade_service_templates`)   | **B**     | Différé — gouvernance séparée (taxonomie, SEO, rattachement métier) | —                                                                                                                                       |
+| 10  | Bibliothèque de médias métier (`trade_media_library`)     | **B**     | Différé — gouvernance séparée (provenance, licence, classification) | —                                                                                                                                       |
 
 **Ordre d'exécution retenu** : `2 → 3 → 1 (après confirmation) → 4 (après
 validation de la liste) → 5 → 6 (après validation visuelle) → 7 → 8`. On
@@ -318,11 +318,12 @@ d'EASYDEP modifiée automatiquement — confirmé en base, pas seulement
 supposé.
 
 **Tests** : unitaires sur `resolveTeamPresentation`, verts (build + typecheck
-+ vitest exécutés). Admin/Super Admin/Public — logique vérifiée par lecture de
-code et par les tests unitaires, pas par un test en navigateur connecté
-(identifiants non disponibles dans cet environnement) : à faire séparément
-avant de considérer le rendu visuel validé, notamment le layout `solo` à une
-seule carte.
+
+- vitest exécutés). Admin/Super Admin/Public — logique vérifiée par lecture de
+  code et par les tests unitaires, pas par un test en navigateur connecté
+  (identifiants non disponibles dans cet environnement) : à faire séparément
+  avant de considérer le rendu visuel validé, notamment le layout `solo` à une
+  seule carte.
 
 **Addendum sécurité — `20260805100000_lock_team_presentation_mode_trigger_execute.sql`**
 Le linter Supabase signalait `enforce_team_presentation_mode_locked()` comme
@@ -424,11 +425,11 @@ ne pas le mélanger avec le correctif de présentation solo/entreprise.
 - **Décision de positionnement, prise avant le code** : trois sections
   publiques distinctes, jamais fusionnées visuellement.
 
-  | Objet | Message public |
-  |---|---|
-  | Marques (`BrandsSection`) | "Marques installées et entretenues" (ou formulation équivalente) |
-  | Partenaires (`PartnersSection`, existant) | "Nos partenaires" — réseaux, organismes de confiance |
-  | Certifications (`CertificationBadges`, existant) | Qualifications réellement détenues |
+  | Objet                                            | Message public                                                   |
+  | ------------------------------------------------ | ---------------------------------------------------------------- |
+  | Marques (`BrandsSection`)                        | "Marques installées et entretenues" (ou formulation équivalente) |
+  | Partenaires (`PartnersSection`, existant)        | "Nos partenaires" — réseaux, organismes de confiance             |
+  | Certifications (`CertificationBadges`, existant) | Qualifications réellement détenues                               |
 
 - **Definition of Done** : les marques sélectionnées par un tenant s'affichent
   publiquement, dans l'ordre, avec la mise en avant respectée ; **uniquement**
@@ -544,12 +545,12 @@ seules la gratuité et le délai de réponse sont protégés. `cta_text` reste u
 champ libre pour toute autre promesse — vérifié directement sur le validateur
 réel, aucun des quatre cas suivants n'est aujourd'hui détecté ni neutralisé :
 
-| Texte libre | Risque | Donnée tenant disponible |
-|---|---|---|
-| "Intervention sous 24h" | délai d'intervention inventé | aucune |
-| "Dépannage en urgence" | urgence non confirmée | `emergency_service_available`, mais non relié au CTA |
-| "Disponible 24/7" | disponibilité absolue | aucune donnée suffisamment précise |
-| "Réponse garantie" | garantie contractuelle | aucune |
+| Texte libre             | Risque                       | Donnée tenant disponible                             |
+| ----------------------- | ---------------------------- | ---------------------------------------------------- |
+| "Intervention sous 24h" | délai d'intervention inventé | aucune                                               |
+| "Dépannage en urgence"  | urgence non confirmée        | `emergency_service_available`, mais non relié au CTA |
+| "Disponible 24/7"       | disponibilité absolue        | aucune donnée suffisamment précise                   |
+| "Réponse garantie"      | garantie contractuelle       | aucune                                               |
 
 Voir le lot séparé ci-dessous.
 
@@ -728,7 +729,7 @@ Rien.
 - Pas de sélection parmi les illustrations existantes du tenant depuis cet
   écran (seulement upload direct) — l'association reste manuelle en base
   pour ce cas, comme pour EASYDEP.
-- Pas de bouton "restaurer le défaut" séparé — retirer la photo *est* déjà
+- Pas de bouton "restaurer le défaut" séparé — retirer la photo _est_ déjà
   la restauration, aucune étape supplémentaire nécessaire.
 
 ### Risques connus
@@ -873,6 +874,7 @@ illustration portfolio liée, sans que le resolver distingue les deux.
 
 **Pistes pour le futur chantier IA/onboarding**, à trancher à ce moment-là,
 pas maintenant :
+
 - `AiTab` consomme directement `admin-services`/`admin-service-areas` ; ou
 - `AiTab` refetch explicitement à l'ouverture de l'onglet.
 
@@ -914,17 +916,21 @@ Rien. Le Header et le Hero validés restent inchangés.
 ## Lot — Illustrations métier SUPORDO (section Métiers)
 
 ### Ce que ce lot simplifie
+
 La section Métiers de la landing SUPORDO montre les dix métiers par leurs illustrations
 définitives, servies depuis le CDN via des pointeurs `.asset.json` (aucun binaire dans le repo).
 
 ### Ce que ce lot supprime
+
 Les dix placeholders textuels qui annonçaient les noms de fichiers attendus.
 
 ### Ce qui reste à migrer
+
 Photographie métier définitive du Hero SUPORDO ; destinations réelles des CTA, des entrées
 Sites / CRM / Tarifs / Ressources ; page métier pilote Chauffagiste.
 
 ### Risques connus
+
 Les cartes restent sans destination : aucune route métier n'existe. Les illustrations sont
 recadrées en `object-cover` centré ; un futur remplacement d'illustration au cadrage très
 différent peut demander un `object-position` dédié.
@@ -932,6 +938,7 @@ différent peut demander un `object-position` dédié.
 ## Lot 1A — Socle backend de conversion (persistance des demandes)
 
 ### Ce que ce lot simplifie
+
 Une demande commerciale est d'abord conservée, puis signalée. `submitSupordoLead`
 valide, écrit la ligne dans `marketing_leads`, envoie la notification, puis
 inscrit `notified_at`. Un échec d'envoi Resend ne fait plus disparaître la
@@ -954,12 +961,14 @@ nulle part ailleurs. Une demande n'est proposée au visiteur que si elle peut
 être à la fois conservée et signalée.
 
 ### Ce que ce lot supprime
+
 L'écriture unique par email comme seul destin d'un prospect, et le champ métier
 en texte libre de `/demarrer`, qui ne permettait aucun filtrage. La page de
 confidentialité et `/demarrer` n'affirment plus que les demandes ne sont
 enregistrées dans aucune base de données — c'était devenu faux.
 
 ### Ce qui reste à migrer
+
 Le mini-formulaire « Être rappelé » et les composants de contact (lot 1B) : le
 serveur accepte déjà `intent: callback`, aucune interface ne l'émet encore. Les
 sources `home`, `pricing`, `how_it_works`, `examples` et `confirmation` sont
@@ -969,6 +978,7 @@ rejoindront `marketing-config.ts` quand une interface les affichera. Aucun écra
 de relecture des demandes n'existe : `marketing_leads` se consulte en base.
 
 ### Risques connus
+
 `SUPORDO_SUPABASE_SECRET_KEY` est un prérequis de déploiement, à renseigner
 comme secret serveur de l'environnement de déploiement. Le préfixe `SUPORDO_`
 est imposé : la plateforme réserve `SUPABASE_` à ses propres secrets et refuse
@@ -1000,6 +1010,7 @@ La suppression d'une demande sur requête d'une personne se fait en base, sans
 ## Lot — Site marketing V1 (landing complète)
 
 ### Ce que ce lot simplifie
+
 La home raconte le produit en neuf actes : reconnaissance du métier, une
 prestation qui devient une page, un chantier qui devient une réalisation, le
 contenu réel du site, le partage des rôles, le prix, les questions, l'action.
@@ -1020,6 +1031,7 @@ L'offre est la seule rupture Forest de la home : le prix est le moment où la
 lecture s'arrête.
 
 ### Ce que ce lot supprime
+
 Le prix faux : 99 € de mise en place n'existe plus nulle part, ni sur la home,
 ni sur `/tarifs`, ni dans le plan directeur. La mention « Sans engagement » de
 `/tarifs`, tant que les règles d'engagement et de résiliation ne sont pas
@@ -1030,6 +1042,7 @@ L'appel à l'action de la FAQ : la page se ferme désormais sur son propre acte,
 deux boutons à quelques centaines de pixels d'écart se neutralisaient.
 
 ### Ce qui reste à migrer
+
 L'acte « Démonstration SUPORDO » n'est pas monté : il attend un site de
 démonstration réel et ses captures. Le lien « Voir un exemple » du Hero suit
 cet état et reste absent — pas d'ancre vers une section qui n'existe pas.
@@ -1041,6 +1054,7 @@ Métiers, faute de photographie éditoriale de marque.
 spécification n'y sont pas encore toutes écrites.
 
 ### Risques connus
+
 La démonstration absente est le seul trou structurel de la narration : la page
 montre comment une information devient une page, mais jamais un site entier
 fini. C'est la preuve la plus convaincante, et c'est celle qui manque.
@@ -1051,3 +1065,77 @@ vocabulaire interdit. Aucune vérification visuelle n'a pu être faite : le
 navigateur disponible dans l'environnement ne produit pas de capture. Les
 jugements de densité, de rythme, de contraste sur fond Forest et de rendu à
 390 px restent à valider à l'œil.
+
+## Lot — Photothèque SUPORDO dans le produit
+
+### Ce que ce lot simplifie
+
+La landing montre des photographies de métier plutôt que des illustrations 3D
+recyclées d'une section à l'autre. Les quatre démonstrations portent chacune
+leurs propres images : Toitures Durand, Berger Électricité, Martin Confort et
+Atelier du Feu ne partagent plus un seul visuel. Vingt-huit images remplacent
+dix pointeurs `.asset.json`, et la même image ne sert plus à trois métiers
+différents.
+
+Les quatre actes illustrés reposent désormais sur quatre entreprises
+distinctes — plomberie pour la prestation, couverture pour le chantier,
+électricité pour le contenu, chauffage pour la fermeture. La page cesse de
+ressembler à une vitrine de chauffagistes.
+
+Le sélecteur de métier ouvre sur la démonstration la plus complète et se
+termine sur la plus jeune : le visiteur voit d'abord un site fourni, puis
+découvre qu'un site neuf reste présentable.
+
+### Ce que ce lot supprime
+
+Les dix fichiers `src/assets/marketing/trades/*.asset.json` : zéro usage
+restant, vérifié avant suppression.
+
+La possibilité, pour une image générique partagée par tous les tenants, d'être
+servie dans un emplacement « nos réalisations ». `templateMediaTypesFor()` ne
+propose plus rien aux catégories `portfolio` et `gallery`. Ce n'était pas
+théorique : la chaîne de repli `portfolio` acceptait `service_card` en dernier
+recours, et les deux seules lignes actives de `trade_media_library` sont
+précisément des `service_card`.
+
+L'entreprise de démonstration « Provence Sanitaire » : elle s'appelle
+Martin Confort, comme les images qui la représentent.
+
+### Ce qui reste à migrer
+
+Les douze images du lot `generic-library` ne sont pas dans le bucket
+`trade-media`. L'envoi passe par la policy `trade_media_super_admin_insert`,
+réservée au super-admin authentifié — il se fait depuis l'écran Super Admin
+« Bibliothèque média ». La table d'import, colonne par colonne, est dans
+`docs/product/phototheque-bibliotheque-generique.md`.
+
+Les couples avant/après n'existent pas : le pack ne contient aucune paire.
+L'acte 4B affiche l'« après » photographié et laisse l'« avant » en
+emplacement dimensionné.
+
+Atelier du Feu n'a qu'une prestation et aucune réalisation, Martin Confort
+deux prestations et aucune réalisation — c'est le nombre de photographies
+disponibles, pas un choix de mise en page.
+
+`trade_templates` contient des doublons apparents (`electricien` et
+`electricite`, `plomberie` et `plombier`) qui fausseront l'import générique si
+personne ne tranche.
+
+### Risques connus
+
+Aucune vérification visuelle n'a été faite. Le navigateur de l'environnement
+ne produit toujours pas de capture. Ce qui est vérifié : build, typecheck,
+lint sur les fichiers touchés, 158 tests au vert, et l'absence d'usage restant
+des assets supprimés. Ce qui ne l'est pas : le rendu des nouvelles photos dans
+les cadrages 16/7, 4/3, 16/9 et 4/5, la lisibilité du texte posé sur la bande
+héros du site de démonstration, et le comportement à 390 px.
+
+Le poids des assets de la landing passe à environ 4,5 Mo de WebP importés par
+le build. Aucune mesure de temps de chargement n'a été faite (hypothèse : le
+découpage par route limite l'effet, la page d'accueil n'en charge qu'une
+partie).
+
+Les images sont générées. Elles illustrent des entreprises fictives étiquetées
+« Démonstration SUPORDO ». Le jour où elles voisineront des photographies de
+clients réels, la différence de texture se verra — c'est une hypothèse, pas
+une observation.
