@@ -2,9 +2,6 @@ import { SupordoHeader } from "./SupordoHeader";
 import { SupordoHero } from "./SupordoHero";
 import { SupordoTrades } from "./SupordoTrades";
 import { SupordoActDemo } from "./SupordoActDemo";
-import { SupordoActThree } from "./SupordoActThree";
-import { SupordoActRealisation } from "./SupordoActRealisation";
-import { SupordoActContenu } from "./SupordoActContenu";
 import { SupordoActFive } from "./SupordoActFive";
 import { SupordoActSix } from "./SupordoActSix";
 import { SupordoActSeven } from "./SupordoActSeven";
@@ -20,9 +17,19 @@ import { SupordoFooter } from "./SupordoFooter";
  * le langage visuel de la marque ne devienne jamais le système de design des
  * sites artisans générés par la plateforme.
  *
- * Narration : reconnaissance → résultat → preuve du mécanisme → preuve du
- * travail → contenu concret → partage des rôles → prix → réassurance →
- * action. Montrer avant d'expliquer, expliquer avant de vendre.
+ * Narration : le produit → mon métier → à quoi ça ressemble → qui fait quoi
+ * → combien → ce qu'il reste à savoir → action.
+ *
+ * Sept actes, contre dix auparavant. Les trois retirés — la prestation qui
+ * prend place sur le site, le chantier publié, le site entier d'un client —
+ * ne manquent pas : ils démontraient le mécanisme, et `/comment-ca-marche`
+ * le démontre désormais mieux, avec le composant public réel. La page
+ * d'accueil les introduit et ouvre le chemin ; elle ne refait plus le
+ * travail des pages profondes.
+ *
+ * Chaque acte conservé mène quelque part : les métiers vers `/metiers`, la
+ * démonstration vers `/exemples`, le partage des rôles vers
+ * `/comment-ca-marche`, le prix vers `/tarifs`.
  *
  * Les appels à l'action marketing ne dépendent plus de `leadIntakeReady` :
  * leur destination existe, et `/demarrer` dit honnêtement quand une demande
@@ -46,19 +53,13 @@ export function SupordoLanding() {
         <SupordoTrades />
         {/* Acte 3 */}
         <SupordoActDemo />
-        {/* Acte 4A */}
-        <SupordoActThree />
-        {/* Acte 4B */}
-        <SupordoActRealisation />
-        {/* Acte 5 */}
-        <SupordoActContenu />
-        {/* Acte 6 */}
+        {/* Acte 4 */}
         <SupordoActFive />
-        {/* Acte 7 */}
+        {/* Acte 5 */}
         <SupordoActSix />
-        {/* Acte 8 */}
+        {/* Acte 6 */}
         <SupordoActSeven />
-        {/* Acte 9 */}
+        {/* Acte 7 */}
         <SupordoActFinal />
       </main>
       <SupordoFooter />
