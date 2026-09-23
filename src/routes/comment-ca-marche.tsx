@@ -2,6 +2,14 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { resolveMarketingRoute } from "@/lib/tenant";
 import { buildMarketingHead } from "@/lib/seo";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
+import {
+  SupordoAdminPanel,
+  SupordoAdminField,
+  SupordoAdminAction,
+} from "@/components/marketing/SupordoAdminPanel";
+import { SupordoDemoService } from "@/components/marketing/SupordoSiteDemo";
+import { DEMO_SITES, DEMO_LABEL } from "@/data/marketing/supordo-demo-site";
+import { RESPONSIBILITY_SENTENCE } from "@/data/marketing/supordo-promise";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
 
 /**
@@ -65,16 +73,22 @@ const INFORMATIONS_A_JOUR = [
 ] as const;
 
 /**
- * Même couple réel que l'Acte 3 de la home (service "Installation poêle à
- * bois", tenant EASYDEP, vérifié en base — voir SupordoActThree.tsx) : le
- * seul contenu apparié réellement prouvé dans le repo. Reproduit ici plutôt
- * qu'importé, car l'ordre de lecture est inversé exprès (espace SUPORDO
- * d'abord, site public ensuite, pour incarner "je change ici → ça apparaît
- * là") — ajouter cette variante à SupordoActThree via une nouvelle prop
- * aurait couplé deux récits différents pour un gain nul.
+ * Une seule entreprise de démonstration pour toute la page : le visiteur
+ * suit le même artisan de la première étape à la demande reçue. Changer
+ * d'entreprise à chaque section transformerait une démonstration en
+ * catalogue.
+ *
+ * Toitures Durand parce que sa prestation « Zinguerie » porte une
+ * photographie : la correspondance espace → site inclut alors l'image, qui
+ * est la partie la plus parlante du mécanisme.
+ *
+ * Le couple affiché n'est plus reproduit en constantes locales : la fiche de
+ * droite est le composant public réel des sites de démonstration. Ce que la
+ * page montre à droite est donc littéralement ce que le site affiche — la
+ * correspondance est tenue par le code, pas par une recopie.
  */
-const DEMO_SERVICE_NAME = "Installation poêle à bois";
-const DEMO_SERVICE_DESCRIPTION = "Installation de poêles à bois avec contrôle du conduit.";
+const demoSite = DEMO_SITES.roofing;
+const demoService = demoSite.services[0]!;
 
 function StepNumber({ n }: { n: string }) {
   return (
@@ -146,23 +160,54 @@ function CommentCaMarchePage() {
                     l'information concernée, depuis votre espace SUPORDO.
                   </p>
                 </div>
-                {/* Deux colonnes à partir de lg : utilise l'espace que la
-                    colonne 1fr laisse à droite du texte plutôt que d'ajouter
-                    un élément décoratif pour le combler. */}
-                <ul className="mt-6 grid gap-x-10 gap-y-3.5 lg:max-w-[900px] lg:grid-cols-2">
-                  {INFORMATIONS_A_JOUR.map((item) => (
-                    <li
-                      key={item}
-                      className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
+                {/* La liste dit ce qu'on tient à jour ; le cadre montre à
+                    quoi cela ressemble. Les deux côte à côte plutôt que la
+                    liste seule sur deux colonnes : « les informations de
+                    votre entreprise » reste abstrait tant qu'on n'a pas vu
+                    des communes et une prestation écrites quelque part. */}
+                <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-2 lg:items-start lg:gap-12">
+                  <ul className="grid gap-y-3.5">
+                    {INFORMATIONS_A_JOUR.map((item) => (
+                      <li
+                        key={item}
+                        className="flex gap-3 text-base leading-relaxed text-[var(--supordo-graphite)]"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-green)]"
+                        />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div>
+                    <SupordoAdminPanel
+                      label="Votre espace SUPORDO"
+                      ariaLabel={`Les informations de ${demoSite.companyName} dans son espace SUPORDO : prestations, communes, chantiers et coordonnées.`}
                     >
-                      <span
-                        aria-hidden="true"
-                        className="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--supordo-green)]"
-                      />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                      <div className="space-y-3.5">
+                        <SupordoAdminField label="Prestations">
+                          {demoSite.services.map((service) => service.name).join(" · ")}
+                        </SupordoAdminField>
+                        <SupordoAdminField label="Communes d'intervention">
+                          {demoSite.areas.join(" · ")}
+                        </SupordoAdminField>
+                        <SupordoAdminField label="Chantiers publiés">
+                          {demoSite.projects.length > 0
+                            ? demoSite.projects.map((project) => project.title).join(" · ")
+                            : "Aucun pour l'instant"}
+                        </SupordoAdminField>
+                        <SupordoAdminField label="Coordonnées">
+                          {demoSite.phone} · {demoSite.email}
+                        </SupordoAdminField>
+                      </div>
+                    </SupordoAdminPanel>
+                    <p className="mt-3 text-xs text-[var(--supordo-graphite)]/70">
+                      {DEMO_LABEL} — {demoSite.companyName}, entreprise fictive.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -196,63 +241,74 @@ function CommentCaMarchePage() {
                     endroit sur votre site.
                   </p>
                 </div>
-
-                <div className="mt-8 flex flex-col items-stretch gap-3 lg:mt-10 lg:flex-row lg:items-center lg:gap-6">
-                  <div className="w-full lg:w-1/3">
-                    <div className="flex h-full min-h-[220px] w-full flex-col justify-center overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-warm)] p-6 md:p-8 lg:min-h-[280px]">
-                      <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                        Dans votre espace SUPORDO
-                      </p>
-                      <dl className="mt-4 space-y-3">
-                        <div>
-                          <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                            Prestation
-                          </dt>
-                          <dd className="mt-1 text-sm font-semibold text-[var(--supordo-forest)]">
-                            {DEMO_SERVICE_NAME}
-                          </dd>
-                        </div>
-                        <div className="border-t border-[var(--supordo-mint-200)] pt-3">
-                          <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                            Description
-                          </dt>
-                          <dd className="mt-1 text-sm leading-relaxed text-[var(--supordo-graphite)]">
-                            {DEMO_SERVICE_DESCRIPTION}
-                          </dd>
-                        </div>
-                      </dl>
-                    </div>
-                  </div>
-
-                  <span
-                    aria-hidden="true"
-                    className="self-center text-2xl font-extrabold text-[var(--supordo-green)]"
-                  >
-                    <span className="lg:hidden">↓</span>
-                    <span className="hidden lg:inline">→</span>
-                  </span>
-
-                  <div className="w-full lg:w-2/3">
-                    <div className="flex h-full min-h-[220px] w-full flex-col justify-center overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-white p-6 md:p-10 lg:min-h-[280px] lg:p-12">
-                      <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--supordo-graphite)]/70">
-                        Sur votre site public
-                      </p>
-                      <h3 className="mt-3 text-xl font-extrabold leading-snug text-[var(--supordo-forest)] sm:text-2xl lg:text-[1.75rem]">
-                        {DEMO_SERVICE_NAME}
-                      </h3>
-                      <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-[var(--supordo-graphite)] lg:text-base">
-                        {DEMO_SERVICE_DESCRIPTION}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="mt-6 max-w-[600px] text-sm leading-relaxed text-[var(--supordo-graphite)]/80 lg:text-base">
-                  Il en va de même pour vos communes d'intervention, vos chantiers publiés et vos
-                  coordonnées.
-                </p>
               </div>
             </div>
+
+            {/* Le moment central de la page. À gauche, les trois champs
+                que l'artisan renseigne ; à droite, la fiche telle qu'elle
+                paraît sur son site — et c'est le composant public réel,
+                pas une reconstitution. Le nom, la description et la photo
+                se répondent d'une colonne à l'autre : c'est la
+                correspondance qui fait la preuve, et elle se lit sans
+                qu'on ait écrit un paragraphe pour l'expliquer.
+                La photo est répétée à gauche en vignette, parce que
+                l'image est précisément ce que l'artisan ajoute — la
+                montrer seulement à droite laisserait croire que SUPORDO
+                la fournit. */}
+            <div className="mt-8 grid items-center gap-4 lg:mt-12 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1.3fr)] lg:gap-10">
+              <SupordoAdminPanel
+                label="Dans votre espace SUPORDO"
+                ariaLabel={`La prestation « ${demoService.name} » en cours de saisie dans l'espace SUPORDO.`}
+              >
+                <div className="space-y-3.5">
+                  <SupordoAdminField label="Prestation">
+                    <span className="font-semibold">{demoService.name}</span>
+                  </SupordoAdminField>
+                  <SupordoAdminField label="Description">
+                    <span className="text-[var(--supordo-graphite)]">
+                      {demoService.description}
+                    </span>
+                  </SupordoAdminField>
+                  <SupordoAdminField label="Photo">
+                    <span className="mt-1 block h-16 w-24 overflow-hidden rounded-[6px]">
+                      <img
+                        src={demoService.image}
+                        alt=""
+                        width={1600}
+                        height={1086}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
+                    </span>
+                  </SupordoAdminField>
+                </div>
+              </SupordoAdminPanel>
+
+              <span
+                aria-hidden="true"
+                className="justify-self-center text-2xl font-extrabold text-[var(--supordo-green)]"
+              >
+                <span className="lg:hidden">↓</span>
+                <span className="hidden lg:inline">→</span>
+              </span>
+
+              <div>
+                <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/70">
+                  Sur votre site public
+                </p>
+                <SupordoDemoService service={demoService} site={demoSite} size="lg" />
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs text-[var(--supordo-graphite)]/70">
+              {DEMO_LABEL} — {demoSite.companyName}, entreprise fictive.
+            </p>
+
+            <p className="mt-6 max-w-[600px] text-sm leading-relaxed text-[var(--supordo-graphite)]/80 lg:text-base">
+              Il en va de même pour vos communes d'intervention, vos chantiers publiés et vos
+              coordonnées.
+            </p>
           </div>
         </section>
 
@@ -285,20 +341,69 @@ function CommentCaMarchePage() {
           aria-labelledby="ccm-final-title"
         >
           <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-            <div className="max-w-[600px]">
-              <h2
-                id="ccm-final-title"
-                className="text-[1.75rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[2rem]"
-              >
-                Les demandes arrivent dans votre espace
-              </h2>
-              <p className="mt-3 text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
-                Les demandes envoyées depuis votre site sont enregistrées dans votre espace SUPORDO.
-                Vous pouvez les consulter et les marquer comme lues.
-              </p>
+            {/* Composition inversée par rapport à l'étape 01 : le cadre
+                passe à gauche, le texte à droite. La page a trois moments,
+                ils ne doivent pas se lire comme trois fois la même mise en
+                page. */}
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:gap-14">
+              <div className="order-2 lg:order-1">
+                {/* Champs repris de l'écran réel des demandes : nom, e-mail,
+                    téléphone, message, date, marqueur « Nouveau » et l'action
+                    « Marquer comme lu ». Rien d'autre n'est montré, parce que
+                    rien d'autre n'existe. */}
+                <SupordoAdminPanel
+                  label="Vos demandes"
+                  tone="flag"
+                  ariaLabel="Une demande reçue dans l'espace SUPORDO : nom, coordonnées, message, date, marqueur « Nouveau » et action « Marquer comme lu »."
+                >
+                  <div className="space-y-3.5">
+                    <SupordoAdminField label="Demande reçue" divider={false}>
+                      <span className="flex flex-wrap items-center gap-2">
+                        <span className="font-semibold">Claire Fontaine</span>
+                        <span className="rounded-[4px] bg-[var(--supordo-green)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white">
+                          Nouveau
+                        </span>
+                      </span>
+                    </SupordoAdminField>
+                    <SupordoAdminField label="Coordonnées">
+                      01 99 00 00 00 · claire.fontaine@example.com
+                    </SupordoAdminField>
+                    <SupordoAdminField label="Message">
+                      <span className="text-[var(--supordo-graphite)]">
+                        Bonjour, une tuile est tombée après l'orage et je vois une trace d'humidité
+                        au plafond. Pouvez-vous passer regarder ?
+                      </span>
+                    </SupordoAdminField>
+                    <SupordoAdminField label="Reçue le">
+                      <span className="flex flex-wrap items-center justify-between gap-3">
+                        <span className="text-[var(--supordo-graphite)]">14 mars, 08:12</span>
+                        <SupordoAdminAction>Marquer comme lu</SupordoAdminAction>
+                      </span>
+                    </SupordoAdminField>
+                  </div>
+                </SupordoAdminPanel>
+                <p className="mt-3 text-xs text-[var(--supordo-graphite)]/70">
+                  {DEMO_LABEL} — demande fictive.
+                </p>
+              </div>
 
-              <p className="mt-10 border-t border-[var(--supordo-mint-200)] pt-8 text-lg font-semibold leading-snug text-[var(--supordo-forest)] lg:text-xl">
-                Vous gardez vos informations à jour. SUPORDO garde la partie technique.
+              <div className="order-1 lg:order-2">
+                <h2
+                  id="ccm-final-title"
+                  className="text-[1.75rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[2rem]"
+                >
+                  Les demandes arrivent dans votre espace
+                </h2>
+                <p className="mt-3 max-w-[52ch] text-base leading-relaxed text-[var(--supordo-graphite)] lg:text-lg">
+                  Les demandes envoyées depuis votre site sont enregistrées dans votre espace
+                  SUPORDO. Vous pouvez les consulter et les marquer comme lues.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-12 max-w-[600px] lg:mt-16">
+              <p className="border-t border-[var(--supordo-mint-200)] pt-8 text-lg font-semibold leading-snug text-[var(--supordo-forest)] lg:text-xl">
+                {RESPONSIBILITY_SENTENCE}
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
