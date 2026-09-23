@@ -35,6 +35,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SuperAdminTenantsRouteImport } from './routes/super-admin.tenants'
 import { Route as SuperAdminOnboardingRouteImport } from './routes/super-admin.onboarding'
 import { Route as SuperAdminMediaLibraryRouteImport } from './routes/super-admin.media-library'
+import { Route as SuperAdminDemandesRouteImport } from './routes/super-admin.demandes'
 import { Route as SuperAdminBrandsRouteImport } from './routes/super-admin.brands'
 import { Route as ServicesServiceSlugRouteImport } from './routes/services.$serviceSlug'
 import { Route as MetiersTradeSlugRouteImport } from './routes/metiers.$tradeSlug'
@@ -184,6 +185,11 @@ const SuperAdminMediaLibraryRoute = SuperAdminMediaLibraryRouteImport.update({
   path: '/media-library',
   getParentRoute: () => SuperAdminRoute,
 } as any)
+const SuperAdminDemandesRoute = SuperAdminDemandesRouteImport.update({
+  id: '/demandes',
+  path: '/demandes',
+  getParentRoute: () => SuperAdminRoute,
+} as any)
 const SuperAdminBrandsRoute = SuperAdminBrandsRouteImport.update({
   id: '/brands',
   path: '/brands',
@@ -310,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/metiers/$tradeSlug': typeof MetiersTradeSlugRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
+  '/super-admin/demandes': typeof SuperAdminDemandesRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
@@ -353,6 +360,7 @@ export interface FileRoutesByTo {
   '/metiers/$tradeSlug': typeof MetiersTradeSlugRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
+  '/super-admin/demandes': typeof SuperAdminDemandesRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/admin': typeof AdminIndexRoute
@@ -399,6 +407,7 @@ export interface FileRoutesById {
   '/metiers/$tradeSlug': typeof MetiersTradeSlugRoute
   '/services/$serviceSlug': typeof ServicesServiceSlugRoute
   '/super-admin/brands': typeof SuperAdminBrandsRoute
+  '/super-admin/demandes': typeof SuperAdminDemandesRoute
   '/super-admin/media-library': typeof SuperAdminMediaLibraryRoute
   '/super-admin/onboarding': typeof SuperAdminOnboardingRoute
   '/super-admin/tenants': typeof SuperAdminTenantsRouteWithChildren
@@ -447,6 +456,7 @@ export interface FileRouteTypes {
     | '/metiers/$tradeSlug'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
+    | '/super-admin/demandes'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/super-admin/tenants'
@@ -490,6 +500,7 @@ export interface FileRouteTypes {
     | '/metiers/$tradeSlug'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
+    | '/super-admin/demandes'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/admin'
@@ -535,6 +546,7 @@ export interface FileRouteTypes {
     | '/metiers/$tradeSlug'
     | '/services/$serviceSlug'
     | '/super-admin/brands'
+    | '/super-admin/demandes'
     | '/super-admin/media-library'
     | '/super-admin/onboarding'
     | '/super-admin/tenants'
@@ -761,6 +773,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperAdminMediaLibraryRouteImport
       parentRoute: typeof SuperAdminRoute
     }
+    '/super-admin/demandes': {
+      id: '/super-admin/demandes'
+      path: '/demandes'
+      fullPath: '/super-admin/demandes'
+      preLoaderRoute: typeof SuperAdminDemandesRouteImport
+      parentRoute: typeof SuperAdminRoute
+    }
     '/super-admin/brands': {
       id: '/super-admin/brands'
       path: '/brands'
@@ -959,6 +978,7 @@ const SuperAdminTenantsRouteWithChildren =
 
 interface SuperAdminRouteChildren {
   SuperAdminBrandsRoute: typeof SuperAdminBrandsRoute
+  SuperAdminDemandesRoute: typeof SuperAdminDemandesRoute
   SuperAdminMediaLibraryRoute: typeof SuperAdminMediaLibraryRoute
   SuperAdminOnboardingRoute: typeof SuperAdminOnboardingRoute
   SuperAdminTenantsRoute: typeof SuperAdminTenantsRouteWithChildren
@@ -967,6 +987,7 @@ interface SuperAdminRouteChildren {
 
 const SuperAdminRouteChildren: SuperAdminRouteChildren = {
   SuperAdminBrandsRoute: SuperAdminBrandsRoute,
+  SuperAdminDemandesRoute: SuperAdminDemandesRoute,
   SuperAdminMediaLibraryRoute: SuperAdminMediaLibraryRoute,
   SuperAdminOnboardingRoute: SuperAdminOnboardingRoute,
   SuperAdminTenantsRoute: SuperAdminTenantsRouteWithChildren,

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Building2, ArrowLeft, Menu, X, Wand2, LogOut, Loader2, Image as ImageIcon, Tag } from "lucide-react";
+import { Building2, ArrowLeft, Menu, X, Wand2, LogOut, Loader2, Image as ImageIcon, Tag, Inbox } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
@@ -91,6 +91,21 @@ function SuperAdminLayout() {
           >
             <Building2 className="h-4 w-4" />
             Pilotage
+          </Link>
+          {/* Placée juste après le pilotage : c'est l'écran qu'on ouvre en
+              premier le lundi matin, avant tout le reste. */}
+          <Link
+            to="/super-admin/demandes"
+            onClick={() => setMobileOpen(false)}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+              path === "/super-admin/demandes"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <Inbox className="h-4 w-4" />
+            Demandes
           </Link>
           <Link
             to="/super-admin/onboarding"
