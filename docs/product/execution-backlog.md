@@ -1282,3 +1282,80 @@ trouvé deux défauts réels — un bouton d'appel rogné et un débordement
 horizontal — tous deux corrigés puis recapturés. Ce qui n'a pas été vérifié :
 le rendu sur un vrai téléphone, et le comportement aux largeurs
 intermédiaires entre 390 et 1440 px.
+
+## Lot — Preuve produit : premier écran, fonctionnement, tarif
+
+### Ce que ce lot simplifie
+
+Le premier écran montre le produit. Il portait une photographie de paysagiste
+avec, dans le code, un `TODO` qui l'annonçait comme provisoire : la page
+promettait un site et prouvait un artisan. Elle montre désormais un site — et
+la photographie de métier n'a pas disparu, elle est à l'intérieur, à la place
+qu'elle occupe réellement sur le site d'un client.
+
+`/comment-ca-marche` montre ce qu'elle expliquait. Les informations de
+l'entreprise ont un cadre où on les voit écrites ; la transformation
+espace → site occupe toute la largeur et met côte à côte les trois champs
+saisis et la fiche publique ; la demande reçue est une vraie demande, avec les
+champs de l'écran réel. Les trois moments ont trois compositions différentes,
+là où la page alternait titre et paragraphe.
+
+Dans la transformation, la fiche de droite est le composant public réel des
+sites de démonstration. La correspondance entre ce qu'on saisit et ce que le
+site affiche est donc tenue par le code, plus par une recopie de texte.
+
+`/tarifs` raconte dans l'ordre : ce que vous obtenez, combien, le site que ce
+tarif finance, ce que couvrent les 199 €, ce que couvre l'abonnement, ce qui
+n'est pas compris, qui s'occupe de quoi. Le prix cesse de flotter au-dessus de
+listes.
+
+Le partage des responsabilités vit dans `supordo-promise.ts`. Trois
+formulations circulaient ; elles ne se contredisent que si l'on oublie ce qui
+les sépare, et c'est cette séparation que le fichier fixe : l'artisan tient à
+jour les informations de son entreprise, SUPORDO s'occupe du site et de sa
+partie technique.
+
+### Ce que ce lot supprime
+
+Le visuel provisoire du premier écran, et le `TODO` qui l'accompagnait.
+
+Les deux paires « inclus / non inclus » qui se suivaient sur `/tarifs`. Aucune
+exclusion n'a quitté la page ni n'est partie en FAQ : les deux listes sont
+regroupées sous leur propre titre, après ce que l'on obtient. C'est l'ordre
+qui change, pas le contenu.
+
+Le couple de texte recopié dans `/comment-ca-marche` pour figurer la
+prestation publique.
+
+Un fragment téléphone posé sur l'angle de l'aperçu du premier écran : essayé,
+capturé, retiré. À 150 px de large, le titre du site chevauchait le bouton
+d'appel et la photographie devenait illisible.
+
+### Ce qui reste à migrer
+
+L'allègement de la page d'accueil, qui mesure toujours près de 12 000 px de
+haut, appartient au lot suivant. Plusieurs de ses sections répondent
+désormais à une question déjà traitée par une page dédiée.
+
+Treize images de la page d'accueil restent sans dimensions explicites : elles
+appartiennent à des sections hors périmètre de ce lot. Les images du premier
+écran, elles, en ont.
+
+`og:image`, la mesure d'audience et `srcset` restent identifiés et séparés.
+
+### Risques connus
+
+La page d'accueil s'allège légèrement malgré un premier écran plus riche :
+1245 Ko avant, 1174 Ko après sur ordinateur ; 840 Ko avant, 769 Ko après sur
+téléphone. L'aperçu réutilise des images que la page charge déjà plus bas, là
+où la photographie de paysagiste n'était utilisée qu'une fois.
+
+`/comment-ca-marche` et `/tarifs` ne chargeaient aucune image ; elles en
+chargent désormais une et trois. C'est le coût assumé de la preuve : une page
+qui affirme sans montrer est légère pour de mauvaises raisons.
+
+Vérification visuelle sur captures Chromium 1440 px et 390 px, réellement
+inspectées. Elle a trouvé trois défauts, tous corrigés puis recapturés : le
+fragment téléphone illisible, deux appels à l'action qui passaient sur deux
+lignes, et la transformation espace → site enfermée dans une demi-largeur.
+Non vérifié : le rendu sur un vrai téléphone et les largeurs intermédiaires.
