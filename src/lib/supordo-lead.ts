@@ -15,17 +15,77 @@ export const MIN_ELAPSED_MS = 3000;
 export const TRADE_OTHER = "autre";
 
 export const LEAD_INTENTS = ["site_request", "callback"] as const;
-export const LEAD_SOURCES = [
+export type LeadIntent = (typeof LEAD_INTENTS)[number];
+
+/**
+ * D'où vient une demande.
+ *
+ * Une forme, pas une liste figée : un jeton de surface, éventuellement suivi
+ * d'un slug pour les deux pages de détail — `example:toitures-durand`,
+ * `trade:couvreur`. La contrainte CHECK de la table garde la même forme ; ce
+ * fichier garde en plus l'existence réelle du slug, ce que la base ne peut
+ * pas vérifier.
+ *
+ * `direct` n'est pas un échec : c'est la valeur vraie quand on ne sait pas.
+ * Elle remplace le `start` écrit en dur pour toutes les demandes, qui donnait
+ * une attribution uniforme et fausse.
+ *
+ * `start` reste accepté sans être émis : aucune ligne ne le porte
+ * aujourd'hui, mais une valeur retirée d'un schéma ne se rattrape pas.
+ */
+export const LEAD_SURFACES = [
   "home",
   "pricing",
   "how_it_works",
   "examples",
-  "start",
+  "trades",
+  "header",
+  "footer",
   "confirmation",
+  "direct",
+  "start",
 ] as const;
 
-export type LeadIntent = (typeof LEAD_INTENTS)[number];
-export type LeadSource = (typeof LEAD_SOURCES)[number];
+/** Surfaces dont l'origine se précise par un slug. */
+export const LEAD_DETAIL_SURFACES = ["example", "trade"] as const;
+
+export type LeadSurface = (typeof LEAD_SURFACES)[number];
+export type LeadDetailSurface = (typeof LEAD_DETAIL_SURFACES)[number];
+export type LeadSource = LeadSurface | `${LeadDetailSurface}.${string}`;
+
+/** Ce qu'on écrit quand l'origine n'est pas exploitable. */
+export const LEAD_SOURCE_FALLBACK: LeadSource = "direct";
+
+/**
+ * Ramène une origine reçue du navigateur à une valeur sûre.
+ *
+ * Toute valeur inconnue, mal formée ou pointant vers un slug qui n'existe pas
+ * devient `direct`. Volontairement une coercition, pas un rejet : une demande
+ * réelle ne doit jamais être perdue parce qu'un lien traînait avec un
+ * paramètre périmé. On préfère ignorer l'origine que perdre le prospect.
+ *
+ * `knownSlugs` est injecté plutôt qu'importé : ce module reste testable sans
+ * rien d'autre, et l'appelant décide ce qui fait foi.
+ */
+export function normalizeLeadSource(
+  raw: string | null | undefined,
+  knownSlugs: { example: readonly string[]; trade: readonly string[] },
+): LeadSource {
+  const value = (raw ?? "").trim();
+  if (!value) return LEAD_SOURCE_FALLBACK;
+  if ((LEAD_SURFACES as readonly string[]).includes(value)) return value as LeadSurface;
+
+  const separator = value.indexOf(".");
+  if (separator === -1) return LEAD_SOURCE_FALLBACK;
+  const surface = value.slice(0, separator);
+  const slug = value.slice(separator + 1);
+  if (!(LEAD_DETAIL_SURFACES as readonly string[]).includes(surface)) return LEAD_SOURCE_FALLBACK;
+  if (!/^[a-z0-9-]{1,60}$/.test(slug)) return LEAD_SOURCE_FALLBACK;
+
+  const allowed = knownSlugs[surface as LeadDetailSurface];
+  if (!allowed.includes(slug)) return LEAD_SOURCE_FALLBACK;
+  return `${surface as LeadDetailSurface}.${slug}`;
+}
 
 const phoneSchema = z
   .string()
@@ -39,7 +99,13 @@ const nameSchema = (message: string) =>
 
 /** Commun aux deux formulaires : qui appeler, et d'où vient la demande. */
 const baseFields = {
-  source: z.enum(LEAD_SOURCES),
+  /**
+   * Chaîne libre bornée, normalisée par `normalizeLeadSource` avant
+   * enregistrement. Un `z.enum` ici ferait échouer toute la demande sur un
+   * paramètre d'URL périmé — on perdrait le prospect pour sauver une
+   * statistique.
+   */
+  source: z.string().trim().max(80).optional().default(""),
   firstName: nameSchema("Indiquez votre prénom."),
   lastName: nameSchema("Indiquez votre nom."),
   phone: phoneSchema,
@@ -143,11 +209,11 @@ export function isLikelyBot(lead: ParsedLead): boolean {
   return lead.trap.trim().length > 0 || lead.elapsedMs < MIN_ELAPSED_MS;
 }
 
-export function toRow(lead: ParsedLead) {
+export function toRow(lead: ParsedLead, source: LeadSource) {
   const site = lead.intent === "site_request" ? lead : null;
   return {
     intent: lead.intent,
-    source: lead.source,
+    source,
     first_name: lead.firstName,
     last_name: lead.lastName,
     phone: lead.phone,
@@ -162,7 +228,7 @@ export function toRow(lead: ParsedLead) {
 }
 
 /** Corps de la notification envoyée à SUPORDO. */
-export function buildNotification(lead: ParsedLead) {
+export function buildNotification(lead: ParsedLead, source: LeadSource) {
   const trade =
     lead.trade === TRADE_OTHER ? `${lead.tradeOther} (hors liste)` : lead.trade || "non renseigné";
   const who = `${lead.firstName} ${lead.lastName}`;
@@ -176,7 +242,7 @@ export function buildNotification(lead: ParsedLead) {
         `Nom : ${who}`,
         `Téléphone : ${lead.phone}`,
         `Métier : ${trade}`,
-        `Origine : ${lead.source}`,
+        `Origine : ${source}`,
       ],
     };
   }
@@ -192,7 +258,7 @@ export function buildNotification(lead: ParsedLead) {
       `Téléphone : ${lead.phone}`,
       `Email : ${lead.email}`,
       `Site actuel : ${lead.currentWebsite || "aucun"}`,
-      `Origine : ${lead.source}`,
+      `Origine : ${source}`,
       "",
       "Message :",
       lead.message || "(aucun message)",

@@ -40,11 +40,14 @@ import {
   escapeHtml,
   isLikelyBot,
   leadSchema,
+  normalizeLeadSource,
   toRow,
   TRADE_OTHER,
   type LeadInput,
   type LeadResult,
 } from "@/lib/supordo-lead";
+import { DEMO_SITE_BY_SLUG } from "@/data/marketing/supordo-demo-site";
+import { TRADE_PAGE_BY_SLUG } from "@/data/marketing/supordo-trade-pages";
 
 /**
  * Indique aux pages marketing si une demande peut réellement être prise en
@@ -90,6 +93,15 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
     }
     const lead = parsed.data;
 
+    // L'origine vient du navigateur : elle est ramenée à une valeur sûre,
+    // vérifiée contre les slugs qui existent réellement dans le site. Une
+    // valeur inconnue devient `direct` — on perd l'attribution, jamais la
+    // demande.
+    const source = normalizeLeadSource(lead.source, {
+      example: Object.keys(DEMO_SITE_BY_SLUG),
+      trade: Object.keys(TRADE_PAGE_BY_SLUG),
+    });
+
     // Succès silencieux volontaire : un robot n'apprend pas ce qui l'a trahi.
     // Rien n'est écrit en base, aucune notification ne part.
     if (isLikelyBot(lead)) {
@@ -111,7 +123,7 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
 
     const { data: saved, error: saveError } = await supabaseMarketing
       .from("marketing_leads")
-      .insert(toRow(lead))
+      .insert(toRow(lead, source))
       .select("id")
       .single();
 
@@ -129,7 +141,7 @@ export const submitSupordoLead = createServerFn({ method: "POST" })
       return { ok: true };
     }
 
-    const { subject, lines } = buildNotification(lead);
+    const { subject, lines } = buildNotification(lead, source);
     const text = lines.join("\n");
     const html = `<div style="font-family:sans-serif;font-size:14px;line-height:1.6">${escapeHtml(
       text,

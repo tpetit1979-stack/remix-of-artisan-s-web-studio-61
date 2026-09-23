@@ -4,6 +4,8 @@ import {
   escapeHtml,
   isLikelyBot,
   leadSchema,
+  LEAD_SURFACES,
+  normalizeLeadSource,
   toRow,
   TRADE_OTHER,
 } from "./supordo-lead";
@@ -38,7 +40,7 @@ describe("leadSchema — rappel express", () => {
   it("n'exige ni entreprise, ni ville, ni email", () => {
     const parsed = leadSchema.parse(callback);
     expect(parsed.intent).toBe("callback");
-    expect(toRow(parsed)).toMatchObject({ company: null, city: null, email: null });
+    expect(toRow(parsed, "home")).toMatchObject({ company: null, city: null, email: null });
   });
 
   it("refuse un rappel sans téléphone", () => {
@@ -73,7 +75,7 @@ describe("leadSchema — demande de site", () => {
 
   it("accepte site actuel et message vides", () => {
     const parsed = leadSchema.parse(siteRequest);
-    expect(toRow(parsed)).toMatchObject({ current_website: null, message: null });
+    expect(toRow(parsed, "home")).toMatchObject({ current_website: null, message: null });
   });
 });
 
@@ -88,7 +90,7 @@ describe("leadSchema — métier hors liste", () => {
       trade: TRADE_OTHER,
       tradeOther: "Poseur de pierre sèche",
     });
-    expect(toRow(parsed)).toMatchObject({
+    expect(toRow(parsed, "home")).toMatchObject({
       trade: TRADE_OTHER,
       trade_other: "Poseur de pierre sèche",
     });
@@ -102,17 +104,20 @@ describe("leadSchema — métier hors liste", () => {
 
   it("ne recopie jamais le texte libre quand le métier est dans la liste", () => {
     const parsed = leadSchema.parse({ ...callback, trade: "plombier" });
-    expect(toRow(parsed).trade_other).toBeNull();
+    expect(toRow(parsed, "home").trade_other).toBeNull();
   });
 });
 
 describe("leadSchema — source", () => {
-  it("refuse une source inconnue", () => {
-    expect(leadSchema.safeParse({ ...callback, source: "chatbot" }).success).toBe(false);
+  it("n'échoue plus sur une origine inconnue", () => {
+    // Une origine inconnue ne fait plus échouer la demande : elle est
+    // ramenée à `direct` par `normalizeLeadSource`. Rejeter ici reviendrait à
+    // perdre un prospect pour sauver une statistique.
+    expect(leadSchema.safeParse({ ...callback, source: "chatbot" }).success).toBe(true);
   });
 
   it("accepte chacune des sources prévues", () => {
-    for (const source of ["home", "pricing", "how_it_works", "examples", "start", "confirmation"]) {
+    for (const source of LEAD_SURFACES) {
       expect(leadSchema.safeParse({ ...callback, source }).success).toBe(true);
     }
   });
@@ -161,10 +166,10 @@ describe("anti-bot — piège et délai", () => {
 
 describe("buildNotification", () => {
   it("distingue rappel et demande de site dans l'objet", () => {
-    expect(buildNotification(leadSchema.parse(callback)).subject).toBe(
+    expect(buildNotification(leadSchema.parse(callback), "home").subject).toBe(
       "Rappel demandé — Marie Durand",
     );
-    expect(buildNotification(leadSchema.parse(siteRequest)).subject).toBe(
+    expect(buildNotification(leadSchema.parse(siteRequest), "home").subject).toBe(
       "Demande de site — Durand Plomberie (Annecy)",
     );
   });
@@ -175,13 +180,13 @@ describe("buildNotification", () => {
       trade: TRADE_OTHER,
       tradeOther: "Poseur de pierre sèche",
     });
-    expect(buildNotification(lead).lines.join("\n")).toContain(
+    expect(buildNotification(lead, "home").lines.join("\n")).toContain(
       "Poseur de pierre sèche (hors liste)",
     );
   });
 
   it("indique toujours la page d'origine", () => {
-    expect(buildNotification(leadSchema.parse(callback)).lines.join("\n")).toContain(
+    expect(buildNotification(leadSchema.parse(callback), "home").lines.join("\n")).toContain(
       "Origine : home",
     );
   });
@@ -192,5 +197,71 @@ describe("escapeHtml", () => {
     expect(escapeHtml('<script>alert("x")</script>')).toBe(
       '&lt;script&gt;alert("x")&lt;/script&gt;',
     );
+  });
+});
+
+/**
+ * L'attribution, tenue par des tests.
+ *
+ * Avant ce lot, `/demarrer` inscrivait `start` en dur pour toutes les
+ * demandes : la colonne existait, elle était `NOT NULL`, et elle ne disait
+ * rien. Ces tests fixent les deux garanties qui remplacent ce comportement :
+ * une origine reconnue est conservée telle quelle, et tout le reste devient
+ * `direct` — jamais une erreur, jamais une valeur inventée.
+ */
+const KNOWN = {
+  example: ["toitures-durand", "berger-electricite"],
+  trade: ["couvreur", "plombier"],
+} as const;
+
+describe("normalizeLeadSource", () => {
+  it("conserve chaque surface connue", () => {
+    for (const surface of LEAD_SURFACES) {
+      expect(normalizeLeadSource(surface, KNOWN), surface).toBe(surface);
+    }
+  });
+
+  it("conserve une page de détail dont le slug existe", () => {
+    expect(normalizeLeadSource("example.toitures-durand", KNOWN)).toBe("example.toitures-durand");
+    expect(normalizeLeadSource("trade.couvreur", KNOWN)).toBe("trade.couvreur");
+  });
+
+  it("refuse un slug qui n'existe pas dans le site", () => {
+    expect(normalizeLeadSource("example.entreprise-inventee", KNOWN)).toBe("direct");
+    expect(normalizeLeadSource("trade.astronaute", KNOWN)).toBe("direct");
+  });
+
+  it("refuse une surface de détail inconnue", () => {
+    expect(normalizeLeadSource("client.toitures-durand", KNOWN)).toBe("direct");
+  });
+
+  it("refuse un slug mal formé plutôt que de l'écrire en base", () => {
+    expect(normalizeLeadSource("trade../../etc", KNOWN)).toBe("direct");
+    expect(normalizeLeadSource("trade.Couvreur", KNOWN)).toBe("direct");
+    expect(normalizeLeadSource(`trade.${"a".repeat(61)}`, KNOWN)).toBe("direct");
+  });
+
+  it("répond direct plutôt que vide quand rien n'est transmis", () => {
+    expect(normalizeLeadSource("", KNOWN)).toBe("direct");
+    expect(normalizeLeadSource(null, KNOWN)).toBe("direct");
+    expect(normalizeLeadSource(undefined, KNOWN)).toBe("direct");
+    expect(normalizeLeadSource("   ", KNOWN)).toBe("direct");
+  });
+
+  it("ne rejette jamais : toute entrée produit une origine écrivable", () => {
+    for (const bogus of ["chatbot", "<script>", "home ; drop table", "trade.", ".couvreur", ".."]) {
+      const result = normalizeLeadSource(bogus, KNOWN);
+      expect(
+        (LEAD_SURFACES as readonly string[]).includes(result) || result.includes("."),
+        bogus,
+      ).toBe(true);
+    }
+  });
+});
+
+describe("toRow — origine", () => {
+  it("écrit l'origine normalisée, pas celle reçue du navigateur", () => {
+    const parsed = leadSchema.parse({ ...siteRequest, source: "n'importe quoi" });
+    expect(toRow(parsed, "trade.couvreur").source).toBe("trade.couvreur");
   });
 });
