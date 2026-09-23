@@ -80,43 +80,56 @@ export function SupordoActDemo() {
             className="mt-8 focus-visible:outline-none lg:mt-10"
             tabIndex={-1}
           >
-            {/* Mobile : la vue téléphone seule, en grand — un site entier
-                réduit à 390 px ne prouve rien. Desktop : la vue large porte
-                la composition, la vue mobile s'y appuie. */}
-            <div className="lg:hidden">
-              <SupordoSiteDemo site={site} variant="mobile" />
-            </div>
+            {/* L'aperçu cadré, pas le site entier. La home montrait ici les
+                quatre sites dans leur intégralité, vue large et vue
+                téléphone superposées : 2 235 px, la plus longue section de
+                la page, et exactement ce que /exemples fait désormais mieux.
+                Le sélecteur reste — c'est lui qui prouve que quatre métiers
+                donnent quatre sites — mais la preuve approfondie part à la
+                page qui existe pour ça.
 
-            <div className="relative hidden lg:block lg:pr-[220px]">
-              <SupordoSiteDemo site={site} variant="desktop" />
-              <div className="absolute bottom-0 right-0 w-[260px] translate-y-6">
-                <SupordoSiteDemo site={site} variant="mobile" />
+                Largeur bornée à 880 px plutôt qu'étalée sur les 1 200 : au
+                delà, les fiches de prestation deviennent si hautes que le
+                cadrage les coupe en deux, et une photographie tranchée en
+                son milieu se lit comme un défaut, pas comme un cadrage. La
+                colonne libérée porte l'identité de l'entreprise et les deux
+                sorties vers /exemples. */}
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,880px)_minmax(0,1fr)] lg:gap-12">
+              <SupordoSiteDemo site={site} variant="preview" previewAspect="5 / 6" />
+
+              <div className="lg:pt-4">
+                <p className="text-lg font-extrabold leading-tight text-[var(--supordo-forest)]">
+                  {site.companyName}
+                </p>
+                <p className="mt-1.5 text-sm font-medium text-[var(--supordo-green)]">
+                  {site.trade} · {site.city}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--supordo-graphite)]">
+                  {site.headline}
+                </p>
+                <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--supordo-graphite)]/55">
+                  {DEMO_LABEL} — entreprise fictive
+                </p>
+
+                <div className="mt-6 flex flex-col gap-3">
+                  <Link
+                    to="/exemples/$demoSlug"
+                    params={{ demoSlug: site.slug }}
+                    className="inline-flex min-h-11 items-center self-start text-base font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+                  >
+                    Voir {site.companyName} en grand
+                  </Link>
+                  <Link
+                    to="/exemples"
+                    className="inline-flex min-h-11 items-center self-start text-base font-medium text-[var(--supordo-graphite)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+                  >
+                    Comparer les quatre exemples
+                  </Link>
+                </div>
               </div>
             </div>
           </TabsContent>
         </Tabs>
-
-        <p className="mt-8 text-sm text-[var(--supordo-graphite)]/70 lg:mt-14">
-          {site.companyName} — entreprise présentée à titre de démonstration.
-        </p>
-
-        {/* La comparaison approfondie appartient à /exemples : ici, un aperçu
-            qui donne envie d'y aller, pas quatre sites empilés. */}
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Link
-            to="/exemples/$demoSlug"
-            params={{ demoSlug: site.slug }}
-            className="inline-flex min-h-11 items-center text-base font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
-          >
-            Voir {site.companyName} en grand
-          </Link>
-          <Link
-            to="/exemples"
-            className="inline-flex min-h-11 items-center text-base font-medium text-[var(--supordo-graphite)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
-          >
-            Comparer les quatre exemples
-          </Link>
-        </div>
       </div>
     </section>
   );
