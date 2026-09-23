@@ -29,7 +29,7 @@ import {
  * présentées comme des clients, des témoignages ou des résultats.
  */
 export function SupordoActDemo() {
-  const [trade, setTrade] = useState<DemoTrade>("heating");
+  const [trade, setTrade] = useState<DemoTrade>(DEMO_TRADES[0]!);
   const site = DEMO_SITES[trade];
 
   return (

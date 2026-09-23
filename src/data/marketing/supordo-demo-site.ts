@@ -1,36 +1,50 @@
-import ramoneur from "@/assets/marketing/trades/ramoneur-cheminee.webp.asset.json";
-import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json";
-import climaticien from "@/assets/marketing/trades/climaticien.webp.asset.json";
-import couvreur from "@/assets/marketing/trades/couvreur.webp.asset.json";
-import macon from "@/assets/marketing/trades/macon.webp.asset.json";
-import plombier from "@/assets/marketing/trades/plombier.webp.asset.json";
-import electricien from "@/assets/marketing/trades/electricien.webp.asset.json";
-import menuisier from "@/assets/marketing/trades/menuisier.webp.asset.json";
-import peintre from "@/assets/marketing/trades/peintre.webp.asset.json";
+import atelierHero from "@/assets/marketing/demos/atelier-du-feu/atelier-du-feu-hero-stove-installation.webp";
+import atelierStoveService from "@/assets/marketing/demos/atelier-du-feu/atelier-du-feu-service-stove-repair.webp";
+import martinHero from "@/assets/marketing/demos/martin-confort/martin-confort-hero-plumbing.webp";
+import martinHeatPump from "@/assets/marketing/demos/martin-confort/martin-confort-service-heat-pump-diagnostics.webp";
+import durandHero from "@/assets/marketing/demos/toitures-durand/toitures-durand-hero-roofing.webp";
+import bergerEvCharger from "@/assets/marketing/demos/berger-electricite/berger-electricite-service-ev-charger.webp";
+
+import waterHeater from "@/assets/marketing/generic-library/plumbing-heating-thermodynamic-water-heater-service-01.webp";
+import roofingZinc from "@/assets/marketing/generic-library/roofing-zinc-service-01.webp";
+import roofingLeak from "@/assets/marketing/generic-library/roofing-leak-diagnostic-service-01.webp";
+import roofingFinished from "@/assets/marketing/generic-library/roofing-finished-tile-roof-gallery-01.webp";
+import electricalPanel from "@/assets/marketing/generic-library/electrical-panel-service-01.webp";
+import electricalPanelEntry from "@/assets/marketing/generic-library/electrical-panel-service-02.webp";
+import electricalRenovation from "@/assets/marketing/generic-library/electrical-renovation-service-01.webp";
+import electricalPanelFinished from "@/assets/marketing/generic-library/electrical-panel-finished-gallery-01.webp";
+import electricalLightingFinished from "@/assets/marketing/generic-library/electrical-lighting-finished-gallery-01.webp";
 
 /**
  * Données fictives utilisées uniquement pour les démonstrations visuelles du
  * site marketing SUPORDO. Ne représentent aucun client réel.
  *
- * Quatre entreprises de démonstration, une par métier, pour montrer que le
- * système produit des sites différents plutôt qu'un gabarit repeint : le nom,
- * le métier, la photo d'accueil, le titre, les prestations, les réalisations,
- * les communes, la couleur dominante et la typographie changent ensemble.
- * Ce qui reste commun est le socle — structure, hiérarchie, lisibilité,
- * comportement responsive.
+ * Quatre entreprises de démonstration pour montrer que le système produit des
+ * sites différents plutôt qu'un gabarit repeint : le nom, le métier, la photo
+ * d'accueil, le titre, les prestations, les réalisations, les communes, la
+ * couleur dominante et la typographie changent ensemble. Ce qui reste commun
+ * est le socle — structure, hiérarchie, lisibilité, comportement responsive.
  *
- * Assets de démonstration temporaires. À remplacer progressivement par des
- * réalisations clients autorisées sans modifier l'architecture des
- * composants : seules les valeurs de ce fichier changent.
+ * Provenance des images (photothèque SUPORDO) :
  *
- * Rien ici ne doit être présenté comme un client, un témoignage, un avis ou
- * un résultat commercial. Les composants qui affichent ces données portent
- * l'étiquette « Démonstration SUPORDO ».
+ * - lot `demos` — images rattachées à une entreprise de démonstration
+ *   nommée. Elles ne servent qu'ici et ne doivent jamais devenir un visuel
+ *   générique proposé à un tenant : une image portant le fourgon ou la
+ *   signature de « Martin Confort » n'a de sens que pour Martin Confort.
+ * - lot `generic-library` — images de métier sans marque, qui complètent une
+ *   démonstration lorsqu'elles sont cohérentes avec le métier montré.
  *
- * Les illustrations viennent des assets de marque SUPORDO. Les couples
- * avant/après attendent leurs photographies : `beforeImage` et `afterImage`
- * restent nuls, et les composants affichent alors un emplacement dimensionné
- * plutôt qu'une image inventée.
+ * Toutes ces images sont générées. Le manifeste les marque
+ * `can_use_as_customer_project_proof = false` : elles illustrent une
+ * prestation ou une entreprise fictive, jamais le chantier réel d'un client.
+ * Les blocs qui les affichent portent l'étiquette « Démonstration SUPORDO ».
+ *
+ * Le nombre de prestations et de réalisations suit les photographies
+ * réellement disponibles par entreprise. Une démonstration sans réalisation
+ * n'est pas un trou à combler : c'est l'état d'un site neuf, que le produit
+ * doit savoir afficher. Les couples avant/après attendent leurs prises de vue
+ * — `beforeImage` reste nul et le composant affiche alors un emplacement
+ * dimensionné plutôt qu'une image inventée.
  */
 export type DemoTrade = "heating" | "plumbing" | "roofing" | "electrical";
 
@@ -102,9 +116,9 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
     areas: ["Aubagne", "Gémenos", "La Penne-sur-Huveaune", "Roquevaire", "Cuges-les-Pins"],
     phone: FAKE_PHONE,
     email: "contact@atelier-du-feu.example",
-    nav: ["Accueil", "Prestations", "Réalisations", "Contact"],
-    heroImage: ramoneur.url,
-    heroImageAlt: "Entretien d'un conduit de poêle à bois",
+    nav: ["Accueil", "Prestations", "Contact"],
+    heroImage: atelierHero,
+    heroImageAlt: "Deux installateurs posent un poêle et son conduit dans une maison.",
     theme: {
       primary: "#B4541E",
       surface: "#FBF6F1",
@@ -117,58 +131,28 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
         name: "Installation de poêle à bois",
         description:
           "Pose du poêle, raccordement au conduit et mise en service, avec contrôle du tirage.",
-        image: chauffagiste.url,
-        imageAlt: "Pose d'un appareil de chauffage dans un séjour",
-      },
-      {
-        name: "Poêle à granulés",
-        description: "Installation de l'appareil, raccordement et réglage du fonctionnement.",
-        image: climaticien.url,
-        imageAlt: "Installation d'un appareil de chauffage",
-      },
-      {
-        name: "Entretien",
-        description: "Nettoyage de l'appareil, vérification du conduit et des joints.",
-        image: ramoneur.url,
-        imageAlt: "Entretien d'un conduit de fumée",
+        image: atelierStoveService,
+        imageAlt: "Un installateur contrôle le raccordement d'un poêle à bois.",
       },
     ],
-    projects: [
-      {
-        title: "Remplacement d'un insert par un poêle à bois",
-        city: "Gémenos",
-        service: "Installation de poêle à bois",
-        image: macon.url,
-        imageAlt: "Ouvrage de maçonnerie autour d'un âtre",
-        beforeImage: null,
-        afterImage: null,
-        beforeAlt: "Ancienne cheminée avant remplacement",
-        afterAlt: "Poêle à bois installé à la place de l'ancienne cheminée",
-      },
-      {
-        title: "Réfection de conduit avant installation",
-        city: "Aubagne",
-        service: "Entretien",
-        image: couvreur.url,
-        imageAlt: "Intervention sur un conduit en toiture",
-      },
-    ],
+    // Site neuf : aucune réalisation publiée pour l'instant.
+    projects: [],
   },
 
   plumbing: {
     demo: true,
     id: "plumbing",
     tradeLabel: "Plomberie",
-    companyName: "Provence Sanitaire",
-    trade: "Plomberie et salle de bain",
-    headline: "Plomberie et rénovation de salle de bain à Aix-en-Provence",
+    companyName: "Martin Confort",
+    trade: "Plomberie et chauffage",
+    headline: "Plomberie, chauffage et eau chaude à Aix-en-Provence",
     city: "Aix-en-Provence",
     areas: ["Aix-en-Provence", "Venelles", "Le Tholonet", "Bouc-Bel-Air", "Gardanne"],
     phone: FAKE_PHONE,
-    email: "contact@provence-sanitaire.example",
-    nav: ["Accueil", "Prestations", "Réalisations", "Contact"],
-    heroImage: plombier.url,
-    heroImageAlt: "Intervention de plomberie sous un meuble de salle de bain",
+    email: "contact@martin-confort.example",
+    nav: ["Accueil", "Prestations", "Contact"],
+    heroImage: martinHero,
+    heroImageAlt: "Un plombier intervient sur les raccordements d'un meuble vasque.",
     theme: {
       primary: "#1F4E6B",
       surface: "#F4F7F9",
@@ -178,45 +162,23 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
     },
     services: [
       {
-        name: "Rénovation de salle de bain",
+        name: "Entretien de pompe à chaleur",
         description:
-          "Dépose de l'ancienne installation, plomberie, faïence et pose des équipements.",
-        image: peintre.url,
-        imageAlt: "Travaux de rénovation intérieure",
+          "Contrôle des pressions, du circuit et des réglages, puis remise en service de l'appareil.",
+        image: martinHeatPump,
+        imageAlt:
+          "Un technicien contrôle une pompe à chaleur extérieure avec des instruments de mesure.",
       },
       {
-        name: "Remplacement de chauffe-eau",
+        name: "Chauffe-eau thermodynamique",
         description: "Dépose de l'ancien appareil, pose et mise en service du nouveau.",
-        image: plombier.url,
-        imageAlt: "Intervention sur une installation sanitaire",
-      },
-      {
-        name: "Dépannage plomberie",
-        description: "Fuite, évacuation bouchée, robinetterie : intervention rapide.",
-        image: menuisier.url,
-        imageAlt: "Travail d'atelier sur une installation",
+        image: waterHeater,
+        imageAlt:
+          "Un technicien contrôle un chauffe-eau thermodynamique dans un garage domestique.",
       },
     ],
-    projects: [
-      {
-        title: "Rénovation complète d'une salle de bain",
-        city: "Venelles",
-        service: "Rénovation de salle de bain",
-        image: peintre.url,
-        imageAlt: "Pièce en cours de rénovation",
-        beforeImage: null,
-        afterImage: null,
-        beforeAlt: "Salle de bain avant rénovation, baignoire et carrelage anciens",
-        afterAlt: "Même salle de bain après rénovation, douche et faïence neuves",
-      },
-      {
-        title: "Remplacement d'un chauffe-eau",
-        city: "Bouc-Bel-Air",
-        service: "Remplacement de chauffe-eau",
-        image: plombier.url,
-        imageAlt: "Installation sanitaire remise à neuf",
-      },
-    ],
+    // Site neuf : aucune réalisation publiée pour l'instant.
+    projects: [],
   },
 
   roofing: {
@@ -224,15 +186,15 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
     id: "roofing",
     tradeLabel: "Couverture",
     companyName: "Toitures Durand",
-    trade: "Couverture et charpente",
+    trade: "Couverture et zinguerie",
     headline: "Couverture et rénovation de toiture autour de Salon-de-Provence",
     city: "Salon-de-Provence",
     areas: ["Salon-de-Provence", "Pélissanne", "Lançon-Provence", "Grans", "La Barben"],
     phone: FAKE_PHONE,
     email: "contact@toitures-durand.example",
     nav: ["Accueil", "Prestations", "Réalisations", "Contact"],
-    heroImage: couvreur.url,
-    heroImageAlt: "Couvreur travaillant sur une toiture",
+    heroImage: durandHero,
+    heroImageAlt: "Deux couvreurs posent des tuiles sur une toiture résidentielle.",
     theme: {
       primary: "#8C3A2B",
       surface: "#F7F4EF",
@@ -242,42 +204,30 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
     },
     services: [
       {
-        name: "Rénovation de toiture",
-        description: "Dépose des tuiles, reprise du support et remise en état de la couverture.",
-        image: couvreur.url,
-        imageAlt: "Chantier de couverture",
-      },
-      {
         name: "Zinguerie",
-        description: "Gouttières, noues et solins : pose et remplacement.",
-        image: macon.url,
-        imageAlt: "Travaux sur un ouvrage extérieur",
+        description: "Gouttières, noues et solins : pose, reprise et remplacement.",
+        image: roofingZinc,
+        imageAlt: "Un couvreur travaille une finition en zinc au bord d'une toiture.",
       },
       {
         name: "Recherche de fuite",
-        description: "Repérage de l'infiltration et réparation de la zone concernée.",
-        image: menuisier.url,
-        imageAlt: "Intervention sur une charpente",
+        description: "Repérage de l'infiltration dans les combles et réparation de la zone.",
+        image: roofingLeak,
+        imageAlt:
+          "Un professionnel inspecte des traces d'humidité sur la charpente dans des combles.",
       },
     ],
     projects: [
       {
-        title: "Réfection d'une toiture en tuiles",
+        title: "Couverture et zinguerie refaites",
         city: "Pélissanne",
-        service: "Rénovation de toiture",
-        image: couvreur.url,
-        imageAlt: "Toiture en cours de réfection",
-        beforeImage: null,
-        afterImage: null,
-        beforeAlt: "Toiture avant réfection, tuiles vieillies et zones dégradées",
-        afterAlt: "Même toiture après réfection, couverture et zinguerie neuves",
-      },
-      {
-        title: "Remplacement des gouttières",
-        city: "Grans",
         service: "Zinguerie",
-        image: macon.url,
-        imageAlt: "Ouvrage extérieur remis en état",
+        image: roofingFinished,
+        imageAlt: "Maison résidentielle avec une toiture en tuiles terminée.",
+        beforeImage: null,
+        afterImage: roofingFinished,
+        beforeAlt: "Toiture avant réfection, tuiles vieillies et zinguerie dégradée",
+        afterAlt: "Maison résidentielle avec une toiture en tuiles terminée.",
       },
     ],
   },
@@ -300,8 +250,8 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
     phone: FAKE_PHONE,
     email: "contact@berger-electricite.example",
     nav: ["Accueil", "Prestations", "Réalisations", "Contact"],
-    heroImage: electricien.url,
-    heroImageAlt: "Électricien travaillant sur un tableau électrique",
+    heroImage: electricalPanel,
+    heroImageAlt: "Deux électriciens interviennent sur un tableau électrique résidentiel ouvert.",
     theme: {
       primary: "#2F3A45",
       surface: "#F5F5F4",
@@ -311,22 +261,23 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
     },
     services: [
       {
-        name: "Mise aux normes",
-        description: "Vérification de l'installation et reprise des points non conformes.",
-        image: electricien.url,
-        imageAlt: "Travail sur une installation électrique",
+        name: "Borne de recharge",
+        description: "Pose de la borne, protection dédiée et raccordement au tableau.",
+        image: bergerEvCharger,
+        imageAlt:
+          "Un électricien de la démonstration Berger Électricité raccorde une borne de recharge.",
+      },
+      {
+        name: "Rénovation électrique",
+        description: "Création de circuits, prises, éclairage et raccordements.",
+        image: electricalRenovation,
+        imageAlt: "Deux électriciens tirent et préparent des câbles dans une maison en rénovation.",
       },
       {
         name: "Tableau électrique",
         description: "Remplacement du tableau, repérage des circuits et protection différentielle.",
-        image: menuisier.url,
-        imageAlt: "Intervention technique en intérieur",
-      },
-      {
-        name: "Installation et rénovation",
-        description: "Création de circuits, prises, éclairage et raccordements.",
-        image: peintre.url,
-        imageAlt: "Travaux de rénovation intérieure",
+        image: electricalPanelEntry,
+        imageAlt: "Deux électriciens travaillent dans une entrée autour d'un tableau électrique.",
       },
     ],
     projects: [
@@ -334,29 +285,33 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
         title: "Remplacement d'un tableau électrique",
         city: "Allauch",
         service: "Tableau électrique",
-        image: electricien.url,
-        imageAlt: "Tableau électrique remis à neuf",
+        image: electricalPanelFinished,
+        imageAlt: "Tableau électrique résidentiel terminé dans une entrée lumineuse.",
         beforeImage: null,
-        afterImage: null,
+        afterImage: electricalPanelFinished,
         beforeAlt: "Ancien tableau électrique avant remplacement",
-        afterAlt: "Même emplacement après pose du nouveau tableau",
+        afterAlt: "Tableau électrique résidentiel terminé dans une entrée lumineuse.",
       },
       {
         title: "Rénovation de l'éclairage d'un séjour",
         city: "Marseille",
-        service: "Installation et rénovation",
-        image: peintre.url,
-        imageAlt: "Séjour rénové",
+        service: "Rénovation électrique",
+        image: electricalLightingFinished,
+        imageAlt: "Salon et salle à manger éclairés par plusieurs luminaires résidentiels.",
       },
     ],
   },
 };
 
-/** Ordre d'affichage du sélecteur de métier. */
-export const DEMO_TRADES: readonly DemoTrade[] = ["heating", "plumbing", "roofing", "electrical"];
+/**
+ * Ordre d'affichage du sélecteur de métier, de la démonstration la plus
+ * complète à la plus jeune : le visiteur voit d'abord un site fourni, puis
+ * découvre qu'un site neuf reste présentable.
+ */
+export const DEMO_TRADES: readonly DemoTrade[] = ["roofing", "electrical", "plumbing", "heating"];
 
 /** Démonstration par défaut, utilisée quand aucun métier n'est sélectionné. */
-export const SUPORDO_DEMO_SITE: DemoSite = DEMO_SITES.heating;
+export const SUPORDO_DEMO_SITE: DemoSite = DEMO_SITES.roofing;
 
 /** Étiquette obligatoire partout où ces données sont affichées. */
 export const DEMO_LABEL = "DÉMONSTRATION SUPORDO";

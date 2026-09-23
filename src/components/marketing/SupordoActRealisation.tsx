@@ -15,14 +15,18 @@ import { DEMO_SITES } from "@/data/marketing/supordo-demo-site";
  * donc « pour le présenter parmi les réalisations », jamais « il devient
  * automatiquement ».
  *
- * Métier choisi : la plomberie. Le chauffage porte déjà le Hero, le
- * personnage du carrousel et la démonstration par défaut ; une rénovation de
- * salle de bain diversifie la page et rend la transformation lisible en une
- * demi-seconde.
+ * Métier choisi : la couverture. Chaque acte illustré montre un métier
+ * différent (plomberie en 4A, couverture ici, électricité à l'acte 5,
+ * chauffage à la fermeture), et une toiture terminée se lit en une
+ * demi-seconde, de loin, sur un téléphone.
+ *
+ * L'« après » est une photographie ; l'« avant » n'existe pas encore et
+ * reste un emplacement dimensionné. Inventer la photographie manquante
+ * reviendrait à montrer un chantier qui n'a pas eu lieu.
  *
  * Chantier, entreprise et commune sont fictifs.
  */
-const site = DEMO_SITES.plumbing;
+const site = DEMO_SITES.roofing;
 const project = site.projects[0]!;
 
 export function SupordoActRealisation() {

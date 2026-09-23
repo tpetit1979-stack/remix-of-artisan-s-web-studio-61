@@ -12,14 +12,14 @@ import { DEMO_SITES } from "@/data/marketing/supordo-demo-site";
  * garantit pas une synchronisation instantanée, et le verbe ne doit pas la
  * suggérer.
  *
- * Métier choisi : la couverture. Chaque acte de preuve s'appuie sur une
+ * Métier choisi : la plomberie. Chaque acte de preuve s'appuie sur une
  * entreprise de démonstration différente — le mécanisme est le même quel que
  * soit le métier, et la page cesse de ressembler à une vitrine de
  * chauffagistes.
  *
  * Entreprise, prestation et commune fictives.
  */
-const site = DEMO_SITES.roofing;
+const site = DEMO_SITES.plumbing;
 const service = site.services[0]!;
 
 export function SupordoActThree() {

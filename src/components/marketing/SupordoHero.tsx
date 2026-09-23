@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import paysagiste from "@/assets/marketing/trades/paysagiste.webp.asset.json";
+import paysagiste from "@/assets/marketing/brand/trades/supordo-trade-landscaping.webp";
 
 /**
  * Acte 1 — Hero.
@@ -61,7 +61,7 @@ export function SupordoHero({ showExampleLink = true }: { showExampleLink?: bool
         <div>
           <div className="aspect-[4/3] w-full overflow-hidden rounded-[10px] border border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] lg:max-h-[520px] lg:min-h-[400px]">
             <img
-              src={paysagiste.url}
+              src={paysagiste}
               alt="Paysagiste taillant une haie"
               loading="eager"
               decoding="async"

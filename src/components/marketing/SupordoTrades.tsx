@@ -1,55 +1,68 @@
 /**
  * Trade recognition section for the SUPORDO Sites marketing landing only.
  *
- * Illustrations are SUPORDO-owned brand assets served from the CDN through
- * `.asset.json` pointers. No tenant media is used here.
+ * Illustrations are SUPORDO-owned brand assets (photothèque SUPORDO, lot
+ * `brand`), importées depuis le dépôt et servies par le build. Aucun média
+ * tenant, aucune image de la bibliothèque générique multi-tenant.
  *
  * Fond Mint-100 ("Warm très léger") : casse l'adjacence de deux fonds blancs
  * consécutifs avec l'Acte 3 juste après, dans le rythme de page Hero(Warm) →
  * Métiers(Mint-100) → Acte 3(blanc) → Acte 5(Warm) → Acte 6(blanc) → Acte 7(Warm).
  */
-import chauffagiste from "@/assets/marketing/trades/chauffagiste.webp.asset.json";
-import plombier from "@/assets/marketing/trades/plombier.webp.asset.json";
-import electricien from "@/assets/marketing/trades/electricien.webp.asset.json";
-import ramoneurCheminee from "@/assets/marketing/trades/ramoneur-cheminee.webp.asset.json";
-import climaticien from "@/assets/marketing/trades/climaticien.webp.asset.json";
-import couvreur from "@/assets/marketing/trades/couvreur.webp.asset.json";
-import menuisier from "@/assets/marketing/trades/menuisier.webp.asset.json";
-import macon from "@/assets/marketing/trades/macon.webp.asset.json";
-import paysagiste from "@/assets/marketing/trades/paysagiste.webp.asset.json";
-import peintre from "@/assets/marketing/trades/peintre.webp.asset.json";
+import chauffagiste from "@/assets/marketing/brand/trades/supordo-trade-heating.webp";
+import plombier from "@/assets/marketing/brand/trades/supordo-trade-plumbing.webp";
+import electricien from "@/assets/marketing/brand/trades/supordo-trade-electrical.webp";
+import ramoneurCheminee from "@/assets/marketing/brand/trades/supordo-trade-chimney-sweep.webp";
+import poeles from "@/assets/marketing/brand/trades/supordo-trade-stove-installer.webp";
+import pompeAChaleur from "@/assets/marketing/brand/trades/supordo-trade-heat-pump.webp";
+import climaticien from "@/assets/marketing/brand/trades/supordo-trade-air-conditioning.webp";
+import couvreur from "@/assets/marketing/brand/trades/supordo-trade-roofing.webp";
+import menuisier from "@/assets/marketing/brand/trades/supordo-trade-carpentry.webp";
+import macon from "@/assets/marketing/brand/trades/supordo-trade-masonry.webp";
+import paysagiste from "@/assets/marketing/brand/trades/supordo-trade-landscaping.webp";
+import peintre from "@/assets/marketing/brand/trades/supordo-trade-painting.webp";
 
 const TRADES = [
   {
     name: "Chauffagiste",
-    image: chauffagiste.url,
-    alt: "Chauffagiste installant une pompe à chaleur",
+    image: chauffagiste,
+    alt: "Chauffagiste réglant une chaudière murale",
   },
   {
     name: "Plombier",
-    image: plombier.url,
-    alt: "Plombier intervenant sous un meuble de salle de bain",
+    image: plombier,
+    alt: "Plombier intervenant sur une installation sanitaire",
   },
   {
     name: "Électricien",
-    image: electricien.url,
+    image: electricien,
     alt: "Électricien travaillant sur un tableau électrique",
   },
   {
     name: "Ramoneur · Professionnel de la cheminée",
-    image: ramoneurCheminee.url,
-    alt: "Ramoneur entretenant un conduit de poêle à bois",
+    image: ramoneurCheminee,
+    alt: "Ramoneur entretenant un conduit de cheminée",
+  },
+  {
+    name: "Poseur de poêles",
+    image: poeles,
+    alt: "Installateur posant un poêle à bois dans un séjour",
+  },
+  {
+    name: "Installateur de pompes à chaleur",
+    image: pompeAChaleur,
+    alt: "Technicien installant une pompe à chaleur en extérieur",
   },
   {
     name: "Climaticien",
-    image: climaticien.url,
+    image: climaticien,
     alt: "Climaticien posant une unité intérieure de climatisation",
   },
-  { name: "Couvreur", image: couvreur.url, alt: "Couvreur travaillant sur une toiture" },
-  { name: "Menuisier", image: menuisier.url, alt: "Menuisier travaillant le bois en atelier" },
-  { name: "Maçon", image: macon.url, alt: "Maçon réalisant un ouvrage de maçonnerie" },
-  { name: "Paysagiste", image: paysagiste.url, alt: "Paysagiste taillant une haie" },
-  { name: "Peintre", image: peintre.url, alt: "Peintre réalisant une peinture intérieure" },
+  { name: "Couvreur", image: couvreur, alt: "Couvreur travaillant sur une toiture en tuiles" },
+  { name: "Menuisier", image: menuisier, alt: "Menuisier travaillant le bois en atelier" },
+  { name: "Maçon", image: macon, alt: "Maçon réalisant un ouvrage de maçonnerie" },
+  { name: "Paysagiste", image: paysagiste, alt: "Paysagiste entretenant un jardin" },
+  { name: "Peintre", image: peintre, alt: "Peintre réalisant une peinture intérieure" },
 ] as const;
 
 export function SupordoTrades() {

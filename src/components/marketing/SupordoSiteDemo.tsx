@@ -231,6 +231,19 @@ function DemoFooter({ site }: { site: DemoSite }) {
 }
 
 /**
+ * Les prestations occupent toute la largeur quelle que soit leur quantité :
+ * une grille figée à trois colonnes laisserait deux trous sur un site qui
+ * n'affiche qu'une prestation. Les classes sont écrites en toutes lettres,
+ * Tailwind ne compilant pas une classe construite à l'exécution.
+ */
+const SERVICE_COLUMNS: Record<number, string> = {
+  0: "",
+  1: "sm:grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+};
+
+/**
  * Le site fictif entier. `variant="desktop"` pour la représentation large,
  * `variant="mobile"` pour la colonne étroite — c'est le même site, pas deux
  * démonstrations différentes.
@@ -253,23 +266,27 @@ export function SupordoSiteDemo({
           Nos prestations
         </p>
         <div
-          className={`mt-3 grid gap-3 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-3"}`}
+          className={`mt-3 grid gap-3 ${compact ? "grid-cols-1" : `grid-cols-1 ${SERVICE_COLUMNS[Math.min(site.services.length, 3)]}`}`}
         >
           {(compact ? site.services.slice(0, 2) : site.services).map((service) => (
             <SupordoDemoService key={service.name} service={service} site={site} />
           ))}
         </div>
 
-        <p className="mt-6 text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
-          Nos réalisations
-        </p>
-        <div
-          className={`mt-3 grid gap-3 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}
-        >
-          {(compact ? site.projects.slice(0, 1) : site.projects).map((project) => (
-            <SupordoDemoProject key={project.title} project={project} site={site} />
-          ))}
-        </div>
+        {site.projects.length > 0 && (
+          <>
+            <p className="mt-6 text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
+              Nos réalisations
+            </p>
+            <div
+              className={`mt-3 grid gap-3 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}
+            >
+              {(compact ? site.projects.slice(0, 1) : site.projects).map((project) => (
+                <SupordoDemoProject key={project.title} project={project} site={site} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <DemoFooter site={site} />
