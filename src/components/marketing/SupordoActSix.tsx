@@ -81,6 +81,7 @@ export function SupordoActSix() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
               <Link
                 to="/demarrer"
+                search={{ src: "home" }}
                 className="inline-flex min-h-12 w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-6 text-sm font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-mint-200)] sm:w-auto lg:min-h-[52px] lg:px-7 lg:text-base"
               >
                 Demander mon site

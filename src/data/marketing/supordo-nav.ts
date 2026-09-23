@@ -38,7 +38,9 @@ export const MARKETING_FOOTER_SECTIONS = [
     links: [
       { to: "/exemples", label: "Exemples de sites" },
       { to: "/metiers", label: "Métiers" },
-      { to: "/demarrer", label: "Demander mon site" },
+      // Le même lien apparaît sur toutes les surfaces : il porte sa propre
+      // origine plutôt que d'être confondu avec la page qui l'affiche.
+      { to: "/demarrer", label: "Demander mon site", src: "footer" as const },
     ],
   },
   {

@@ -113,6 +113,7 @@ function MetierDetailPage() {
                 </p>
                 <Link
                   to="/demarrer"
+                  search={{ src: `trade.${page.slug}` }}
                   className="mt-8 inline-flex min-h-[52px] w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-7 text-base font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto"
                 >
                   Demander mon site
@@ -277,6 +278,7 @@ function MetierDetailPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 to="/demarrer"
+                search={{ src: `trade.${page.slug}` }}
                 className="inline-flex min-h-[52px] items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-7 text-base font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)]"
               >
                 Demander mon site

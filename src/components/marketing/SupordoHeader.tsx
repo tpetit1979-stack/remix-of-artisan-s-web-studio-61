@@ -70,6 +70,7 @@ export function SupordoHeader() {
         <div className="flex items-center gap-2 md:gap-3">
           <Link
             to="/demarrer"
+            search={{ src: "header" }}
             className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-[6px] bg-[var(--supordo-green)] px-3 text-[13px] font-semibold text-white transition-colors sm:px-4 sm:text-sm hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] md:min-h-12 md:px-5 md:text-[15px]"
           >
             Demander mon site

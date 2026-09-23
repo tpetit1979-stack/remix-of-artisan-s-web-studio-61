@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
 import { MARKETING_NAV, MARKETING_FOOTER_SECTIONS, MARKETING_SITEMAP_PATHS } from "./supordo-nav";
 import { DEMO_TRADES, DEMO_SITES, DEMO_SITE_BY_SLUG } from "./supordo-demo-site";
 import { TRADE_PAGES, TRADE_PAGE_BY_SLUG } from "./supordo-trade-pages";
@@ -68,5 +69,67 @@ describe("pages métier", () => {
   it("donne à chaque page un slug unique", () => {
     const slugs = TRADE_PAGES.map((page) => page.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
+  });
+});
+
+/**
+ * L'attribution ne tient que si chaque bouton la transporte.
+ *
+ * Avant ce lot, `/demarrer` écrivait `start` en dur : la colonne `source`
+ * était `NOT NULL` et ne disait rien. Un lien ajouté demain sans `src`
+ * retomberait silencieusement sur `direct` — visible nulle part, sauf ici.
+ */
+describe("attribution des appels à l'action", () => {
+  const files = [
+    "src/components/marketing/SupordoHeader.tsx",
+    "src/components/marketing/SupordoHero.tsx",
+    "src/components/marketing/SupordoActSix.tsx",
+    "src/components/marketing/SupordoActFinal.tsx",
+    "src/routes/comment-ca-marche.tsx",
+    "src/routes/tarifs.tsx",
+    "src/routes/exemples.index.tsx",
+    "src/routes/exemples.$demoSlug.tsx",
+    "src/routes/metiers.index.tsx",
+    "src/routes/metiers.$tradeSlug.tsx",
+  ];
+
+  it("fait porter une origine au lien du pied de page", () => {
+    // Le pied de page construit ses liens depuis ce fichier, pas depuis un
+    // `to="/demarrer"` littéral : il échappait au contrôle ci-dessous, et
+    // c'est exactement par là que l'attribution a fui la première fois.
+    const links: { to: string; src?: string }[] = [];
+    for (const section of MARKETING_FOOTER_SECTIONS) {
+      for (const link of section.links) links.push(link as { to: string; src?: string });
+    }
+    const entry = links.find((link) => link.to === "/demarrer");
+    expect(entry).toBeDefined();
+    expect(entry?.src).toBe("footer");
+  });
+
+  it("fait porter une origine à chaque lien vers /demarrer", () => {
+    for (const file of files) {
+      const source = readFileSync(file, "utf8");
+      const links = source.split('to="/demarrer"').length - 1;
+      expect(links, file).toBeGreaterThan(0);
+      // Chaque occurrence doit être immédiatement suivie de son `src`.
+      for (const after of source.split('to="/demarrer"').slice(1)) {
+        expect(after.slice(0, 80), file).toContain("src:");
+      }
+    }
+  });
+
+  it("couvre toutes les surfaces marketing qui convertissent", () => {
+    const all = files.map((file) => readFileSync(file, "utf8")).join("\n");
+    for (const surface of [
+      'src: "home"',
+      'src: "pricing"',
+      'src: "how_it_works"',
+      'src: "examples"',
+      'src: "trades"',
+    ]) {
+      expect(all, surface).toContain(surface);
+    }
+    expect(all).toContain("src: `example.${");
+    expect(all).toContain("src: `trade.${");
   });
 });

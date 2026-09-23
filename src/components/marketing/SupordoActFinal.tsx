@@ -39,6 +39,7 @@ export function SupordoActFinal() {
             </p>
             <Link
               to="/demarrer"
+              search={{ src: "home" }}
               className="mt-8 inline-flex min-h-[52px] w-full items-center justify-center rounded-[6px] bg-[var(--supordo-green)] px-7 text-base font-semibold text-white transition-colors hover:bg-[var(--supordo-green-hover)] active:bg-[var(--supordo-forest)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-forest)] sm:w-auto lg:mt-10 lg:min-h-[56px] lg:px-8 lg:text-lg"
             >
               Demander mon site

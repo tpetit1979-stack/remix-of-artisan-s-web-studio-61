@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { resolveMarketingRoute } from "@/lib/tenant";
 import { buildMarketingHead } from "@/lib/seo";
 import { getLeadIntakeStatus, submitSupordoLead } from "@/lib/supordo-lead.functions";
-import { TRADE_OTHER } from "@/lib/supordo-lead";
+import { TRADE_OTHER, type LeadSource } from "@/lib/supordo-lead";
 import { supabase } from "@/integrations/supabase/client";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
@@ -23,6 +23,22 @@ import { SupordoFooter } from "@/components/marketing/SupordoFooter";
  * the landing hides its call to action for the same reason.
  */
 export const Route = createFileRoute("/demarrer/")({
+  /**
+   * `?src=` transporte la page d'où vient le visiteur.
+   *
+   * Le type force les appelants à écrire une origine qui existe : une faute
+   * de frappe dans un `<Link>` ne compile pas. Le contrôle ici reste
+   * volontairement léger — c'est le serveur qui fait foi, via
+   * `normalizeLeadSource`, parce qu'une URL se modifie à la main.
+   *
+   * Une valeur absente n'est pas remplacée ici par une valeur inventée :
+   * elle reste vide et devient `direct` côté serveur.
+   */
+  validateSearch: (search: Record<string, unknown>): { src?: LeadSource } => {
+    const raw = search["src"];
+    if (typeof raw !== "string" || raw.length === 0 || raw.length > 80) return {};
+    return { src: raw as LeadSource };
+  },
   loader: async () => {
     const marketing = await resolveMarketingRoute();
     if (!marketing) throw notFound();
@@ -80,6 +96,7 @@ const inputClass =
 
 function DemarrerPage() {
   const { configured, trades } = Route.useLoaderData();
+  const { src } = Route.useSearch();
   const navigate = useNavigate();
   const submit = useServerFn(submitSupordoLead);
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -128,7 +145,9 @@ function DemarrerPage() {
       const result = await submit({
         data: {
           intent: "site_request",
-          source: "start",
+          // Transmise telle quelle : le serveur la vérifie et la ramène à
+          // `direct` si elle ne correspond à rien de réel.
+          source: src ?? "",
           firstName: form.firstName,
           lastName: form.lastName,
           company: form.company,

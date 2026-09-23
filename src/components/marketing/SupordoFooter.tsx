@@ -35,9 +35,15 @@ export function SupordoFooter() {
             <ul className="mt-4 space-y-3 text-sm">
               {section.links.map((link) => (
                 <li key={link.to}>
-                  <Link to={link.to} className={LINK_CLASS}>
-                    {link.label}
-                  </Link>
+                  {"src" in link ? (
+                    <Link to={link.to} search={{ src: link.src }} className={LINK_CLASS}>
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <Link to={link.to} className={LINK_CLASS}>
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
