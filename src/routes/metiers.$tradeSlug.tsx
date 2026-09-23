@@ -3,9 +3,14 @@ import { resolveMarketingRoute } from "@/lib/tenant";
 import { buildMarketingHead } from "@/lib/seo";
 import { SupordoHeader } from "@/components/marketing/SupordoHeader";
 import { SupordoFooter } from "@/components/marketing/SupordoFooter";
-import { SupordoSiteDemo } from "@/components/marketing/SupordoSiteDemo";
-import { TRADE_PAGE_BY_SLUG } from "@/data/marketing/supordo-trade-pages";
-import { DEMO_SITES, DEMO_LABEL } from "@/data/marketing/supordo-demo-site";
+import {
+  SupordoSiteDemo,
+  SupordoDemoService,
+  SupordoDemoProject,
+  SupordoDemoCoverage,
+} from "@/components/marketing/SupordoSiteDemo";
+import { TRADE_PAGE_BY_SLUG, type TradeProof } from "@/data/marketing/supordo-trade-pages";
+import { DEMO_SITES, DEMO_LABEL, type DemoSite } from "@/data/marketing/supordo-demo-site";
 
 /**
  * `/metiers/<métier>` — une seule implémentation pour les quatre pages
@@ -41,6 +46,45 @@ export const Route = createFileRoute("/metiers/$tradeSlug")({
   component: MetierDetailPage,
 });
 
+/**
+ * La preuve métier. Un seul composant, quatre récits : c'est `proof.kind` qui
+ * décide du fragment montré, pas un gabarit par métier.
+ *
+ * Les fragments viennent tous de la démonstration correspondante et sont
+ * affichés en grand — c'est le point du lot. Aucun média n'est produit ici.
+ */
+function TradeProofFragment({ proof, site }: { proof: TradeProof; site: DemoSite }) {
+  switch (proof.kind) {
+    case "finished_work": {
+      const project = site.projects[0];
+      if (!project) return null;
+      return <SupordoDemoProject project={project} site={site} size="lg" />;
+    }
+    case "intervention": {
+      const service = site.services[0];
+      if (!service) return null;
+      return <SupordoDemoService service={service} site={site} size="lg" />;
+    }
+    case "service_sheets":
+      return (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {site.services.slice(0, 2).map((service) => (
+            <SupordoDemoService key={service.name} service={service} site={site} />
+          ))}
+        </div>
+      );
+    case "coverage":
+      return (
+        <div className="space-y-4">
+          <SupordoDemoCoverage site={site} />
+          {site.services[0] && (
+            <SupordoDemoService service={site.services[0]} site={site} size="lg" />
+          )}
+        </div>
+      );
+  }
+}
+
 function MetierDetailPage() {
   const { tradeSlug } = Route.useLoaderData();
   const page = TRADE_PAGE_BY_SLUG[tradeSlug]!;
@@ -74,9 +118,14 @@ function MetierDetailPage() {
                   Demander mon site
                 </Link>
               </div>
+              {/* Dimensions explicites : c'était la seule image du lot sans
+                  conteneur à proportion fixe, donc la seule à décaler la mise
+                  en page pendant son chargement. */}
               <img
                 src={page.image}
                 alt={page.imageAlt}
+                width={1024}
+                height={1536}
                 loading="eager"
                 decoding="async"
                 className="hidden w-full rounded-[10px] object-cover lg:block"
@@ -132,6 +181,33 @@ function MetierDetailPage() {
           </div>
         </section>
 
+        {/* La preuve avant les principes : on montre, puis on explique.
+            Composition asymétrique — le texte tient dans une colonne étroite,
+            le fragment occupe le reste, à une échelle où il se lit. */}
+        <section className="border-y border-[var(--supordo-mint-200)] bg-white py-14 md:py-18 lg:py-20">
+          <div className="mx-auto max-w-[1200px] px-5 md:px-8">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-center lg:gap-14">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
+                  {page.proof.eyebrow}
+                </p>
+                <h2 className="mt-4 max-w-[22ch] text-[1.5rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[1.875rem]">
+                  {page.proof.title}
+                </h2>
+                <p className="mt-4 max-w-[48ch] text-base leading-relaxed text-[var(--supordo-graphite)]">
+                  {page.proof.body}
+                </p>
+              </div>
+              <div>
+                <TradeProofFragment proof={page.proof} site={demo} />
+                <p className="mt-3 text-xs text-[var(--supordo-graphite)]/70">
+                  {DEMO_LABEL} — {demo.companyName}, entreprise fictive.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="bg-[var(--supordo-warm)] py-14 md:py-18 lg:py-20">
           <div className="mx-auto max-w-[1200px] px-5 md:px-8">
             <h2 className="max-w-[26ch] text-[1.5rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[1.875rem]">
@@ -152,17 +228,27 @@ function MetierDetailPage() {
           </div>
         </section>
 
+        {/* L'aperçu domine la composition et le texte s'efface à côté : la
+            version précédente rangeait un site entier dans une colonne
+            étroite, où il devenait une bande illisible. À cette largeur, le
+            cadrage 3/4 descend jusqu'au début des réalisations — assez pour
+            que « en entier » soit crédible, et que la coupe dise qu'il y a
+            une suite. */}
         <section className="border-t border-[var(--supordo-mint-200)] bg-[var(--supordo-mint-100)] py-14 md:py-18 lg:py-20">
           <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
-              <div>
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-14">
+              <div className="order-2 lg:order-1">
+                <SupordoSiteDemo site={demo} variant="preview" previewAspect="3 / 4" />
+              </div>
+
+              <div className="order-1 lg:order-2 lg:pt-6">
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--supordo-green)] lg:text-sm">
                   {DEMO_LABEL}
                 </p>
-                <h2 className="mt-4 max-w-[24ch] text-[1.5rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[1.875rem]">
+                <h2 className="mt-4 max-w-[20ch] text-[1.5rem] font-extrabold leading-[1.15] text-[var(--supordo-forest)] sm:text-[1.875rem]">
                   Un site de {page.label.toLowerCase()}, en entier.
                 </h2>
-                <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-[var(--supordo-graphite)]">
+                <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-[var(--supordo-graphite)]">
                   {demo.companyName} est une entreprise fictive. Elle sert à montrer le résultat :
                   la structure, les prestations, la zone d'intervention et les coordonnées, dans son
                   propre univers visuel.
@@ -170,15 +256,10 @@ function MetierDetailPage() {
                 <Link
                   to="/exemples/$demoSlug"
                   params={{ demoSlug: demo.slug }}
-                  className="mt-6 inline-flex min-h-[52px] items-center justify-center rounded-[6px] px-0 text-base font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
+                  className="mt-6 inline-flex min-h-11 items-center text-base font-semibold text-[var(--supordo-forest)] underline underline-offset-4 transition-colors hover:text-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)]"
                 >
-                  Voir {demo.companyName} en grand
+                  Voir {demo.companyName} en entier →
                 </Link>
-              </div>
-              {/* La vue téléphone reste à une largeur de téléphone : étirée à 600 px
-                  elle ne ressemble plus à ce qu'elle représente. */}
-              <div className="mx-auto w-full max-w-[420px]">
-                <SupordoSiteDemo site={demo} variant="mobile" />
               </div>
             </div>
           </div>

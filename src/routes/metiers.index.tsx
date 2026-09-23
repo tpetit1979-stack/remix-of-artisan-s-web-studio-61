@@ -55,25 +55,41 @@ function MetiersIndexPage() {
 
         <section className="bg-[var(--supordo-mint-100)] py-16 md:py-20 lg:py-24">
           <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-            <ul className="grid gap-8 sm:grid-cols-2">
+            {/* L'index ne répète pas les pages : il donne à chacune son angle.
+                La ligne mise en avant est la preuve qui compte pour ce métier
+                — elle vient de la même donnée que la page détail, donc les
+                deux ne peuvent pas se contredire. L'illustration passe de
+                112 px à toute la largeur de la carte : quatre vignettes de la
+                taille d'un avatar affirmaient que les métiers sont
+                différents tout en les rendant interchangeables. */}
+            <ul className="grid gap-x-8 gap-y-12 sm:grid-cols-2">
               {TRADE_PAGES.map((page) => (
                 <li key={page.slug}>
                   <Link
                     to="/metiers/$tradeSlug"
                     params={{ tradeSlug: page.slug }}
-                    className="group flex h-full flex-col rounded-[10px] border border-[var(--supordo-mint-200)] bg-white p-6 transition-colors hover:border-[var(--supordo-green)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--supordo-green)] md:p-7"
+                    className="group block rounded-[10px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--supordo-green)]"
                   >
-                    <img
-                      src={page.image}
-                      alt={page.imageAlt}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-28 w-28 shrink-0 rounded-[8px] object-cover"
-                    />
-                    <h2 className="mt-5 text-xl font-extrabold leading-tight text-[var(--supordo-forest)] group-hover:text-[var(--supordo-green)]">
+                    <div className="overflow-hidden rounded-[10px] bg-white">
+                      <div className="aspect-[4/3]">
+                        <img
+                          src={page.image}
+                          alt={page.imageAlt}
+                          width={1024}
+                          height={1536}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
+                        />
+                      </div>
+                    </div>
+                    <h2 className="mt-5 text-xl font-extrabold leading-tight text-[var(--supordo-forest)] transition-colors group-hover:text-[var(--supordo-green)] lg:text-2xl">
                       {page.label}
                     </h2>
-                    <p className="mt-3 text-sm leading-relaxed text-[var(--supordo-graphite)]">
+                    <p className="mt-2 text-[15px] font-semibold leading-snug text-[var(--supordo-green)]">
+                      {page.proof.title}
+                    </p>
+                    <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-[var(--supordo-graphite)]">
                       {page.intro}
                     </p>
                   </Link>

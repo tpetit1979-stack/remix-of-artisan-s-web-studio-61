@@ -27,6 +27,39 @@ import electrical from "@/assets/marketing/brand/trades/supordo-trade-electrical
  * Aucun chiffre, aucune part de marché, aucune promesse de résultat : rien
  * ici n'est mesuré, donc rien ici ne se chiffre.
  */
+/**
+ * La preuve qui compte, métier par métier.
+ *
+ * C'est la variation introduite par ce lot, et elle est une donnée, pas un
+ * quatrième gabarit. Les quatre pages partagent une implémentation ; ce champ
+ * décide seulement quel fragment du site de démonstration est montré en
+ * grand, parce que ce qui convainc n'est pas le même selon le métier :
+ *
+ * - `finished_work`  — un chantier terminé. Le couvreur se choisit sur le
+ *   résultat visible : on lui confie un toit.
+ * - `intervention`   — une prestation en cours d'exécution. Le plombier se
+ *   choisit sur sa capacité à venir et à faire.
+ * - `service_sheets` — deux fiches côte à côte. L'électricien a des
+ *   prestations qui ne se cherchent pas avec les mêmes mots ; la preuve est
+ *   qu'elles existent séparément.
+ * - `coverage`       — la zone d'intervention et les coordonnées. Pour un
+ *   chauffagiste en panne de chaudière, « intervenez-vous chez moi ? » passe
+ *   avant toute photographie.
+ *
+ * Aucun nouveau média n'est produit pour ça : chaque preuve pointe vers un
+ * fragment de la démonstration qui existe déjà.
+ */
+export type TradeProofKind = "finished_work" | "intervention" | "service_sheets" | "coverage";
+
+export interface TradeProof {
+  kind: TradeProofKind;
+  /** Sur-titre de la section. */
+  eyebrow: string;
+  /** Titre : il nomme ce que la preuve démontre, pas le composant montré. */
+  title: string;
+  body: string;
+}
+
 export interface MarketingTradePage {
   /** Segment d'URL — `/metiers/<slug>`. */
   slug: string;
@@ -49,6 +82,8 @@ export interface MarketingTradePage {
   whatMatters: readonly { title: string; body: string }[];
   /** Démonstration correspondante, montrée en aperçu. */
   demo: DemoTrade;
+  /** La preuve mise en avant pour ce métier — voir `TradeProofKind`. */
+  proof: TradeProof;
 }
 
 export const TRADE_PAGES: readonly MarketingTradePage[] = [
@@ -68,7 +103,7 @@ export const TRADE_PAGES: readonly MarketingTradePage[] = [
       "Intervenez-vous dans ma commune ?",
       "Travaillez-vous sur ma marque de chaudière ou de pompe à chaleur ?",
       "Faites-vous l'entretien annuel, ou seulement l'installation ?",
-      "Comment vous joindre maintenant ?",
+      "Êtes-vous disponible pour un dépannage aujourd'hui ?",
     ],
     typicalServices: [
       {
@@ -104,6 +139,12 @@ export const TRADE_PAGES: readonly MarketingTradePage[] = [
       },
     ],
     demo: "heating",
+    proof: {
+      kind: "coverage",
+      eyebrow: "LA PREUVE QUI COMPTE",
+      title: "Vos communes et votre numéro, avant tout le reste.",
+      body: "Une chaudière qui s'arrête ne laisse pas le temps de comparer. La première chose qu'un visiteur vérifie est que vous venez chez lui, et la deuxième est comment vous appeler. Votre site affiche les deux sur chaque page, sans avoir à chercher.",
+    },
   },
   {
     slug: "plombier",
@@ -121,7 +162,7 @@ export const TRADE_PAGES: readonly MarketingTradePage[] = [
       "Intervenez-vous dans ma commune ?",
       "Faites-vous du dépannage, ou seulement de la rénovation ?",
       "À quoi ressemble une salle de bain que vous avez faite ?",
-      "Comment vous joindre maintenant ?",
+      "Pouvez-vous passer avant que ça empire ?",
     ],
     typicalServices: [
       {
@@ -156,6 +197,12 @@ export const TRADE_PAGES: readonly MarketingTradePage[] = [
       },
     ],
     demo: "plumbing",
+    proof: {
+      kind: "intervention",
+      eyebrow: "LA PREUVE QUI COMPTE",
+      title: "Une intervention, décrite comme vous la faites.",
+      body: "Un particulier ne sait pas ce que recouvre « plomberie ». Il sait qu'il a une pompe à chaleur à faire contrôler. Chaque prestation a sa fiche, sa description et sa photo — c'est ce qui transforme une recherche en appel.",
+    },
   },
   {
     slug: "couvreur",
@@ -208,6 +255,12 @@ export const TRADE_PAGES: readonly MarketingTradePage[] = [
       },
     ],
     demo: "roofing",
+    proof: {
+      kind: "finished_work",
+      eyebrow: "LA PREUVE QUI COMPTE",
+      title: "Un chantier terminé vaut n'importe quel argument.",
+      body: "On ne confie pas son toit sur une promesse. Une réalisation, sa commune et la prestation concernée en disent plus qu'une page entière de texte. Vos photos de chantier prennent cette place ; le site ne fournit que le cadre.",
+    },
   },
   {
     slug: "electricien",
@@ -225,7 +278,7 @@ export const TRADE_PAGES: readonly MarketingTradePage[] = [
       "Intervenez-vous dans ma commune ?",
       "Posez-vous des bornes de recharge ?",
       "Faites-vous la mise aux normes d'un logement ancien ?",
-      "Comment vous joindre maintenant ?",
+      "Sous quel délai intervenez-vous pour un devis ?",
     ],
     typicalServices: [
       {
@@ -260,6 +313,12 @@ export const TRADE_PAGES: readonly MarketingTradePage[] = [
       },
     ],
     demo: "electrical",
+    proof: {
+      kind: "service_sheets",
+      eyebrow: "LA PREUVE QUI COMPTE",
+      title: "Une prestation, une fiche.",
+      body: "Une borne de recharge et une mise aux normes ne se cherchent pas avec les mêmes mots et ne s'adressent pas au même client. Les regrouper dans un paragraphe fait perdre les deux. Séparées, chacune se trouve.",
+    },
   },
 ];
 
