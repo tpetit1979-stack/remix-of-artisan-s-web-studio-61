@@ -84,6 +84,8 @@ export interface DemoProject {
 export interface DemoSite {
   demo: true;
   id: DemoTrade;
+  /** Segment d'URL de la page détail — `/exemples/<slug>`. */
+  slug: string;
   tradeLabel: string;
   companyName: string;
   trade: string;
@@ -108,6 +110,7 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
   heating: {
     demo: true,
     id: "heating",
+    slug: "atelier-du-feu",
     tradeLabel: "Chauffage",
     companyName: "Atelier du Feu",
     trade: "Poêles et cheminées",
@@ -142,6 +145,7 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
   plumbing: {
     demo: true,
     id: "plumbing",
+    slug: "martin-confort",
     tradeLabel: "Plomberie",
     companyName: "Martin Confort",
     trade: "Plomberie et chauffage",
@@ -184,6 +188,7 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
   roofing: {
     demo: true,
     id: "roofing",
+    slug: "toitures-durand",
     tradeLabel: "Couverture",
     companyName: "Toitures Durand",
     trade: "Couverture et zinguerie",
@@ -235,6 +240,7 @@ export const DEMO_SITES: Record<DemoTrade, DemoSite> = {
   electrical: {
     demo: true,
     id: "electrical",
+    slug: "berger-electricite",
     tradeLabel: "Électricité",
     companyName: "Berger Électricité",
     trade: "Électricité générale",
@@ -312,6 +318,15 @@ export const DEMO_TRADES: readonly DemoTrade[] = ["roofing", "electrical", "plum
 
 /** Démonstration par défaut, utilisée quand aucun métier n'est sélectionné. */
 export const SUPORDO_DEMO_SITE: DemoSite = DEMO_SITES.roofing;
+
+/**
+ * Index par segment d'URL. `/exemples/<slug>` le lit pour résoudre sa
+ * démonstration : une seule source, donc aucun lien de la navigation ou du
+ * sitemap ne peut désigner une page qui n'existe pas.
+ */
+export const DEMO_SITE_BY_SLUG: Record<string, DemoSite> = Object.fromEntries(
+  DEMO_TRADES.map((id) => [DEMO_SITES[id].slug, DEMO_SITES[id]]),
+);
 
 /** Étiquette obligatoire partout où ces données sont affichées. */
 export const DEMO_LABEL = "DÉMONSTRATION SUPORDO";
