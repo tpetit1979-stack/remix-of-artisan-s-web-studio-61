@@ -1432,3 +1432,75 @@ les largeurs intermédiaires.
 La capture pleine page à 390 px sort à 402 px de large : c'est le conteneur
 défilant des onglets de métier, pas un débordement de la page. Mesuré :
 `document.scrollWidth` vaut 390.
+
+## Lot — Une demande exploitable de bout en bout
+
+### Ce que ce lot simplifie
+
+Une demande dit d'où elle vient. `/demarrer` inscrivait `start` en dur pour
+tout le monde : la colonne `source` était `NOT NULL` et ne disait rien. Les
+treize appels à l'action du site portent désormais leur origine réelle —
+`home`, `pricing`, `how_it_works`, `examples`, `trades`, `header`, `footer`,
+et `example.<slug>` / `trade.<slug>` pour les pages de détail.
+
+Une origine se vérifie au lieu de se croire. Le navigateur la propose, le
+serveur la ramène à une valeur sûre : la forme est gardée par la contrainte de
+la table, l'existence réelle du slug par `normalizeLeadSource`, contre les
+données statiques du site. Une valeur inconnue devient `direct` — jamais une
+erreur. On perd l'attribution, jamais le prospect.
+
+SUPORDO peut voir ses demandes. `/super-admin/demandes` liste ce que la base
+contient, signale celles qu'aucun email n'a annoncées, et fait passer chacune
+par les trois statuts que la table autorisait déjà. Une demande reçue samedi
+soir existe lundi matin, même si la notification a échoué.
+
+La confirmation dit la vérité. Elle affirmait « Elle est arrivée par email
+chez SUPORDO » alors que trois chemins du code renvoient un succès sans
+qu'aucun email ne parte. Elle n'affirme plus que l'enregistrement, qui lui est
+garanti, puis explique la suite sans inventer de délai.
+
+### Ce que ce lot supprime
+
+`start` écrit en dur, et l'attribution uniforme qu'il produisait.
+
+L'affirmation d'un email envoyé sur la page de confirmation — deux tests la
+refusent désormais, avec les promesses de délai.
+
+La liste figée de six valeurs dans `marketing_leads_source_check`, remplacée
+par une forme. La contrainte garde le gabarit ; le code garde le sens.
+
+### Ce qui reste à migrer
+
+L'interface de l'intention `callback` : le schéma, la notification et les
+colonnes existent depuis le premier lot, sans aucun écran. Volontairement P1 —
+une seconde conversion ne s'ouvre pas avant d'avoir mesuré la première.
+
+Le formulaire garde ses neuf champs et son sélecteur de trente-cinq métiers.
+L'audit recommande six champs et six familles ; c'est P1, après de vraies
+visites.
+
+`.env` est suivi par git et aucune règle de `.gitignore` ne le couvre. Il ne
+contient aujourd'hui que des valeurs publiables, mais la prochaine personne
+qui y ajoutera `SUPORDO_SUPABASE_SECRET_KEY` ou `RESEND_API_KEY` les
+commettra. Les secrets vont dans l'environnement de déploiement, jamais dans
+ce fichier.
+
+### Risques connus
+
+Les quatre variables d'envoi sont absentes de cet environnement : le
+formulaire ne s'affiche pas, et **aucun test de bout en bout n'a pu être
+fait**. Ce qui est prouvé : la contrainte accepte les douze origines prévues
+et refuse les sept malformées, testé dans un bloc atomique annulé, table
+laissée à zéro ligne ; les treize liens portent leur origine dans le HTML
+rendu ; la page de confirmation dit ce qu'elle doit dire. Ce qui ne l'est pas :
+l'insertion réelle d'une demande, l'envoi Resend, et l'affichage dans l'écran
+Super Admin, qui demande une session super-admin.
+
+L'écran Super Admin lit la table avec la session de l'utilisateur, via la
+seule policy existante (`super_admin_manage_marketing_leads`). Aucune clé
+privilégiée ne passe côté navigateur. Le comportement pour un compte non
+super-admin n'a pas été observé faute de session de test.
+
+`super-admin.tsx` n'a jamais été passé à prettier : 105 erreurs de format
+avant ce lot. Le bloc de navigation ajouté reproduit le style de ses voisins
+plutôt que d'introduire un îlot formaté au milieu du fichier.
