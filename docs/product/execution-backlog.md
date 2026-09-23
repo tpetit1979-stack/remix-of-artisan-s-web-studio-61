@@ -1203,3 +1203,82 @@ nulle part dans la copy, et rien ne doit l'y introduire.
 
 Sur téléphone à 390 px, le bouton « Demander mon site » de l'en-tête passe sur
 deux lignes. Le comportement précède ce lot ; il est constaté ici, pas corrigé.
+
+## Lot — Échelle des démonstrations et preuve métier
+
+### Ce que ce lot simplifie
+
+Une démonstration se montre désormais à trois échelles depuis un seul
+composant : le site entier, la colonne téléphone, et un aperçu large et
+tronqué. L'aperçu est la nouveauté, et il règle la contradiction centrale de
+`/exemples` : la page affirmait que quatre métiers produisent quatre sites
+différents en les affichant dans quatre colonnes de 300 px, largeur à
+laquelle ils se ressemblaient tous. Deux aperçus par rangée, à près de 600 px,
+et les quatre univers se distinguent avant qu'on ait lu un mot.
+
+Le cadrage est donné en proportion et non en pixels : les quatre aperçus ont
+la même hauteur quelle que soit la largeur, donc une entreprise au corpus plus
+court ne laisse pas de trou. Rien n'est inventé pour l'égaliser — c'est le
+cadre qui s'aligne, pas le contenu. Atelier du Feu garde une prestation et
+aucune réalisation.
+
+Chaque page métier met en avant la preuve qui compte pour ce métier, et ce
+choix est une donnée : `proof.kind` décide du fragment montré. Un chantier
+terminé pour le couvreur, une intervention pour le plombier, deux fiches
+séparées pour l'électricien, la zone d'intervention et le numéro pour le
+chauffagiste. Quatre récits, une implémentation.
+
+`/metiers` cesse d'être quatre entrées de base de données : chaque métier y
+porte sa photographie en pleine largeur et la phrase de preuve de sa page,
+lue depuis la même donnée — les deux ne peuvent donc pas se contredire.
+
+### Ce que ce lot supprime
+
+Le site entier réduit à une colonne illisible, sur `/exemples` comme dans la
+section démonstration des pages métier.
+
+Les vignettes de 112 px de `/metiers`, qui affirmaient que les métiers sont
+différents tout en les rendant interchangeables.
+
+Les faux sites dans l'arbre d'accessibilité. Un lecteur d'écran traversait sur
+`/exemples` quatre fausses navigations, quatre faux titres et quatre faux
+numéros de téléphone comme s'ils appartenaient à la page SUPORDO — dont un
+numéro fictif qu'une personne aveugle aurait pu composer. Chaque
+représentation s'annonce désormais comme une image unique, nommée, et signalée
+comme fictive.
+
+Le débordement horizontal à 390 px : la navigation du faux site réagit à la
+largeur de son propre conteneur, plus à celle de la fenêtre.
+
+Une question client recopiée sur trois pages métier — trouvée par le
+garde-fou, corrigée dans le contenu et non dans le seuil du test.
+
+### Ce qui reste à migrer
+
+Les images sont servies à leur taille d'origine : une fiche prestation affiche
+251 px de large une source de 1448 px. Réduire ce gaspillage demande des
+variantes redimensionnées et `srcset`, donc une vraie chaîne de traitement
+d'images — chantier ouvert, pas traité ici.
+
+Le Hero de la page d'accueil, `/comment-ca-marche`, `/tarifs` et l'allègement
+de la page d'accueil appartiennent aux lots 2 et 3.
+
+L'image de partage (`og:image`) et la mesure d'audience restent absentes : les
+deux sont identifiées et arbitrées séparément.
+
+### Risques connus
+
+`/exemples` reste la page la plus lourde du site : 10 requêtes d'image pour
+1545 Ko sur ordinateur, contre 13 pour 2035 Ko avant. Elle s'allège tout en
+montrant plus grand, mais elle reste au-dessus du mégaoctet, et aucune mesure
+de temps de chargement réel n'a été faite.
+
+Les pages métier s'alourdissent volontairement : la preuve est une image, donc
+`/metiers/couvreur` passe de 172 à 448 Ko sur ordinateur. Sur téléphone, rien
+ne change (172 Ko) : la preuve reste sous la ligne de flottaison.
+
+Vérification visuelle faite sur captures Chromium 1440 px et 390 px. Elle a
+trouvé deux défauts réels — un bouton d'appel rogné et un débordement
+horizontal — tous deux corrigés puis recapturés. Ce qui n'a pas été vérifié :
+le rendu sur un vrai téléphone, et le comportement aux largeurs
+intermédiaires entre 390 et 1440 px.
