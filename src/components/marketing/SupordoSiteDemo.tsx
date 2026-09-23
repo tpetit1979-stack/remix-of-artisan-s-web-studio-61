@@ -41,14 +41,18 @@ function themeVars(site: DemoSite): CSSProperties {
 function DemoHeader({ site, compact }: { site: DemoSite; compact: boolean }) {
   return (
     <div
-      className="flex items-center justify-between gap-3 px-4 py-3 md:px-6"
+      className={`flex items-center justify-between gap-3 py-3 ${compact ? "px-4" : "px-4 md:px-6"}`}
       style={{ backgroundColor: "var(--demo-text)" }}
     >
       <div className="min-w-0">
-        <p className="truncate text-[13px] font-bold tracking-[0.01em] text-white md:text-[15px]">
+        <p
+          className={`truncate font-bold tracking-[0.01em] text-white ${compact ? "text-[13px]" : "text-[13px] md:text-[15px]"}`}
+        >
           {site.companyName}
         </p>
-        <p className="truncate text-[9px] uppercase tracking-[0.12em] text-white/50 md:text-[10px]">
+        <p
+          className={`truncate uppercase tracking-[0.12em] text-white/50 ${compact ? "text-[9px]" : "text-[9px] md:text-[10px]"}`}
+        >
           {site.trade}
         </p>
       </div>
@@ -66,7 +70,7 @@ function DemoHeader({ site, compact }: { site: DemoSite; compact: boolean }) {
           </nav>
         )}
         <span
-          className="shrink-0 px-3 py-1.5 text-[10px] font-semibold text-white md:text-[11px]"
+          className={`shrink-0 px-3 py-1.5 font-semibold text-white ${compact ? "text-[10px]" : "text-[10px] md:text-[11px]"}`}
           style={{ backgroundColor: "var(--demo-primary)", borderRadius: "var(--demo-radius)" }}
         >
           {site.phone}
@@ -90,7 +94,7 @@ function DemoHeroBand({ site, compact }: { site: DemoSite; compact: boolean }) {
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-black/10" />
-      <div className="absolute inset-x-0 bottom-0 p-4 md:p-6">
+      <div className={`absolute inset-x-0 bottom-0 ${compact ? "p-4" : "p-4 md:p-6"}`}>
         <p
           className={`font-bold leading-tight text-white ${
             compact ? "text-[15px]" : "text-[17px] md:text-[22px]"
@@ -201,13 +205,15 @@ export function SupordoDemoProject({
 }
 
 /** Bas de page du site fictif : zones d'intervention et coordonnées. */
-function DemoFooter({ site }: { site: DemoSite }) {
+function DemoFooter({ site, compact }: { site: DemoSite; compact: boolean }) {
   return (
     <div
-      className="border-t border-black/10 px-4 py-4 md:px-6 md:py-5"
+      className={`border-t border-black/10 ${compact ? "px-4 py-4" : "px-4 py-4 md:px-6 md:py-5"}`}
       style={{ backgroundColor: "var(--demo-surface)" }}
     >
-      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+      <div
+        className={`flex flex-col gap-3 ${compact ? "" : "md:flex-row md:items-start md:justify-between"}`}
+      >
         <div className="min-w-0">
           <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
             Zones d'intervention
@@ -289,7 +295,7 @@ export function SupordoSiteDemo({
         )}
       </div>
 
-      <DemoFooter site={site} />
+      <DemoFooter site={site} compact={compact} />
     </div>
   );
 }
